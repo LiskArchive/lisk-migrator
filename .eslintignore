@@ -1,0 +1,12 @@
+docs/
+templates/
+types/
+examples/
+**/*.d.ts
+jest.config.js
+coverage
+benchmark
+.eslintrc.js
+dist/
+test/_global_hooks.ts
+test/setup.js
