@@ -12,4 +12,4 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-SELECT "publicKey", "vote" FROM mem_accounts_snapshot ORDER BY vote DESC, "publicKey" DESC LIMIT 103;
+SELECT DISTINCT DECODE("dependentId", 'hex') as "publicKey" FROM mem_accounts2multisignatures_snapshot WHERE "accountId" = ${address};

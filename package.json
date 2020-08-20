@@ -28,7 +28,7 @@
 		"start": "ts-node src/index.js",
 		"format": "prettier --write '**/*'",
 		"lint": "eslint --ext .ts .",
-		"lint:fix": "eslint --fix --ext ,.ts .",
+		"lint:fix": "eslint --fix --ext .ts .",
 		"test": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=./test/tsconfig.json mocha",
 		"test:coverage": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=./test/tsconfig.json nyc mocha",
 		"test:ci": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_PROJECT=./test/tsconfig.json nyc mocha",
@@ -54,13 +54,17 @@
 	],
 	"dependencies": {
 		"@liskhq/lisk-cryptography": "3.0.0-alpha.0",
+		"@liskhq/lisk-tree": "0.1.0-alpha.0",
+		"@liskhq/lisk-utils": "0.1.0-alpha.0",
 		"@oclif/command": "1.5.19",
 		"@oclif/config": "1.14.0",
 		"@oclif/errors": "1.2.2",
 		"@oclif/plugin-help": "2.2.3",
+		"@types/pg-query-stream": "1.0.3",
 		"axios": "0.19.2",
-		"lisk-genesis": "0.1.0",
-		"pg-promise": "10.5.8"
+		"@liskhq/lisk-genesis": "0.1.0-alpha.0",
+		"pg-promise": "10.5.8",
+		"pg-query-stream": "3.2.2"
 	},
 	"devDependencies": {
 		"@oclif/dev-cli": "1.22.2",

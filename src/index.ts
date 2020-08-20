@@ -12,6 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import { writeFileSync } from 'fs';
+import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import { getConfig } from './utils/config';
 // import { observeChainHeight } from './utils/network';
@@ -59,7 +61,7 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		const { flags } = this.parse(LiskMigrator);
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		// const outputPath = flags.output ?? process.cwd();
+		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
 		const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 
@@ -91,7 +93,12 @@ class LiskMigrator extends Command {
 
 		this.log('\n');
 		this.log('Creating genesis block');
-		await createGenesisBlockFromStorage(db, snapshotHeight);
+		const genesisBlock = await createGenesisBlockFromStorage(db, snapshotHeight);
+
+		this.log('\n');
+		this.log('Exporting genesis block');
+		writeFileSync(outputPath, JSON.stringify(genesisBlock, null, '\t'));
+		this.log(outputPath);
 
 		db.$pool.end();
 	}

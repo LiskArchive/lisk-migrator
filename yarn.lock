@@ -573,6 +573,21 @@
     ajv "6.8.1"
     ajv-merge-patch "4.1.0"
 
+"@liskhq/lisk-tree@0.1.0-alpha.0":
+  version "0.1.0-alpha.0"
+  resolved "https://npm.lisk.io/@liskhq%2flisk-tree/-/lisk-tree-0.1.0-alpha.0.tgz#dfdcdb705acd4dfc86859d9204c2831ed7bfb8f9"
+  integrity sha512-s7O7fzyqTmgyyqFjB32wYwgSREseDM4hnjumquHe+rZUpaMgsH8U7C5VBS9PB/RsQABiRONxml3/vt6D5riBNg==
+  dependencies:
+    "@liskhq/lisk-cryptography" "3.0.0-alpha.0"
+    "@liskhq/lisk-utils" "0.1.0-alpha.0"
+
+"@liskhq/lisk-utils@0.1.0-alpha.0":
+  version "0.1.0-alpha.0"
+  resolved "https://npm.lisk.io/@liskhq%2flisk-utils/-/lisk-utils-0.1.0-alpha.0.tgz#5cc213672178dfb19d6aed1d00447f99258f0c5e"
+  integrity sha512-fCdLkUqF2Bvkn1bBHHmHbsyF7Dhe9/PGWJhIbUpsKKOI4DFG9qlI40KpalUWpA9W7sK809edEBLrPyWmN322YA==
+  dependencies:
+    lodash.clonedeep "4.5.0"
+
 "@liskhq/lisk-validator@0.3.0":
   version "0.3.0"
   resolved "https://npm.lisk.io/@liskhq%2flisk-validator/-/lisk-validator-0.3.0.tgz#65965ccd699f981383f51b71e5a8aecce1d236f7"
@@ -935,6 +950,27 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
+
+"@types/pg-query-stream@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@types/pg-query-stream/-/pg-query-stream-1.0.3.tgz#3b858d4a0f66fbb73e6927ea53ef5bf375f88f85"
+  integrity sha512-39/vyj0pyaaUyqjvA4siTZV9eqqM8+OkI+bd66BSpPc+8BxHP5CCCh8z+N04Td4xqeyX10+YJQIYCtLHo0ywjA==
+  dependencies:
+    "@types/node" "*"
+    "@types/pg" "*"
+
+"@types/pg-types@*":
+  version "1.11.5"
+  resolved "https://registry.yarnpkg.com/@types/pg-types/-/pg-types-1.11.5.tgz#1eebbe62b6772fcc75c18957a90f933d155e005b"
+  integrity sha512-L8ogeT6vDzT1vxlW3KITTCt+BVXXVkLXfZ/XNm6UqbcJgxf+KPO7yjWx7dQQE8RW07KopL10x2gNMs41+IkMGQ==
+
+"@types/pg@*":
+  version "7.14.4"
+  resolved "https://registry.yarnpkg.com/@types/pg/-/pg-7.14.4.tgz#15cfcfd9300f94fd44e6191a1b0ba18d2de209f6"
+  integrity sha512-yCKVMCcFPZSFHGg+8qjY368uf3ruyDBPjxvOU2ZcGa/vRFo5Ti5Y6z6vl+2hxtwm9VMWUGb6TWkIk3cIV8C0Cw==
+  dependencies:
+    "@types/node" "*"
+    "@types/pg-types" "*"
 
 "@types/prettier@^2.0.0":
   version "2.0.2"
@@ -4078,6 +4114,11 @@ lodash._reinterpolate@^3.0.0:
   resolved "https://registry.yarnpkg.com/lodash._reinterpolate/-/lodash._reinterpolate-3.0.0.tgz#0ccf2d89166af03b3663c796538b75ac6e114d9d"
   integrity sha1-DM8tiRZq8Ds2Y8eWU4t1rG4RTZ0=
 
+lodash.clonedeep@4.5.0:
+  version "4.5.0"
+  resolved "https://npm.lisk.io/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz#e23f3f9c4f8fbdde872529c1071857a086e5ccef"
+  integrity sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8=
+
 lodash.memoize@4.x:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
@@ -4706,6 +4747,11 @@ pg-connection-string@^2.2.3:
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.3.0.tgz#c13fcb84c298d0bfa9ba12b40dd6c23d946f55d6"
   integrity sha512-ukMTJXLI7/hZIwTW7hGMZJ0Lj0S2XQBCJ4Shv4y1zgQ/vqVea+FLhzywvPj0ujSuofu+yA4MYHGZPTsgjBgJ+w==
 
+pg-cursor@^2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/pg-cursor/-/pg-cursor-2.3.2.tgz#84f373f09c28149da3603acfb2f6074d43d08232"
+  integrity sha512-6rRV1loW+A/zEgVpVj8V79YfMs21cs/wHFTQ1ADjSh61z/SPaFo1S3uCsQLvPJ7VdHL0emJFWpL/ylw0O7HvGg==
+
 pg-int8@1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/pg-int8/-/pg-int8-1.0.1.tgz#943bd463bf5b71b4170115f80f8efc9a0c0eb78c"
@@ -4735,6 +4781,13 @@ pg-protocol@^1.2.5:
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/pg-protocol/-/pg-protocol-1.2.5.tgz#28a1492cde11646ff2d2d06bdee42a3ba05f126c"
   integrity sha512-1uYCckkuTfzz/FCefvavRywkowa6M5FohNMF5OjKrqo9PSR8gYc8poVmwwYQaBxhmQdBjhtP514eXy9/Us2xKg==
+
+pg-query-stream@3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/pg-query-stream/-/pg-query-stream-3.2.2.tgz#5196e5932bb5097ba1f14a367b06f582ba00521d"
+  integrity sha512-ZQahKQiPY5qGCvcTJcUmwdugWsbfa/mlKLxmy8xsMApc6qup9PmXxKJTEW510gtOOaUSt/yhAbyyB02sArtDeg==
+  dependencies:
+    pg-cursor "^2.3.2"
 
 pg-types@^2.1.0:
   version "2.2.0"
