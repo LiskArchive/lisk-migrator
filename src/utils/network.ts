@@ -35,16 +35,27 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		let intervalId: NodeJS.Timer;
 		let currentHeight: number;
 
+		// eslint-disable-next-line consistent-return
 		const checkHeight = async () => {
-			const height = await getChainHeight(options.address, options.port);
+			let height!: number;
+			try {
+				height = await getChainHeight(options.address, options.port);
+			} catch (error) {
+				return reject(error);
+			}
+
 			if (height === options.height) {
 				clearInterval(intervalId);
-				resolve(height);
-			} else if (height > options.height) {
-				reject(
+				return resolve(height);
+			}
+
+			if (height > options.height) {
+				return reject(
 					new Error(`Network height: ${height} corssed the observed height: ${options.height}`),
 				);
-			} else if (currentHeight !== height) {
+			}
+
+			if (currentHeight !== height) {
 				// Only show chain height in log when its changed
 				currentHeight = height;
 				console.info(`\nCurrent height: ${currentHeight}`);

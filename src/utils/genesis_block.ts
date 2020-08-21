@@ -23,8 +23,6 @@ import { defaultAccountSchema } from './schema';
 
 const sortBufferArray = (arr: Buffer[]): Buffer[] => arr.sort((a, b) => a.compare(b));
 
-const pageSize = 2 ** 6;
-
 interface Block {
 	readonly version: number;
 	readonly height: number;
@@ -253,27 +251,46 @@ const migrateFromLegacyAccount = async ({
 	accountsMap.set(account.address, account);
 };
 
+const sortByVotesRecevied = (a: Account, b: Account) => {
+	if (a.dpos.delegate.totalVotesReceived > b.dpos.delegate.totalVotesReceived) {
+		return 1;
+	}
+	if (a.dpos.delegate.totalVotesReceived < b.dpos.delegate.totalVotesReceived) {
+		return -1;
+	}
+	return 0;
+};
+
+const sortByAddress = (a: Account, b: Account) => a.address.compare(b.address);
+
 export const createGenesisBlockFromStorage = async (
 	db: pgPromise.IDatabase<any>,
 	snapshotHeight: number,
 ): Promise<Record<string, unknown>> => {
-	const initRounds = 600;
 	// Calcualte previousBlockID
 	const blockIDSubTreeRoots: Buffer[] = [];
-	const totalPages = Math.ceil(snapshotHeight / pageSize);
-	for (let page = 0; page < totalPages; page += 1) {
-		const blocks = await db.manyOrNone<Block>(SQLs.getBlocks, {
-			limit: pageSize,
-			offset: page * pageSize,
-		});
-		const pageHashes = blocks.map(block => hash(getBlockBytes(block)));
-		blockIDSubTreeRoots.push(new MerkleTree(pageHashes).root);
-	}
-	const previousBlockID = new MerkleTree(blockIDSubTreeRoots, { preHashedLeaf: true }).root;
+	const blocksBatchSize = 2 ** 16; // This must be power of 2
+	const accountsBatchSize = 10000;
+	const blocksStreamParser = (_: unknown, blocksBatch: Block[]) => {
+		blockIDSubTreeRoots.push(
+			new MerkleTree(blocksBatch.map(block => hash(getBlockBytes(block)))).root,
+		);
+	};
+	await db.stream(
+		new QueryStream(
+			'SELECT * FROM blocks WHERE height <= $1 ORDER BY height ASC',
+			[snapshotHeight],
+			{ batchSize: blocksBatchSize },
+		),
+		async s => streamRead(s, blocksStreamParser),
+	);
+	const merkleRootOfBlocksTillSnapshotHeight = new MerkleTree(blockIDSubTreeRoots, {
+		preHashedLeaf: true,
+	}).root;
 
 	// Calcualte accounts
 	const accountsMap = new dataStructures.BufferMap<Account>();
-	const streamParser = async (_: unknown, data: LegacyAccount[]) => {
+	const accountsStreamParser = async (_: unknown, data: LegacyAccount[]) => {
 		for (const legacyAccount of data) {
 			await migrateFromLegacyAccount({ db, legacyAccount, snapshotHeight, accountsMap });
 		}
@@ -281,30 +298,24 @@ export const createGenesisBlockFromStorage = async (
 	await db.stream(
 		new QueryStream(
 			'select mem_accounts_snapshot.*, (select COUNT(*) from trs where trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount" from mem_accounts_snapshot;',
+			[],
+			{ batchSize: accountsBatchSize },
 		),
-		async s => streamRead(s, streamParser),
+		async s => streamRead(s, accountsStreamParser),
 	);
 
-	const accounts = accountsMap.values().sort((a, b) => a.address.compare(b.address));
+	const accounts = accountsMap.values().sort(sortByAddress);
 	const topDelegates = accounts
 		.filter(a => a.dpos.delegate.username !== '')
-		.sort((a, b) => {
-			if (a.dpos.delegate.totalVotesReceived > b.dpos.delegate.totalVotesReceived) {
-				return 1;
-			}
-			if (a.dpos.delegate.totalVotesReceived < b.dpos.delegate.totalVotesReceived) {
-				return -1;
-			}
-			return 0;
-		})
+		.sort(sortByVotesRecevied)
 		.slice(0, 103)
 		.map(a => a.address);
 
 	const genesisBlock = createGenesisBlock({
-		accounts,
-		initRounds,
+		accounts: accounts as any,
+		initRounds: 600,
 		initDelegates: topDelegates,
-		previousBlockID,
+		previousBlockID: merkleRootOfBlocksTillSnapshotHeight,
 		height: snapshotHeight + 1,
 		roundLength: 103,
 		accountAssetSchemas: defaultAccountSchema,

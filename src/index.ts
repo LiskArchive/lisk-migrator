@@ -16,7 +16,7 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import { getConfig } from './utils/config';
-// import { observeChainHeight } from './utils/network';
+import { observeChainHeight } from './utils/network';
 import { createDb, verifyConnection, SQLs } from './utils/storage';
 import { createGenesisBlockFromStorage } from './utils/genesis_block';
 
@@ -33,7 +33,7 @@ class LiskMigrator extends Command {
 			char: 'o',
 			required: false,
 			description:
-				'Path to write the genesis block. Current directory will be considred defautl if not porvided.',
+				'File path to write the genesis block json. If not provide then cwd/genesis_block.json will be considred defautl.',
 		}),
 		'lisk-core-path': flagsParser.string({
 			char: 'p',
@@ -79,7 +79,12 @@ class LiskMigrator extends Command {
 		this.log('\n');
 		this.log(`Connecting Lisk Core on ${httpAddress as string}:${httpPort as number}`);
 		this.log(`Waiting for snapshot height: ${snapshotHeight}`);
-		// await observeChainHeight({ address: httpAddress, port: httpPort, height: snapshotHeight, delay: 500 });
+		await observeChainHeight({
+			address: httpAddress,
+			port: httpPort,
+			height: snapshotHeight,
+			delay: 500,
+		});
 		this.log('\n');
 
 		this.log(`Taking snapshot on height: ${snapshotHeight}`);
@@ -89,7 +94,12 @@ class LiskMigrator extends Command {
 
 		this.log('\n');
 		this.log(`Waiting for threshold height: ${snapshotHeight + waitThreshold}`);
-		// await observeChainHeight({ address: httpAddress, port: httpPort, height: snapshotHeight + waitThreshold, delay: 500 });
+		await observeChainHeight({
+			address: httpAddress,
+			port: httpPort,
+			height: snapshotHeight + waitThreshold,
+			delay: 500,
+		});
 
 		this.log('\n');
 		this.log('Creating genesis block');
