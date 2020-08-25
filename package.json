@@ -54,6 +54,7 @@
 	],
 	"dependencies": {
 		"@liskhq/lisk-cryptography": "3.0.0-alpha.0",
+		"@liskhq/lisk-genesis": "0.1.0-alpha.0",
 		"@liskhq/lisk-tree": "0.1.0-alpha.0",
 		"@liskhq/lisk-utils": "0.1.0-alpha.0",
 		"@oclif/command": "1.5.19",
@@ -62,9 +63,9 @@
 		"@oclif/plugin-help": "2.2.3",
 		"@types/pg-query-stream": "1.0.3",
 		"axios": "0.19.2",
-		"@liskhq/lisk-genesis": "0.1.0-alpha.0",
 		"pg-promise": "10.5.8",
-		"pg-query-stream": "3.2.2"
+		"pg-query-stream": "3.2.2",
+		"semver": "7.3.2"
 	},
 	"devDependencies": {
 		"@oclif/dev-cli": "1.22.2",
@@ -72,6 +73,7 @@
 		"@types/jest": "26.0.3",
 		"@types/jest-when": "2.7.1",
 		"@types/node": "12.12.11",
+		"@types/semver": "7.3.3",
 		"@typescript-eslint/eslint-plugin": "3.5.0",
 		"@typescript-eslint/parser": "3.5.0",
 		"eslint": "7.3.1",

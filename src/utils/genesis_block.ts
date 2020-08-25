@@ -15,13 +15,24 @@
 import pgPromise from 'pg-promise';
 import QueryStream from 'pg-query-stream';
 import { createGenesisBlock, getGenesisBlockJSON } from '@liskhq/lisk-genesis';
-import { getAddressFromPublicKey, hash } from '@liskhq/lisk-cryptography';
+import {
+	getAddressFromPublicKey,
+	hash,
+	intToBuffer,
+	LITTLE_ENDIAN,
+	BIG_ENDIAN,
+} from '@liskhq/lisk-cryptography';
 import { objects, dataStructures } from '@liskhq/lisk-utils';
 import { MerkleTree } from '@liskhq/lisk-tree';
 import { SQLs, streamRead } from './storage';
 import { defaultAccountSchema } from './schema';
 
 const sortBufferArray = (arr: Buffer[]): Buffer[] => arr.sort((a, b) => a.compare(b));
+
+export interface DelegateWithVotes {
+	readonly address: Buffer;
+	readonly votes: bigint;
+}
 
 interface Block {
 	readonly version: number;
@@ -47,73 +58,95 @@ interface LegacyAccount {
 	readonly username: string;
 	readonly secondSignature: number;
 	readonly multimin: number;
+	readonly vote: string;
 	readonly incomingTxCount?: number;
 }
 
 interface Account {
-	readonly [key: string]: unknown;
 	readonly address: Buffer;
 	readonly token: {
 		readonly balance: bigint;
 	};
+	readonly sequence: {
+		readonly nonce: bigint;
+	};
+	readonly keys: {
+		readonly mandatoryKeys: Buffer[];
+		readonly optionalKeys: Buffer[];
+		readonly numberOfSignatures: number;
+	};
 	readonly dpos: {
 		readonly delegate: {
 			readonly username: string;
+			readonly pomHeights: number[];
+			readonly consecutiveMissedBlocks: number;
+			readonly lastForgedHeight: number;
+			readonly isBanned: boolean;
 			readonly totalVotesReceived: bigint;
 		};
+		readonly sentVotes: {
+			readonly delegateAddress: Buffer;
+			readonly amount: bigint;
+		}[];
+		readonly unlocking: {
+			readonly delegateAddress: Buffer;
+			readonly amount: bigint;
+			readonly unvoteHeight: number;
+		}[];
 	};
 }
 
+const SIZE_INT32 = 4;
+const SIZE_INT64 = 8;
+
+// Referenced from https://github.com/LiskHQ/lisk-sdk/blob/v2.3.8/framework/src/modules/chain/blocks/block.js#L139
 const getBlockBytes = (block: Block): Buffer => {
-	const capacity =
-		4 + // version (int)
-		4 + // timestamp (int)
-		8 + // previousBlock
-		4 + // numberOfTransactions (int)
-		8 + // totalAmount (long)
-		8 + // totalFee (long)
-		8 + // reward (long)
-		4 + // payloadLength (int)
-		32 + // payloadHash
-		32 + // generatorPublicKey
-		64 + // blockSignature or unused
-		4; // unused
+	const blockVersionBuffer = intToBuffer(block.version, SIZE_INT32, LITTLE_ENDIAN);
 
-	let offset = 0;
-	const byteBuffer = Buffer.alloc(capacity);
+	const timestampBuffer = intToBuffer(block.timestamp, SIZE_INT32, LITTLE_ENDIAN);
 
-	offset = byteBuffer.writeInt32BE(block.version, offset);
-	offset = byteBuffer.writeInt32BE(block.timestamp, offset);
+	const previousBlockBuffer = block.previousBlock
+		? intToBuffer(block.previousBlock, SIZE_INT64, BIG_ENDIAN)
+		: Buffer.alloc(SIZE_INT64);
 
-	if (block.previousBlock) {
-		offset = byteBuffer.writeBigUInt64BE(BigInt(block.previousBlock), offset);
-	} else {
-		offset = byteBuffer.writeBigUInt64BE(BigInt(0), offset);
-	}
+	const numTransactionsBuffer = intToBuffer(block.numberOfTransactions, SIZE_INT32, LITTLE_ENDIAN);
 
-	offset = byteBuffer.writeInt32BE(block.numberOfTransactions, offset);
-	offset = byteBuffer.writeBigUInt64BE(BigInt(block.totalAmount), offset);
-	offset = byteBuffer.writeBigUInt64BE(BigInt(block.totalFee), offset);
-	offset = byteBuffer.writeBigUInt64BE(BigInt(block.reward), offset);
+	const totalAmountBuffer = intToBuffer(block.totalAmount.toString(), SIZE_INT64, LITTLE_ENDIAN);
 
-	offset = byteBuffer.writeInt32BE(block.payloadLength, offset);
-	offset = byteBuffer.write(block.payloadHash.toString('hex'), offset, 'hex');
-	offset = byteBuffer.write(block.generatorPublicKey.toString('hex'), offset, 'hex');
-	offset = byteBuffer.write(block.generatorPublicKey.toString('hex'), offset, 'hex');
+	const totalFeeBuffer = intToBuffer(block.totalFee.toString(), SIZE_INT64, LITTLE_ENDIAN);
 
-	if (block.blockSignature) {
-		offset = byteBuffer.write(block.blockSignature.toString('hex'), offset, 'hex');
-	}
+	const rewardBuffer = intToBuffer(block.reward.toString(), SIZE_INT64, LITTLE_ENDIAN);
 
-	return byteBuffer;
+	const payloadLengthBuffer = intToBuffer(block.payloadLength, SIZE_INT32, LITTLE_ENDIAN);
+
+	const blockSignatureBuffer = block.blockSignature ?? Buffer.alloc(0);
+
+	return Buffer.concat([
+		blockVersionBuffer,
+		timestampBuffer,
+		previousBlockBuffer,
+		numTransactionsBuffer,
+		totalAmountBuffer,
+		totalFeeBuffer,
+		rewardBuffer,
+		payloadLengthBuffer,
+		block.payloadHash,
+		block.generatorPublicKey,
+		blockSignatureBuffer,
+	]);
 };
 
 const accountDefaultProps = {
+	token: {
+		balance: BigInt(0),
+	},
 	sequence: {
-		nonce: 0,
+		nonce: BigInt(0),
 	},
 	dpos: {
 		delegate: {
+			lastForgedHeight: 0,
+			username: '',
 			pomHeights: [],
 			consecutiveMissedBlocks: 0,
 			isBanned: false,
@@ -129,25 +162,17 @@ const accountDefaultProps = {
 	},
 };
 
-const genesisAccountPublicKeyMainnet = Buffer.from(
-	'd121d3abf5425fdc0f161d9ddb32f89b7750b4bdb0bff7d18b191d4b4bafa6d4',
-	'hex',
-);
-
-const genesisAccountPublicKeyTestnet = Buffer.from(
-	'73ec4adbd8f99f0d46794aeda3c3d86b245bd9d27be2b282cdd38ad21988556b',
-	'hex',
-);
-
 const migrateFromLegacyAccount = async ({
 	db,
 	legacyAccount,
 	snapshotHeight,
 	accountsMap,
+	delegatesMap,
 }: {
 	db: pgPromise.IDatabase<any>;
 	legacyAccount: LegacyAccount;
 	accountsMap: dataStructures.BufferMap<Account>;
+	delegatesMap: dataStructures.BufferMap<DelegateWithVotes>;
 	snapshotHeight: number;
 }): Promise<void> => {
 	if (legacyAccount.incomingTxCount === 0) {
@@ -167,10 +192,8 @@ const migrateFromLegacyAccount = async ({
 		}
 	}
 
-	if (
-		legacyAccount.publicKey?.equals(genesisAccountPublicKeyMainnet) ||
-		legacyAccount.publicKey?.equals(genesisAccountPublicKeyTestnet)
-	) {
+	// Its a genesis block
+	if (BigInt(legacyAccount.balance) < BigInt(0)) {
 		return;
 	}
 
@@ -249,13 +272,20 @@ const migrateFromLegacyAccount = async ({
 	) as Account;
 
 	accountsMap.set(account.address, account);
+
+	if (account.dpos.delegate.username !== '') {
+		delegatesMap.set(account.address, {
+			address: account.address,
+			votes: BigInt(legacyAccount.vote),
+		});
+	}
 };
 
-const sortByVotesRecevied = (a: Account, b: Account) => {
-	if (a.dpos.delegate.totalVotesReceived > b.dpos.delegate.totalVotesReceived) {
+const sortByVotesRecevied = (a: DelegateWithVotes, b: DelegateWithVotes) => {
+	if (a.votes > b.votes) {
 		return 1;
 	}
-	if (a.dpos.delegate.totalVotesReceived < b.dpos.delegate.totalVotesReceived) {
+	if (a.votes < b.votes) {
 		return -1;
 	}
 	return 0;
@@ -290,9 +320,16 @@ export const createGenesisBlockFromStorage = async (
 
 	// Calcualte accounts
 	const accountsMap = new dataStructures.BufferMap<Account>();
+	const delegatesMap = new dataStructures.BufferMap<DelegateWithVotes>();
 	const accountsStreamParser = async (_: unknown, data: LegacyAccount[]) => {
 		for (const legacyAccount of data) {
-			await migrateFromLegacyAccount({ db, legacyAccount, snapshotHeight, accountsMap });
+			await migrateFromLegacyAccount({
+				db,
+				legacyAccount,
+				snapshotHeight,
+				accountsMap,
+				delegatesMap,
+			});
 		}
 	};
 	await db.stream(
@@ -305,8 +342,8 @@ export const createGenesisBlockFromStorage = async (
 	);
 
 	const accounts = accountsMap.values().sort(sortByAddress);
-	const topDelegates = accounts
-		.filter(a => a.dpos.delegate.username !== '')
+	const topDelegates = delegatesMap
+		.values()
 		.sort(sortByVotesRecevied)
 		.slice(0, 103)
 		.map(a => a.address);

@@ -25,6 +25,7 @@ const sqlDir = join(__dirname, 'sql');
 
 export const SQLs = {
 	crateSnapshot: new QueryFile(join(sqlDir, 'create_snapshot.sql'), { minify: true }),
+	getLastBlockHeight: new QueryFile(join(sqlDir, 'get_last_block_height.sql'), { minify: true }),
 	getMultisigPublicKeys: new QueryFile(join(sqlDir, 'get_multisig_public_keys.sql'), {
 		minify: true,
 	}),

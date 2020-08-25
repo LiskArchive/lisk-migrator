@@ -12,22 +12,19 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import axios from 'axios';
+import pgPromise from 'pg-promise';
+import { SQLs } from './storage';
 
 interface ObserveParams {
 	readonly height: number;
-	readonly address: string;
-	readonly port: number;
+	readonly db: pgPromise.IDatabase<any>;
 	readonly delay: number;
 }
 
-export const getChainHeight = async (address: string, port: number): Promise<number> => {
-	const result = await axios({
-		method: 'get',
-		url: `http://${address}:${port}/api/node/status`,
-	});
+export const getChainHeight = async (db: pgPromise.IDatabase<any>): Promise<number> => {
+	const result = await db.one<{ height: number }>(SQLs.getLastBlockHeight);
 
-	return result.data.data.height;
+	return result.height;
 };
 
 export const observeChainHeight = async (options: ObserveParams): Promise<number> =>
@@ -39,7 +36,7 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		const checkHeight = async () => {
 			let height!: number;
 			try {
-				height = await getChainHeight(options.address, options.port);
+				height = await getChainHeight(options.db);
 			} catch (error) {
 				return reject(error);
 			}
@@ -51,7 +48,7 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 
 			if (height > options.height) {
 				return reject(
-					new Error(`Network height: ${height} corssed the observed height: ${options.height}`),
+					new Error(`Chain height: ${height} crossed the observed height: ${options.height}`),
 				);
 			}
 

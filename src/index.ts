@@ -12,13 +12,16 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import * as semver from 'semver';
 import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import { getConfig } from './utils/config';
-import { observeChainHeight } from './utils/network';
+import { observeChainHeight } from './utils/chain';
 import { createDb, verifyConnection, SQLs } from './utils/storage';
 import { createGenesisBlockFromStorage } from './utils/genesis_block';
+
+const copmpatibleVersions = '>=2.1.4 <=2.1.6';
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
@@ -26,27 +29,27 @@ class LiskMigrator extends Command {
 	public static flags = {
 		// add --version flag to show CLI version
 		version: flagsParser.version({ char: 'v' }),
-		help: flagsParser.help(),
+		help: flagsParser.help({ char: 'h' }),
 
 		// Cutom flags
 		output: flagsParser.string({
 			char: 'o',
 			required: false,
 			description:
-				'File path to write the genesis block json. If not provide then cwd/genesis_block.json will be considred defautl.',
+				'File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.',
 		}),
 		'lisk-core-path': flagsParser.string({
 			char: 'p',
 			required: false,
 			description:
-				'Path where Lisk-Core instnace is running. Current directory will be considred defautl if not porvided.',
+				'Path where the lisk-core instance is running. Current directory will be considered the default if not provided.',
 		}),
 		'snapshot-height': flagsParser.integer({
-			char: 'h',
+			char: 's',
 			required: true,
 			env: 'SNAPSHOT_HEIGHT',
 			description:
-				'The height at which re-genesis block will be associated. Can be specified with SNAPSHOT_HEIGHT as well.',
+				'he height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
 		}),
 		'wait-threshold': flagsParser.integer({
 			char: 'w',
@@ -69,19 +72,30 @@ class LiskMigrator extends Command {
 		const config = await getConfig(liskCorePath);
 
 		this.log('\n');
+		this.log('Verifying Lisk-Core verison...');
+		const liskCoreVersion = semver.coerce(config.app.version);
+		if (!liskCoreVersion) {
+			this.error('Unable to detect the lisk-core version.');
+		}
+		if (!semver.satisfies(liskCoreVersion, copmpatibleVersions)) {
+			this.error(
+				`Lisk-Migrator utility is not compatiable for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${copmpatibleVersions}`,
+			);
+		}
+		this.log(`Lisk-Core version ${liskCoreVersion.version} detected`);
+
+		this.log('\n');
 		this.log('Verifying database connection...');
 		const storageConfig = config.components.storage;
-		const db = createDb(storageConfig);
+		const db = createDb({ ...storageConfig, database: 'lisk_main' });
 		await verifyConnection(db);
 		this.log('Verified database connection');
 
-		const { httpPort, address: httpAddress } = config.modules.http_api;
 		this.log('\n');
-		this.log(`Connecting Lisk Core on ${httpAddress as string}:${httpPort as number}`);
+		this.log('Connecting Lisk Core database...');
 		this.log(`Waiting for snapshot height: ${snapshotHeight}`);
 		await observeChainHeight({
-			address: httpAddress,
-			port: httpPort,
+			db,
 			height: snapshotHeight,
 			delay: 500,
 		});
@@ -95,8 +109,7 @@ class LiskMigrator extends Command {
 		this.log('\n');
 		this.log(`Waiting for threshold height: ${snapshotHeight + waitThreshold}`);
 		await observeChainHeight({
-			address: httpAddress,
-			port: httpPort,
+			db,
 			height: snapshotHeight + waitThreshold,
 			delay: 500,
 		});

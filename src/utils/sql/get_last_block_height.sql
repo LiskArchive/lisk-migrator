@@ -12,21 +12,4 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-export interface StorageConfig {
-	readonly user: string;
-	readonly password: string;
-	readonly database: string;
-	readonly host: string;
-	readonly port: number;
-}
-
-export interface Config {
-	readonly app: {
-		readonly version: string;
-		readonly minVersion: string;
-		readonly protocolVersion: string;
-	};
-	readonly components: {
-		readonly storage: StorageConfig;
-	};
-}
+SELECT height FROM blocks ORDER BY height DESC LIMIT 1
