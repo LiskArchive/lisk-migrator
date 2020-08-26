@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import debugLib from 'debug';
 import pgPromise from 'pg-promise';
 import QueryStream from 'pg-query-stream';
 import { createGenesisBlock, getGenesisBlockJSON } from '@liskhq/lisk-genesis';
@@ -26,6 +27,8 @@ import { objects, dataStructures } from '@liskhq/lisk-utils';
 import { MerkleTree } from '@liskhq/lisk-tree';
 import { SQLs, streamRead } from './storage';
 import { defaultAccountSchema } from './schema';
+
+const debug = debugLib('lisk_migrator:genesis_block');
 
 const sortBufferArray = (arr: Buffer[]): Buffer[] => arr.sort((a, b) => a.compare(b));
 
@@ -176,6 +179,13 @@ const migrateFromLegacyAccount = async ({
 	delegatesMap: dataStructures.BufferMap<DelegateWithVotes>;
 	snapshotHeight: number;
 }): Promise<void> => {
+	debug('Migrating legacy account: ', legacyAccount.address);
+	debug({
+		incomingTxCount: legacyAccount.incomingTxCount,
+		outgoingTxCount: legacyAccount.outgoingTxCount,
+		balance: legacyAccount.balance,
+	});
+
 	if (legacyAccount.incomingTxCount === 0) {
 		return;
 	}
@@ -195,6 +205,7 @@ const migrateFromLegacyAccount = async ({
 
 	// Its a genesis account
 	if (BigInt(legacyAccount.balance) < BigInt(0)) {
+		debug('Its a genesis account. Skipping.');
 		return;
 	}
 
@@ -203,7 +214,10 @@ const migrateFromLegacyAccount = async ({
 			? getAddressFromPublicKey(legacyAccount.publicKey)
 			: eightByteAddress;
 
+	debug('New address', address.toString('hex'));
+
 	if (accountsMap.has(address)) {
+		debug('Duplicate account detected. Adding up the balance.');
 		const oldAccount = accountsMap.get(address) as Account;
 		const updatedAccount = objects.mergeDeep(oldAccount, {
 			token: { balance: oldAccount.token.balance + BigInt(legacyAccount.balance) },
@@ -272,6 +286,8 @@ const migrateFromLegacyAccount = async ({
 		dposProps,
 		keysProps,
 	) as Account;
+
+	debug('New account:', account);
 
 	accountsMap.set(account.address, account);
 
@@ -359,7 +375,7 @@ export const createGenesisBlockFromStorage = async ({
 	};
 	await db.stream(
 		new QueryStream(
-			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*) FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*) FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot',
+			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*)::int FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*)::int FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot',
 			[],
 			{ batchSize: accountsBatchSize },
 		),

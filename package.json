@@ -63,6 +63,7 @@
 		"@oclif/plugin-help": "2.2.3",
 		"@types/pg-query-stream": "1.0.3",
 		"axios": "0.19.2",
+		"debug": "4.1.1",
 		"pg-promise": "10.5.8",
 		"pg-query-stream": "3.2.2",
 		"semver": "7.3.2"
@@ -70,6 +71,7 @@
 	"devDependencies": {
 		"@oclif/dev-cli": "1.22.2",
 		"@oclif/test": "1.2.5",
+		"@types/debug": "4.1.5",
 		"@types/jest": "26.0.3",
 		"@types/jest-when": "2.7.1",
 		"@types/node": "12.12.11",
