@@ -59,7 +59,8 @@ interface LegacyAccount {
 	readonly secondSignature: number;
 	readonly multimin: number;
 	readonly vote: string;
-	readonly incomingTxCount?: number;
+	readonly incomingTxCount: number;
+	readonly outgoingTxCount: number;
 }
 
 interface Account {
@@ -192,14 +193,15 @@ const migrateFromLegacyAccount = async ({
 		}
 	}
 
-	// Its a genesis block
+	// Its a genesis account
 	if (BigInt(legacyAccount.balance) < BigInt(0)) {
 		return;
 	}
 
-	const address = legacyAccount.publicKey
-		? getAddressFromPublicKey(legacyAccount.publicKey)
-		: eightByteAddress;
+	const address =
+		legacyAccount.publicKey && legacyAccount.outgoingTxCount > 0
+			? getAddressFromPublicKey(legacyAccount.publicKey)
+			: eightByteAddress;
 
 	if (accountsMap.has(address)) {
 		const oldAccount = accountsMap.get(address) as Account;
@@ -357,7 +359,7 @@ export const createGenesisBlockFromStorage = async ({
 	};
 	await db.stream(
 		new QueryStream(
-			'select mem_accounts_snapshot.*, (select COUNT(*) from trs where trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount" from mem_accounts_snapshot;',
+			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*) FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*) FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot',
 			[],
 			{ batchSize: accountsBatchSize },
 		),
@@ -378,12 +380,12 @@ export const createGenesisBlockFromStorage = async ({
 
 	const genesisBlock = createGenesisBlock({
 		accounts: accounts as any,
-		initRounds: 600,
+		initRounds: 600, // Approximately 7 days assuming no missed blocks
 		initDelegates: topDelegates,
 		previousBlockID: merkleRootOfBlocksTillSnapshotHeight,
 		height: snapshotHeight + 1,
 		roundLength: 103,
-		timestamp: lastBlockTimeToNearest10s + 7200,
+		timestamp: lastBlockTimeToNearest10s + 7200, // 2 hours in future
 		accountAssetSchemas: defaultAccountSchema,
 	});
 

@@ -17,7 +17,7 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import { getConfig } from './utils/config';
-import { observeChainHeight } from './utils/chain';
+// import { observeChainHeight } from './utils/chain';
 import { createDb, verifyConnection, SQLs } from './utils/storage';
 import { createGenesisBlockFromStorage } from './utils/genesis_block';
 
@@ -87,18 +87,18 @@ class LiskMigrator extends Command {
 		this.log('\n');
 		this.log('Verifying database connection...');
 		const storageConfig = config.components.storage;
-		const db = createDb(storageConfig);
+		const db = createDb({ ...storageConfig, database: 'lisk_main' });
 		await verifyConnection(db);
 		this.log('Verified database connection');
 
 		this.log('\n');
 		this.log('Connecting Lisk Core database...');
 		this.log(`Waiting for snapshot height: ${snapshotHeight}`);
-		await observeChainHeight({
-			db,
-			height: snapshotHeight,
-			delay: 500,
-		});
+		// await observeChainHeight({
+		// 	db,
+		// 	height: snapshotHeight,
+		// 	delay: 500,
+		// });
 		this.log('\n');
 
 		this.log(`Taking snapshot on height: ${snapshotHeight}`);
@@ -108,11 +108,11 @@ class LiskMigrator extends Command {
 
 		this.log('\n');
 		this.log(`Waiting for threshold height: ${snapshotHeight + waitThreshold}`);
-		await observeChainHeight({
-			db,
-			height: snapshotHeight + waitThreshold,
-			delay: 500,
-		});
+		// await observeChainHeight({
+		// 	db,
+		// 	height: snapshotHeight + waitThreshold,
+		// 	delay: 500,
+		// });
 
 		this.log('\n');
 		this.log('Creating genesis block');
