@@ -172,11 +172,13 @@ const migrateFromLegacyAccount = async ({
 	snapshotHeight,
 	accountsMap,
 	delegatesMap,
+	legacyAddressMap,
 }: {
 	db: pgPromise.IDatabase<any>;
 	legacyAccount: LegacyAccount;
 	accountsMap: dataStructures.BufferMap<Account>;
 	delegatesMap: dataStructures.BufferMap<DelegateWithVotes>;
+	legacyAddressMap: dataStructures.BufferMap<Buffer>;
 	snapshotHeight: number;
 }): Promise<void> => {
 	debug('Migrating legacy account: ', legacyAccount.address);
@@ -186,7 +188,15 @@ const migrateFromLegacyAccount = async ({
 		balance: legacyAccount.balance,
 	});
 
+	// Its an empty account
 	if (legacyAccount.incomingTxCount === 0) {
+		debug('No incoming transaction. Skipping.');
+		return;
+	}
+
+	// Its a genesis account
+	if (BigInt(legacyAccount.balance) < BigInt(0)) {
+		debug('Its a genesis account. Skipping.');
 		return;
 	}
 
@@ -203,12 +213,6 @@ const migrateFromLegacyAccount = async ({
 		}
 	}
 
-	// Its a genesis account
-	if (BigInt(legacyAccount.balance) < BigInt(0)) {
-		debug('Its a genesis account. Skipping.');
-		return;
-	}
-
 	const address =
 		legacyAccount.publicKey && legacyAccount.outgoingTxCount > 0
 			? getAddressFromPublicKey(legacyAccount.publicKey)
@@ -216,9 +220,16 @@ const migrateFromLegacyAccount = async ({
 
 	debug('New address', address.toString('hex'));
 
+	let duplicatteAddress: Buffer | undefined;
 	if (accountsMap.has(address)) {
+		duplicatteAddress = address;
+	} else if (legacyAddressMap.has(eightByteAddress)) {
+		duplicatteAddress = legacyAddressMap.get(eightByteAddress);
+	}
+
+	if (duplicatteAddress) {
 		debug('Duplicate account detected. Adding up the balance.');
-		const oldAccount = accountsMap.get(address) as Account;
+		const oldAccount = accountsMap.get(duplicatteAddress) as Account;
 		const updatedAccount = objects.mergeDeep(oldAccount, {
 			token: { balance: oldAccount.token.balance + BigInt(legacyAccount.balance) },
 		}) as Account;
@@ -289,6 +300,7 @@ const migrateFromLegacyAccount = async ({
 
 	debug('New account:', account);
 
+	legacyAddressMap.set(eightByteAddress, account.address);
 	accountsMap.set(account.address, account);
 
 	if (account.dpos.delegate.username !== '') {
@@ -362,6 +374,7 @@ export const createGenesisBlockFromStorage = async ({
 	// Calcualte accounts
 	const accountsMap = new dataStructures.BufferMap<Account>();
 	const delegatesMap = new dataStructures.BufferMap<DelegateWithVotes>();
+	const legacyAddressMap = new dataStructures.BufferMap<Buffer>();
 	const accountsStreamParser = async (_: unknown, data: LegacyAccount[]) => {
 		for (const legacyAccount of data) {
 			await migrateFromLegacyAccount({
@@ -370,6 +383,7 @@ export const createGenesisBlockFromStorage = async ({
 				snapshotHeight,
 				accountsMap,
 				delegatesMap,
+				legacyAddressMap,
 			});
 		}
 	};
