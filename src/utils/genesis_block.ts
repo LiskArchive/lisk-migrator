@@ -288,23 +288,46 @@ const sortByVotesRecevied = (a: DelegateWithVotes, b: DelegateWithVotes) => {
 	if (a.votes < b.votes) {
 		return -1;
 	}
-	return 0;
+
+	return a.address.compare(b.address);
 };
 
-const sortByAddress = (a: Account, b: Account) => a.address.compare(b.address);
+const sortAccounts = (a: Account, b: Account) => {
+	if (a.address.length < b.address.length) {
+		return 1;
+	}
 
-export const createGenesisBlockFromStorage = async (
-	db: pgPromise.IDatabase<any>,
-	snapshotHeight: number,
-): Promise<Record<string, unknown>> => {
+	if (a.address.length > b.address.length) {
+		return -1;
+	}
+
+	return a.address.compare(b.address);
+};
+
+interface createGenesisBlockFromStorageParams {
+	readonly db: pgPromise.IDatabase<any>;
+	readonly snapshotHeight: number;
+	readonly epochTime: string;
+	readonly blockTime: number;
+}
+
+export const createGenesisBlockFromStorage = async ({
+	db,
+	snapshotHeight,
+	epochTime,
+	blockTime,
+}: createGenesisBlockFromStorageParams): Promise<Record<string, unknown>> => {
 	// Calcualte previousBlockID
 	const blockIDSubTreeRoots: Buffer[] = [];
 	const blocksBatchSize = 2 ** 16; // This must be power of 2
 	const accountsBatchSize = 10000;
+	let lastBlock!: Block;
+
 	const blocksStreamParser = (_: unknown, blocksBatch: Block[]) => {
 		blockIDSubTreeRoots.push(
 			new MerkleTree(blocksBatch.map(block => hash(getBlockBytes(block)))).root,
 		);
+		lastBlock = blocksBatch[blocksBatch.length - 1];
 	};
 	await db.stream(
 		new QueryStream(
@@ -341,12 +364,17 @@ export const createGenesisBlockFromStorage = async (
 		async s => streamRead(s, accountsStreamParser),
 	);
 
-	const accounts = accountsMap.values().sort(sortByAddress);
+	const accounts = accountsMap.values().sort(sortAccounts);
 	const topDelegates = delegatesMap
 		.values()
 		.sort(sortByVotesRecevied)
 		.slice(0, 103)
 		.map(a => a.address);
+
+	const epochTimeInMs = new Date(epochTime).getTime();
+	const lastBlockTimeOffsetInMs = lastBlock.height * blockTime * 1000;
+	const lastBlockTimeInSeconds = (epochTimeInMs + lastBlockTimeOffsetInMs) / 1000;
+	const lastBlockTimeToNearest10s = Math.round(lastBlockTimeInSeconds / 10) * 10;
 
 	const genesisBlock = createGenesisBlock({
 		accounts: accounts as any,
@@ -355,6 +383,7 @@ export const createGenesisBlockFromStorage = async (
 		previousBlockID: merkleRootOfBlocksTillSnapshotHeight,
 		height: snapshotHeight + 1,
 		roundLength: 103,
+		timestamp: lastBlockTimeToNearest10s + 7200,
 		accountAssetSchemas: defaultAccountSchema,
 	});
 

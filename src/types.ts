@@ -25,6 +25,10 @@ export interface Config {
 		readonly version: string;
 		readonly minVersion: string;
 		readonly protocolVersion: string;
+		readonly genesisConfig: {
+			readonly EPOCH_TIME: string;
+			readonly BLOCK_TIME: number;
+		};
 	};
 	readonly components: {
 		readonly storage: StorageConfig;

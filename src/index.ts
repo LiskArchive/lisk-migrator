@@ -87,7 +87,7 @@ class LiskMigrator extends Command {
 		this.log('\n');
 		this.log('Verifying database connection...');
 		const storageConfig = config.components.storage;
-		const db = createDb({ ...storageConfig, database: 'lisk_main' });
+		const db = createDb(storageConfig);
 		await verifyConnection(db);
 		this.log('Verified database connection');
 
@@ -116,7 +116,12 @@ class LiskMigrator extends Command {
 
 		this.log('\n');
 		this.log('Creating genesis block');
-		const genesisBlock = await createGenesisBlockFromStorage(db, snapshotHeight);
+		const genesisBlock = await createGenesisBlockFromStorage({
+			db,
+			snapshotHeight,
+			blockTime: config.app.genesisConfig.BLOCK_TIME,
+			epochTime: config.app.genesisConfig.EPOCH_TIME,
+		});
 
 		this.log('\n');
 		this.log('Exporting genesis block');
