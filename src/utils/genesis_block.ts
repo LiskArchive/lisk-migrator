@@ -311,7 +311,7 @@ const migrateFromLegacyAccount = async ({
 	}
 };
 
-const sortByVotesRecevied = (a: DelegateWithVotes, b: DelegateWithVotes) => {
+const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) => {
 	if (a.votes > b.votes) {
 		return 1;
 	}
@@ -347,7 +347,7 @@ export const createGenesisBlockFromStorage = async ({
 	epochTime,
 	blockTime,
 }: createGenesisBlockFromStorageParams): Promise<Record<string, unknown>> => {
-	// Calcualte previousBlockID
+	// Calculate previousBlockID
 	const blockIDSubTreeRoots: Buffer[] = [];
 	const blocksBatchSize = 2 ** 16; // This must be power of 2
 	const accountsBatchSize = 10000;
@@ -371,7 +371,7 @@ export const createGenesisBlockFromStorage = async ({
 		preHashedLeaf: true,
 	}).root;
 
-	// Calcualte accounts
+	// Calculate accounts
 	const accountsMap = new dataStructures.BufferMap<Account>();
 	const delegatesMap = new dataStructures.BufferMap<DelegateWithVotes>();
 	const legacyAddressMap = new dataStructures.BufferMap<Buffer>();
@@ -399,7 +399,7 @@ export const createGenesisBlockFromStorage = async ({
 	const accounts = accountsMap.values().sort(sortAccounts);
 	const topDelegates = delegatesMap
 		.values()
-		.sort(sortByVotesRecevied)
+		.sort(sortByVotesReceived)
 		.slice(0, 103)
 		.map(a => a.address);
 
