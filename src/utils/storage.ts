@@ -40,6 +40,10 @@ export const createDb = (config: StorageConfig): pgPromise.IDatabase<any> =>
 		database: config.database,
 	});
 
+export const createSnapshot = async (db: pgPromise.IDatabase<any>): Promise<void> => {
+	await db.query(SQLs.crateSnapshot);
+};
+
 export const verifyConnection = async (db: pgPromise.IDatabase<any>): Promise<void> => {
 	const connectionObject = await db.connect({ direct: true });
 	connectionObject.done();

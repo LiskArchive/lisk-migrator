@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import { writeFileSync } from 'fs';
 import debugLib from 'debug';
 import pgPromise from 'pg-promise';
 import QueryStream from 'pg-query-stream';
@@ -420,4 +421,11 @@ export const createGenesisBlockFromStorage = async ({
 	});
 
 	return getGenesisBlockJSON({ genesisBlock, accountAssetSchemas: defaultAccountSchema });
+};
+
+export const writeGenesisBlock = (
+	genesisBlock: Record<string, unknown>,
+	filePath: string,
+): void => {
+	writeFileSync(filePath, JSON.stringify(genesisBlock, null, '\t'));
 };

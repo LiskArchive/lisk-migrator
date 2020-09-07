@@ -13,17 +13,16 @@
  */
 
 import * as semver from 'semver';
-import { writeFileSync } from 'fs';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import { getConfig } from './utils/config';
 import { observeChainHeight } from './utils/chain';
-import { createDb, verifyConnection, SQLs } from './utils/storage';
-import { createGenesisBlockFromStorage } from './utils/genesis_block';
+import { createDb, verifyConnection, createSnapshot } from './utils/storage';
+import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
 
-const copmpatibleVersions = '>=2.1.4 <=2.1.6';
+const compatibleVersions = '>=2.1.4 <=2.1.6';
 
-class LiskMigrator extends Command {
+export default class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
 	public static flags = {
@@ -31,7 +30,7 @@ class LiskMigrator extends Command {
 		version: flagsParser.version({ char: 'v' }),
 		help: flagsParser.help({ char: 'h' }),
 
-		// Cutom flags
+		// Custom flags
 		output: flagsParser.string({
 			char: 'o',
 			required: false,
@@ -49,7 +48,7 @@ class LiskMigrator extends Command {
 			required: true,
 			env: 'SNAPSHOT_HEIGHT',
 			description:
-				'he height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
+				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
 		}),
 		'wait-threshold': flagsParser.integer({
 			char: 'w',
@@ -72,14 +71,14 @@ class LiskMigrator extends Command {
 		const config = await getConfig(liskCorePath);
 
 		this.log('\n');
-		this.log('Verifying Lisk-Core verison...');
+		this.log('Verifying Lisk-Core version...');
 		const liskCoreVersion = semver.coerce(config.app.version);
 		if (!liskCoreVersion) {
 			this.error('Unable to detect the lisk-core version.');
 		}
-		if (!semver.satisfies(liskCoreVersion, copmpatibleVersions)) {
+		if (!semver.satisfies(liskCoreVersion, compatibleVersions)) {
 			this.error(
-				`Lisk-Migrator utility is not compatiable for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${copmpatibleVersions}`,
+				`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${compatibleVersions}`,
 			);
 		}
 		this.log(`Lisk-Core version ${liskCoreVersion.version} detected`);
@@ -92,7 +91,6 @@ class LiskMigrator extends Command {
 		this.log('Verified database connection');
 
 		this.log('\n');
-		this.log('Connecting Lisk Core database...');
 		this.log(`Waiting for snapshot height: ${snapshotHeight}`);
 		await observeChainHeight({
 			db,
@@ -101,9 +99,9 @@ class LiskMigrator extends Command {
 		});
 		this.log('\n');
 
-		this.log(`Taking snapshot on height: ${snapshotHeight}`);
+		this.log(`Taking snapshot at height: ${snapshotHeight}`);
 		const time = Date.now();
-		await db.query(SQLs.crateSnapshot);
+		await createSnapshot(db);
 		this.log(`Snapshot took ${Date.now() - time}ms`);
 
 		this.log('\n');
@@ -115,7 +113,7 @@ class LiskMigrator extends Command {
 		});
 
 		this.log('\n');
-		this.log('Creating genesis block');
+		this.log('Creating genesis block...');
 		const genesisBlock = await createGenesisBlockFromStorage({
 			db,
 			snapshotHeight,
@@ -124,12 +122,10 @@ class LiskMigrator extends Command {
 		});
 
 		this.log('\n');
-		this.log('Exporting genesis block');
-		writeFileSync(outputPath, JSON.stringify(genesisBlock, null, '\t'));
+		this.log('Exporting genesis block...');
+		writeGenesisBlock(genesisBlock, outputPath);
 		this.log(outputPath);
 
 		db.$pool.end();
 	}
 }
-
-export = LiskMigrator;

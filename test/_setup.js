@@ -14,12 +14,6 @@
  *
  */
 /* eslint-disable @typescript-eslint/no-var-requires */
-const os = require('os');
-const chai = require('chai');
-const chaiAsPromised = require('chai-as-promised');
-const sinonChai = require('sinon-chai');
-
-const { Assertion } = chai;
+require('jest-extended');
 
 process.env.NODE_ENV = 'test';
-[sinonChai, chaiAsPromised].forEach(chai.use);
