@@ -22,7 +22,7 @@ import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesi
 
 const compatibleVersions = '>=2.1.4 <=2.1.6';
 
-export default class LiskMigrator extends Command {
+class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
 	public static flags = {
@@ -129,3 +129,5 @@ export default class LiskMigrator extends Command {
 		db.$pool.end();
 	}
 }
+
+export = LiskMigrator;

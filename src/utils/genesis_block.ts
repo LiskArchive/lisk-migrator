@@ -53,10 +53,10 @@ interface Block {
 	readonly blockSignature: Buffer;
 }
 
-interface LegacyAccount {
+export interface LegacyAccount {
 	readonly address: string;
-	readonly publicKey: Buffer;
-	readonly secondPublicKey: Buffer;
+	readonly publicKey: Buffer | null;
+	readonly secondPublicKey: Buffer | null;
 	readonly balance: string;
 	readonly isDelegate: number;
 	readonly username: string;
@@ -67,7 +67,7 @@ interface LegacyAccount {
 	readonly outgoingTxCount: number;
 }
 
-interface Account {
+export interface Account {
 	readonly address: Buffer;
 	readonly token: {
 		readonly balance: bigint;
@@ -105,7 +105,7 @@ const SIZE_INT32 = 4;
 const SIZE_INT64 = 8;
 
 // Referenced from https://github.com/LiskHQ/lisk-sdk/blob/v2.3.8/framework/src/modules/chain/blocks/block.js#L139
-const getBlockBytes = (block: Block): Buffer => {
+export const getBlockBytes = (block: Block): Buffer => {
 	const blockVersionBuffer = intToBuffer(block.version, SIZE_INT32, LITTLE_ENDIAN);
 
 	const timestampBuffer = intToBuffer(block.timestamp, SIZE_INT32, LITTLE_ENDIAN);
@@ -141,7 +141,7 @@ const getBlockBytes = (block: Block): Buffer => {
 	]);
 };
 
-const accountDefaultProps = {
+export const accountDefaultProps = {
 	token: {
 		balance: BigInt(0),
 	},
@@ -167,7 +167,7 @@ const accountDefaultProps = {
 	},
 };
 
-const migrateFromLegacyAccount = async ({
+export const migrateLegacyAccount = async ({
 	db,
 	legacyAccount,
 	snapshotHeight,
@@ -221,20 +221,22 @@ const migrateFromLegacyAccount = async ({
 
 	debug('New address', address.toString('hex'));
 
-	let duplicatteAddress: Buffer | undefined;
-	if (accountsMap.has(address)) {
-		duplicatteAddress = address;
-	} else if (legacyAddressMap.has(eightByteAddress)) {
-		duplicatteAddress = legacyAddressMap.get(eightByteAddress);
+	if (accountsMap.has(address) && !address.equals(eightByteAddress)) {
+		throw new Error(
+			`Account with publicKey: ${(legacyAccount.publicKey as Buffer).toString(
+				'hex',
+			)} already migrated.`,
+		);
 	}
 
-	if (duplicatteAddress) {
+	if (!legacyAccount.publicKey && legacyAddressMap.has(eightByteAddress)) {
 		debug('Duplicate account detected. Adding up the balance.');
-		const oldAccount = accountsMap.get(duplicatteAddress) as Account;
+		const duplicateAddress = legacyAddressMap.get(eightByteAddress) as Buffer;
+		const oldAccount = accountsMap.get(duplicateAddress) as Account;
 		const updatedAccount = objects.mergeDeep(oldAccount, {
 			token: { balance: oldAccount.token.balance + BigInt(legacyAccount.balance) },
 		}) as Account;
-		accountsMap.set(address, updatedAccount);
+		accountsMap.set(duplicateAddress, updatedAccount);
 		return;
 	}
 
@@ -252,12 +254,14 @@ const migrateFromLegacyAccount = async ({
 
 	// If its a second signature account & multisig account
 	if (legacyAccount.secondSignature && legacyAccount.multimin > 0) {
+		// Its an initialized account so public key can't be null
+		const publicKey = legacyAccount.publicKey as Buffer;
 		const keys = await db.manyOrNone(SQLs.getMultisigPublicKeys, {
 			address: legacyAccount.address,
 		});
 		keysProps = {
 			keys: {
-				mandatoryKeys: sortBufferArray([legacyAccount.publicKey, legacyAccount.secondPublicKey]),
+				mandatoryKeys: sortBufferArray([publicKey, legacyAccount.secondPublicKey as Buffer]),
 				optionalKeys: sortBufferArray(keys.map(r => r.publicKey)),
 				numberOfSignatures: legacyAccount.multimin + 1,
 			},
@@ -266,10 +270,13 @@ const migrateFromLegacyAccount = async ({
 		// If account is just second signature account
 	} else if (legacyAccount.secondSignature && legacyAccount.multimin === 0) {
 		// There are few second signature accounts which use same second public key
-		if (!legacyAccount.publicKey.equals(legacyAccount.secondPublicKey)) {
+		// Its an initialized account so public key can't be null
+		const publicKey = legacyAccount.publicKey as Buffer;
+
+		if (!publicKey.equals(legacyAccount.secondPublicKey as Buffer)) {
 			keysProps = {
 				keys: {
-					mandatoryKeys: sortBufferArray([legacyAccount.publicKey, legacyAccount.secondPublicKey]),
+					mandatoryKeys: sortBufferArray([publicKey, legacyAccount.secondPublicKey as Buffer]),
 					optionalKeys: [],
 					numberOfSignatures: 2,
 				},
@@ -312,18 +319,20 @@ const migrateFromLegacyAccount = async ({
 	}
 };
 
-const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) => {
+export const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) => {
 	if (a.votes > b.votes) {
-		return 1;
-	}
-	if (a.votes < b.votes) {
 		return -1;
 	}
+	if (a.votes < b.votes) {
+		return 1;
+	}
 
+	// As these are delegates they must be
+	// initialized account and always have 20 byte address
 	return a.address.compare(b.address);
 };
 
-const sortAccounts = (a: Account, b: Account) => {
+export const sortAccounts = (a: Account, b: Account) => {
 	if (a.address.length < b.address.length) {
 		return 1;
 	}
@@ -378,7 +387,7 @@ export const createGenesisBlockFromStorage = async ({
 	const legacyAddressMap = new dataStructures.BufferMap<Buffer>();
 	const accountsStreamParser = async (_: unknown, data: LegacyAccount[]) => {
 		for (const legacyAccount of data) {
-			await migrateFromLegacyAccount({
+			await migrateLegacyAccount({
 				db,
 				legacyAccount,
 				snapshotHeight,
