@@ -334,11 +334,11 @@ export const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) 
 
 export const sortAccounts = (a: Account, b: Account) => {
 	if (a.address.length < b.address.length) {
-		return 1;
+		return -1;
 	}
 
 	if (a.address.length > b.address.length) {
-		return -1;
+		return 1;
 	}
 
 	return a.address.compare(b.address);

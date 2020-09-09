@@ -560,15 +560,15 @@ describe('utils/genesis_block', () => {
 	});
 
 	describe('sortAccounts', () => {
-		it('should always sort 20 byte address above 8 byte address', () => {
+		it('should always sort 8 byte address address above 20 byte address', () => {
 			const twentyByteAddress1 = Buffer.from('abcdefghnjhyuiolmjnh', 'utf8');
 			const eightByteAddress1 = Buffer.from('abcdefgh', 'utf8');
 
-			const accounts = [eightByteAddress1, twentyByteAddress1].map(
+			const accounts = [twentyByteAddress1, eightByteAddress1].map(
 				b => ({ address: b } as Account),
 			);
 
-			const correctOrder = [twentyByteAddress1, eightByteAddress1].map(
+			const correctOrder = [eightByteAddress1, twentyByteAddress1].map(
 				a => ({ address: a } as Account),
 			);
 
@@ -584,7 +584,7 @@ describe('utils/genesis_block', () => {
 				b => ({ address: b } as Account),
 			);
 
-			const correctOrder = [twentyByteAddress1, twentyByteAddress2, eightByteAddress1].map(
+			const correctOrder = [eightByteAddress1, twentyByteAddress1, twentyByteAddress2].map(
 				a => ({ address: a } as Account),
 			);
 
@@ -600,7 +600,7 @@ describe('utils/genesis_block', () => {
 				b => ({ address: b } as Account),
 			);
 
-			const correctOrder = [twentyByteAddress1, eightByteAddress1, eightByteAddress2].map(
+			const correctOrder = [eightByteAddress1, eightByteAddress2, twentyByteAddress1].map(
 				a => ({ address: a } as Account),
 			);
 
