@@ -1,3 +1,17 @@
+/*
+ * Copyright © 2020 Lisk Foundation
+ *
+ * See the LICENSE file at the top-level directory of this distribution
+ * for licensing information.
+ *
+ * Unless otherwise agreed in a custom licensing agreement with the Lisk Foundation,
+ * no part of this software, including this file, may be copied, modified,
+ * propagated, or distributed except according to the terms contained in the
+ * LICENSE file.
+ *
+ * Removal or modification of this copyright notice is prohibited.
+ */
+
 import { dataStructures } from '@liskhq/lisk-utils';
 import { getRandomBytes, getAddressFromPublicKey, intToBuffer } from '@liskhq/lisk-cryptography';
 import {
@@ -135,7 +149,7 @@ describe('utils/genesis_block', () => {
 			});
 		});
 
-		describe('when account is a genesis block a.k.a. have negative balance', () => {
+		describe('when account is a genesis account which has negative balance', () => {
 			it('should return', async () => {
 				const legacyAccount = randomLegacyAccount({ balance: BigInt(-93833).toString() });
 

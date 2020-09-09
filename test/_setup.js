@@ -1,5 +1,4 @@
 /*
- * LiskHQ/lisk-commander
  * Copyright © 2020 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
@@ -11,8 +10,8 @@
  * LICENSE file.
  *
  * Removal or modification of this copyright notice is prohibited.
- *
  */
+
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('jest-extended');
 
