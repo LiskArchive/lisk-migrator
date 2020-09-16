@@ -117,7 +117,6 @@ class LiskMigrator extends Command {
 		const genesisBlock = await createGenesisBlockFromStorage({
 			db,
 			snapshotHeight,
-			blockTime: config.app.genesisConfig.BLOCK_TIME,
 			epochTime: config.app.genesisConfig.EPOCH_TIME,
 		});
 

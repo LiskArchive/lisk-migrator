@@ -46,7 +46,7 @@ describe('LiskMigrator', () => {
 				version: '2.1.4',
 				minVersion: '123',
 				protocolVersion: '1.0',
-				genesisConfig: { EPOCH_TIME: '1344', BLOCK_TIME: 10 },
+				genesisConfig: { EPOCH_TIME: '1344' },
 			},
 		};
 		jest.spyOn(process.stdout, 'write').mockImplementation(val => result.push(val));
@@ -288,7 +288,6 @@ describe('LiskMigrator', () => {
 			expect(utils.createGenesisBlockFromStorage).toHaveBeenCalledWith({
 				db,
 				snapshotHeight,
-				blockTime: appConfig.app.genesisConfig.BLOCK_TIME,
 				epochTime: appConfig.app.genesisConfig.EPOCH_TIME,
 			});
 			expect(utils.createGenesisBlockFromStorage).toHaveBeenCalledAfter(

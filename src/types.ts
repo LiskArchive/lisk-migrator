@@ -27,7 +27,6 @@ export interface Config {
 		readonly protocolVersion: string;
 		readonly genesisConfig: {
 			readonly EPOCH_TIME: string;
-			readonly BLOCK_TIME: number;
 		};
 	};
 	readonly components: {

@@ -202,6 +202,7 @@ export const migrateAddressForAccount = (
 	return { legacyAddress: eightByteAddress, newAddress: twentyByteAddress ?? eightByteAddress };
 };
 
+// This function assumes that accounts with public key are migrated first
 export const migrateLegacyAccount = async ({
 	db,
 	legacyAccount,
@@ -249,7 +250,6 @@ export const migrateLegacyAccount = async ({
 	}
 
 	let duplicateAccount: Account | undefined;
-	let duplicateUpdatedAccount: Account | undefined;
 
 	if (accountsMap.has(newAddress)) {
 		duplicateAccount = accountsMap.get(newAddress);
@@ -260,9 +260,10 @@ export const migrateLegacyAccount = async ({
 
 	if (duplicateAccount) {
 		debug('Duplicate account detected. Adding up the balance.');
-		duplicateUpdatedAccount = objects.mergeDeep({}, duplicateAccount, {
+		const duplicateUpdatedAccount = {
+			...duplicateAccount,
 			token: { balance: duplicateAccount.token.balance + BigInt(legacyAccount.balance) },
-		}) as Account;
+		};
 
 		accountsMap.set(duplicateAccount.address, duplicateUpdatedAccount);
 		return;
@@ -376,14 +377,12 @@ interface createGenesisBlockFromStorageParams {
 	readonly db: pgPromise.IDatabase<any>;
 	readonly snapshotHeight: number;
 	readonly epochTime: string;
-	readonly blockTime: number;
 }
 
 export const createGenesisBlockFromStorage = async ({
 	db,
 	snapshotHeight,
 	epochTime,
-	blockTime,
 }: createGenesisBlockFromStorageParams): Promise<Record<string, unknown>> => {
 	// Calculate previousBlockID
 	const blockIDSubTreeRoots: Buffer[] = [];
@@ -427,7 +426,7 @@ export const createGenesisBlockFromStorage = async ({
 	};
 	await db.stream(
 		new QueryStream(
-			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*)::int FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*)::int FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot ORDER BY mem_accounts_snapshot."publicKey"',
+			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*)::int FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*)::int FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot ORDER BY mem_accounts_snapshot."publicKey" ASC',
 			[],
 			{ batchSize: accountsBatchSize },
 		),
@@ -442,18 +441,18 @@ export const createGenesisBlockFromStorage = async ({
 		.map(a => a.address);
 
 	const epochTimeInMs = new Date(epochTime).getTime();
-	const lastBlockTimeOffsetInMs = lastBlock.height * blockTime * 1000;
+	const lastBlockTimeOffsetInMs = lastBlock.timestamp * 1000;
 	const lastBlockTimeInSeconds = (epochTimeInMs + lastBlockTimeOffsetInMs) / 1000;
 	const lastBlockTimeToNearest10s = Math.round(lastBlockTimeInSeconds / 10) * 10;
 
 	const genesisBlock = createGenesisBlock({
 		accounts: accounts as any,
-		initRounds: 600, // Approximately 7 days assuming no missed blocks
+		initRounds: 600, // 10 * 103 * 600 / 60 / 60 / 24 = Approximately 7 days assuming no missed blocks
 		initDelegates: topDelegates,
 		previousBlockID: merkleRootOfBlocksTillSnapshotHeight,
 		height: snapshotHeight + 1,
 		roundLength: 103,
-		timestamp: lastBlockTimeToNearest10s + 7200, // 2 hours in future
+		timestamp: lastBlockTimeToNearest10s + 7200, // 60 * 60 * 2 seconds, 2 hours in future
 		accountAssetSchemas: defaultAccountSchema,
 	});
 
