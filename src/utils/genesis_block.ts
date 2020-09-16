@@ -167,6 +167,41 @@ export const accountDefaultProps = {
 	},
 };
 
+export const migrateAddressForAccount = (
+	legacyAccount: LegacyAccount,
+): { legacyAddress: Buffer; newAddress: Buffer } => {
+	// Get integer buffer from format 12345L
+	// There are some legacy addresses which have leading zeros e.g. 01234L
+	// 		https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/testnet/config.json#L18
+	//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/mainnet/config.json#L39
+	// this will remove any leading zeros end-up in merging balances of both accounts e.g. 123L and 0123L
+	const address = BigInt(legacyAccount.address.slice(0, -1));
+
+	// Try converting it to buffer to check if its overflowed
+	const eightByteAddress = Buffer.alloc(8);
+	try {
+		eightByteAddress.writeBigUInt64BE(address);
+	} catch (error) {
+		// There are some legacy accounts which address range exceed unit64 limit
+		//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/testnet/config.json#L27
+		//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/mainnet/config.json#L55
+		if (error.code && error.code === 'ERR_OUT_OF_RANGE') {
+			// We decided to convert such overflowed ranges to their respective lower range addresses
+			// e.g. 88888888888888888888L will be migrated to 4L
+			// this will be achieved by truncating 8 bytes from the right side
+			// eslint-disable-next-line no-bitwise
+			eightByteAddress.writeBigInt64BE(address >> BigInt(64));
+		}
+	}
+
+	const twentyByteAddress =
+		legacyAccount.publicKey && legacyAccount.outgoingTxCount > 0
+			? getAddressFromPublicKey(legacyAccount.publicKey)
+			: null;
+
+	return { legacyAddress: eightByteAddress, newAddress: twentyByteAddress ?? eightByteAddress };
+};
+
 export const migrateLegacyAccount = async ({
 	db,
 	legacyAccount,
@@ -201,27 +236,11 @@ export const migrateLegacyAccount = async ({
 		return;
 	}
 
-	const eightByteAddress = Buffer.alloc(8);
-	try {
-		eightByteAddress.writeBigUInt64BE(BigInt(legacyAccount.address.slice(0, -1)));
-	} catch (error) {
-		// There are some legacy accounts which address range exceed unit64 limit
-		//  since no key pair can ever generate such accounts addresses so we can remove those accounts
-		//  https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/testnet/config.json#L27
-		//  https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/mainnet/config.json#L55
-		if (error.code && error.code === 'ERR_OUT_OF_RANGE') {
-			return;
-		}
-	}
+	const { legacyAddress, newAddress } = migrateAddressForAccount(legacyAccount);
+	debug('New address', newAddress.toString('hex'));
 
-	const address =
-		legacyAccount.publicKey && legacyAccount.outgoingTxCount > 0
-			? getAddressFromPublicKey(legacyAccount.publicKey)
-			: eightByteAddress;
-
-	debug('New address', address.toString('hex'));
-
-	if (accountsMap.has(address) && !address.equals(eightByteAddress)) {
+	// If there is an account with public key tried to be migrated twice
+	if (accountsMap.has(newAddress) && newAddress.length === 20) {
 		throw new Error(
 			`Account with publicKey: ${(legacyAccount.publicKey as Buffer).toString(
 				'hex',
@@ -229,18 +248,27 @@ export const migrateLegacyAccount = async ({
 		);
 	}
 
-	if (!legacyAccount.publicKey && legacyAddressMap.has(eightByteAddress)) {
+	let duplicateAccount: Account | undefined;
+	let duplicateUpdatedAccount: Account | undefined;
+
+	if (accountsMap.has(newAddress)) {
+		duplicateAccount = accountsMap.get(newAddress);
+	} else if (legacyAddressMap.has(legacyAddress)) {
+		const duplicateAddress = legacyAddressMap.get(legacyAddress) as Buffer;
+		duplicateAccount = accountsMap.get(duplicateAddress);
+	}
+
+	if (duplicateAccount) {
 		debug('Duplicate account detected. Adding up the balance.');
-		const duplicateAddress = legacyAddressMap.get(eightByteAddress) as Buffer;
-		const oldAccount = accountsMap.get(duplicateAddress) as Account;
-		const updatedAccount = objects.mergeDeep(oldAccount, {
-			token: { balance: oldAccount.token.balance + BigInt(legacyAccount.balance) },
+		duplicateUpdatedAccount = objects.mergeDeep({}, duplicateAccount, {
+			token: { balance: duplicateAccount.token.balance + BigInt(legacyAccount.balance) },
 		}) as Account;
-		accountsMap.set(duplicateAddress, updatedAccount);
+
+		accountsMap.set(duplicateAccount.address, duplicateUpdatedAccount);
 		return;
 	}
 
-	const basicProps = { address };
+	const basicProps = { address: newAddress };
 	const tokenProps = { token: { balance: BigInt(legacyAccount.balance) } };
 	const dposProps = {
 		dpos: {
@@ -308,7 +336,7 @@ export const migrateLegacyAccount = async ({
 
 	debug('New account:', account);
 
-	legacyAddressMap.set(eightByteAddress, account.address);
+	legacyAddressMap.set(legacyAddress, account.address);
 	accountsMap.set(account.address, account);
 
 	if (account.dpos.delegate.username !== '') {
@@ -399,7 +427,7 @@ export const createGenesisBlockFromStorage = async ({
 	};
 	await db.stream(
 		new QueryStream(
-			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*)::int FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*)::int FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot',
+			'SELECT mem_accounts_snapshot.*, (SELECT COUNT(*)::int FROM trs WHERE trs."recipientId" = mem_accounts_snapshot.address) as "incomingTxCount", (SELECT COUNT(*)::int FROM trs WHERE trs."senderId" = mem_accounts_snapshot.address) as "outgoingTxCount" FROM mem_accounts_snapshot ORDER BY mem_accounts_snapshot."publicKey"',
 			[],
 			{ batchSize: accountsBatchSize },
 		),
