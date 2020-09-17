@@ -167,6 +167,8 @@ export const accountDefaultProps = {
 	},
 };
 
+const MAX_EIGHT_BYTE_UNSIGNED_INTEGER = BigInt(2) ** BigInt(64) - BigInt(1);
+
 export const migrateAddressForAccount = (
 	legacyAccount: LegacyAccount,
 ): { legacyAddress: Buffer; newAddress: Buffer } => {
@@ -179,19 +181,18 @@ export const migrateAddressForAccount = (
 
 	// Try converting it to buffer to check if its overflowed
 	const eightByteAddress = Buffer.alloc(8);
-	try {
+
+	// There are some legacy accounts which address range exceed unit64 limit
+	//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/testnet/config.json#L27
+	//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/mainnet/config.json#L55
+	if (address > MAX_EIGHT_BYTE_UNSIGNED_INTEGER) {
+		// We decided to convert such overflowed ranges to their respective lower range addresses
+		// e.g. 88888888888888888888L will be migrated to 4L
+		// this will be achieved by truncating 8 bytes from the right side
+		// eslint-disable-next-line no-bitwise
+		eightByteAddress.writeBigUInt64BE(address >> BigInt(64));
+	} else {
 		eightByteAddress.writeBigUInt64BE(address);
-	} catch (error) {
-		// There are some legacy accounts which address range exceed unit64 limit
-		//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/testnet/config.json#L27
-		//  	https://github.com/LiskHQ/lisk-sdk/blob/276c968c49bab6dc1267079bfb5a58da546bf22b/framework/test/fixtures/config/mainnet/config.json#L55
-		if (error.code && error.code === 'ERR_OUT_OF_RANGE') {
-			// We decided to convert such overflowed ranges to their respective lower range addresses
-			// e.g. 88888888888888888888L will be migrated to 4L
-			// this will be achieved by truncating 8 bytes from the right side
-			// eslint-disable-next-line no-bitwise
-			eightByteAddress.writeBigInt64BE(address >> BigInt(64));
-		}
 	}
 
 	const twentyByteAddress =
@@ -356,8 +357,7 @@ export const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) 
 		return 1;
 	}
 
-	// As these are delegates they must be
-	// initialized account and always have 20 byte address
+	// If accounts have same votes then sort by their address lexicographically
 	return a.address.compare(b.address);
 };
 
