@@ -239,7 +239,7 @@ describe('utils/genesis_block', () => {
 			});
 		});
 
-		describe('when there is a duplicate accounts in 8 byte address format and first account have public key', () => {
+		describe('when there are duplicate accounts in 8 byte address format and first account has public key', () => {
 			it('should add up their balance in one account', async () => {
 				const eightByteAddress = '12345678L';
 				const legacyAccount1 = randomLegacyAccount({ address: eightByteAddress });
@@ -272,14 +272,15 @@ describe('utils/genesis_block', () => {
 				).resolves.toBeUndefined();
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(20);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) + BigInt(legacyAccount2.balance),
 				);
 			});
 		});
 
-		describe('when there is a duplicate accounts in 8 byte address format and second account have public key', () => {
-			it('should add up their balance in one account', async () => {
+		describe('when there are duplicate accounts in 8 byte address format and second account has public key', () => {
+			it('should add up their balance in one account migrated earlier', async () => {
 				const eightByteAddress = '12345678L';
 				const legacyAccount1 = randomLegacyAccount({ address: eightByteAddress });
 
@@ -311,13 +312,14 @@ describe('utils/genesis_block', () => {
 				).resolves.toBeUndefined();
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(8);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) + BigInt(legacyAccount2.balance),
 				);
 			});
 		});
 
-		describe('when there is a duplicate accounts in 8 byte address format and both accounts do not have public key', () => {
+		describe('when there are duplicate accounts in 8 byte address format and both accounts do not has public key', () => {
 			it('should add up their balance in one account', async () => {
 				const eightByteAddress = '12345678L';
 				const legacyAccount1 = randomLegacyAccount({ address: eightByteAddress });
@@ -350,13 +352,14 @@ describe('utils/genesis_block', () => {
 				).resolves.toBeUndefined();
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(8);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) + BigInt(legacyAccount2.balance),
 				);
 			});
 		});
 
-		describe('when there is a duplicate accounts in over-flowed range', () => {
+		describe('when there are duplicate accounts in over-flowed range', () => {
 			it('should add up their balance in one account and use lower range address', async () => {
 				const eightByteAddress = '88888888888888888888L';
 				const legacyAccount1 = randomLegacyAccount({ address: eightByteAddress });
@@ -389,6 +392,7 @@ describe('utils/genesis_block', () => {
 				).resolves.toBeUndefined();
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(8);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) + BigInt(legacyAccount2.balance),
 				);
@@ -396,7 +400,7 @@ describe('utils/genesis_block', () => {
 			});
 		});
 
-		describe('when there are more than one duplicate accounts in 8 byte address format', () => {
+		describe('when there is more than one duplicate account in 8 byte address format', () => {
 			it('should add up their balance in one account', async () => {
 				const legacyAccount1 = randomLegacyAccount({ address: '12345678L' });
 				const legacyAccount2 = randomLegacyAccount({ address: '012345678L' });
@@ -407,7 +411,7 @@ describe('utils/genesis_block', () => {
 						migrateLegacyAccount({
 							db,
 							snapshotHeight,
-							legacyAccount: account,
+							legacyAccount: { ...account, publicKey: null },
 							accountsMap,
 							delegatesMap,
 							legacyAddressMap,
@@ -416,6 +420,7 @@ describe('utils/genesis_block', () => {
 				}
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(8);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) +
 						BigInt(legacyAccount2.balance) +
@@ -424,7 +429,7 @@ describe('utils/genesis_block', () => {
 			});
 		});
 
-		describe('when there is a duplicate accounts in 8 byte address format and second account is a delegate', () => {
+		describe('when there are duplicate accounts in 8 byte address format and second account is a delegate', () => {
 			it('should add up their balance and skip delegate properties', async () => {
 				const eightByteAddress = '12345678L';
 				const legacyAccount1 = randomLegacyAccount({ address: eightByteAddress });
@@ -440,7 +445,7 @@ describe('utils/genesis_block', () => {
 					migrateLegacyAccount({
 						db,
 						snapshotHeight,
-						legacyAccount: { ...legacyAccount1 },
+						legacyAccount: { ...legacyAccount1, publicKey: null },
 						accountsMap,
 						delegatesMap,
 						legacyAddressMap,
@@ -459,6 +464,7 @@ describe('utils/genesis_block', () => {
 				).resolves.toBeUndefined();
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(8);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) + BigInt(legacyAccount2.balance),
 				);
@@ -466,7 +472,7 @@ describe('utils/genesis_block', () => {
 			});
 		});
 
-		describe('when there is a duplicate accounts in 8 byte address format and first account is a delegate', () => {
+		describe('when there are duplicate accounts in 8 byte address format and first account is a delegate', () => {
 			it('should add up their balance in one account and make it a delegate account', async () => {
 				const eightByteAddress = '12345678L';
 				const legacyAccount1 = randomLegacyAccount({
@@ -495,7 +501,7 @@ describe('utils/genesis_block', () => {
 					migrateLegacyAccount({
 						db,
 						snapshotHeight,
-						legacyAccount: { ...legacyAccount2 },
+						legacyAccount: { ...legacyAccount2, publicKey: null },
 						accountsMap,
 						delegatesMap,
 						legacyAddressMap,
@@ -503,6 +509,7 @@ describe('utils/genesis_block', () => {
 				).resolves.toBeUndefined();
 
 				expect(accountsMap.values()).toHaveLength(1);
+				expect(accountsMap.values()[0].address).toHaveLength(20);
 				expect(accountsMap.values()[0].token.balance).toEqual(
 					BigInt(legacyAccount1.balance) + BigInt(legacyAccount2.balance),
 				);
@@ -511,7 +518,7 @@ describe('utils/genesis_block', () => {
 		});
 
 		// This will happen if one try to migrate same account (same public key) twice
-		describe('when there is a duplicate accounts in 20 byte address format', () => {
+		describe('when there are duplicate accounts in 20 byte address format', () => {
 			it('should throw error', async () => {
 				const legacyAccount1 = randomLegacyAccount();
 				const legacyAccount2 = randomLegacyAccount({
