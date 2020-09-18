@@ -1,14 +1,9 @@
 module.exports = {
-	extends: ['../.eslintrc.js', 'lisk-base/mocha'],
-	env: {
-		mocha: true,
-	},
+	extends: ['../.eslintrc.js', 'lisk-base/jest'],
 	rules: {
 		'arrow-body-style': 'off',
 		'dot-notation': 'off',
-		'mocha/no-synchronous-tests': 'off',
-		'no-unused-expressions': 'off',
-		'@typescript-eslint/no-unused-expressions': 'off',
+		'@typescript-eslint/explicit-function-return-type': 'off',
 		'@typescript-eslint/no-magic-numbers': 'off',
 		'@typescript-eslint/unbound-method': 'off',
 		'@typescript-eslint/no-require-imports': 'off',
@@ -17,11 +12,9 @@ module.exports = {
 		'@typescript-eslint/no-unsafe-member-access': 'off',
 		'@typescript-eslint/no-unsafe-call': 'off',
 		'@typescript-eslint/no-unsafe-return': 'off',
-		'import/no-extraneous-dependencies': [
-			'error',
-			{
-				devDependencies: ['./**'],
-			},
-		],
+	},
+	parserOptions: {
+		project: './tsconfig.json',
+		tsconfigRootDir: __dirname,
 	},
 };
