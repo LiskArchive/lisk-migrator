@@ -451,7 +451,6 @@ export const createGenesisBlockFromStorage = async ({
 		initDelegates: topDelegates,
 		previousBlockID: merkleRootOfBlocksTillSnapshotHeight,
 		height: snapshotHeight + 1,
-		roundLength: 103,
 		timestamp: lastBlockTimeToNearest10s + 7200, // 60 * 60 * 2 seconds, 2 hours in future
 		accountAssetSchemas: defaultAccountSchema,
 	});

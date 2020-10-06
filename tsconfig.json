@@ -18,7 +18,8 @@
 		"composite": true,
 		"esModuleInterop": true,
 		"importHelpers": true,
-		"outDir": "dist"
+		"outDir": "dist",
+		"rootDir": "src"
 	},
 	"include": ["src/**/*"]
 }
