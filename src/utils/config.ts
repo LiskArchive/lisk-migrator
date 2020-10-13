@@ -40,13 +40,14 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	const fullCommand = command.join(' ');
 	const compiledConfigPath = join(corePath, compiledConfig);
 
-	console.info('Execurting command to fetch the configuration');
+	console.info('Executing command to fetch the configuration');
 	console.info(fullCommand);
 
-	// Excuting command to compile the configuration
-	execSync(fullCommand);
+	// Executing command to compile the configuration
+	// 	to use the "source" command on Linux we have to explicity set shell to bash
+	execSync(fullCommand, { shell: '/bin/bash' });
 
-	// Loading compiled configuraiton file
+	// Loading compiled configuration file
 	const config = await import(compiledConfigPath);
 
 	// Deleting compiled configuration file
