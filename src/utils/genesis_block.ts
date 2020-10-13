@@ -395,6 +395,11 @@ export const createGenesisBlockFromStorage = async ({
 			new MerkleTree(blocksBatch.map(block => hash(getBlockBytes(block)))).root,
 		);
 		lastBlock = blocksBatch[blocksBatch.length - 1];
+		debug(
+			`Processed block till height: ${lastBlock.height}, Remaining: ${
+				snapshotHeight - lastBlock.height
+			}`,
+		);
 	};
 	await db.stream(
 		new QueryStream(
