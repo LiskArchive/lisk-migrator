@@ -13,11 +13,13 @@
  */
 
 import 'jest-extended';
+import cli from 'cli-ux';
 import { Command } from '@oclif/command';
 import LiskMigrator from '../../src/index';
 import * as utils from '../../src/utils';
 import { Config } from '../../src/types';
 
+jest.mock('cli-ux', () => ({ action: { start: jest.fn(), stop: jest.fn() } }));
 jest.mock('../../src/utils/config');
 jest.mock('../../src/utils/storage');
 jest.mock('../../src/utils/genesis_block');
@@ -60,20 +62,12 @@ describe('LiskMigrator', () => {
 			it('should use the lisk core path if provided', async () => {
 				await LiskMigrator.run(requiredFlags.concat(['-p', '/my/directory']));
 
-				expect(loggerSpy).toHaveBeenCalledWith(
-					'Loading up configuration from path: ',
-					'/my/directory',
-				);
 				expect(utils.getConfig).toHaveBeenCalledWith('/my/directory');
 			});
 
 			it('should use current directory if the flag is not provided', async () => {
 				await LiskMigrator.run(requiredFlags);
 
-				expect(loggerSpy).toHaveBeenCalledWith(
-					'Loading up configuration from path: ',
-					process.cwd(),
-				);
 				expect(utils.getConfig).toHaveBeenCalledWith(process.cwd());
 			});
 		});
@@ -86,6 +80,8 @@ describe('LiskMigrator', () => {
 					undefined,
 					'/my/directory/my_block.json',
 				);
+				expect(cli.action.start).toHaveBeenCalledWith('Exporting genesis block');
+				expect(loggerSpy).toHaveBeenCalledWith('/my/directory/my_block.json');
 			});
 
 			it('should use current directory if the flag is not provided', async () => {
@@ -95,6 +91,8 @@ describe('LiskMigrator', () => {
 					undefined,
 					`${process.cwd()}/genesis_block.json`,
 				);
+				expect(cli.action.start).toHaveBeenCalledWith('Exporting genesis block');
+				expect(loggerSpy).toHaveBeenCalledWith(`${process.cwd()}/genesis_block.json`);
 			});
 		});
 
@@ -108,20 +106,24 @@ describe('LiskMigrator', () => {
 			it('should not fail if height is provided via flag', async () => {
 				await expect(LiskMigrator.run(requiredFlags)).resolves.toBeUndefined();
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
+					label: 'Waiting snapshot height',
 					db,
 					height: snapshotHeight,
 					delay: 500,
 				});
-				expect(loggerSpy).toHaveBeenCalledWith(`Waiting for snapshot height: ${snapshotHeight}`);
-				expect(loggerSpy).toHaveBeenCalledWith(`Taking snapshot at height: ${snapshotHeight}`);
+				expect(cli.action.start).toHaveBeenCalledWith('Taking snapshot');
 			});
 
 			it('should not fail if height is provided via env variable', async () => {
 				process.env.SNAPSHOT_HEIGHT = '67';
 				await expect(LiskMigrator.run()).resolves.toBeUndefined();
-				expect(utils.observeChainHeight).toHaveBeenCalledWith({ db, height: 67, delay: 500 });
-				expect(loggerSpy).toHaveBeenCalledWith('Waiting for snapshot height: 67');
-				expect(loggerSpy).toHaveBeenCalledWith('Taking snapshot at height: 67');
+				expect(utils.observeChainHeight).toHaveBeenCalledWith({
+					label: 'Waiting snapshot height',
+					db,
+					height: 67,
+					delay: 500,
+				});
+				expect(cli.action.start).toHaveBeenCalledWith('Taking snapshot');
 			});
 		});
 
@@ -130,26 +132,22 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags);
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
+					label: 'Waiting threshold height',
 					db,
 					height: snapshotHeight + 201,
 					delay: 500,
 				});
-				expect(loggerSpy).toHaveBeenCalledWith(
-					`Waiting for threshold height: ${snapshotHeight + 201}`,
-				);
 			});
 
 			it('should use provided wait threshold as flag', async () => {
 				await LiskMigrator.run(requiredFlags.concat(['-w', '400']));
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
+					label: 'Waiting threshold height',
 					db,
 					height: snapshotHeight + 400,
 					delay: 500,
 				});
-				expect(loggerSpy).toHaveBeenCalledWith(
-					`Waiting for threshold height: ${snapshotHeight + 400}`,
-				);
 			});
 
 			it('should use provided wait threshold from env variable', async () => {
@@ -157,13 +155,11 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags);
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
+					label: 'Waiting threshold height',
 					db,
 					height: snapshotHeight + 600,
 					delay: 500,
 				});
-				expect(loggerSpy).toHaveBeenCalledWith(
-					`Waiting for threshold height: ${snapshotHeight + 600}`,
-				);
 			});
 
 			it('should use 201 as default if NODE_ENV != test', async () => {
@@ -171,13 +167,11 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags.concat(['-w', '400']));
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
+					label: 'Waiting threshold height',
 					db,
 					height: snapshotHeight + 201,
 					delay: 500,
 				});
-				expect(loggerSpy).toHaveBeenCalledWith(
-					`Waiting for threshold height: ${snapshotHeight + 201}`,
-				);
 				process.env.NODE_ENV = 'test';
 			});
 		});
@@ -232,29 +226,29 @@ describe('LiskMigrator', () => {
 		it('should config from provided core path', () => {
 			expect(utils.getConfig).toHaveBeenCalledTimes(1);
 			expect(utils.getConfig).toHaveBeenCalledWith(corePath);
-			expect(loggerSpy).toHaveBeenCalledWith('Loading up configuration from path: ', corePath);
 		});
 
 		it('should detect and verify the lisk-core version', () => {
-			expect(loggerSpy).toHaveBeenCalledWith('Verifying Lisk-Core version...');
-			expect(loggerSpy).toHaveBeenCalledWith(`Lisk-Core version ${appConfig.app.version} detected`);
+			expect(cli.action.start).toHaveBeenCalledWith('Verifying Lisk-Core version');
+			expect(cli.action.stop).toHaveBeenCalledWith(`${appConfig.app.version} detected`);
 		});
 
 		it('should create and verify db connection', () => {
-			expect(loggerSpy).toHaveBeenCalledWith('Verifying database connection...');
 			expect(utils.createDb).toHaveBeenCalledTimes(1);
 			expect(utils.createDb).toHaveBeenCalledWith(appConfig.components.storage);
 			expect(utils.createDb).toHaveBeenCalledAfter(utils.getConfig as never);
 			expect(utils.verifyConnection).toHaveBeenCalledTimes(1);
 			expect(utils.verifyConnection).toHaveBeenCalledWith(db);
 			expect(utils.verifyConnection).toHaveBeenCalledAfter(utils.createDb as never);
-			expect(loggerSpy).toHaveBeenCalledWith('Verified database connection');
+			expect(cli.action.start).toHaveBeenCalledWith(
+				`Verifying connection to database "${appConfig.components.storage.database}"`,
+			);
 		});
 
 		it('should wait for snapshot height', () => {
-			expect(loggerSpy).toHaveBeenCalledWith(`Waiting for snapshot height: ${snapshotHeight}`);
 			expect(utils.observeChainHeight).toHaveBeenCalledTimes(2);
 			expect(utils.observeChainHeight).toHaveBeenNthCalledWith(1, {
+				label: 'Waiting snapshot height',
 				db,
 				height: snapshotHeight,
 				delay: 500,
@@ -263,27 +257,22 @@ describe('LiskMigrator', () => {
 		});
 
 		it('should take the snapshot', () => {
-			expect(loggerSpy).toHaveBeenCalledWith(`Taking snapshot at height: ${snapshotHeight}`);
 			expect(utils.createSnapshot).toHaveBeenCalledTimes(1);
 			expect(utils.createSnapshot).toHaveBeenCalledWith(db);
 			expect(utils.createSnapshot).toHaveBeenCalledAfter(utils.observeChainHeight as never);
 		});
 
 		it('should wait for threshold height', () => {
-			expect(loggerSpy).toHaveBeenCalledWith(
-				`Waiting for threshold height: ${snapshotHeight + waitThreshold}`,
-			);
 			expect(utils.observeChainHeight).toHaveBeenCalledTimes(2);
 			expect(utils.observeChainHeight).toHaveBeenNthCalledWith(2, {
+				label: 'Waiting threshold height',
 				db,
 				height: snapshotHeight + waitThreshold,
 				delay: 500,
 			});
-			// expect(utils.observeChainHeight).toHaveBeenCalledAfter(utils.createSnapshot as never);
 		});
 
 		it('should create genesis block', () => {
-			expect(loggerSpy).toHaveBeenCalledWith('Creating genesis block...');
 			expect(utils.createGenesisBlockFromStorage).toHaveBeenCalledTimes(1);
 			expect(utils.createGenesisBlockFromStorage).toHaveBeenCalledWith({
 				db,
@@ -296,7 +285,6 @@ describe('LiskMigrator', () => {
 		});
 
 		it('should write json block json to output path', () => {
-			expect(loggerSpy).toHaveBeenCalledWith('Exporting genesis block...');
 			expect(utils.writeGenesisBlock).toHaveBeenCalledTimes(1);
 			expect(utils.writeGenesisBlock).toHaveBeenCalledWith(genesisBlock, outputPath);
 			expect(utils.writeGenesisBlock).toHaveBeenCalledAfter(
