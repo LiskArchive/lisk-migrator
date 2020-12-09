@@ -81,15 +81,17 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 	}
 
 	const progress = cli.progress({
-		format: `${options.label}: [{bar}] {percentage}% | {value}/{total} | ETA: {timeLeft}`,
+		format: `${options.label}: [{bar}] {percentage}% | Remaining: {remaining}/{total} | Height: {height}/${observedHeight} | ETA: {timeLeft}`,
 		fps: 2,
 		synchronousUpdate: false,
 		etaAsynchronousUpdate: false,
-		barsize: 50,
+		barsize: 30,
 	});
 
-	progress.start(observedHeight, startHeight, {
+	progress.start(observedHeight - startHeight, 0, {
 		timeLeft: getRemainingTime(startHeight, observedHeight),
+		remaining: observedHeight - startHeight,
+		height: startHeight,
 	});
 
 	await new Promise((resolve, reject) => {
@@ -104,8 +106,10 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 				return reject(error);
 			}
 
-			progress.update(height, {
+			progress.update(height - startHeight, {
 				timeLeft: getRemainingTime(height, observedHeight),
+				remaining: observedHeight - height,
+				height,
 			});
 
 			if (height === observedHeight) {
