@@ -1,28 +1,26 @@
 # Lisk Migrator
 
-Lisk Commander is a command line tool which allows you to manage a Lisk node instance and interact with a Lisk compatible network.
+Lisk Migrator is a command line tool to migrate the blockchain data to the latest protocol when hard fork.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-## Installation
-
-```sh
-$ npm install --global --production lisk-migrator
-```
-
-Upon successful completion, NPM will add the `lisk-migrator` executable `lisk-migrator` to your PATH.
-
 ## Usage
 
+<!-- usage -->
+
+```sh-session
+$ npm install -g lisk-migrator
+$ lisk-migrator COMMAND
+running command...
+$ lisk-migrator (-v|--version|version)
+lisk-migrator/0.1.0-alpha.1 darwin-x64 node-v12.20.0
+$ lisk-migrator --help [COMMAND]
+USAGE
+  $ lisk-migrator COMMAND
+...
+```
+
 <!-- usagestop -->
-
-## Commands
-
-<!-- commands -->
-
-# Command Topics
-
-<!-- commandsstop -->
 
 ### Running Tests
 
