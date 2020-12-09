@@ -15,6 +15,7 @@
 import * as semver from 'semver';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
+import cli from 'cli-ux';
 import { getConfig } from './utils/config';
 import { observeChainHeight } from './utils/chain';
 import { createDb, verifyConnection, createSnapshot } from './utils/storage';
@@ -67,11 +68,9 @@ class LiskMigrator extends Command {
 		const snapshotHeight = flags['snapshot-height'];
 		const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 
-		this.log('Loading up configuration from path: ', liskCorePath);
 		const config = await getConfig(liskCorePath);
 
-		this.log('\n');
-		this.log('Verifying Lisk-Core version...');
+		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(config.app.version);
 		if (!liskCoreVersion) {
 			this.error('Unable to detect the lisk-core version.');
@@ -81,48 +80,43 @@ class LiskMigrator extends Command {
 				`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${compatibleVersions}`,
 			);
 		}
-		this.log(`Lisk-Core version ${liskCoreVersion.version} detected`);
+		cli.action.stop(`${liskCoreVersion.version} detected`);
 
-		this.log('\n');
-		this.log('Verifying database connection...');
 		const storageConfig = config.components.storage;
+
+		cli.action.start(`Verifying connection to database "${storageConfig.database}"`);
 		const db = createDb(storageConfig);
 		await verifyConnection(db);
-		this.log('Verified database connection');
+		cli.action.stop();
 
-		this.log('\n');
-		this.log(`Waiting for snapshot height: ${snapshotHeight}`);
 		await observeChainHeight({
+			label: 'Waiting snapshot height',
 			db,
 			height: snapshotHeight,
 			delay: 500,
 		});
-		this.log('\n');
 
-		this.log(`Taking snapshot at height: ${snapshotHeight}`);
+		cli.action.start('Taking snapshot');
 		const time = Date.now();
 		await createSnapshot(db);
-		this.log(`Snapshot took ${Date.now() - time}ms`);
+		cli.action.stop(`done in ${Date.now() - time}ms`);
 
-		this.log('\n');
-		this.log(`Waiting for threshold height: ${snapshotHeight + waitThreshold}`);
 		await observeChainHeight({
+			label: 'Waiting threshold height',
 			db,
 			height: snapshotHeight + waitThreshold,
 			delay: 500,
 		});
 
-		this.log('\n');
-		this.log('Creating genesis block...');
 		const genesisBlock = await createGenesisBlockFromStorage({
 			db,
 			snapshotHeight,
 			epochTime: config.app.genesisConfig.EPOCH_TIME,
 		});
 
-		this.log('\n');
-		this.log('Exporting genesis block...');
+		cli.action.start('Exporting genesis block');
 		writeGenesisBlock(genesisBlock, outputPath);
+		cli.action.stop();
 		this.log(outputPath);
 
 		db.$pool.end();

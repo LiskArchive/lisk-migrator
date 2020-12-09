@@ -12,10 +12,12 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import cli from 'cli-ux';
 import pgPromise from 'pg-promise';
 import { SQLs } from './storage';
 
 interface ObserveParams {
+	readonly label: string;
 	readonly height: number;
 	readonly db: pgPromise.IDatabase<any>;
 	readonly delay: number;
@@ -27,10 +29,71 @@ export const getChainHeight = async (db: pgPromise.IDatabase<any>): Promise<numb
 	return result.height;
 };
 
-export const observeChainHeight = async (options: ObserveParams): Promise<number> =>
-	new Promise((resolve, reject) => {
+const secondsToHumanString = (seconds: number): string => {
+	const years = Math.floor(seconds / 31536000);
+	const days = Math.floor((seconds % 31536000) / 86400);
+	const hours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+	const minutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+	const numSeconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+
+	const result = [];
+
+	if (years > 0) {
+		result.push(`${years}y`);
+	}
+
+	if (days > 0) {
+		result.push(`${days}d`);
+	}
+
+	if (hours > 0) {
+		result.push(`${hours}h`);
+	}
+
+	if (minutes > 0) {
+		result.push(`${minutes}m`);
+	}
+
+	if (numSeconds > 0) {
+		result.push(`${numSeconds}s`);
+	}
+
+	if (result.length === 0) {
+		return '0';
+	}
+
+	return result.join(' ');
+};
+
+const getRemainingTime = (currentHeight: number, observedHeight: number): string =>
+	secondsToHumanString((observedHeight - currentHeight) * 10);
+
+export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
+	const observedHeight = options.height;
+	const startHeight = await getChainHeight(options.db);
+
+	if (startHeight === observedHeight) {
+		return startHeight;
+	}
+
+	if (startHeight > observedHeight) {
+		throw new Error(`Chain height: ${startHeight} crossed the observed height: ${observedHeight}`);
+	}
+
+	const progress = cli.progress({
+		format: `${options.label}: [{bar}] {percentage}% | {value}/{total} | ETA: {timeLeft}`,
+		fps: 2,
+		synchronousUpdate: false,
+		etaAsynchronousUpdate: false,
+		barsize: 50,
+	});
+
+	progress.start(observedHeight, startHeight, {
+		timeLeft: getRemainingTime(startHeight, observedHeight),
+	});
+
+	await new Promise((resolve, reject) => {
 		let intervalId: NodeJS.Timer;
-		let currentHeight: number;
 
 		// eslint-disable-next-line consistent-return
 		const checkHeight = async () => {
@@ -41,26 +104,26 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 				return reject(error);
 			}
 
-			if (height === options.height) {
+			progress.update(height, {
+				timeLeft: getRemainingTime(height, observedHeight),
+			});
+
+			if (height === observedHeight) {
 				clearInterval(intervalId);
 				return resolve(height);
 			}
 
-			if (height > options.height) {
+			if (height > observedHeight) {
 				return reject(
-					new Error(`Chain height: ${height} crossed the observed height: ${options.height}`),
+					new Error(`Chain height: ${height} crossed the observed height: ${observedHeight}`),
 				);
-			}
-
-			if (currentHeight !== height) {
-				// Only show chain height in log when its changed
-				currentHeight = height;
-				console.info(`\nCurrent height: ${currentHeight}`);
-			} else {
-				// Show some indicator for user for progress
-				process.stdout.write('.');
 			}
 		};
 
 		intervalId = setInterval(checkHeight, options.delay);
 	});
+
+	progress.stop();
+
+	return observedHeight;
+};

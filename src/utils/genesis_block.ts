@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import cli from 'cli-ux';
 import { writeFileSync } from 'fs';
 import debugLib from 'debug';
 import pgPromise from 'pg-promise';
@@ -390,6 +391,7 @@ export const createGenesisBlockFromStorage = async ({
 	const accountsBatchSize = 10000;
 	let lastBlock!: Block;
 
+	cli.action.start('Processing blocks to calculate previous block id');
 	const blocksStreamParser = (_: unknown, blocksBatch: Block[]) => {
 		blockIDSubTreeRoots.push(
 			new MerkleTree(blocksBatch.map(block => hash(getBlockBytes(block)))).root,
@@ -412,11 +414,28 @@ export const createGenesisBlockFromStorage = async ({
 	const merkleRootOfBlocksTillSnapshotHeight = new MerkleTree(blockIDSubTreeRoots, {
 		preHashedLeaf: true,
 	}).root;
+	cli.action.stop();
 
 	// Calculate accounts
+	const progress = cli.progress({
+		format: 'Migrating accounts: [{bar}] {percentage}% | {value}/{total} | ETA: {eta}',
+		fps: 2,
+		synchronousUpdate: false,
+		etaAsynchronousUpdate: false,
+		barsize: 50,
+		stream: process.stdout,
+		stopOnComplete: true,
+	});
 	const accountsMap = new dataStructures.BufferMap<Account>();
 	const delegatesMap = new dataStructures.BufferMap<DelegateWithVotes>();
 	const legacyAddressMap = new dataStructures.BufferMap<Buffer>();
+
+	let processedAccounts = 0;
+	const { totalAccounts } = await db.one(
+		'SELECT count(*) as "totalAccounts" FROM mem_accounts_snapshot',
+	);
+	progress.start(totalAccounts, 0);
+
 	const accountsStreamParser = async (_: unknown, data: LegacyAccount[]) => {
 		for (const legacyAccount of data) {
 			await migrateLegacyAccount({
@@ -427,6 +446,8 @@ export const createGenesisBlockFromStorage = async ({
 				delegatesMap,
 				legacyAddressMap,
 			});
+			processedAccounts += 1;
+			progress.update(processedAccounts);
 		}
 	};
 	await db.stream(
@@ -437,6 +458,12 @@ export const createGenesisBlockFromStorage = async ({
 		),
 		async s => streamRead(s, accountsStreamParser),
 	);
+
+	await new Promise(resolve => {
+		progress.on('stop', () => {
+			resolve();
+		});
+	});
 
 	const accounts = accountsMap.values().sort(sortAccounts);
 	const topDelegates = delegatesMap
@@ -450,6 +477,7 @@ export const createGenesisBlockFromStorage = async ({
 	const lastBlockTimeInSeconds = (epochTimeInMs + lastBlockTimeOffsetInMs) / 1000;
 	const lastBlockTimeToNearest10s = Math.round(lastBlockTimeInSeconds / 10) * 10;
 
+	cli.action.start('Creating genesis block');
 	const genesisBlock = createGenesisBlock({
 		accounts: accounts as any,
 		initRounds: 600, // 10 * 103 * 600 / 60 / 60 / 24 = Approximately 7 days assuming no missed blocks
@@ -459,6 +487,7 @@ export const createGenesisBlockFromStorage = async ({
 		timestamp: lastBlockTimeToNearest10s + 7200, // 60 * 60 * 2 seconds, 2 hours in future
 		accountAssetSchemas: defaultAccountSchema,
 	});
+	cli.action.stop();
 
 	return getGenesisBlockJSON({ genesisBlock, accountAssetSchemas: defaultAccountSchema });
 };

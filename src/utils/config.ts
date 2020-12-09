@@ -12,10 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import debugInit from 'debug';
+import cli from 'cli-ux';
 import { unlinkSync, existsSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
+
+const debug = debugInit('lisk:migrator');
 
 const compiledConfig = 'migrator_compiled_config.json';
 
@@ -40,15 +44,18 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	const fullCommand = command.join(' ');
 	const compiledConfigPath = join(corePath, compiledConfig);
 
-	console.info('Executing command to fetch the configuration');
-	console.info(fullCommand);
+	debug(`Core path: ${corePath}`);
+	debug(`Cmd: ${fullCommand}`);
 
+	cli.action.start('Compiling Lisk Core configuration');
 	// Executing command to compile the configuration
 	// 	to use the "source" command on Linux we have to explicity set shell to bash
 	execSync(fullCommand, { shell: '/bin/bash' });
+	cli.action.stop();
 
-	// Loading compiled configuration file
+	cli.action.start('Loading Lisk Core configuration');
 	const config = await import(compiledConfigPath);
+	cli.action.stop();
 
 	// Deleting compiled configuration file
 	unlinkSync(compiledConfigPath);
