@@ -13,7 +13,7 @@ $ npm install -g lisk-migrator
 $ lisk-migrator COMMAND
 running command...
 $ lisk-migrator (-v|--version|version)
-lisk-migrator/0.1.0-alpha.1 darwin-x64 node-v12.20.0
+lisk-migrator/0.1.0-alpha.2 darwin-x64 node-v12.20.0
 $ lisk-migrator --help [COMMAND]
 USAGE
   $ lisk-migrator COMMAND
@@ -42,7 +42,7 @@ $ npm test
 
 ## License
 
-Copyright 2016-2020 Lisk Foundation
+Copyright 2016-2021 Lisk Foundation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

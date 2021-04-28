@@ -1,6 +1,6 @@
 {
 	"name": "lisk-migrator",
-	"version": "0.1.0-alpha.1",
+	"version": "0.1.0-alpha.2",
 	"description": "A command line tool to migrate the blockchain data to the latest protocol when hard fork",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
@@ -59,10 +59,10 @@
 		"/docs"
 	],
 	"dependencies": {
-		"@liskhq/lisk-cryptography": "^3.0.0-alpha.0",
-		"@liskhq/lisk-genesis": "^0.1.0-alpha.1",
-		"@liskhq/lisk-tree": "^0.1.0-alpha.0",
-		"@liskhq/lisk-utils": "^0.1.0-alpha.1",
+		"@liskhq/lisk-cryptography": "^3.0.1",
+		"@liskhq/lisk-genesis": "^0.1.1",
+		"@liskhq/lisk-tree": "^0.1.1",
+		"@liskhq/lisk-utils": "^0.1.0",
 		"@oclif/command": "1.5.19",
 		"@oclif/config": "1.14.0",
 		"@oclif/errors": "1.2.2",

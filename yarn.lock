@@ -504,81 +504,81 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@liskhq/lisk-chain@^0.2.0-alpha.1":
-  version "0.2.0-alpha.2"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-chain/-/lisk-chain-0.2.0-alpha.2.tgz#034ccaad0f8154730b5fcbf5ed2b4af853a49d6b"
-  integrity sha512-vDApZRpq8bVwAXuwG2C6GvL9k2YpBefsw8j0x6V3DR39ymBCCzyArV5mezJwjcgdKx/InsXVdwbQ31VWjINhkQ==
+"@liskhq/lisk-chain@^0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-chain/-/lisk-chain-0.2.1.tgz#4134f2765cbdc37a189a08ea5109ba8c488125c5"
+  integrity sha512-sPsodtZ66wwOC7f6WEjzRZImcEZX1uHXXTICxIru+RJPxgklZWlC2twWDGYIEQY+5omzyQUIw0CyMCepHNKaHw==
   dependencies:
-    "@liskhq/lisk-codec" "^0.1.0-alpha.0"
-    "@liskhq/lisk-cryptography" "^3.0.0-alpha.0"
-    "@liskhq/lisk-db" "^0.1.0-alpha.0"
-    "@liskhq/lisk-tree" "^0.1.0-alpha.0"
-    "@liskhq/lisk-utils" "^0.1.0-alpha.1"
-    "@liskhq/lisk-validator" "^0.5.0-alpha.0"
+    "@liskhq/lisk-codec" "^0.1.1"
+    "@liskhq/lisk-cryptography" "^3.0.1"
+    "@liskhq/lisk-db" "^0.1.0"
+    "@liskhq/lisk-tree" "^0.1.1"
+    "@liskhq/lisk-utils" "^0.1.0"
+    "@liskhq/lisk-validator" "^0.5.1"
     debug "4.1.1"
 
-"@liskhq/lisk-codec@^0.1.0-alpha.0":
-  version "0.1.0-alpha.0"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-codec/-/lisk-codec-0.1.0-alpha.0.tgz#5e6a3dc232123fd32905969e9696d95d37cea361"
-  integrity sha512-JbSWvLyVEIahGnoytSXkHqubFc8CvNwjYeq7Qo7M5vo8gdE2jhkMXoXy9nDr/jxxtnMlLcGC4cDB/1WFUP7NEw==
+"@liskhq/lisk-codec@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-codec/-/lisk-codec-0.1.1.tgz#aeefbc6ad811e109a6094f5460ecbbe907ce05c0"
+  integrity sha512-otW7UlNRlgeZSz5Pj2lIzq2lbVclVOBgX/o0qtnGFa0+73bryiU17deymlqYYoCPAam9uVE3MFedu2sgpAlEYQ==
   dependencies:
-    "@liskhq/lisk-utils" "^0.1.0-alpha.0"
-    "@liskhq/lisk-validator" "^0.5.0-alpha.0"
+    "@liskhq/lisk-utils" "^0.1.0"
+    "@liskhq/lisk-validator" "^0.5.1"
 
-"@liskhq/lisk-cryptography@^3.0.0-alpha.0":
-  version "3.0.0-alpha.0"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-cryptography/-/lisk-cryptography-3.0.0-alpha.0.tgz#c658481455e8de0dcd3ee8ea337a4f30d63304e4"
-  integrity sha512-pg22vndfAAe2KmCC/KFpulajKb3dceQ7E8PXIsDSyPCI9bBL0ruGPMTYNQNPLTREL3mzqp1lvB+wK2GE0FQdyQ==
+"@liskhq/lisk-cryptography@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-cryptography/-/lisk-cryptography-3.0.1.tgz#a4e379c58ad1682273bea9d5e6a4b8928b05d57e"
+  integrity sha512-jtYbRUMMjALICQI6MW7yvD7q1guVSADmD+JlhoNh64Ja6ff8ILm+zgQ7MCCp7j2r6pfsfIQzdsRxZhtHWBhfvA==
   dependencies:
     buffer-reverse "1.0.1"
     ed2curve "0.3.0"
     tweetnacl "1.0.3"
     varuint-bitcoin "1.1.2"
   optionalDependencies:
-    sodium-native "2.4.6"
+    sodium-native "3.2.0"
 
-"@liskhq/lisk-db@^0.1.0-alpha.0":
-  version "0.1.0-alpha.0"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-db/-/lisk-db-0.1.0-alpha.0.tgz#bf615e4227039bcf904e2ce6dfaa900879b4c633"
-  integrity sha512-ODxzgEzkg8C8LlQOIr6qcGDqpCI/pYEcj5CcDRrAJbHJIp+HciBVXEQKJ5P/i4JMwZEND131CCWbAViTSDp1Dw==
+"@liskhq/lisk-db@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-db/-/lisk-db-0.1.0.tgz#59ad04e3a911b76d8715c60c18fd75a53aae3628"
+  integrity sha512-VrH8W32WijY2jYLqxVKybcJsHYpxa2nxq3CgTflTMZD/L/JKMwIL5xxf7eEjLzXvaa7XxfrEqdeQUzOspjrfcQ==
   dependencies:
     debug "4.1.1"
     levelup "4.4.0"
     rocksdb "4.1.0"
 
-"@liskhq/lisk-genesis@^0.1.0-alpha.1":
-  version "0.1.0-alpha.1"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-genesis/-/lisk-genesis-0.1.0-alpha.1.tgz#184b005ae7028901ada7095c8ae733a5931089fd"
-  integrity sha512-kTbV38XLDQn/yX8v3x5dG4r3vGcqpTj+J0e5z2wg04yrp4BODnu9ocAUUV5fGwy1IY+pyinS2dBsRVNZDaVfyg==
+"@liskhq/lisk-genesis@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-genesis/-/lisk-genesis-0.1.1.tgz#32048d8bb1beea6e19d9a1d964ed049b98137c94"
+  integrity sha512-odaAk0FPDcdCan3z6qc0LcpyuLZIiRzAsIz3/xpbw3PyNll0jtPKTM8nYyHT3GL6blpq/hewaqJyg8Yurt33uQ==
   dependencies:
-    "@liskhq/lisk-chain" "^0.2.0-alpha.1"
-    "@liskhq/lisk-codec" "^0.1.0-alpha.0"
-    "@liskhq/lisk-cryptography" "^3.0.0-alpha.0"
-    "@liskhq/lisk-utils" "^0.1.0-alpha.0"
-    "@liskhq/lisk-validator" "^0.5.0-alpha.0"
+    "@liskhq/lisk-chain" "^0.2.1"
+    "@liskhq/lisk-codec" "^0.1.1"
+    "@liskhq/lisk-cryptography" "^3.0.1"
+    "@liskhq/lisk-utils" "^0.1.0"
+    "@liskhq/lisk-validator" "^0.5.1"
     lodash.clonedeep "4.5.0"
 
-"@liskhq/lisk-tree@^0.1.0-alpha.0":
-  version "0.1.0-alpha.0"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-tree/-/lisk-tree-0.1.0-alpha.0.tgz#e55dce0bcfbfa47026c1492d9ae1397341b20d1f"
-  integrity sha512-CcAjRUD8/F6FTjID7dPZiQxieSkNgjWPCrYP4O9vyKWN3bbJZChKtcagQpTFecOzEbTxQPbY8DRQwOh0oxcjDA==
+"@liskhq/lisk-tree@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-tree/-/lisk-tree-0.1.1.tgz#b7c02c4ff39ef141e4adf74ea25b5a52229be66d"
+  integrity sha512-fnNqaTywcJyK4qDjoHLl7h86cgqSQO8rO+gu0CnBJPCdETIhO7LTAnAOGHi4uEVuUWsvK+l33ky8BI+zZjG+rQ==
   dependencies:
-    "@liskhq/lisk-cryptography" "^3.0.0-alpha.0"
-    "@liskhq/lisk-utils" "^0.1.0-alpha.0"
+    "@liskhq/lisk-cryptography" "^3.0.1"
+    "@liskhq/lisk-utils" "^0.1.0"
 
-"@liskhq/lisk-utils@^0.1.0-alpha.0", "@liskhq/lisk-utils@^0.1.0-alpha.1":
-  version "0.1.0-alpha.1"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-utils/-/lisk-utils-0.1.0-alpha.1.tgz#cbc4b8b236d9119b93f0bb1ca8c9f9fb70015bed"
-  integrity sha512-wupLsuIgDjn/zSMAd5XCiApPlUAYTTrNF4AlUNWinKlQFBl6YEqySN3WcCHSFFV68yJKwECDOd7YKdT7Or6//Q==
+"@liskhq/lisk-utils@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-utils/-/lisk-utils-0.1.0.tgz#b8f31e0bde5a8d0bf2bee9f6f7e6b9bfe2cd45b0"
+  integrity sha512-PR36Rxk6Nhg8Z6vvEIOpbeTuISaw23It6WhVyxEibH2RN2UPpUwDWR60BcIqZtR1FCK5vEcDMTvBXu1FgawbdA==
   dependencies:
     lodash.clonedeep "4.5.0"
 
-"@liskhq/lisk-validator@^0.5.0-alpha.0":
-  version "0.5.0-alpha.0"
-  resolved "https://npm.lisk.io/@liskhq%2flisk-validator/-/lisk-validator-0.5.0-alpha.0.tgz#c21500cfb47524153bd9814b240224bdabc8b14c"
-  integrity sha512-fKZpmKf9qel6jPDH3G4139dXTs/P6lOX6yEyqTV3M06LpVVw5lpkQpgIPT3xgC7KvcWYjjpc2ylbwKgT2nSj3Q==
+"@liskhq/lisk-validator@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-validator/-/lisk-validator-0.5.1.tgz#3cb2a83684dfd3c0d729400579e7f015f8e8527d"
+  integrity sha512-mIFRetkasdU7QoaoOmRWxHZaUXvKXWjAgA3wwn8wnSANArSVtWyM23xvfDVBLzPFRnMH9LfvSt66U8uYkGdIPg==
   dependencies:
-    "@liskhq/lisk-cryptography" "^3.0.0-alpha.0"
+    "@liskhq/lisk-cryptography" "^3.0.1"
     "@types/node" "12.12.11"
     "@types/semver" "7.1.0"
     "@types/validator" "12.0.1"
@@ -4388,9 +4388,9 @@ nice-try@^1.0.4:
   resolved "https://npm.lisk.io/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-node-gyp-build@^4.1.0:
+node-gyp-build@^4.2.0:
   version "4.2.3"
-  resolved "https://npm.lisk.io/node-gyp-build/-/node-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
+  resolved "https://registry.yarnpkg.com/node-gyp-build/-/node-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
   integrity sha512-MN6ZpzmfNCRM+3t57PTJHgHyw/h4OWnZ6mR8P5j/uZtqQr46RRuDE/P+g3n0YR/AiYXeWixZZzaip77gdICfRg==
 
 node-gyp-build@~4.1.0:
@@ -5476,14 +5476,13 @@ snapdragon@^0.8.1:
     source-map-resolve "^0.5.0"
     use "^3.1.0"
 
-sodium-native@2.4.6:
-  version "2.4.6"
-  resolved "https://npm.lisk.io/sodium-native/-/sodium-native-2.4.6.tgz#8a8173095e8cf4f997de393a2ba106c34870cac2"
-  integrity sha512-Ro9lhTjot8M01nwKLXiqLSmjR7B8o+Wg4HmJUjEShw/q6XPlNMzjPkA1VJKaMH8SO8fJ/sggAKVwreTaFszS2Q==
+sodium-native@3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/sodium-native/-/sodium-native-3.2.0.tgz#68a9469b96edadffef320cbce51294ad5f72a37f"
+  integrity sha512-8aq/vQSegLwsRch8Sb/Bpf9aAqlNe5dp0+NVhb9UjHv42zDZ0D5zX3wBRUbXK9Ejum9uZE6DUgT4vVLlUFRBWg==
   dependencies:
     ini "^1.3.5"
-    nan "^2.14.0"
-    node-gyp-build "^4.1.0"
+    node-gyp-build "^4.2.0"
 
 sort-keys@^4.0.0:
   version "4.0.0"
