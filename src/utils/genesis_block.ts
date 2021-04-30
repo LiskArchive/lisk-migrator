@@ -13,8 +13,9 @@
  */
 
 import cli from 'cli-ux';
-import { writeFileSync } from 'fs';
 import debugLib from 'debug';
+import * as fsExtra from 'fs-extra';
+import * as path from 'path';
 import pgPromise from 'pg-promise';
 import QueryStream from 'pg-query-stream';
 import { createGenesisBlock, getGenesisBlockJSON } from '@liskhq/lisk-genesis';
@@ -497,5 +498,12 @@ export const writeGenesisBlock = (
 	genesisBlock: Record<string, unknown>,
 	filePath: string,
 ): void => {
-	writeFileSync(filePath, JSON.stringify(genesisBlock, null, '\t'));
+	if (fsExtra.existsSync(filePath)) {
+		fsExtra.unlinkSync(filePath);
+	}
+
+	const { dir } = path.parse(filePath);
+
+	fsExtra.ensureDirSync(dir);
+	fsExtra.writeFileSync(filePath, JSON.stringify(genesisBlock, null, '\t'));
 };

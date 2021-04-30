@@ -106,24 +106,24 @@ describe('LiskMigrator', () => {
 			it('should not fail if height is provided via flag', async () => {
 				await expect(LiskMigrator.run(requiredFlags)).resolves.toBeUndefined();
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
-					label: 'Waiting snapshot height',
+					label: 'Waiting for snapshot height',
 					db,
 					height: snapshotHeight,
 					delay: 500,
 				});
-				expect(cli.action.start).toHaveBeenCalledWith('Taking snapshot');
+				expect(cli.action.start).toHaveBeenCalledWith('Creating snapshot');
 			});
 
 			it('should not fail if height is provided via env variable', async () => {
 				process.env.SNAPSHOT_HEIGHT = '67';
 				await expect(LiskMigrator.run()).resolves.toBeUndefined();
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
-					label: 'Waiting snapshot height',
+					label: 'Waiting for snapshot height',
 					db,
 					height: 67,
 					delay: 500,
 				});
-				expect(cli.action.start).toHaveBeenCalledWith('Taking snapshot');
+				expect(cli.action.start).toHaveBeenCalledWith('Creating snapshot');
 			});
 		});
 
@@ -132,7 +132,7 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags);
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
-					label: 'Waiting threshold height',
+					label: 'Waiting for threshold height',
 					db,
 					height: snapshotHeight + 201,
 					delay: 500,
@@ -143,7 +143,7 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags.concat(['-w', '400']));
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
-					label: 'Waiting threshold height',
+					label: 'Waiting for threshold height',
 					db,
 					height: snapshotHeight + 400,
 					delay: 500,
@@ -155,7 +155,7 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags);
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
-					label: 'Waiting threshold height',
+					label: 'Waiting for threshold height',
 					db,
 					height: snapshotHeight + 600,
 					delay: 500,
@@ -167,7 +167,7 @@ describe('LiskMigrator', () => {
 				await LiskMigrator.run(requiredFlags.concat(['-w', '400']));
 
 				expect(utils.observeChainHeight).toHaveBeenCalledWith({
-					label: 'Waiting threshold height',
+					label: 'Waiting for threshold height',
 					db,
 					height: snapshotHeight + 201,
 					delay: 500,
@@ -248,7 +248,7 @@ describe('LiskMigrator', () => {
 		it('should wait for snapshot height', () => {
 			expect(utils.observeChainHeight).toHaveBeenCalledTimes(2);
 			expect(utils.observeChainHeight).toHaveBeenNthCalledWith(1, {
-				label: 'Waiting snapshot height',
+				label: 'Waiting for snapshot height',
 				db,
 				height: snapshotHeight,
 				delay: 500,
@@ -265,7 +265,7 @@ describe('LiskMigrator', () => {
 		it('should wait for threshold height', () => {
 			expect(utils.observeChainHeight).toHaveBeenCalledTimes(2);
 			expect(utils.observeChainHeight).toHaveBeenNthCalledWith(2, {
-				label: 'Waiting threshold height',
+				label: 'Waiting for threshold height',
 				db,
 				height: snapshotHeight + waitThreshold,
 				delay: 500,
