@@ -350,7 +350,7 @@ export const migrateLegacyAccount = async ({
 	}
 };
 
-export const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) => {
+export const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes): number => {
 	if (a.votes > b.votes) {
 		return -1;
 	}
@@ -362,7 +362,7 @@ export const sortByVotesReceived = (a: DelegateWithVotes, b: DelegateWithVotes) 
 	return a.address.compare(b.address);
 };
 
-export const sortAccounts = (a: Account, b: Account) => {
+export const sortAccounts = (a: Account, b: Account): number => {
 	if (a.address.length < b.address.length) {
 		return -1;
 	}
@@ -392,6 +392,7 @@ export const createGenesisBlockFromStorage = async ({
 	let lastBlock!: Block;
 
 	cli.action.start('Processing blocks to calculate previous block id');
+	const time = Date.now();
 	const blocksStreamParser = (_: unknown, blocksBatch: Block[]) => {
 		blockIDSubTreeRoots.push(
 			new MerkleTree(blocksBatch.map(block => hash(getBlockBytes(block)))).root,
@@ -414,7 +415,7 @@ export const createGenesisBlockFromStorage = async ({
 	const merkleRootOfBlocksTillSnapshotHeight = new MerkleTree(blockIDSubTreeRoots, {
 		preHashedLeaf: true,
 	}).root;
-	cli.action.stop();
+	cli.action.stop(`done in ${Date.now() - time}ms`);
 
 	// Calculate accounts
 	const progress = cli.progress({
@@ -459,7 +460,7 @@ export const createGenesisBlockFromStorage = async ({
 		async s => streamRead(s, accountsStreamParser),
 	);
 
-	await new Promise(resolve => {
+	await new Promise<void>(resolve => {
 		progress.on('stop', () => {
 			resolve();
 		});

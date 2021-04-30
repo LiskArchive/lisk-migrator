@@ -90,19 +90,19 @@ class LiskMigrator extends Command {
 		cli.action.stop();
 
 		await observeChainHeight({
-			label: 'Waiting snapshot height',
+			label: 'Waiting for snapshot height',
 			db,
 			height: snapshotHeight,
 			delay: 500,
 		});
 
-		cli.action.start('Taking snapshot');
+		cli.action.start('Creating snapshot');
 		const time = Date.now();
 		await createSnapshot(db);
 		cli.action.stop(`done in ${Date.now() - time}ms`);
 
 		await observeChainHeight({
-			label: 'Waiting threshold height',
+			label: 'Waiting for threshold height',
 			db,
 			height: snapshotHeight + waitThreshold,
 			delay: 500,
