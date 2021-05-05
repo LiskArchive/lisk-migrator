@@ -329,14 +329,17 @@ export const migrateLegacyAccount = async ({
 		};
 	}
 
-	const account = objects.mergeDeep(
+	let account = objects.mergeDeep(
 		{},
 		accountDefaultProps,
 		basicProps,
 		tokenProps,
-		dposProps,
 		keysProps,
 	) as Account;
+
+	if (legacyAccount.username !== '') {
+		account = objects.mergeDeep({}, account, dposProps) as Account;
+	}
 
 	debug('New account:', account);
 
