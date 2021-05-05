@@ -66,7 +66,7 @@ const expectAccountMigration = (
 			delegate: {
 				consecutiveMissedBlocks: 0,
 				isBanned: false,
-				lastForgedHeight: snapshotHeight + 1,
+				lastForgedHeight: legacyAccount.username === '' ? 0 : snapshotHeight + 1,
 				pomHeights: [],
 				totalVotesReceived: BigInt(0),
 				username: legacyAccount.username,
