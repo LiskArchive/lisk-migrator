@@ -22,6 +22,22 @@ USAGE
 
 <!-- usagestop -->
 
+## Build Distributions (Linux, Darwin)
+
+<!-- build -->
+
+```sh-session
+$ git clone https://github.com/LiskHQ/lisk-migrator
+$ cd lisk-migrator
+$ git checkout $tag
+$ nvm install $(cat .nvmrc)
+$ npm install --global yarn
+$ yarn; yarn build;
+$ npx oclif-dev pack --targets=linux-x64,darwin-x64
+```
+
+<!-- buildstop -->
+
 ### Running Tests
 
 Lisk Migrator has an extensive set of unit tests. To run the tests, please install Lisk Migrator from source, and then run the command:
