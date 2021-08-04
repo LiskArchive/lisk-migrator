@@ -187,7 +187,7 @@ describe('LiskMigrator', () => {
 		);
 	});
 
-	it.each(['2.1.3', '2.1.7'])(
+	it.each(['2.1.3', '2.1.0', '2.0.0', '2.2.0'])(
 		'should fail if lisk-core version "$1" does not satisfy',
 		async (version: string) => {
 			jest
@@ -195,8 +195,19 @@ describe('LiskMigrator', () => {
 				.mockResolvedValue({ ...appConfig, app: { ...appConfig.app, version } });
 
 			await expect(LiskMigrator.run(requiredFlags)).rejects.toThrow(
-				`Lisk-Migrator utility is not compatible for lisk-core version ${version}. Compatible versions range is: >=2.1.4 <=2.1.6`,
+				`Lisk-Migrator utility is not compatible for lisk-core version ${version}. Compatible versions range is: >=2.1.4 <=2.1`,
 			);
+		},
+	);
+
+	it.each(['2.1.4', '2.1.7', '2.1.8'])(
+		'should pass if lisk-core version "$1" satisfy',
+		async (version: string) => {
+			jest
+				.spyOn(utils, 'getConfig')
+				.mockResolvedValue({ ...appConfig, app: { ...appConfig.app, version } });
+
+			await expect(LiskMigrator.run(requiredFlags)).toResolve();
 		},
 	);
 

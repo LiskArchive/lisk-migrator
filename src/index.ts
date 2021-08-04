@@ -21,7 +21,7 @@ import { observeChainHeight } from './utils/chain';
 import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
 
-const compatibleVersions = '>=2.1.4 <=2.1.6';
+const compatibleVersions = '>=2.1.4 <=2.1';
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
