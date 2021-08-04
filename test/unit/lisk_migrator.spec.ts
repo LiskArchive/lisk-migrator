@@ -195,7 +195,7 @@ describe('LiskMigrator', () => {
 				.mockResolvedValue({ ...appConfig, app: { ...appConfig.app, version } });
 
 			await expect(LiskMigrator.run(requiredFlags)).rejects.toThrow(
-				`Lisk-Migrator utility is not compatible for lisk-core version ${version}. Compatible versions range is: >=2.1.4 <=2.1.6`,
+				`Lisk-Migrator utility is not compatible for lisk-core version ${version}. Compatible versions range is: >=2.1.4 <=2.1`,
 			);
 		},
 	);
