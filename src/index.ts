@@ -16,10 +16,11 @@ import * as semver from 'semver';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
-import { getConfig } from './utils/config';
+import { getConfig, isBinaryBuild } from './utils/config';
 import { observeChainHeight } from './utils/chain';
 import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
+import { Config } from './types';
 
 const compatibleVersions = '>=2.1.4 <=2.1';
 
@@ -44,6 +45,11 @@ class LiskMigrator extends Command {
 			description:
 				'Path where the lisk-core instance is running. Current directory will be considered the default if not provided.',
 		}),
+		config: flagsParser.string({
+			char: 'c',
+			required: false,
+			description: 'Custom configuration file path.',
+		}),
 		'snapshot-height': flagsParser.integer({
 			char: 's',
 			required: true,
@@ -66,9 +72,20 @@ class LiskMigrator extends Command {
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
 		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
+		const customConfigPath = flags.config;
 		const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
+		let config: Config;
 
-		const config = await getConfig(liskCorePath);
+		// User specified custom config file
+		if (customConfigPath) {
+			config = await getConfig(liskCorePath, customConfigPath);
+
+			// Custom config file used by `lisk.sh` in binary build
+		} else if (isBinaryBuild(liskCorePath)) {
+			config = await getConfig(liskCorePath, join(liskCorePath, 'config.json'));
+		} else {
+			config = await getConfig(liskCorePath);
+		}
 
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(config.app.version);
