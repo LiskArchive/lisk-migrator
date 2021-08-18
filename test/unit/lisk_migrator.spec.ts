@@ -72,6 +72,32 @@ describe('LiskMigrator', () => {
 			});
 		});
 
+		describe('custom config file', () => {
+			it('should use the custom config file if provided', async () => {
+				await LiskMigrator.run(
+					requiredFlags.concat(['-p', '/my/directory', '-c', 'my-custom-config.json']),
+				);
+
+				expect(utils.getConfig).toHaveBeenCalledWith('/my/directory', 'my-custom-config.json');
+			});
+
+			it('should use the default custom config path if not provided and its a binary build', async () => {
+				jest.spyOn(utils, 'isBinaryBuild').mockReturnValue(true);
+
+				await LiskMigrator.run(requiredFlags.concat(['-p', '/my/directory']));
+
+				expect(utils.getConfig).toHaveBeenCalledWith('/my/directory', '/my/directory/config.json');
+			});
+
+			it('should not use custom config path if not provided and its not a binary build', async () => {
+				jest.spyOn(utils, 'isBinaryBuild').mockReturnValue(false);
+
+				await LiskMigrator.run(requiredFlags.concat(['-p', '/my/directory']));
+
+				expect(utils.getConfig).toHaveBeenCalledWith('/my/directory');
+			});
+		});
+
 		describe('output', () => {
 			it('should use the output path if provided', async () => {
 				await LiskMigrator.run(requiredFlags.concat(['-o', '/my/directory/my_block.json']));
