@@ -22,7 +22,7 @@ import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 
-const compatibleVersions = '>=2.1.4 <=2.1';
+const compatibleVersions = '>=3.0.4 <=3.0';
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
@@ -56,6 +56,31 @@ class LiskMigrator extends Command {
 			env: 'SNAPSHOT_HEIGHT',
 			description:
 				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
+		}),
+		'snapshot-time-gap': flagsParser.integer({
+			char: 's',
+			required: true,
+			env: 'SNAPSHOT_TIME_GAP',
+			description:
+				'The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.',
+		}),
+		'auto-migrate-config': flagsParser.integer({
+			char: 's',
+			required: true,
+			env: 'AUTO_MIGRATE_CONFIG',
+			description: 'Migrate user configuration automatically.',
+		}),
+		'auto-download-lisk-core-v4': flagsParser.integer({
+			char: 's',
+			required: true,
+			env: 'AUTO_DOWNLOAD_LISK_CORE',
+			description: 'Download lisk core v4 automatically.',
+		}),
+		'auto-start-lisk-core-v4': flagsParser.integer({
+			char: 's',
+			required: true,
+			env: 'AUTO_START_LISK_CORE',
+			description: 'Start lisk core v4 automatically.',
 		}),
 		'wait-threshold': flagsParser.integer({
 			char: 'w',
