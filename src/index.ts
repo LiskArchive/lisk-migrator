@@ -16,7 +16,7 @@ import * as semver from 'semver';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
-import { getConfig, isBinaryBuild } from './utils/config';
+import { getConfig, isBinaryBuild, migrateConfig } from './utils/config';
 import { observeChainHeight } from './utils/chain';
 import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
@@ -98,6 +98,7 @@ class LiskMigrator extends Command {
 		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
+		const autoMigrateConfig = flags['auto-migrate-config'] || false;
 		const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
@@ -123,6 +124,8 @@ class LiskMigrator extends Command {
 			);
 		}
 		cli.action.stop(`${liskCoreVersion.version} detected`);
+
+		if (autoMigrateConfig) await migrateConfig();
 
 		const storageConfig = config.components.storage;
 

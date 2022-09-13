@@ -62,3 +62,6 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 
 	return config;
 };
+
+// TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55
+export const migrateConfig = async (): Promise<any> => true;
