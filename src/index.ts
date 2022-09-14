@@ -138,8 +138,6 @@ class LiskMigrator extends Command {
 			config = await getConfig(liskCorePath);
 		}
 
-		this.debug(config);
-
 		await observeChainHeight({
 			label: 'Waiting for snapshot height',
 			liskCorePath,
