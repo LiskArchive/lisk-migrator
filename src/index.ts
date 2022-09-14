@@ -17,10 +17,11 @@ import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { createIPCClient } from '@liskhq/lisk-api-client';
+import { ROUND_LENGTH } from './constants';
 import { getConfig, isBinaryBuild, migrateConfig } from './utils/config';
 import { observeChainHeight } from './utils/chain';
-import { createDb, verifyConnection, createSnapshot } from './utils/storage';
-import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
+// import { createDb, verifyConnection, createSnapshot } from './utils/storage';
+// import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 
 // TODO: Update version to '>=3.0.5
@@ -97,16 +98,22 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		const { flags } = this.parse(LiskMigrator);
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
+		// const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
 		const autoMigrateConfig = flags['auto-migrate-config'] ?? false;
-		const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
+		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
 		const client = await createIPCClient(liskCorePath);
 		const info = await client.node.getNodeInfo();
 		const { version: appVersion } = info;
+
+		cli.action.start('Verifying Snapshot Height is an end of round block');
+		if (snapshotHeight % ROUND_LENGTH !== 0) {
+			this.error('Invalid Snapshot Height.');
+		}
+		cli.action.stop('Snapshot Height is valid');
 
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(appVersion);
@@ -131,46 +138,48 @@ class LiskMigrator extends Command {
 			config = await getConfig(liskCorePath);
 		}
 
-		if (autoMigrateConfig) await migrateConfig();
-
-		const storageConfig = config.components.storage;
-
-		cli.action.start(`Verifying connection to database "${storageConfig.database}"`);
-		const db = createDb(storageConfig);
-		await verifyConnection(db);
-		cli.action.stop();
+		this.debug(config);
 
 		await observeChainHeight({
 			label: 'Waiting for snapshot height',
-			db,
+			liskCorePath,
 			height: snapshotHeight,
 			delay: 500,
 		});
 
-		cli.action.start('Creating snapshot');
-		const time = Date.now();
-		await createSnapshot(db);
-		cli.action.stop(`done in ${Date.now() - time}ms`);
+		if (autoMigrateConfig) await migrateConfig();
 
-		await observeChainHeight({
-			label: 'Waiting for threshold height',
-			db,
-			height: snapshotHeight + waitThreshold,
-			delay: 500,
-		});
+		// const storageConfig = config.components.storage;
 
-		const genesisBlock = await createGenesisBlockFromStorage({
-			db,
-			snapshotHeight,
-			epochTime: config.app.genesisConfig.EPOCH_TIME,
-		});
+		// cli.action.start(`Verifying connection to database "${storageConfig.database}"`);
+		// const db = createDb(storageConfig);
+		// await verifyConnection(db);
+		// cli.action.stop();
 
-		cli.action.start('Exporting genesis block');
-		writeGenesisBlock(genesisBlock, outputPath);
-		cli.action.stop();
-		this.log(outputPath);
+		// cli.action.start('Creating snapshot');
+		// const time = Date.now();
+		// await createSnapshot(db);
+		// cli.action.stop(`done in ${Date.now() - time}ms`);
 
-		db.$pool.end();
+		// await observeChainHeight({
+		// 	label: 'Waiting for threshold height',
+		// 	db,
+		// 	height: snapshotHeight + waitThreshold,
+		// 	delay: 500,
+		// });
+
+		// const genesisBlock = await createGenesisBlockFromStorage({
+		// 	db,
+		// 	snapshotHeight,
+		// 	epochTime: config.app.genesisConfig.EPOCH_TIME,
+		// });
+
+		// cli.action.start('Exporting genesis block');
+		// writeGenesisBlock(genesisBlock, outputPath);
+		// cli.action.stop();
+		// this.log(outputPath);
+
+		// db.$pool.end();
 	}
 }
 

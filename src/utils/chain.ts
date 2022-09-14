@@ -13,18 +13,18 @@
  */
 
 import cli from 'cli-ux';
-import pgPromise from 'pg-promise';
-import { SQLs } from './storage';
+import { createIPCClient } from '@liskhq/lisk-api-client';
 
 interface ObserveParams {
 	readonly label: string;
 	readonly height: number;
-	readonly db: pgPromise.IDatabase<any>;
+	readonly liskCorePath: string;
 	readonly delay: number;
 }
 
-export const getChainHeight = async (db: pgPromise.IDatabase<any>): Promise<number> => {
-	const result = await db.one<{ height: number }>(SQLs.getLastBlockHeight);
+export const getChainHeight = async (liskCorePath: string): Promise<number> => {
+	const client = await createIPCClient(liskCorePath);
+	const result = await client.node.getNodeInfo();
 
 	return result.height;
 };
@@ -70,7 +70,7 @@ const getRemainingTime = (currentHeight: number, observedHeight: number): string
 
 export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
 	const observedHeight = options.height;
-	const startHeight = await getChainHeight(options.db);
+	const startHeight = await getChainHeight(options.liskCorePath);
 
 	if (startHeight === observedHeight) {
 		return startHeight;
@@ -101,7 +101,7 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		const checkHeight = async () => {
 			let height!: number;
 			try {
-				height = await getChainHeight(options.db);
+				height = await getChainHeight(options.liskCorePath);
 			} catch (error) {
 				return reject(error);
 			}

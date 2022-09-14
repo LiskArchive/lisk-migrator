@@ -14,7 +14,7 @@
 
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { unlinkSync, existsSync } from 'fs';
+import { unlinkSync, existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
@@ -27,13 +27,22 @@ export const isBinaryBuild = (corePath: string): boolean => existsSync(join(core
 
 export const getConfig = async (corePath: string, customConfigPath?: string): Promise<Config> => {
 	const command = [];
+
+	const [network] = readdirSync(`${corePath}/config`);
+	debug(network);
+
+	cli.action.start('Creating configuration for migrator');
+	// Executing command to copy config file to corePath
+	execSync(`cd ${corePath}/config/${network} && cp config.json ${corePath}/${compiledConfig}`, {
+		shell: '/bin/bash',
+	});
+	cli.action.stop();
+
 	command.push(`cd ${corePath}`);
 
 	if (isBinaryBuild(corePath)) {
 		command.push('&& source env.sh');
 	}
-
-	command.push('&& node scripts/generate_config.js');
 
 	if (customConfigPath) {
 		command.push(`--config ${customConfigPath}`);
