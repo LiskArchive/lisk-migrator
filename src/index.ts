@@ -67,23 +67,26 @@ class LiskMigrator extends Command {
 			description:
 				'The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.',
 		}),
-		'auto-migrate-config': flagsParser.integer({
+		'auto-migrate-config': flagsParser.boolean({
 			char: 's',
 			required: false,
 			env: 'AUTO_MIGRATE_CONFIG',
-			description: 'Migrate user configuration automatically. Default to false',
+			description: 'Migrate user configuration automatically. Default to false.',
+			default: false,
 		}),
-		'auto-download-lisk-core-v4': flagsParser.integer({
+		'auto-download-lisk-core-v4': flagsParser.boolean({
 			char: 's',
 			required: false,
 			env: 'AUTO_DOWNLOAD_LISK_CORE',
-			description: 'Download lisk core v4 automatically.',
+			description: 'Download lisk core v4 automatically. Default to false.',
+			default: false,
 		}),
-		'auto-start-lisk-core-v4': flagsParser.integer({
+		'auto-start-lisk-core-v4': flagsParser.boolean({
 			char: 's',
 			required: false,
 			env: 'AUTO_START_LISK_CORE',
-			description: 'Start lisk core v4 automatically.',
+			description: 'Start lisk core v4 automatically. Default to false.',
+			default: false,
 		}),
 		'wait-threshold': flagsParser.integer({
 			char: 'w',
