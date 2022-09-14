@@ -141,6 +141,9 @@ class LiskMigrator extends Command {
 			config = await getConfig(liskCorePath);
 		}
 
+		// TODO: Remove the debug, added only to fix unused variable error
+		this.debug(config);
+
 		await observeChainHeight({
 			label: 'Waiting for snapshot height',
 			liskCorePath,
