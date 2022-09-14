@@ -16,9 +16,9 @@ import * as semver from 'semver';
 import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
-import { createIPCClient } from '@liskhq/lisk-api-client';
 import { ROUND_LENGTH } from './constants';
-import { getConfig, isBinaryBuild, migrateConfig } from './utils/config';
+import { getClient } from './client';
+import { getConfig, isBinaryBuild, migrateUserConfig } from './utils/config';
 import { observeChainHeight } from './utils/chain';
 // import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 // import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
@@ -101,11 +101,11 @@ class LiskMigrator extends Command {
 		// const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
-		const autoMigrateConfig = flags['auto-migrate-config'] ?? false;
+		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
-		const client = await createIPCClient(liskCorePath);
+		const client = await getClient(liskCorePath);
 		const info = await client.node.getNodeInfo();
 		const { version: appVersion } = info;
 
@@ -147,8 +147,9 @@ class LiskMigrator extends Command {
 			delay: 500,
 		});
 
-		if (autoMigrateConfig) await migrateConfig();
+		if (autoMigrateUserConfig) await migrateUserConfig();
 
+		// TODO: This section will be refactored in the next issues
 		// const storageConfig = config.components.storage;
 
 		// cli.action.start(`Verifying connection to database "${storageConfig.database}"`);

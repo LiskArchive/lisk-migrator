@@ -13,7 +13,7 @@
  */
 
 import cli from 'cli-ux';
-import { createIPCClient } from '@liskhq/lisk-api-client';
+import { getClient } from '../client';
 
 interface ObserveParams {
 	readonly label: string;
@@ -23,7 +23,7 @@ interface ObserveParams {
 }
 
 export const getChainHeight = async (liskCorePath: string): Promise<number> => {
-	const client = await createIPCClient(liskCorePath);
+	const client = await getClient(liskCorePath);
 	const result = await client.node.getNodeInfo();
 
 	return result.height;
