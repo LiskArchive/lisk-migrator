@@ -14,14 +14,12 @@
 
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { unlinkSync, existsSync, readdirSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
 
 const debug = debugInit('lisk:migrator');
-
-const compiledConfig = 'migrator_compiled_config.json';
 
 export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
 
@@ -29,14 +27,8 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	const command = [];
 
 	const [network] = readdirSync(`${corePath}/config`);
-	debug(network);
 
-	cli.action.start('Creating configuration for migrator');
-	// Executing command to copy config file to corePath
-	execSync(`cd ${corePath}/config/${network} && cp config.json ${corePath}/${compiledConfig}`, {
-		shell: '/bin/bash',
-	});
-	cli.action.stop();
+	let compiledConfigPath = `${corePath}/config/${network}/config.json`;
 
 	command.push(`cd ${corePath}`);
 
@@ -46,12 +38,10 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 
 	if (customConfigPath) {
 		command.push(`--config ${customConfigPath}`);
+		compiledConfigPath = customConfigPath;
 	}
 
-	command.push(`> ./${compiledConfig}`);
-
 	const fullCommand = command.join(' ');
-	const compiledConfigPath = join(corePath, compiledConfig);
 
 	debug(`Core path: ${corePath}`);
 	debug(`Cmd: ${fullCommand}`);
@@ -65,9 +55,6 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	cli.action.start('Loading Lisk Core configuration');
 	const config = await import(compiledConfigPath);
 	cli.action.stop();
-
-	// Deleting compiled configuration file
-	unlinkSync(compiledConfigPath);
 
 	return config;
 };
