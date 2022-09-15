@@ -108,15 +108,15 @@ class LiskMigrator extends Command {
 		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
-		const client = await getClient(liskCorePath);
-		const info = await client.node.getNodeInfo();
-		const { version: appVersion } = info;
-
 		cli.action.start('Verifying Snapshot Height is an end of round block');
 		if (snapshotHeight % ROUND_LENGTH !== 0) {
 			this.error('Invalid Snapshot Height.');
 		}
 		cli.action.stop('Snapshot Height is valid');
+
+		const client = await getClient(liskCorePath);
+		const info = await client.node.getNodeInfo();
+		const { version: appVersion } = info;
 
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(appVersion);
