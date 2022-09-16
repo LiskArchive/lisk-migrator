@@ -61,28 +61,24 @@ class LiskMigrator extends Command {
 				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
 		}),
 		'snapshot-time-gap': flagsParser.integer({
-			char: 's',
 			required: false,
 			env: 'SNAPSHOT_TIME_GAP',
 			description:
 				'The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.',
 		}),
 		'auto-migrate-config': flagsParser.boolean({
-			char: 's',
 			required: false,
 			env: 'AUTO_MIGRATE_CONFIG',
 			description: 'Migrate user configuration automatically. Default to false.',
 			default: false,
 		}),
 		'auto-download-lisk-core-v4': flagsParser.boolean({
-			char: 's',
 			required: false,
 			env: 'AUTO_DOWNLOAD_LISK_CORE',
 			description: 'Download lisk core v4 automatically. Default to false.',
 			default: false,
 		}),
 		'auto-start-lisk-core-v4': flagsParser.boolean({
-			char: 's',
 			required: false,
 			env: 'AUTO_START_LISK_CORE',
 			description: 'Start lisk core v4 automatically. Default to false.',
@@ -108,9 +104,11 @@ class LiskMigrator extends Command {
 		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
-		cli.action.start('Verifying Snapshot Height is an end of round block');
+		cli.action.start(
+			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
+		);
 		if (snapshotHeight % ROUND_LENGTH !== 0) {
-			this.error('Invalid Snapshot Height.');
+			this.error(`Invalid Snapshot Height: ${snapshotHeight}.`);
 		}
 		cli.action.stop('Snapshot Height is valid');
 
@@ -121,7 +119,9 @@ class LiskMigrator extends Command {
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(appVersion);
 		if (!liskCoreVersion) {
-			this.error('Unable to detect the lisk-core version.');
+			this.error(
+				`Unsupported lisk-core version detected. Supported version range ${compatibleVersions}`,
+			);
 		}
 		if (!semver.satisfies(liskCoreVersion, compatibleVersions)) {
 			this.error(
@@ -151,7 +151,9 @@ class LiskMigrator extends Command {
 			delay: 500,
 		});
 
-		if (autoMigrateUserConfig) await migrateUserConfig();
+		if (autoMigrateUserConfig) {
+			await migrateUserConfig();
+		}
 
 		// TODO: This section will be refactored in the next issues
 		// const storageConfig = config.components.storage;
