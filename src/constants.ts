@@ -11,8 +11,5 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+
 export const ROUND_LENGTH = 103;
-
-export const MODULE_NAME_LEGACY = 'legacy';
-
-export const LENGTH_LEGACY_ADDRESS = 8;
