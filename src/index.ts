@@ -61,28 +61,24 @@ class LiskMigrator extends Command {
 				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
 		}),
 		'snapshot-time-gap': flagsParser.integer({
-			char: 's',
 			required: false,
 			env: 'SNAPSHOT_TIME_GAP',
 			description:
 				'The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.',
 		}),
 		'auto-migrate-config': flagsParser.boolean({
-			char: 's',
 			required: false,
 			env: 'AUTO_MIGRATE_CONFIG',
 			description: 'Migrate user configuration automatically. Default to false.',
 			default: false,
 		}),
 		'auto-download-lisk-core-v4': flagsParser.boolean({
-			char: 's',
 			required: false,
 			env: 'AUTO_DOWNLOAD_LISK_CORE',
 			description: 'Download lisk core v4 automatically. Default to false.',
 			default: false,
 		}),
 		'auto-start-lisk-core-v4': flagsParser.boolean({
-			char: 's',
 			required: false,
 			env: 'AUTO_START_LISK_CORE',
 			description: 'Start lisk core v4 automatically. Default to false.',
