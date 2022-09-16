@@ -108,9 +108,11 @@ class LiskMigrator extends Command {
 		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
-		cli.action.start('Verifying Snapshot Height is an end of round block');
+		cli.action.start(
+			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
+		);
 		if (snapshotHeight % ROUND_LENGTH !== 0) {
-			this.error('Invalid Snapshot Height.');
+			this.error(`Invalid Snapshot Height: ${snapshotHeight}.`);
 		}
 		cli.action.stop('Snapshot Height is valid');
 
@@ -121,7 +123,9 @@ class LiskMigrator extends Command {
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(appVersion);
 		if (!liskCoreVersion) {
-			this.error('Unable to detect the lisk-core version.');
+			this.error(
+				`Unsupported lisk-core version detected. Supported version range ${compatibleVersions}`,
+			);
 		}
 		if (!semver.satisfies(liskCoreVersion, compatibleVersions)) {
 			this.error(
@@ -151,7 +155,9 @@ class LiskMigrator extends Command {
 			delay: 500,
 		});
 
-		if (autoMigrateUserConfig) await migrateUserConfig();
+		if (autoMigrateUserConfig) {
+			await migrateUserConfig();
+		}
 
 		// TODO: This section will be refactored in the next issues
 		// const storageConfig = config.components.storage;
