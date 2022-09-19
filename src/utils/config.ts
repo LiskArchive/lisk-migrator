@@ -14,35 +14,34 @@
 
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { unlinkSync, existsSync } from 'fs';
+import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
 
 const debug = debugInit('lisk:migrator');
 
-const compiledConfig = 'migrator_compiled_config.json';
-
 export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
 
 export const getConfig = async (corePath: string, customConfigPath?: string): Promise<Config> => {
 	const command = [];
+
+	const [network] = readdirSync(`${corePath}/config`);
+
+	let compiledConfigPath = `${corePath}/config/${network}/config.json`;
+
 	command.push(`cd ${corePath}`);
 
 	if (isBinaryBuild(corePath)) {
 		command.push('&& source env.sh');
 	}
 
-	command.push('&& node scripts/generate_config.js');
-
 	if (customConfigPath) {
 		command.push(`--config ${customConfigPath}`);
+		compiledConfigPath = customConfigPath;
 	}
 
-	command.push(`> ./${compiledConfig}`);
-
 	const fullCommand = command.join(' ');
-	const compiledConfigPath = join(corePath, compiledConfig);
 
 	debug(`Core path: ${corePath}`);
 	debug(`Cmd: ${fullCommand}`);
@@ -57,8 +56,8 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	const config = await import(compiledConfigPath);
 	cli.action.stop();
 
-	// Deleting compiled configuration file
-	unlinkSync(compiledConfigPath);
-
 	return config;
 };
+
+// TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55
+export const migrateUserConfig = async (): Promise<any> => true;

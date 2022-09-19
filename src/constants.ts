@@ -1,5 +1,5 @@
 /*
- * Copyright © 2020 Lisk Foundation
+ * Copyright © 2022 Lisk Foundation
  *
  * See the LICENSE file at the top-level directory of this distribution
  * for licensing information.
@@ -12,4 +12,4 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-SELECT DISTINCT DECODE("dependentId", 'hex') as "publicKey" FROM mem_accounts2multisignatures_snapshot WHERE "accountId" = ${address};
+export const ROUND_LENGTH = 103;
