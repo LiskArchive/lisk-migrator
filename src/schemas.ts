@@ -40,3 +40,29 @@ export const genesisLegacyStoreSchema = {
 		},
 	},
 };
+
+export const unregisteredAddressesSchema = {
+	$id: '/legacyAccount/unregisteredAddresses',
+	type: 'object',
+	properties: {
+		unregisteredAddresses: {
+			type: 'array',
+			fieldNumber: 1,
+			items: {
+				type: 'object',
+				properties: {
+					address: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					balance: {
+						dataType: 'uint64',
+						fieldNumber: 2,
+					},
+				},
+				required: ['address', 'balance'],
+			},
+		},
+	},
+	required: ['unregisteredAddresses'],
+};

@@ -11,5 +11,39 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { codec } from '@liskhq/lisk-codec';
+import { KVStore } from '@liskhq/lisk-db';
 
-export const addLegacyModuleEntry = async (): Promise<any> => true;
+import {
+	MODULE_NAME_LEGACY,
+	DB_KEY_CHAIN_STATE,
+	CHAIN_STATE_UNREGISTERED_ADDRESSES,
+} from '../constants';
+import { unregisteredAddressesSchema } from '../schemas';
+import { UnregisteredAddresses } from '../types';
+
+export class LegacyModuleAsset {
+	private readonly _db: KVStore;
+
+	public constructor(db: KVStore) {
+		this._db = db;
+	}
+
+	public addLegacyModuleEntry = async (): Promise<any> => {
+		const encodedUnregisteredAddresses = await this._db.get(
+			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
+		);
+
+		const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
+			unregisteredAddressesSchema,
+			encodedUnregisteredAddresses,
+		);
+
+		const legacyObject = { accounts: unregisteredAddresses };
+
+		return {
+			module: MODULE_NAME_LEGACY,
+			data: legacyObject,
+		};
+	};
+}
