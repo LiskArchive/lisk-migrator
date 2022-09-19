@@ -13,19 +13,15 @@
  */
 
 import * as semver from 'semver';
-import { join } from 'path';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { ROUND_LENGTH } from './constants';
 import { getClient } from './client';
-import { getConfig, isBinaryBuild, migrateUserConfig } from './utils/config';
+import { getConfig, migrateUserConfig } from './utils/config';
 import { observeChainHeight } from './utils/chain';
 // import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 // import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
-
-// TODO: Update version to '>=3.0.5
-const compatibleVersions = '>=3.0.4 <=3.0';
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
@@ -36,6 +32,12 @@ class LiskMigrator extends Command {
 		help: flagsParser.help({ char: 'h' }),
 
 		// Custom flags
+		'min-compatible-version': flagsParser.string({
+			char: 'm',
+			required: false,
+			description: 'Minimum compatible version required to run the migrator.',
+			default: '>=3.0.4 <=3.0', // TODO: Update version to '3.0.5
+		}),
 		output: flagsParser.string({
 			char: 'o',
 			required: false,
@@ -101,6 +103,7 @@ class LiskMigrator extends Command {
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
+		const compatibleVersions = flags['min-compatible-version'];
 		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
@@ -133,10 +136,6 @@ class LiskMigrator extends Command {
 		// User specified custom config file
 		if (customConfigPath) {
 			config = await getConfig(liskCorePath, customConfigPath);
-
-			// Custom config file used by `lisk.sh` in binary build
-		} else if (isBinaryBuild(liskCorePath)) {
-			config = await getConfig(liskCorePath, join(liskCorePath, 'config.json'));
 		} else {
 			config = await getConfig(liskCorePath);
 		}
