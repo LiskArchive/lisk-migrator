@@ -34,16 +34,14 @@ export class LegacyModuleAsset {
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
 		);
 
-		const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
+		const { unregisteredAddresses: accounts } = await codec.decode<UnregisteredAddresses>(
 			unregisteredAddressesSchema,
 			encodedUnregisteredAddresses,
 		);
 
-		const legacyObject = { accounts: unregisteredAddresses };
-
 		return {
 			module: MODULE_NAME_LEGACY,
-			data: legacyObject,
+			data: { accounts },
 		};
 	};
 }
