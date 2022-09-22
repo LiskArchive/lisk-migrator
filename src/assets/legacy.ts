@@ -34,9 +34,16 @@ export class LegacyModuleAsset {
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
 		);
 
-		const { unregisteredAddresses: accounts } = await codec.decode<UnregisteredAddresses>(
+		const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
 			unregisteredAddressesSchema,
 			encodedUnregisteredAddresses,
+		);
+
+		const accounts = await Promise.all(
+			unregisteredAddresses.map(async account => ({
+				address: account.address.toString('hex'),
+				balance: String(account.balance),
+			})),
 		);
 
 		return {
