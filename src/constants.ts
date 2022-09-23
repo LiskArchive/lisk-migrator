@@ -15,7 +15,10 @@
 export const ROUND_LENGTH = 103;
 
 export const MODULE_NAME_LEGACY = 'legacy';
+export const MODULE_NAME_AUTH = 'auth';
 
 export const DB_KEY_CHAIN_STATE = 'chain';
 
 export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
+
+export const DB_KEY_ACCOUNTS_ADDRESS = 'accounts:address';
