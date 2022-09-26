@@ -33,3 +33,12 @@ export interface Config {
 		readonly storage: StorageConfig;
 	};
 }
+
+export interface UnregisteredAccount {
+	readonly address: Buffer;
+	readonly balance: bigint;
+}
+
+export interface UnregisteredAddresses {
+	readonly unregisteredAddresses: UnregisteredAccount[];
+}
