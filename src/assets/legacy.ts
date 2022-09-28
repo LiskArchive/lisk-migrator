@@ -12,43 +12,26 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
 
-import {
-	MODULE_NAME_LEGACY,
-	DB_KEY_CHAIN_STATE,
-	CHAIN_STATE_UNREGISTERED_ADDRESSES,
-} from '../constants';
+import { MODULE_NAME_LEGACY } from '../constants';
 import { unregisteredAddressesSchema } from '../schemas';
 import { UnregisteredAddresses } from '../types';
 
-export class LegacyModuleAsset {
-	private readonly _db: KVStore;
+export const addLegacyModuleEntry = async (encodedUnregisteredAddresses: Buffer) => {
+	const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
+		unregisteredAddressesSchema,
+		encodedUnregisteredAddresses,
+	);
 
-	public constructor(db: KVStore) {
-		this._db = db;
-	}
+	const accounts = await Promise.all(
+		unregisteredAddresses.map(async account => ({
+			address: account.address.toString('hex'),
+			balance: String(account.balance),
+		})),
+	);
 
-	public addLegacyModuleEntry = async (): Promise<any> => {
-		const encodedUnregisteredAddresses = await this._db.get(
-			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
-		);
-
-		const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
-			unregisteredAddressesSchema,
-			encodedUnregisteredAddresses,
-		);
-
-		const accounts = await Promise.all(
-			unregisteredAddresses.map(async account => ({
-				address: account.address.toString('hex'),
-				balance: String(account.balance),
-			})),
-		);
-
-		return {
-			module: MODULE_NAME_LEGACY,
-			data: { accounts },
-		};
+	return {
+		module: MODULE_NAME_LEGACY,
+		data: { accounts },
 	};
-}
+};

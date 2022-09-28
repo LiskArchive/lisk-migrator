@@ -11,60 +11,28 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { codec } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
+import { MODULE_NAME_AUTH } from '../constants';
 
-import { DB_KEY_ACCOUNTS_ADDRESS, MODULE_NAME_AUTH } from '../constants';
+const delegateComparator = (a: any, b: any) => a.localeCompare(b, 'en');
 
-import { accountSchema } from '../schemas';
+export const addAuthModuleEntry = async (accounts: []) => {
+	const authDataSubstore: any = [];
+	await Promise.all(
+		accounts.map(async (account: any) => {
+			const authObj: any = {};
+			authObj.numberOfSignatures = account.keys.numberOfSignatures;
+			authObj.mandatoryKeys = account.keys.mandatoryKeys.sort(delegateComparator);
+			authObj.optionalKeys = account.keys.optionalKeys.sort(delegateComparator);
+			authObj.nonce = account.sequence.nonce;
+			authDataSubstore.push({
+				address: account.address,
+				authAccount: authObj,
+			});
+		}),
+	);
 
-export class AuthModuleAsset {
-	private readonly _db: KVStore;
-
-	public constructor(db: KVStore) {
-		this._db = db;
-	}
-
-	public addAuthModuleEntry = async (): Promise<any> => {
-		const accountStream = await this._db.createReadStream({
-			gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(0, 20).toString('binary')}`,
-		});
-
-		const allAccounts = await new Promise<any>((resolve, reject) => {
-			const accounts: any = [];
-			accountStream
-				.on('data', async ({ value }) => {
-					accounts.push(value.toString('hex'));
-				})
-				.on('error', error => {
-					reject(error);
-				})
-				.on('end', () => {
-					resolve(accounts);
-				});
-		});
-
-		const authDataSubstore: any[] = [];
-
-		await Promise.all(
-			allAccounts.map(async (account: Buffer) => {
-				const authObj: any = {};
-				const decodedAccount = await codec.decode<any>(accountSchema, account);
-				authObj.numberOfSignatures = decodedAccount.keys.numberOfSignatures;
-				authObj.mandatoryKeys = decodedAccount.keys.mandatoryKeys.sort();
-				authObj.optionalKeys = decodedAccount.keys.optionalKeys.sort();
-				authObj.nonce = decodedAccount.sequence.nonce;
-				authDataSubstore.push({
-					address: decodedAccount.address,
-					authAccount: authObj,
-				});
-				return decodedAccount;
-			}),
-		);
-
-		return {
-			module: MODULE_NAME_AUTH,
-			data: { authDataSubstore },
-		};
+	return {
+		moduie: MODULE_NAME_AUTH,
+		data: authDataSubstore,
 	};
-}
+};
