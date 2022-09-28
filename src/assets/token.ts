@@ -21,7 +21,7 @@ import {
 	MODULE_NAME_LEGACY,
 } from '../constants';
 
-const nextLexicographicalOrder = (currentID: Buffer) =>
+const nextLexicographicalOrder = (currentID: string) =>
 	(parseInt((currentID as unknown) as string, RADIX_HEX) + 1).toString(RADIX_HEX);
 
 export const getLockedBalances = async (account: any) => {
@@ -76,8 +76,9 @@ export const createUserSubstoreArray = async (accounts: any[], legacyAccounts: [
 	}
 
 	const legacyReserveAccount: any = await createLegacyReserveAccount(accounts, legacyAccounts);
-	userSubstore.concat(legacyReserveAccount);
-	// sort userSubstore in the ascending order of(userObj.address + userObj.tokenID)
+	userSubstore
+		.concat(legacyReserveAccount)
+		.sort((a: any, b: any) => a.address.concat(a.tokenID) - b.address.concat(b.tokenID));
 	return userSubstore;
 };
 
