@@ -26,7 +26,7 @@ export const DB_KEY_ACCOUNTS_ADDRESS = 'accounts:address';
 
 export const ADDRESS_LEGACY_RESERVE = utils.hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 
-export const TOKEN_ID_LSK_MAINCHAIN = 0x0000000000000000;
+export const TOKEN_ID_LSK_MAINCHAIN = '0000000000000000';
 export const LOCAL_ID_LSK = Buffer.from([0, 0, 0, 0]).toString('hex');
 
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0);

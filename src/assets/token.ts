@@ -27,15 +27,15 @@ const nextLexicographicalOrder = (currentID: string) =>
 export const getLockedBalances = async (account: any) => {
 	let amount = 0;
 	for (const vote of account.dpos.sentVotes) {
-		amount += vote.amount;
+		amount += Number(vote.amount);
 	}
 
 	for (const unlockingObj of account.dpos.unlocking) {
-		amount += unlockingObj.amount;
+		amount += Number(unlockingObj.amount);
 	}
 
 	if (amount > 0) {
-		return [{ module: MODULE_NAME_DPOS, amount }];
+		return [{ module: MODULE_NAME_DPOS, amount: String(amount) }];
 	}
 	return [];
 };
@@ -46,13 +46,13 @@ export const createLegacyReserveAccount = async (accounts: any[], legacyAccounts
 	const isEmpty = legacyReserveAmount === undefined;
 
 	const legacyReserve: any = {};
-	legacyReserve.address = ADDRESS_LEGACY_RESERVE;
+	legacyReserve.address = ADDRESS_LEGACY_RESERVE.toString('hex');
 	legacyReserve.tokenID = TOKEN_ID_LSK_MAINCHAIN;
 	legacyReserve.availableBalance = isEmpty ? 0 : legacyReserveAccount.token.balance;
 	legacyReserveAmount = 0;
 
 	for (const account of legacyAccounts) {
-		legacyReserveAmount += account.token.balance;
+		legacyReserveAmount += account.balance;
 	}
 	const lockedBalances: any[] = isEmpty ? [] : await getLockedBalances(legacyReserveAccount);
 	legacyReserve.lockedBalances = lockedBalances.push({
@@ -67,9 +67,9 @@ export const createUserSubstoreArray = async (accounts: any[], legacyAccounts: [
 	for (const account of accounts) {
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj: any = {};
-			userObj.address = account.address;
+			userObj.address = account.address.toString('hex');
 			userObj.tokenID = TOKEN_ID_LSK_MAINCHAIN;
-			userObj.availableBalance = account.token.balance;
+			userObj.availableBalance = String(account.token.balance);
 			userObj.lockedBalances = await getLockedBalances(account);
 			userSubstore.push(userObj);
 		}
@@ -78,17 +78,19 @@ export const createUserSubstoreArray = async (accounts: any[], legacyAccounts: [
 	const legacyReserveAccount: any = await createLegacyReserveAccount(accounts, legacyAccounts);
 	userSubstore
 		.concat(legacyReserveAccount)
-		.sort((a: any, b: any) => a.address.concat(a.tokenID) - b.address.concat(b.tokenID));
+		.sort((a: any, b: any) =>
+			a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID)),
+		);
 	return userSubstore;
 };
 
 export const createSupplySubstoreArray = async (accounts: any[]) => {
 	let totalLSKSupply = 0;
 	for (const account of accounts) {
-		totalLSKSupply += account.token.balance;
+		totalLSKSupply += Number(account.token.balance);
 		const lockedBalances = await getLockedBalances(account);
 		if (lockedBalances.length) {
-			totalLSKSupply += lockedBalances[0].amount;
+			totalLSKSupply += Number(lockedBalances[0].amount);
 		}
 	}
 	const LSKSupply = { localID: LOCAL_ID_LSK, totalSupply: totalLSKSupply };

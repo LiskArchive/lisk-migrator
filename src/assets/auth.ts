@@ -12,20 +12,26 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { MODULE_NAME_AUTH } from '../constants';
+import { authSubstore } from '../types';
 
-const delegateComparator = (a: any, b: any) => a.localeCompare(b, 'en');
+const delegateComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
 export const addAuthModuleEntry = async (accounts: []) => {
-	const authDataSubstore: any = [];
+	const authDataSubstore: authSubstore[] = [];
 	await Promise.all(
 		accounts.map(async (account: any) => {
 			const authObj: any = {};
 			authObj.numberOfSignatures = account.keys.numberOfSignatures;
-			authObj.mandatoryKeys = account.keys.mandatoryKeys.sort(delegateComparator);
-			authObj.optionalKeys = account.keys.optionalKeys.sort(delegateComparator);
-			authObj.nonce = account.sequence.nonce;
+			authObj.mandatoryKeys = account.keys.mandatoryKeys
+				.map((key: Buffer) => key.toString('hex'))
+				.sort(delegateComparator);
+			authObj.optionalKeys = account.keys.optionalKeys
+				.map((key: Buffer) => key.toString('hex'))
+				.sort(delegateComparator);
+
+			authObj.nonce = String(account.sequence.nonce);
 			authDataSubstore.push({
-				address: account.address,
+				address: account.address.toString('hex'),
 				authAccount: authObj,
 			});
 		}),

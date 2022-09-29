@@ -42,3 +42,15 @@ export interface UnregisteredAccount {
 export interface UnregisteredAddresses {
 	readonly unregisteredAddresses: UnregisteredAccount[];
 }
+
+export interface authAccount {
+	numberOfSignatures: number;
+	mandatoryKeys: [];
+	optionalKeys: [];
+	nonce: string;
+}
+
+export interface authSubstore {
+	readonly address: string;
+	readonly authAccount: authAccount;
+}
