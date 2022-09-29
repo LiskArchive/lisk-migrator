@@ -12,15 +12,15 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { MODULE_NAME_AUTH } from '../constants';
-import { authSubstore } from '../types';
+import { AuthDataSubstore, AuthAccount } from '../types';
 
 const delegateComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
 export const addAuthModuleEntry = async (accounts: []) => {
-	const authDataSubstore: authSubstore[] = [];
+	const authDataSubstore: AuthDataSubstore[] = [];
 	await Promise.all(
 		accounts.map(async (account: any) => {
-			const authObj: any = {};
+			const authObj: AuthAccount = {};
 			authObj.numberOfSignatures = account.keys.numberOfSignatures;
 			authObj.mandatoryKeys = account.keys.mandatoryKeys
 				.map((key: Buffer) => key.toString('hex'))

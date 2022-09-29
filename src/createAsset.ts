@@ -66,7 +66,7 @@ export class CreateAsset {
 
 		const accounts: any = await Promise.all(
 			allAccounts.map(async (account: Buffer) => {
-				const decodedAccount = await codec.decode<any>(accountSchema, account);
+				const decodedAccount = await codec.decode(accountSchema, account);
 				return decodedAccount;
 			}),
 		);
