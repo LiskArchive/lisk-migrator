@@ -52,12 +52,12 @@ export const createLegacyReserveAccount = async (accounts: any[], legacyAccounts
 	legacyReserveAmount = 0;
 
 	for (const account of legacyAccounts) {
-		legacyReserveAmount += account.balance;
+		legacyReserveAmount += Number(account.balance);
 	}
 	const lockedBalances: any[] = isEmpty ? [] : await getLockedBalances(legacyReserveAccount);
 	legacyReserve.lockedBalances = lockedBalances.push({
 		moduleID: MODULE_NAME_LEGACY,
-		amount: legacyReserveAmount,
+		amount: String(legacyReserveAmount),
 	});
 	return legacyReserve;
 };
@@ -93,7 +93,7 @@ export const createSupplySubstoreArray = async (accounts: any[]) => {
 			totalLSKSupply += Number(lockedBalances[0].amount);
 		}
 	}
-	const LSKSupply = { localID: LOCAL_ID_LSK, totalSupply: totalLSKSupply };
+	const LSKSupply = { localID: LOCAL_ID_LSK, totalSupply: String(totalLSKSupply) };
 	return [LSKSupply];
 };
 

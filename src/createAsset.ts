@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+// import fs from 'fs';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore } from '@liskhq/lisk-db';
 
@@ -25,7 +26,7 @@ import { accountSchema } from './schemas';
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
 import { addTokenModuleEntry } from './assets/token';
-import { addDPoSModuleEntry } from './assets/dpos';
+// import { addDPoSModuleEntry } from './assets/dpos';
 
 export class CreateAsset {
 	private readonly _db: KVStore;
@@ -34,7 +35,7 @@ export class CreateAsset {
 		this._db = db;
 	}
 
-	public init = async (): Promise<any> => {
+	public init = async (): Promise<Record<string, unknown>> => {
 		// Create legacy module asset
 		const encodedUnregisteredAddresses = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
@@ -45,14 +46,15 @@ export class CreateAsset {
 
 		// Create other module assets
 		const accountStream = await this._db.createReadStream({
-			gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(0, 20).toString('binary')}`,
+			gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
+			lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
 		});
 
 		const allAccounts = await new Promise<any>((resolve, reject) => {
-			const accounts: any = [];
+			const accounts: Buffer[] = [];
 			accountStream
 				.on('data', async ({ value }) => {
-					accounts.push(value.toString('hex'));
+					accounts.push(value);
 				})
 				.on('error', error => {
 					reject(error);
@@ -69,16 +71,16 @@ export class CreateAsset {
 			}),
 		);
 
-		const authModuleAssets = await addAuthModuleEntry(accounts);
 		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts);
-		const dposModuleAssets = await addDPoSModuleEntry(accounts);
+		const authModuleAssets = await addAuthModuleEntry(accounts);
+		// const dposModuleAssets = await addDPoSModuleEntry(accounts);
 
 		// Either return or create assets.json file
 		return {
 			legacyModuleAssets,
 			authModuleAssets,
 			tokenModuleAssets,
-			dposModuleAssets,
+			// dposModuleAssets,
 		};
 	};
 }
