@@ -179,3 +179,37 @@ export const accountSchema = {
 	},
 	required: ['address', 'token', 'sequence', 'keys', 'dpos'],
 };
+
+export const signingBlockHeaderSchema = {
+	$id: '/block/header/signing',
+	type: 'object',
+	properties: {
+		version: { dataType: 'uint32', fieldNumber: 1 },
+		timestamp: { dataType: 'uint32', fieldNumber: 2 },
+		height: { dataType: 'uint32', fieldNumber: 3 },
+		previousBlockID: { dataType: 'bytes', fieldNumber: 4 },
+		transactionRoot: { dataType: 'bytes', fieldNumber: 5 },
+		generatorPublicKey: { dataType: 'bytes', fieldNumber: 6 },
+		reward: { dataType: 'uint64', fieldNumber: 7 },
+		asset: { dataType: 'bytes', fieldNumber: 8 },
+	},
+	required: [
+		'version',
+		'timestamp',
+		'height',
+		'previousBlockID',
+		'transactionRoot',
+		'generatorPublicKey',
+		'reward',
+		'asset',
+	],
+};
+
+export const blockHeaderSchema = {
+	...signingBlockHeaderSchema,
+	$id: '/block/header',
+	properties: {
+		...signingBlockHeaderSchema.properties,
+		signature: { dataType: 'bytes', fieldNumber: 9 },
+	},
+};

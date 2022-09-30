@@ -13,20 +13,23 @@
  */
 // import fs from 'fs';
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
+import { KVStore, formatInt } from '@liskhq/lisk-db';
 
 import {
 	DB_KEY_CHAIN_STATE,
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
 	DB_KEY_ACCOUNTS_ADDRESS,
+	DB_KEY_BLOCKS_HEIGHT,
+	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
+	HEIGHT_SNAPSHOT,
 } from './constants';
 
-import { accountSchema } from './schemas';
+import { accountSchema, blockHeaderSchema } from './schemas';
 
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
 import { addTokenModuleEntry } from './assets/token';
-// import { addDPoSModuleEntry } from './assets/dpos';
+import { addDPoSModuleEntry } from './assets/dpos';
 
 export class CreateAsset {
 	private readonly _db: KVStore;
@@ -42,7 +45,6 @@ export class CreateAsset {
 		);
 
 		const legacyModuleAssets = await addLegacyModuleEntry(encodedUnregisteredAddresses);
-		const legacyAccounts: any = legacyModuleAssets.data.accounts;
 
 		// Create other module assets
 		const accountStream = await this._db.createReadStream({
@@ -71,16 +73,40 @@ export class CreateAsset {
 			}),
 		);
 
-		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts);
 		const authModuleAssets = await addAuthModuleEntry(accounts);
-		// const dposModuleAssets = await addDPoSModuleEntry(accounts);
+
+		const legacyAccounts: any = legacyModuleAssets.data.accounts;
+		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts);
+
+		const blockStream = this._db.createReadStream({
+			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
+			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_SNAPSHOT)}`,
+			reverse: true,
+		});
+
+		const allBlocks = await new Promise<any>((resolve, reject) => {
+			const blocks: Buffer[] = [];
+			blockStream
+				.on('data', async ({ value }) => {
+					blocks.push(value);
+				})
+				.on('error', error => {
+					reject(error);
+				})
+				.on('end', () => {
+					resolve(blocks);
+				});
+		});
+
+		const blocks = allBlocks.map(async (block: Buffer) => codec.decode(blockHeaderSchema, block));
+		const dposModuleAssets = await addDPoSModuleEntry(accounts, blocks);
 
 		// Either return or create assets.json file
 		return {
 			legacyModuleAssets,
 			authModuleAssets,
 			tokenModuleAssets,
-			// dposModuleAssets,
+			dposModuleAssets,
 		};
 	};
 }
