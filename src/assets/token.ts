@@ -21,10 +21,12 @@ import {
 	MODULE_NAME_LEGACY,
 } from '../constants';
 
+import { Account } from '../types';
+
 const nextLexicographicalOrder = (currentID: string) =>
 	(parseInt((currentID as unknown) as string, RADIX_HEX) + 1).toString(RADIX_HEX);
 
-export const getLockedBalances = async (account: any) => {
+export const getLockedBalances = async (account: Account) => {
 	let amount = 0;
 	for (const vote of account.dpos.sentVotes) {
 		amount += Number(vote.amount);
@@ -40,8 +42,10 @@ export const getLockedBalances = async (account: any) => {
 	return [];
 };
 
-export const createLegacyReserveAccount = async (accounts: any[], legacyAccounts: any[]) => {
-	const legacyReserveAccount = accounts.find(account => account.address === ADDRESS_LEGACY_RESERVE);
+export const createLegacyReserveAccount = async (accounts: Account[], legacyAccounts: any[]) => {
+	const legacyReserveAccount: any = accounts.find(
+		account => account.address === ADDRESS_LEGACY_RESERVE,
+	);
 	let legacyReserveAmount;
 	const isEmpty = legacyReserveAmount === undefined;
 
@@ -62,8 +66,8 @@ export const createLegacyReserveAccount = async (accounts: any[], legacyAccounts
 	return legacyReserve;
 };
 
-export const createUserSubstoreArray = async (accounts: any[], legacyAccounts: []) => {
-	const userSubstore: Object[] = [];
+export const createUserSubstoreArray = async (accounts: Account[], legacyAccounts: []) => {
+	const userSubstore: Record<string, unknown>[] = [];
 	for (const account of accounts) {
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj: any = {};
@@ -84,7 +88,7 @@ export const createUserSubstoreArray = async (accounts: any[], legacyAccounts: [
 	return userSubstore;
 };
 
-export const createSupplySubstoreArray = async (accounts: any[]) => {
+export const createSupplySubstoreArray = async (accounts: Account[]) => {
 	let totalLSKSupply = 0;
 	for (const account of accounts) {
 		totalLSKSupply += Number(account.token.balance);
@@ -97,7 +101,7 @@ export const createSupplySubstoreArray = async (accounts: any[]) => {
 	return [LSKSupply];
 };
 
-export const addTokenModuleEntry = async (accounts: [], legacyAccounts: []) => {
+export const addTokenModuleEntry = async (accounts: Account[], legacyAccounts: []) => {
 	const tokenObj: any = {};
 	tokenObj.userSubstore = await createUserSubstoreArray(accounts, legacyAccounts);
 	tokenObj.supplySubstore = await createSupplySubstoreArray(accounts);

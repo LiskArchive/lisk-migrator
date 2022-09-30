@@ -45,12 +45,46 @@ export interface UnregisteredAddresses {
 
 export interface AuthAccount {
 	numberOfSignatures?: number;
-	mandatoryKeys?: [];
-	optionalKeys?: [];
+	mandatoryKeys?: any;
+	optionalKeys?: any;
 	nonce?: string;
 }
 
 export interface AuthDataSubstore {
 	address: string;
 	authAccount: AuthAccount;
+}
+
+export interface Account {
+	readonly address: Buffer;
+	readonly token: {
+		readonly balance: bigint;
+	};
+	readonly sequence: {
+		readonly nonce: bigint;
+	};
+	readonly keys: {
+		readonly mandatoryKeys: Buffer[];
+		readonly optionalKeys: Buffer[];
+		readonly numberOfSignatures: number;
+	};
+	readonly dpos: {
+		readonly delegate: {
+			readonly username: string;
+			readonly pomHeights: number[];
+			readonly consecutiveMissedBlocks: number;
+			readonly lastForgedHeight: number;
+			readonly isBanned: boolean;
+			readonly totalVotesReceived: bigint;
+		};
+		readonly sentVotes: {
+			readonly delegateAddress: Buffer;
+			readonly amount: bigint;
+		}[];
+		readonly unlocking: {
+			readonly delegateAddress: Buffer;
+			readonly amount: bigint;
+			readonly unvoteHeight: number;
+		}[];
+	};
 }

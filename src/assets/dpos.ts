@@ -22,6 +22,8 @@ import {
 	// ROUND_LENGTH,
 } from '../constants';
 
+import { Account } from '../types';
+
 export const getValidatorKeys = (blocks: any[]) => {
 	const keys: any = [];
 	for (const block of blocks) {
@@ -35,19 +37,19 @@ export const getValidatorKeys = (blocks: any[]) => {
 	return keys;
 };
 
-export const createValidatorsArray = (accounts: any[], blocks: any[]) => {
+export const createValidatorsArray = (accounts: Account[], blocks: any[]) => {
 	const validators: any[] = [];
 	const validatorKeys: any = getValidatorKeys(blocks);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username === '') {
 			const validator: any = {};
-			validator.address = account.address;
+			validator.address = account.address.toString('hex');
 			validator.name = account.dpos.delegate.username;
 			validator.blsKey = INVALID_BLS_KEY;
 			validator.proofOfPossession = DUMMY_PROOF_OF_POSSESSION;
-			if (validatorKeys[account.address]) {
-				validator.generatorKey = validatorKeys[account.address];
+			if (validatorKeys[account.address.toString('hex')]) {
+				validator.generatorKey = validatorKeys[account.address.toString('hex')];
 			} else {
 				validator.generatorKey = INVALID_ED25519_KEY;
 			}
@@ -61,7 +63,7 @@ export const createValidatorsArray = (accounts: any[], blocks: any[]) => {
 	return validators;
 };
 
-export const createVotersArray = (accounts: any[]) => {
+export const createVotersArray = (accounts: Account[]) => {
 	const voters: any = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes && account.dpos.unlocking) {
@@ -85,7 +87,7 @@ export const createGenesisDataObj = () => {
 	return genesisDataObj;
 };
 
-export const addDPoSModuleEntry = async (accounts: any, blocks: any) => {
+export const addDPoSModuleEntry = async (accounts: Account[], blocks: any) => {
 	const DPoSObj: any = {};
 	DPoSObj.validators = await createValidatorsArray(accounts, blocks);
 	DPoSObj.voters = await createVotersArray(accounts);
