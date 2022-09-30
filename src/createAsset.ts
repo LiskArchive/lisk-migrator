@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// import fs from 'fs';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
 
@@ -67,10 +66,7 @@ export class CreateAsset {
 		});
 
 		const accounts: any = await Promise.all(
-			allAccounts.map(async (account: Buffer) => {
-				const decodedAccount = await codec.decode(accountSchema, account);
-				return decodedAccount;
-			}),
+			allAccounts.map(async (account: Buffer) => codec.decode(accountSchema, account)),
 		);
 
 		const authModuleAssets = await addAuthModuleEntry(accounts);
@@ -81,7 +77,6 @@ export class CreateAsset {
 		const blockStream = this._db.createReadStream({
 			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
 			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_SNAPSHOT)}`,
-			reverse: true,
 		});
 
 		const allBlocks = await new Promise<any>((resolve, reject) => {
@@ -98,7 +93,9 @@ export class CreateAsset {
 				});
 		});
 
-		const blocks = allBlocks.map(async (block: Buffer) => codec.decode(blockHeaderSchema, block));
+		const blocks: any = await Promise.all(
+			allBlocks.map(async (block: Buffer) => codec.decode(blockHeaderSchema, block)),
+		);
 		const dposModuleAssets = await addDPoSModuleEntry(accounts, blocks);
 
 		// Either return or create assets.json file
