@@ -93,3 +93,80 @@ export interface LegacyAccount {
 	address: string;
 	balance: string;
 }
+
+export interface Block<T = Buffer | string> {
+	header: {
+		[key: string]: unknown;
+		id?: T;
+		generatorPublicKey: Buffer;
+		version: number;
+		transactions: Record<string, unknown>;
+		asset: Record<string, unknown>;
+	};
+	payload: {
+		[key: string]: unknown;
+		id?: T;
+		senderPublicKey: Buffer;
+	}[];
+}
+
+export interface UserSubstore {
+	address: string;
+	tokenID: string;
+	availableBalance: string;
+	lockedBalances: {
+		module: string;
+		amount: string;
+	}[];
+}
+
+export interface SupplySubstore {
+	localID: string;
+	totalSupply: string;
+}
+
+export interface TokenStore {
+	userSubstore: UserSubstore[];
+	supplySubstore: SupplySubstore[];
+	escrowSubstore: Record<string, unknown>;
+	availableLocalIDSubstore: {
+		nextAvailableLocalID: string;
+	};
+}
+
+export interface Validator {
+	address: string;
+	name: string;
+	blsKey: string;
+	proofOfPossession: string;
+	generatorKey: string;
+	lastGeneratedHeight: number;
+	isBanned: boolean;
+	pomHeights: number[];
+	consecutiveMissedBlocks: number;
+}
+
+export interface Voter {
+	address: string;
+	sentVotes: {
+		delegateAddress: string;
+		amount: string;
+	}[];
+	pendingUnlocks: {
+		delegateAddress: string;
+		amount: string;
+		unvoteHeight: number;
+	}[];
+}
+
+export interface GenesisData {
+	initRounds: number;
+	initDelegates: string[];
+}
+
+export interface DPoSStore {
+	validators: Validator[];
+	voters: Voter[];
+	snapshots: Record<string, unknown>;
+	genesisData: GenesisData;
+}

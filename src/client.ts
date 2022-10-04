@@ -13,7 +13,7 @@
  */
 import { createIPCClient } from '@liskhq/lisk-api-client';
 
-let client: object;
+let client: unknown;
 
 export const getClient = async (liskCorePath: string): Promise<any> => {
 	if (!client) {

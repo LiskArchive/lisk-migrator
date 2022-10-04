@@ -22,23 +22,23 @@ import {
 	// ROUND_LENGTH,
 } from '../constants';
 
-import { Account } from '../types';
+import { Account, Block, Validator, Voter } from '../types';
 
-export const getValidatorKeys = (blocks: any[]) => {
+export const getValidatorKeys = (blocks: Block[]) => {
 	const keys = [];
 	for (const block of blocks) {
-		const lskAddress: any = address.getAddressFromPublicKey(block.generatorPublicKey);
-		keys[lskAddress] = block.generatorPublicKey;
-		for (const trs of block.transactions) {
-			const trxAddress: any = address.getAddressFromPublicKey(trs.senderPublicKey);
-			keys[trxAddress] = trs.senderPublicKey;
+		const lskAddress: any = address.getAddressFromPublicKey(block.header.generatorPublicKey);
+		keys[lskAddress] = block.header.generatorPublicKey;
+		for (const trs of block.payload) {
+			const trxAddress: any = address.getAddressFromPublicKey(trs.senderPublicKey).toString('hex');
+			keys[trxAddress] = trs.senderPublicKey.toString('hex');
 		}
 	}
 	return keys;
 };
 
-export const createValidatorsArray = (accounts: Account[], blocks: any[]) => {
-	const validators: any[] = [];
+export const createValidatorsArray = (accounts: Account[], blocks: Block[]) => {
+	const validators: Validator[] = [];
 	const validatorKeys: any = getValidatorKeys(blocks);
 
 	for (const account of accounts) {
@@ -64,7 +64,7 @@ export const createValidatorsArray = (accounts: Account[], blocks: any[]) => {
 };
 
 export const createVotersArray = (accounts: Account[]) => {
-	const voters: any = [];
+	const voters: Voter[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes && account.dpos.unlocking) {
 			const voter: any = {};
