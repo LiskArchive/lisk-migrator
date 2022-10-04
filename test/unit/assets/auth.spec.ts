@@ -13,12 +13,13 @@
  */
 import { addAuthModuleEntry } from '../../../src/assets/auth';
 import { MODULE_NAME_AUTH } from '../../../src/constants';
-import { AccountEntry } from '../../../src/types';
+import { AccountEntry, AuthAccountEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
+import { ADDRESS_LISK32 } from '../utils/regex';
 
 describe('Build assets/auth', () => {
 	let accounts: AccountEntry[];
-	beforeEach(async () => {
+	beforeAll(async () => {
 		accounts = [
 			createFakeDefaultAccount({
 				address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
@@ -42,12 +43,15 @@ describe('Build assets/auth', () => {
 		// Assert
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
 		expect(response.data).toHaveLength(2);
-		expect(Object.keys(response.data[0])).toEqual(['address', 'authAccount']);
-		expect(Object.keys(response.data[0].authAccount)).toEqual([
-			'numberOfSignatures',
-			'mandatoryKeys',
-			'optionalKeys',
-			'nonce',
-		]);
+		expect(Object.getOwnPropertyNames(response.data[0])).toEqual(['address', 'authAccount']);
+		response.data.forEach((asset: { address: string; authAccount: AuthAccountEntry }) => {
+			expect(asset.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(asset.authAccount)).toEqual([
+				'numberOfSignatures',
+				'mandatoryKeys',
+				'optionalKeys',
+				'nonce',
+			]);
+		});
 	});
 });

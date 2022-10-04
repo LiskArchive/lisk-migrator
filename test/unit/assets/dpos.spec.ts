@@ -14,6 +14,8 @@
 import { MODULE_NAME_DPOS } from '../../../src/constants';
 import { AccountEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
+import { ADDRESS_LISK32 } from '../utils/regex';
+
 import {
 	addDPoSModuleEntry,
 	createGenesisDataObj,
@@ -75,17 +77,20 @@ describe('Build assets/dpos', () => {
 
 		// Assert
 		expect(validatorsArray).toBeInstanceOf(Array);
-		expect(Object.keys(validatorsArray[0])).toEqual([
-			'address',
-			'name',
-			'blsKey',
-			'proofOfPossession',
-			'generatorKey',
-			'lastGeneratedHeight',
-			'isBanned',
-			'pomHeights',
-			'consecutiveMissedBlocks',
-		]);
+		validatorsArray.forEach(validator => {
+			expect(validator.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(validator)).toEqual([
+				'address',
+				'name',
+				'blsKey',
+				'proofOfPossession',
+				'generatorKey',
+				'lastGeneratedHeight',
+				'isBanned',
+				'pomHeights',
+				'consecutiveMissedBlocks',
+			]);
+		});
 	});
 
 	it('should create createVotersArray', async () => {
@@ -93,14 +98,26 @@ describe('Build assets/dpos', () => {
 
 		// Assert
 		expect(votersArray).toBeInstanceOf(Array);
-		expect(Object.keys(votersArray[0])).toEqual(['address', 'sentVotes', 'pendingUnlocks']);
+		votersArray.forEach(voter => {
+			expect(voter.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(voter)).toEqual(['address', 'sentVotes', 'pendingUnlocks']);
+			voter.sentVotes.forEach(vote =>
+				expect(vote.delegateAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
+			);
+			voter.pendingUnlocks.forEach(unlock =>
+				expect(unlock.delegateAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
+			);
+		});
 	});
 
 	it('should create createGenesisDataObj', async () => {
 		const genesisDataObj = await createGenesisDataObj();
 
 		// Assert
-		expect(Object.keys(genesisDataObj)).toEqual(['initRounds', 'initDelegates']);
+		genesisDataObj.initDelegates.forEach(address => {
+			expect(address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+		});
+		expect(Object.getOwnPropertyNames(genesisDataObj)).toEqual(['initRounds', 'initDelegates']);
 	});
 
 	it('should create DPoS module asset', async () => {
@@ -108,7 +125,7 @@ describe('Build assets/dpos', () => {
 
 		// Assert
 		expect(dposModuleAsset.module).toEqual(MODULE_NAME_DPOS);
-		expect(Object.keys(dposModuleAsset.data)).toEqual([
+		expect(Object.getOwnPropertyNames(dposModuleAsset.data)).toEqual([
 			'validators',
 			'voters',
 			'snapshots',

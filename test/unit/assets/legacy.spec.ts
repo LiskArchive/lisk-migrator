@@ -17,7 +17,7 @@ import { codec } from '@liskhq/lisk-codec';
 import { addLegacyModuleEntry } from '../../../src/assets/legacy';
 import { MODULE_NAME_LEGACY } from '../../../src/constants';
 import { unregisteredAddressesSchema } from '../../../src/schemas';
-import { UnregisteredAccount } from '../../../src/types';
+import { UnregisteredAccount, LegacyAccountEntry } from '../../../src/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = legacy.getKeys(passphrase);
@@ -47,7 +47,7 @@ describe('Build assets/legacy', () => {
 	};
 
 	describe('addLegacyModuleEntry', () => {
-		beforeEach(async () => {
+		beforeAll(async () => {
 			for (const account of Object.values(testAccounts)) {
 				unregisteredAddresses = [];
 				unregisteredAddresses.push({
@@ -67,7 +67,9 @@ describe('Build assets/legacy', () => {
 			// Assert
 			expect(response.module).toEqual(MODULE_NAME_LEGACY);
 			expect(response.data.accounts.length).toBeGreaterThan(0);
-			expect(Object.keys(response.data.accounts[0])).toEqual(['address', 'balance']);
+			response.data.accounts.forEach((account: LegacyAccountEntry) => {
+				expect(Object.getOwnPropertyNames(account)).toEqual(['address', 'balance']);
+			});
 		});
 
 		it('should throw error when invalid encodedUnregisteredAddresses', async () => {

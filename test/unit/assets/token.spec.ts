@@ -16,6 +16,8 @@ import { utils, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
 import { MODULE_NAME_TOKEN } from '../../../src/constants';
 import { AccountEntry, LegacyAccountEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
+import { ADDRESS_LISK32 } from '../utils/regex';
+
 import {
 	addTokenModuleEntry,
 	createUserSubstoreArray,
@@ -87,27 +89,39 @@ describe('Build assets/token', () => {
 
 		// Assert
 		expect(userSubstore).toBeInstanceOf(Array);
-		expect(Object.keys(userSubstore[0])).toEqual([
-			'address',
-			'tokenID',
-			'availableBalance',
-			'lockedBalances',
-		]);
+		userSubstore.forEach(entry => {
+			expect(entry.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(entry)).toEqual([
+				'address',
+				'tokenID',
+				'availableBalance',
+				'lockedBalances',
+			]);
+		});
 	});
 
 	it('should create supplySubStore', async () => {
 		const supplySubStore = await createSupplySubstoreArray(accounts);
 
 		// Assert
+		let totalSupply = 0;
+		for (const account of accounts) {
+			totalSupply += Number(account.token.balance);
+		}
+
 		expect(supplySubStore).toBeInstanceOf(Array);
-		expect(Object.keys(supplySubStore[0])).toEqual(['localID', 'totalSupply']);
+		supplySubStore.forEach(entry => {
+			expect(Object.getOwnPropertyNames(entry)).toEqual(['localID', 'totalSupply']);
+			expect(entry.totalSupply).toEqual(String(totalSupply));
+		});
 	});
 
 	it('should create legacyReserveAccount', async () => {
 		const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccount);
 
 		// Assert
-		expect(Object.keys(legacyReserveAccount)).toEqual([
+		expect(legacyReserveAccount.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+		expect(Object.getOwnPropertyNames(legacyReserveAccount)).toEqual([
 			'address',
 			'tokenID',
 			'availableBalance',
@@ -120,7 +134,7 @@ describe('Build assets/token', () => {
 
 		// Assert
 		expect(response.module).toEqual(MODULE_NAME_TOKEN);
-		expect(Object.keys(response.data)).toEqual([
+		expect(Object.getOwnPropertyNames(response.data)).toEqual([
 			'userSubstore',
 			'supplySubstore',
 			'escrowSubstore',
