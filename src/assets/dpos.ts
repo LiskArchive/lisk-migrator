@@ -22,7 +22,14 @@ import {
 	// ROUND_LENGTH,
 } from '../constants';
 
-import { AccountEntry, BlockEntry, ValidatorEntry, VoterEntry } from '../types';
+import {
+	AccountEntry,
+	BlockEntry,
+	ModuleResponse,
+	ValidatorEntry,
+	VoterEntry,
+	GenesisDataEntry,
+} from '../types';
 
 export const getValidatorKeys = async (blocks: BlockEntry[]) => {
 	const keys = [];
@@ -37,18 +44,21 @@ export const getValidatorKeys = async (blocks: BlockEntry[]) => {
 	return keys;
 };
 
-export const createValidatorsArray = async (accounts: AccountEntry[], blocks: BlockEntry[]) => {
+export const createValidatorsArray = async (
+	accounts: AccountEntry[],
+	blocks: BlockEntry[],
+): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntry[] = [];
 	const validatorKeys: any = await getValidatorKeys(blocks);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
 			const validator: ValidatorEntry = {
-				address: account.address.toString('hex'),
+				address: address.getLisk32AddressFromAddress(account.address),
 				name: account.dpos.delegate.username,
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
-				generatorKey: 'null',
+				generatorKey: '',
 				lastGeneratedHeight: 0,
 				isBanned: false,
 				pomHeights: [],
@@ -70,18 +80,18 @@ export const createValidatorsArray = async (accounts: AccountEntry[], blocks: Bl
 	return validators;
 };
 
-export const createVotersArray = async (accounts: AccountEntry[]) => {
+export const createVotersArray = async (accounts: AccountEntry[]): Promise<VoterEntry[]> => {
 	const voters: VoterEntry[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes && account.dpos.unlocking) {
 			const voter: VoterEntry = {
-				address: account.address.toString('hex'),
+				address: address.getLisk32AddressFromAddress(account.address),
 				sentVotes: account.dpos.sentVotes.map(vote => ({
-					delegateAddress: vote.delegateAddress.toString('hex'),
+					delegateAddress: address.getLisk32AddressFromAddress(vote.delegateAddress),
 					amount: String(vote.amount),
 				})),
 				pendingUnlocks: account.dpos.unlocking.map(unlock => ({
-					delegateAddress: unlock.delegateAddress.toString('hex'),
+					delegateAddress: address.getLisk32AddressFromAddress(unlock.delegateAddress),
 					amount: String(unlock.amount),
 					unvoteHeight: unlock.unvoteHeight,
 				})),
@@ -92,18 +102,24 @@ export const createVotersArray = async (accounts: AccountEntry[]) => {
 	return voters;
 };
 
-export const createGenesisDataObj = async () => {
-	const genesisDataObj: any = {};
-	genesisDataObj.initRounds = DPOS_INIT_ROUNDS;
+export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
 	// const r = Math.ceil((HEIGHT_SNAPSHOT - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
 	// TODO: Discuss
 	const topDelegates: any = [];
-	const initDelegates = topDelegates.map((delegate: any) => delegate.address);
-	genesisDataObj.initDelegates = initDelegates;
+	const initDelegates = topDelegates.map((delegate: any) =>
+		address.getLisk32AddressFromAddress(delegate.address),
+	);
+	const genesisDataObj = {
+		initRounds: DPOS_INIT_ROUNDS,
+		initDelegates,
+	};
 	return genesisDataObj;
 };
 
-export const addDPoSModuleEntry = async (accounts: AccountEntry[], blocks: BlockEntry[]) => {
+export const addDPoSModuleEntry = async (
+	accounts: AccountEntry[],
+	blocks: BlockEntry[],
+): Promise<ModuleResponse> => {
 	const DPoSObj = {
 		validators: await createValidatorsArray(accounts, blocks),
 		voters: await createVotersArray(accounts),

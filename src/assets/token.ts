@@ -11,6 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { address } from '@liskhq/lisk-cryptography';
+
 import {
 	MODULE_NAME_TOKEN,
 	MODULE_NAME_DPOS,
@@ -27,12 +29,14 @@ import {
 	SupplySubstoreEntry,
 	TokenStoreEntry,
 	UserSubstoreEntry,
+	ModuleResponse,
+	LockedBalance,
 } from '../types';
 
 const nextLexicographicalOrder = (currentID: string) =>
 	(parseInt(currentID, RADIX_HEX) + 1).toString(RADIX_HEX).padStart(8, '0');
 
-export const getLockedBalances = async (account: AccountEntry) => {
+export const getLockedBalances = async (account: AccountEntry): Promise<LockedBalance[]> => {
 	let amount = 0;
 	for (const vote of account.dpos.sentVotes) {
 		amount += Number(vote.amount);
@@ -51,7 +55,7 @@ export const getLockedBalances = async (account: AccountEntry) => {
 export const createLegacyReserveAccount = async (
 	accounts: AccountEntry[],
 	legacyAccounts: LegacyAccountEntry[],
-) => {
+): Promise<UserSubstoreEntry> => {
 	const legacyReserveAccount: any = accounts.find(
 		account => account.address === ADDRESS_LEGACY_RESERVE,
 	);
@@ -69,7 +73,7 @@ export const createLegacyReserveAccount = async (
 		amount: String(legacyReserveAmount),
 	});
 	const legacyReserve = {
-		address: ADDRESS_LEGACY_RESERVE.toString('hex'),
+		address: address.getLisk32AddressFromAddress(ADDRESS_LEGACY_RESERVE),
 		tokenID: TOKEN_ID_LSK_MAINCHAIN,
 		availableBalance: isEmpty ? 0 : legacyReserveAccount.token.balance,
 		lockedBalances,
@@ -86,7 +90,7 @@ export const createUserSubstoreArray = async (
 	for (const account of accounts) {
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj = {
-				address: account.address.toString('hex'),
+				address: address.getLisk32AddressFromAddress(account.address),
 				tokenID: TOKEN_ID_LSK_MAINCHAIN,
 				availableBalance: String(account.token.balance),
 				lockedBalances: await getLockedBalances(account),
@@ -123,7 +127,7 @@ export const createSupplySubstoreArray = async (
 export const addTokenModuleEntry = async (
 	accounts: AccountEntry[],
 	legacyAccounts: LegacyAccountEntry[],
-) => {
+): Promise<ModuleResponse> => {
 	const tokenObj: TokenStoreEntry = {
 		userSubstore: await createUserSubstoreArray(accounts, legacyAccounts),
 		supplySubstore: await createSupplySubstoreArray(accounts),

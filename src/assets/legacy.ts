@@ -15,9 +15,11 @@ import { codec } from '@liskhq/lisk-codec';
 
 import { MODULE_NAME_LEGACY } from '../constants';
 import { unregisteredAddressesSchema } from '../schemas';
-import { UnregisteredAddresses } from '../types';
+import { UnregisteredAddresses, ModuleResponse } from '../types';
 
-export const addLegacyModuleEntry = async (encodedUnregisteredAddresses: Buffer) => {
+export const addLegacyModuleEntry = async (
+	encodedUnregisteredAddresses: Buffer,
+): Promise<ModuleResponse> => {
 	const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
 		unregisteredAddressesSchema,
 		encodedUnregisteredAddresses,

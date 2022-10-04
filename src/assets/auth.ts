@@ -11,12 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { address } from '@liskhq/lisk-cryptography';
+
 import { MODULE_NAME_AUTH } from '../constants';
-import { AuthDataSubstoreEntry, AuthAccountEntry, AccountEntry } from '../types';
+import { AuthDataSubstoreEntry, AuthAccountEntry, AccountEntry, ModuleResponse } from '../types';
 
 const delegateComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
-export const addAuthModuleEntry = async (accounts: AccountEntry[]) => {
+export const addAuthModuleEntry = async (accounts: AccountEntry[]): Promise<ModuleResponse> => {
 	const authDataSubstore: AuthDataSubstoreEntry[] = [];
 	await Promise.all(
 		accounts.map(async (account: AccountEntry) => {
@@ -31,7 +33,7 @@ export const addAuthModuleEntry = async (accounts: AccountEntry[]) => {
 				nonce: String(account.sequence.nonce),
 			};
 			authDataSubstore.push({
-				address: account.address.toString('hex'),
+				address: address.getLisk32AddressFromAddress(account.address),
 				authAccount: authObj,
 			});
 		}),

@@ -45,8 +45,8 @@ export interface UnregisteredAddresses {
 
 export interface AuthAccountEntry {
 	numberOfSignatures: number;
-	mandatoryKeys: any;
-	optionalKeys: any;
+	mandatoryKeys: string[];
+	optionalKeys: string[];
 	nonce: string;
 }
 
@@ -169,4 +169,14 @@ export interface DPoSStoreEntry {
 	voters: VoterEntry[];
 	snapshots: Record<string, unknown>;
 	genesisData: GenesisDataEntry;
+}
+
+export interface LockedBalance {
+	module: string;
+	amount: string;
+}
+
+export interface ModuleResponse {
+	module: string;
+	data: any;
 }
