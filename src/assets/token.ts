@@ -21,7 +21,7 @@ import {
 	MODULE_NAME_LEGACY,
 } from '../constants';
 
-import { Account } from '../types';
+import { Account, LegacyAccount } from '../types';
 
 const nextLexicographicalOrder = (currentID: string) =>
 	(parseInt((currentID as unknown) as string, RADIX_HEX) + 1).toString(RADIX_HEX);
@@ -42,7 +42,10 @@ export const getLockedBalances = async (account: Account) => {
 	return [];
 };
 
-export const createLegacyReserveAccount = async (accounts: Account[], legacyAccounts: any[]) => {
+export const createLegacyReserveAccount = async (
+	accounts: Account[],
+	legacyAccounts: LegacyAccount[],
+) => {
 	const legacyReserveAccount: any = accounts.find(
 		account => account.address === ADDRESS_LEGACY_RESERVE,
 	);
@@ -58,9 +61,9 @@ export const createLegacyReserveAccount = async (accounts: Account[], legacyAcco
 	for (const account of legacyAccounts) {
 		legacyReserveAmount += Number(account.balance);
 	}
-	const lockedBalances: any[] = isEmpty ? [] : await getLockedBalances(legacyReserveAccount);
+	const lockedBalances = isEmpty ? [] : await getLockedBalances(legacyReserveAccount);
 	legacyReserve.lockedBalances = lockedBalances.push({
-		moduleID: MODULE_NAME_LEGACY,
+		module: MODULE_NAME_LEGACY,
 		amount: String(legacyReserveAmount),
 	});
 	return legacyReserve;
@@ -79,7 +82,7 @@ export const createUserSubstoreArray = async (accounts: Account[], legacyAccount
 		}
 	}
 
-	const legacyReserveAccount: any = await createLegacyReserveAccount(accounts, legacyAccounts);
+	const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccounts);
 	userSubstore
 		.concat(legacyReserveAccount)
 		.sort((a: any, b: any) =>

@@ -25,7 +25,7 @@ import {
 import { Account } from '../types';
 
 export const getValidatorKeys = (blocks: any[]) => {
-	const keys: any = [];
+	const keys = [];
 	for (const block of blocks) {
 		const lskAddress: any = address.getAddressFromPublicKey(block.generatorPublicKey);
 		keys[lskAddress] = block.generatorPublicKey;
@@ -81,6 +81,7 @@ export const createGenesisDataObj = () => {
 	const genesisDataObj: any = {};
 	genesisDataObj.initRounds = DPOS_INIT_ROUNDS;
 	// const r = Math.ceil((HEIGHT_SNAPSHOT - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
+	// TODO: Discuss
 	const topDelegates: any = [];
 	const initDelegates = topDelegates.map((delegate: any) => delegate.address);
 	genesisDataObj.initDelegates = initDelegates;

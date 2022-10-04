@@ -88,3 +88,8 @@ export interface Account {
 		}[];
 	};
 }
+
+export interface LegacyAccount {
+	address: string;
+	balance: string;
+}
