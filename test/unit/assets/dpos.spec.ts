@@ -14,6 +14,7 @@
 import { MODULE_NAME_DPOS } from '../../../src/constants';
 import { AccountEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
+import { generateBlocks } from '../utils/blocks';
 import { ADDRESS_LISK32 } from '../utils/regex';
 
 import {
@@ -25,8 +26,13 @@ import {
 
 describe('Build assets/dpos', () => {
 	let accounts: AccountEntry[];
+	let blocks: any;
 
 	beforeAll(async () => {
+		blocks = generateBlocks({
+			startHeight: 1,
+			numberOfBlocks: 10,
+		});
 		accounts = [
 			createFakeDefaultAccount({
 				address: Buffer.from('abd2ed5ad35b3a0870aadae6dceacc988ba63895', 'hex'),
@@ -121,7 +127,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create DPoS module asset', async () => {
-		const dposModuleAsset = await addDPoSModuleEntry(accounts, []);
+		const dposModuleAsset = await addDPoSModuleEntry(accounts, blocks);
 
 		// Assert
 		expect(dposModuleAsset.module).toEqual(MODULE_NAME_DPOS);
