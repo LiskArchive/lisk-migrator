@@ -22,32 +22,39 @@ import {
 	// ROUND_LENGTH,
 } from '../constants';
 
-import { Account, Block, Validator, Voter } from '../types';
+import { AccountEntry, BlockEntry, ValidatorEntry, VoterEntry } from '../types';
 
-export const getValidatorKeys = (blocks: Block[]) => {
+export const getValidatorKeys = async (blocks: BlockEntry[]) => {
 	const keys = [];
 	for (const block of blocks) {
-		const lskAddress: any = address.getAddressFromPublicKey(block.header.generatorPublicKey);
-		keys[lskAddress] = block.header.generatorPublicKey;
-		for (const trs of block.payload) {
-			const trxAddress: any = address.getAddressFromPublicKey(trs.senderPublicKey).toString('hex');
-			keys[trxAddress] = trs.senderPublicKey.toString('hex');
+		const lskAddress: any = address.getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
+		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
+		for (const trx of block.payload) {
+			const trxAddress: any = address.getLisk32AddressFromPublicKey(trx.senderPublicKey);
+			keys[trxAddress] = trx.senderPublicKey.toString('hex');
 		}
 	}
 	return keys;
 };
 
-export const createValidatorsArray = (accounts: Account[], blocks: Block[]) => {
-	const validators: Validator[] = [];
-	const validatorKeys: any = getValidatorKeys(blocks);
+export const createValidatorsArray = async (accounts: AccountEntry[], blocks: BlockEntry[]) => {
+	const validators: ValidatorEntry[] = [];
+	const validatorKeys: any = await getValidatorKeys(blocks);
 
 	for (const account of accounts) {
-		if (account.dpos.delegate.username === '') {
-			const validator: any = {};
-			validator.address = account.address.toString('hex');
-			validator.name = account.dpos.delegate.username;
-			validator.blsKey = INVALID_BLS_KEY;
-			validator.proofOfPossession = DUMMY_PROOF_OF_POSSESSION;
+		if (account.dpos.delegate.username !== '') {
+			const validator: ValidatorEntry = {
+				address: account.address.toString('hex'),
+				name: account.dpos.delegate.username,
+				blsKey: INVALID_BLS_KEY,
+				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
+				generatorKey: 'null',
+				lastGeneratedHeight: 0,
+				isBanned: false,
+				pomHeights: [],
+				consecutiveMissedBlocks: 0,
+			};
+
 			if (validatorKeys[account.address.toString('hex')]) {
 				validator.generatorKey = validatorKeys[account.address.toString('hex')];
 			} else {
@@ -63,21 +70,29 @@ export const createValidatorsArray = (accounts: Account[], blocks: Block[]) => {
 	return validators;
 };
 
-export const createVotersArray = (accounts: Account[]) => {
-	const voters: Voter[] = [];
+export const createVotersArray = async (accounts: AccountEntry[]) => {
+	const voters: VoterEntry[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes && account.dpos.unlocking) {
-			const voter: any = {};
-			voter.address = account.address;
-			voter.sentVotes = account.dpos.sentVotes;
-			voter.pendingUnlocks = account.dpos.unlocking;
+			const voter: VoterEntry = {
+				address: account.address.toString('hex'),
+				sentVotes: account.dpos.sentVotes.map(vote => ({
+					delegateAddress: vote.delegateAddress.toString('hex'),
+					amount: String(vote.amount),
+				})),
+				pendingUnlocks: account.dpos.unlocking.map(unlock => ({
+					delegateAddress: unlock.delegateAddress.toString('hex'),
+					amount: String(unlock.amount),
+					unvoteHeight: unlock.unvoteHeight,
+				})),
+			};
 			voters.push(voter);
 		}
 	}
 	return voters;
 };
 
-export const createGenesisDataObj = () => {
+export const createGenesisDataObj = async () => {
 	const genesisDataObj: any = {};
 	genesisDataObj.initRounds = DPOS_INIT_ROUNDS;
 	// const r = Math.ceil((HEIGHT_SNAPSHOT - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
@@ -88,12 +103,13 @@ export const createGenesisDataObj = () => {
 	return genesisDataObj;
 };
 
-export const addDPoSModuleEntry = async (accounts: Account[], blocks: any) => {
-	const DPoSObj: any = {};
-	DPoSObj.validators = await createValidatorsArray(accounts, blocks);
-	DPoSObj.voters = await createVotersArray(accounts);
-	DPoSObj.snapshots = [];
-	DPoSObj.genesisData = await createGenesisDataObj();
+export const addDPoSModuleEntry = async (accounts: AccountEntry[], blocks: BlockEntry[]) => {
+	const DPoSObj = {
+		validators: await createValidatorsArray(accounts, blocks),
+		voters: await createVotersArray(accounts),
+		snapshots: [],
+		genesisData: await createGenesisDataObj(),
+	};
 
 	return {
 		module: MODULE_NAME_DPOS,

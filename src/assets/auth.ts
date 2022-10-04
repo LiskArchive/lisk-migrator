@@ -12,24 +12,24 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { MODULE_NAME_AUTH } from '../constants';
-import { AuthDataSubstore, AuthAccount, Account } from '../types';
+import { AuthDataSubstoreEntry, AuthAccountEntry, AccountEntry } from '../types';
 
 const delegateComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
-export const addAuthModuleEntry = async (accounts: Account[]) => {
-	const authDataSubstore: AuthDataSubstore[] = [];
+export const addAuthModuleEntry = async (accounts: AccountEntry[]) => {
+	const authDataSubstore: AuthDataSubstoreEntry[] = [];
 	await Promise.all(
-		accounts.map(async (account: Account) => {
-			const authObj: AuthAccount = {};
-			authObj.numberOfSignatures = account.keys.numberOfSignatures;
-			authObj.mandatoryKeys = account.keys.mandatoryKeys
-				.map((key: Buffer) => key.toString('hex'))
-				.sort(delegateComparator);
-			authObj.optionalKeys = account.keys.optionalKeys
-				.map((key: Buffer) => key.toString('hex'))
-				.sort(delegateComparator);
-
-			authObj.nonce = String(account.sequence.nonce);
+		accounts.map(async (account: AccountEntry) => {
+			const authObj: AuthAccountEntry = {
+				numberOfSignatures: account.keys.numberOfSignatures,
+				mandatoryKeys: account.keys.mandatoryKeys
+					.map((key: Buffer) => key.toString('hex'))
+					.sort(delegateComparator),
+				optionalKeys: account.keys.optionalKeys
+					.map((key: Buffer) => key.toString('hex'))
+					.sort(delegateComparator),
+				nonce: String(account.sequence.nonce),
+			};
 			authDataSubstore.push({
 				address: account.address.toString('hex'),
 				authAccount: authObj,
@@ -38,7 +38,7 @@ export const addAuthModuleEntry = async (accounts: Account[]) => {
 	);
 
 	return {
-		moduie: MODULE_NAME_AUTH,
+		module: MODULE_NAME_AUTH,
 		data: authDataSubstore,
 	};
 };

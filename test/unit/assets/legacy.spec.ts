@@ -11,32 +11,20 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { when } from 'jest-when';
-
-import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
+import { utils, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore, NotFoundError } from '@liskhq/lisk-db';
 
-import { LegacyModuleAsset } from '../../../src/assets/legacy';
-import {
-	DB_KEY_CHAIN_STATE,
-	CHAIN_STATE_UNREGISTERED_ADDRESSES,
-	MODULE_NAME_LEGACY,
-} from '../../../src/constants';
-
+import { addLegacyModuleEntry } from '../../../src/assets/legacy';
+import { MODULE_NAME_LEGACY } from '../../../src/constants';
 import { unregisteredAddressesSchema } from '../../../src/schemas';
 import { UnregisteredAccount } from '../../../src/types';
 
-jest.mock('@liskhq/lisk-db');
-
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
-	const { publicKey } = getKeys(passphrase);
-	return getFirstEightBytesReversed(hash(publicKey));
+	const { publicKey } = legacy.getKeys(passphrase);
+	return legacyAddress.getFirstEightBytesReversed(utils.hash(publicKey));
 };
 
 describe('Build assets/legacy', () => {
-	let db: any;
-	let legacyModuleAsset: any;
 	let unregisteredAddresses: UnregisteredAccount[];
 	let encodedUnregisteredAddresses: Buffer;
 
@@ -60,9 +48,6 @@ describe('Build assets/legacy', () => {
 
 	describe('addLegacyModuleEntry', () => {
 		beforeEach(async () => {
-			db = new KVStore('testDB');
-			legacyModuleAsset = new LegacyModuleAsset(db);
-
 			for (const account of Object.values(testAccounts)) {
 				unregisteredAddresses = [];
 				unregisteredAddresses.push({
@@ -77,26 +62,17 @@ describe('Build assets/legacy', () => {
 		});
 
 		it('should get legacy accounts', async () => {
-			when(db.get)
-				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
-				.mockResolvedValue(encodedUnregisteredAddresses as never);
-
-			const response = await legacyModuleAsset.addLegacyModuleEntry();
+			const response = await addLegacyModuleEntry(encodedUnregisteredAddresses);
 
 			// Assert
-			expect(db.get).toHaveBeenCalledTimes(1);
 			expect(response.module).toEqual(MODULE_NAME_LEGACY);
 			expect(response.data.accounts.length).toBeGreaterThan(0);
 			expect(Object.keys(response.data.accounts[0])).toEqual(['address', 'balance']);
 		});
 
-		it('should throw error when no legacy accounts exists', async () => {
-			when(db.get)
-				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
-				.mockRejectedValue(new NotFoundError('Data not found') as never);
-
-			// Assert
-			await expect(legacyModuleAsset.addLegacyModuleEntry()).rejects.toBeInstanceOf(NotFoundError);
+		it('should throw error when invalid encodedUnregisteredAddresses', async () => {
+			const invalidEncodedData = Buffer.alloc(48);
+			await expect(addLegacyModuleEntry(invalidEncodedData)).rejects.toThrow();
 		});
 	});
 });

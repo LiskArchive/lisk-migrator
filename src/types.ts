@@ -35,66 +35,66 @@ export interface Config {
 }
 
 export interface UnregisteredAccount {
-	readonly address: Buffer;
-	readonly balance: bigint;
+	address: Buffer;
+	balance: bigint;
 }
 
 export interface UnregisteredAddresses {
-	readonly unregisteredAddresses: UnregisteredAccount[];
+	unregisteredAddresses: UnregisteredAccount[];
 }
 
-export interface AuthAccount {
-	numberOfSignatures?: number;
-	mandatoryKeys?: any;
-	optionalKeys?: any;
-	nonce?: string;
+export interface AuthAccountEntry {
+	numberOfSignatures: number;
+	mandatoryKeys: any;
+	optionalKeys: any;
+	nonce: string;
 }
 
-export interface AuthDataSubstore {
+export interface AuthDataSubstoreEntry {
 	address: string;
-	authAccount: AuthAccount;
+	authAccount: AuthAccountEntry;
 }
 
-export interface Account {
-	readonly address: Buffer;
-	readonly token: {
-		readonly balance: bigint;
+export interface AccountEntry {
+	address: Buffer;
+	token: {
+		balance: bigint;
 	};
-	readonly sequence: {
-		readonly nonce: bigint;
+	sequence: {
+		nonce: bigint;
 	};
-	readonly keys: {
-		readonly mandatoryKeys: Buffer[];
-		readonly optionalKeys: Buffer[];
-		readonly numberOfSignatures: number;
+	keys: {
+		mandatoryKeys: Buffer[];
+		optionalKeys: Buffer[];
+		numberOfSignatures: number;
 	};
-	readonly dpos: {
-		readonly delegate: {
-			readonly username: string;
-			readonly pomHeights: number[];
-			readonly consecutiveMissedBlocks: number;
-			readonly lastForgedHeight: number;
-			readonly isBanned: boolean;
-			readonly totalVotesReceived: bigint;
+	dpos: {
+		delegate: {
+			username: string;
+			pomHeights: number[];
+			consecutiveMissedBlocks: number;
+			lastForgedHeight: number;
+			isBanned: boolean;
+			totalVotesReceived: bigint;
 		};
-		readonly sentVotes: {
-			readonly delegateAddress: Buffer;
-			readonly amount: bigint;
+		sentVotes: {
+			delegateAddress: Buffer;
+			amount: bigint;
 		}[];
-		readonly unlocking: {
-			readonly delegateAddress: Buffer;
-			readonly amount: bigint;
-			readonly unvoteHeight: number;
+		unlocking: {
+			delegateAddress: Buffer;
+			amount: bigint;
+			unvoteHeight: number;
 		}[];
 	};
 }
 
-export interface LegacyAccount {
+export interface LegacyAccountEntry {
 	address: string;
 	balance: string;
 }
 
-export interface Block<T = Buffer | string> {
+export interface BlockEntry<T = Buffer | string> {
 	header: {
 		[key: string]: unknown;
 		id?: T;
@@ -110,7 +110,7 @@ export interface Block<T = Buffer | string> {
 	}[];
 }
 
-export interface UserSubstore {
+export interface UserSubstoreEntry {
 	address: string;
 	tokenID: string;
 	availableBalance: string;
@@ -120,21 +120,21 @@ export interface UserSubstore {
 	}[];
 }
 
-export interface SupplySubstore {
+export interface SupplySubstoreEntry {
 	localID: string;
 	totalSupply: string;
 }
 
-export interface TokenStore {
-	userSubstore: UserSubstore[];
-	supplySubstore: SupplySubstore[];
-	escrowSubstore: Record<string, unknown>;
+export interface TokenStoreEntry {
+	userSubstore: UserSubstoreEntry[];
+	supplySubstore: SupplySubstoreEntry[];
+	escrowSubstore: [];
 	availableLocalIDSubstore: {
 		nextAvailableLocalID: string;
 	};
 }
 
-export interface Validator {
+export interface ValidatorEntry {
 	address: string;
 	name: string;
 	blsKey: string;
@@ -146,7 +146,7 @@ export interface Validator {
 	consecutiveMissedBlocks: number;
 }
 
-export interface Voter {
+export interface VoterEntry {
 	address: string;
 	sentVotes: {
 		delegateAddress: string;
@@ -159,14 +159,14 @@ export interface Voter {
 	}[];
 }
 
-export interface GenesisData {
+export interface GenesisDataEntry {
 	initRounds: number;
 	initDelegates: string[];
 }
 
-export interface DPoSStore {
-	validators: Validator[];
-	voters: Voter[];
+export interface DPoSStoreEntry {
+	validators: ValidatorEntry[];
+	voters: VoterEntry[];
 	snapshots: Record<string, unknown>;
-	genesisData: GenesisData;
+	genesisData: GenesisDataEntry;
 }

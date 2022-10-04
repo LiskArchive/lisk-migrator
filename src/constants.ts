@@ -30,8 +30,9 @@ export const ADDRESS_LEGACY_RESERVE = utils.hash(Buffer.from('legacyReserve', 'u
 export const TOKEN_ID_LSK_MAINCHAIN = '0000000000000000';
 export const LOCAL_ID_LSK = Buffer.from([0, 0, 0, 0]).toString('hex');
 
-export const INVALID_BLS_KEY = Buffer.alloc(48, 0);
-export const INVALID_ED25519_KEY = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff;
+export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
+export const INVALID_ED25519_KEY =
+	'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
 
 export const DUMMY_PROOF_OF_POSSESSION = '';
 export const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = 16270293;
