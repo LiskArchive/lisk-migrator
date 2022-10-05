@@ -58,7 +58,7 @@ export const createLegacyReserveAccount = async (
 	legacyAccounts: LegacyAccountEntry[],
 ): Promise<UserSubstoreEntry> => {
 	const legacyReserveAccount: any = accounts.find(
-		account => account.address === ADDRESS_LEGACY_RESERVE,
+		account => account.address.toString('hex') === ADDRESS_LEGACY_RESERVE.toString('hex'),
 	);
 	let legacyReserveAmount;
 	const isEmpty = legacyReserveAmount === undefined;
