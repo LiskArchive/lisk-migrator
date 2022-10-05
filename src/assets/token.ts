@@ -21,6 +21,7 @@ import {
 	LOCAL_ID_LSK,
 	RADIX_HEX,
 	MODULE_NAME_LEGACY,
+	LOCAL_ID_LENGTH,
 } from '../constants';
 
 import {
@@ -34,7 +35,7 @@ import {
 } from '../types';
 
 const nextLexicographicalOrder = (currentID: string) =>
-	(parseInt(currentID, RADIX_HEX) + 1).toString(RADIX_HEX).padStart(8, '0');
+	(parseInt(currentID, RADIX_HEX) + 1).toString(RADIX_HEX).padStart(LOCAL_ID_LENGTH, '0');
 
 export const getLockedBalances = async (account: AccountEntry): Promise<LockedBalance[]> => {
 	let amount = 0;
