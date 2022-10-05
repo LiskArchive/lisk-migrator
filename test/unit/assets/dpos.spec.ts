@@ -71,7 +71,16 @@ describe('Build assets/dpos', () => {
 						pomHeights: [],
 						consecutiveMissedBlocks: 0,
 					},
-					sentVotes: [],
+					sentVotes: [
+						{
+							delegateAddress: Buffer.from('03f6d90b7dbd0497dc3a52d1c27e23bb8c75897f', 'hex'),
+							amount: '1000000000000',
+						},
+						{
+							delegateAddress: Buffer.from('0903f4c5cb599a7928aef27e314e98291d1e3888', 'hex'),
+							amount: '1000000000000',
+						},
+					],
 					unlocking: [],
 				},
 			}),

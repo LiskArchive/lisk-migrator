@@ -78,6 +78,7 @@ export class CreateAsset {
 			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
 			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_SNAPSHOT)}`,
 		});
+		// TODO: Discuss/verify the response and decode accordingly
 		const blocks = await getDataFromDBStream(blocksStream, blockHeaderSchema);
 
 		const dposModuleAssets = await addDPoSModuleEntry(accounts, blocks);

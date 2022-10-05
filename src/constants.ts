@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { utils } from '@liskhq/lisk-cryptography';
+import { hash } from '@liskhq/lisk-cryptography';
 
 export const ROUND_LENGTH = 103;
 
@@ -25,7 +25,7 @@ export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
 export const DB_KEY_ACCOUNTS_ADDRESS = 'accounts:address';
 export const DB_KEY_BLOCKS_HEIGHT = 'blocks:height';
 
-export const ADDRESS_LEGACY_RESERVE = utils.hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
+export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 
 export const TOKEN_ID_LSK_MAINCHAIN = '0000000000000000';
 export const LOCAL_ID_LSK = Buffer.from([0, 0, 0, 0]).toString('hex');

@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { utils } from '@liskhq/lisk-cryptography';
+import { hash, getRandomBytes } from '@liskhq/lisk-cryptography';
 import { BlockHeader } from '@liskhq/lisk-chain';
 
 type DeepPartial<T> = T extends Buffer
@@ -24,15 +24,15 @@ type DeepPartial<T> = T extends Buffer
 	: T;
 
 export const createFakeBlockHeader = (header?: DeepPartial<BlockHeader>): BlockHeader => ({
-	id: header?.id ?? utils.hash(utils.getRandomBytes(8)),
+	id: header?.id ?? hash(getRandomBytes(8)),
 	version: 2,
 	timestamp: header?.timestamp ?? 32578370,
 	height: header?.height ?? 489,
-	previousBlockID: header?.previousBlockID ?? utils.hash(utils.getRandomBytes(4)),
-	generatorPublicKey: header?.generatorPublicKey ?? utils.getRandomBytes(32),
+	previousBlockID: header?.previousBlockID ?? hash(getRandomBytes(4)),
+	generatorPublicKey: header?.generatorPublicKey ?? getRandomBytes(32),
 	reward: BigInt(0),
-	transactionRoot: utils.getRandomBytes(32),
-	signature: utils.getRandomBytes(64),
+	transactionRoot: getRandomBytes(32),
+	signature: getRandomBytes(64),
 	asset: {
 		seedReveal: Buffer.alloc(0),
 		maxHeightPreviouslyForged: header?.asset?.maxHeightPreviouslyForged ?? 0,

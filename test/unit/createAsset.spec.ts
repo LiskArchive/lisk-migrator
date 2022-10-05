@@ -14,7 +14,7 @@
 import { Readable } from 'stream';
 import { when } from 'jest-when';
 
-import { utils, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
+import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
 
@@ -40,8 +40,8 @@ import { UnregisteredAccount, AccountEntry } from '../../src/types';
 jest.mock('@liskhq/lisk-db');
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
-	const { publicKey } = legacy.getKeys(passphrase);
-	return legacyAddress.getFirstEightBytesReversed(utils.hash(publicKey));
+	const { publicKey } = getKeys(passphrase);
+	return getFirstEightBytesReversed(hash(publicKey));
 };
 
 describe('Build assets/legacy', () => {

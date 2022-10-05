@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { address } from '@liskhq/lisk-cryptography';
+import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import {
 	MODULE_NAME_TOKEN,
@@ -74,7 +74,7 @@ export const createLegacyReserveAccount = async (
 		amount: String(legacyReserveAmount),
 	});
 	const legacyReserve = {
-		address: address.getLisk32AddressFromAddress(ADDRESS_LEGACY_RESERVE),
+		address: getLisk32AddressFromAddress(ADDRESS_LEGACY_RESERVE),
 		tokenID: TOKEN_ID_LSK_MAINCHAIN,
 		availableBalance: isEmpty ? 0 : legacyReserveAccount.token.balance,
 		lockedBalances,
@@ -91,7 +91,7 @@ export const createUserSubstoreArray = async (
 	for (const account of accounts) {
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj = {
-				address: address.getLisk32AddressFromAddress(account.address),
+				address: getLisk32AddressFromAddress(account.address),
 				tokenID: TOKEN_ID_LSK_MAINCHAIN,
 				availableBalance: String(account.token.balance),
 				lockedBalances: await getLockedBalances(account),

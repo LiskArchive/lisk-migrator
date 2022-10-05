@@ -12,10 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { utils } from '@liskhq/lisk-cryptography';
+import { getRandomBytes } from '@liskhq/lisk-cryptography';
 
 export const createFakeDefaultAccount = (account: any) => ({
-	address: account?.address ?? utils.getRandomBytes(20),
+	address: account?.address ?? getRandomBytes(20),
 	token: {
 		balance: account?.token?.balance ?? BigInt(0),
 	},

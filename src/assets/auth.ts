@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { address } from '@liskhq/lisk-cryptography';
+import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import { MODULE_NAME_AUTH } from '../constants';
 import { AuthDataSubstoreEntry, AuthAccountEntry, AccountEntry, ModuleResponse } from '../types';
@@ -33,7 +33,7 @@ export const addAuthModuleEntry = async (accounts: AccountEntry[]): Promise<Modu
 				nonce: String(account.sequence.nonce),
 			};
 			authDataSubstore.push({
-				address: address.getLisk32AddressFromAddress(account.address),
+				address: getLisk32AddressFromAddress(account.address),
 				authAccount: authObj,
 			});
 		}),

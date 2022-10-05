@@ -12,7 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
-import { address } from '@liskhq/lisk-cryptography';
+import {
+	getLisk32AddressFromAddress,
+	getLisk32AddressFromPublicKey,
+} from '@liskhq/lisk-cryptography';
 import {
 	MODULE_NAME_DPOS,
 	INVALID_BLS_KEY,
@@ -34,10 +37,10 @@ import {
 export const getValidatorKeys = async (blocks: BlockEntry[]) => {
 	const keys = [];
 	for (const block of blocks) {
-		const lskAddress: any = address.getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
+		const lskAddress: any = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
 		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
-			const trxAddress: any = address.getLisk32AddressFromPublicKey(trx.senderPublicKey);
+			const trxAddress: any = getLisk32AddressFromPublicKey(trx.senderPublicKey);
 			keys[trxAddress] = trx.senderPublicKey.toString('hex');
 		}
 	}
@@ -54,7 +57,7 @@ export const createValidatorsArray = async (
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
 			const validator: ValidatorEntry = {
-				address: address.getLisk32AddressFromAddress(account.address),
+				address: getLisk32AddressFromAddress(account.address),
 				name: account.dpos.delegate.username,
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
@@ -85,13 +88,13 @@ export const createVotersArray = async (accounts: AccountEntry[]): Promise<Voter
 	for (const account of accounts) {
 		if (account.dpos.sentVotes && account.dpos.unlocking) {
 			const voter: VoterEntry = {
-				address: address.getLisk32AddressFromAddress(account.address),
+				address: getLisk32AddressFromAddress(account.address),
 				sentVotes: account.dpos.sentVotes.map(vote => ({
-					delegateAddress: address.getLisk32AddressFromAddress(vote.delegateAddress),
+					delegateAddress: getLisk32AddressFromAddress(vote.delegateAddress),
 					amount: String(vote.amount),
 				})),
 				pendingUnlocks: account.dpos.unlocking.map(unlock => ({
-					delegateAddress: address.getLisk32AddressFromAddress(unlock.delegateAddress),
+					delegateAddress: getLisk32AddressFromAddress(unlock.delegateAddress),
 					amount: String(unlock.amount),
 					unvoteHeight: unlock.unvoteHeight,
 				})),
@@ -104,10 +107,10 @@ export const createVotersArray = async (accounts: AccountEntry[]): Promise<Voter
 
 export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
 	// const r = Math.ceil((HEIGHT_SNAPSHOT - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
-	// TODO: Discuss
+	// TODO: Discuss and update the logic to resolve top delegates list
 	const topDelegates: any = [];
 	const initDelegates = topDelegates.map((delegate: any) =>
-		address.getLisk32AddressFromAddress(delegate.address),
+		getLisk32AddressFromAddress(delegate.address),
 	);
 	const genesisDataObj = {
 		initRounds: DPOS_INIT_ROUNDS,
