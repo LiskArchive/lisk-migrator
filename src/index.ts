@@ -194,6 +194,8 @@ class LiskMigrator extends Command {
 		}
 		cli.action.stop();
 
+		// TODO: Stop lisk core automatically if stop command is available from SDK
+
 		// Create new DB instance based on the snapshot path
 		cli.action.start('Creating database instance');
 		const db = new KVStore(snapshotPath);
