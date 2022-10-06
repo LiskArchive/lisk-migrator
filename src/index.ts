@@ -94,14 +94,6 @@ class LiskMigrator extends Command {
 			description: 'Start lisk core v4 automatically. Default to false.',
 			default: false,
 		}),
-		'wait-threshold': flagsParser.integer({
-			char: 'w',
-			required: true,
-			env: 'SNAPSHOT_WAIT_THRESHOLD',
-			description:
-				'Blocks to wait before creating a snapshot. Applies only if NODE_ENV=test otherwise 201 value be used.',
-			default: 201,
-		}),
 		'snapshot-path': flagsParser.string({
 			char: 'p',
 			required: false,
@@ -120,7 +112,6 @@ class LiskMigrator extends Command {
 		const compatibleVersions = flags['min-compatible-version'];
 		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
 
-		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
 		cli.action.start(
