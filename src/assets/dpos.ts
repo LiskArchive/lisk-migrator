@@ -34,13 +34,13 @@ import {
 	GenesisDataEntry,
 } from '../types';
 
-export const getValidatorKeys = async (blocks: BlockEntry[]) => {
-	const keys = [];
+export const getValidatorKeys = async (blocks: BlockEntry[]): Promise<Record<string, string>> => {
+	const keys: Record<string, string> = {};
 	for (const block of blocks) {
-		const lskAddress: any = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
+		const lskAddress: string = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
 		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
-			const trxAddress: any = getLisk32AddressFromPublicKey(trx.senderPublicKey);
+			const trxAddress: string = getLisk32AddressFromPublicKey(trx.senderPublicKey);
 			keys[trxAddress] = trx.senderPublicKey.toString('hex');
 		}
 	}
@@ -107,7 +107,7 @@ export const createVotersArray = async (accounts: AccountEntry[]): Promise<Voter
 
 export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
 	// const r = Math.ceil((HEIGHT_SNAPSHOT - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
-	// TODO: Discuss and update the logic to resolve top delegates list
+	// TODO: Discuss and update the logic to resolve top delegates
 	const topDelegates: any = [];
 	const initDelegates = topDelegates.map((delegate: any) =>
 		getLisk32AddressFromAddress(delegate.address),

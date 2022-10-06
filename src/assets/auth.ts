@@ -16,7 +16,8 @@ import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 import { MODULE_NAME_AUTH } from '../constants';
 import { AuthDataSubstoreEntry, AuthAccountEntry, AccountEntry, ModuleResponse } from '../types';
 
-const delegateComparator = (a: string, b: string) => a.localeCompare(b, 'en');
+const keyMapper = (key: Buffer) => key.toString('hex');
+const keyComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
 export const addAuthModuleEntry = async (accounts: AccountEntry[]): Promise<ModuleResponse> => {
 	const authDataSubstore: AuthDataSubstoreEntry[] = [];
@@ -24,13 +25,9 @@ export const addAuthModuleEntry = async (accounts: AccountEntry[]): Promise<Modu
 		accounts.map(async (account: AccountEntry) => {
 			const authObj: AuthAccountEntry = {
 				numberOfSignatures: account.keys.numberOfSignatures,
-				mandatoryKeys: account.keys.mandatoryKeys
-					.map((key: Buffer) => key.toString('hex'))
-					.sort(delegateComparator),
-				optionalKeys: account.keys.optionalKeys
-					.map((key: Buffer) => key.toString('hex'))
-					.sort(delegateComparator),
-				nonce: String(account.sequence.nonce),
+				mandatoryKeys: account.keys.mandatoryKeys.map(keyMapper).sort(keyComparator),
+				optionalKeys: account.keys.optionalKeys.map(keyMapper).sort(keyComparator),
+				nonce: account.sequence.nonce.toString(),
 			};
 			authDataSubstore.push({
 				address: getLisk32AddressFromAddress(account.address),

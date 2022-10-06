@@ -11,9 +11,9 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { createIPCClient } from '@liskhq/lisk-api-client';
+import { createIPCClient, APIClient } from '@liskhq/lisk-api-client';
 
-let client: unknown;
+let client: APIClient;
 
 export const getClient = async (liskCorePath: string): Promise<any> => {
 	if (!client) {
