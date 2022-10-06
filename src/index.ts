@@ -19,7 +19,12 @@ import cli from 'cli-ux';
 import { ROUND_LENGTH } from './constants';
 import { getClient } from './client';
 import { getConfig, migrateUserConfig } from './utils/config';
-import { observeChainHeight, setBlockIDAtSnapshotHeight } from './utils/chain';
+import {
+	observeChainHeight,
+	setBlockIDAtSnapshotHeight,
+	getBlockIDAtSnapshotHeight,
+	getBlockIDAtSnapshotHeightFinalized,
+} from './utils/chain';
 import { createGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 
@@ -177,8 +182,17 @@ class LiskMigrator extends Command {
 			isFinal: true,
 		});
 
-		// Add blockID verification
-		// TODO: Stop lisk core automatically if command is available
+		const blockID = getBlockIDAtSnapshotHeight();
+		const finalizedBlockID = await getBlockIDAtSnapshotHeightFinalized(
+			liskCorePath,
+			snapshotHeight,
+		);
+
+		cli.action.start('Verifying blockID');
+		if (blockID !== finalizedBlockID) {
+			this.error('BlockID doesnt match with the finalized block');
+		}
+		cli.action.stop();
 
 		// Create new DB instance based on the snapshot path
 		cli.action.start('Creating database instance');

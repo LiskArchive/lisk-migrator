@@ -44,6 +44,16 @@ export const setBlockIDAtSnapshotHeight = async (
 
 export const getBlockIDAtSnapshotHeight = (): string => blockID;
 
+export const getBlockIDAtSnapshotHeightFinalized = async (
+	liskCorePath: string,
+	height: number,
+): Promise<string> => {
+	const client = await getClient(liskCorePath);
+	const result = await client.block.getByHeight(height);
+	blockID = result.header.id.toString('hex');
+	return blockID;
+};
+
 const secondsToHumanString = (seconds: number): string => {
 	const years = Math.floor(seconds / 31536000);
 	const days = Math.floor((seconds % 31536000) / 86400);
