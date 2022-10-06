@@ -190,7 +190,7 @@ class LiskMigrator extends Command {
 
 		cli.action.start('Verifying blockID');
 		if (blockID !== finalizedBlockID) {
-			this.error('BlockID doesnt match with the finalized block');
+			this.error('BlockID doesnt match with the finalized blockID');
 		}
 		cli.action.stop();
 
