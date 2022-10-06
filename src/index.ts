@@ -20,11 +20,10 @@ import { ROUND_LENGTH } from './constants';
 import { getClient } from './client';
 import { getConfig, migrateUserConfig } from './utils/config';
 import { observeChainHeight, setBlockIDAtSnapshotHeight } from './utils/chain';
-// import { createDb, verifyConnection, createSnapshot } from './utils/storage';
 import { createGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 
-// TODO: Import from core once implemented
+// TODO: Import snapshot command from core once implemented
 const createSnapshot = async (snapshotPath: string) => snapshotPath;
 
 class LiskMigrator extends Command {
@@ -179,6 +178,7 @@ class LiskMigrator extends Command {
 		});
 
 		// Add blockID verification
+		// TODO: Stop lisk core automatically if command is available
 
 		// Create new DB instance based on the snapshot path
 		cli.action.start('Creating database instance');
