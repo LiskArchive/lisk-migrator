@@ -11,17 +11,21 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
+import { join } from 'path';
+import { KVStore } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { ROUND_LENGTH } from './constants';
 import { getClient } from './client';
 import { getConfig, migrateUserConfig } from './utils/config';
-import { observeChainHeight } from './utils/chain';
+import { observeChainHeight, setBlockIDAtSnapshotHeight } from './utils/chain';
 // import { createDb, verifyConnection, createSnapshot } from './utils/storage';
-// import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
+import { createGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
+
+// TODO: Import from core once implemented
+const createSnapshot = async (snapshotPath: string) => snapshotPath;
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
@@ -94,16 +98,24 @@ class LiskMigrator extends Command {
 				'Blocks to wait before creating a snapshot. Applies only if NODE_ENV=test otherwise 201 value be used.',
 			default: 201,
 		}),
+		'snapshot-path': flagsParser.string({
+			char: 'p',
+			required: false,
+			description:
+				'Path where the state snapshot will be creating. Current directory will be considered the default if not provided.',
+		}),
 	};
 
 	public async run(): Promise<void> {
 		const { flags } = this.parse(LiskMigrator);
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		// const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
+		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const compatibleVersions = flags['min-compatible-version'];
+		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
+
 		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
 		let config: Config;
 
@@ -148,44 +160,38 @@ class LiskMigrator extends Command {
 			liskCorePath,
 			height: snapshotHeight,
 			delay: 500,
+			isFinal: false,
 		});
+
+		await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
+
+		// TODO: Placeholder to issue createSnapshot command from lisk-core
+		cli.action.start('Creating snapshot');
+		await createSnapshot(snapshotPath);
+		cli.action.stop();
+
+		await observeChainHeight({
+			label: 'Waiting for snapshot height to be finalized',
+			liskCorePath,
+			height: snapshotHeight,
+			delay: 500,
+			isFinal: true,
+		});
+
+		// Add blockID verification
+
+		// Create new DB instance based on the snapshot path
+		cli.action.start('Creating database instance');
+		const db = new KVStore(snapshotPath);
+		cli.action.stop();
+
+		cli.action.start('Creating genesis block');
+		await createGenesisBlock(db, outputPath);
+		cli.action.stop();
 
 		if (autoMigrateUserConfig) {
 			await migrateUserConfig();
 		}
-
-		// TODO: This section will be refactored in the next issues
-		// const storageConfig = config.components.storage;
-
-		// cli.action.start(`Verifying connection to database "${storageConfig.database}"`);
-		// const db = createDb(storageConfig);
-		// await verifyConnection(db);
-		// cli.action.stop();
-
-		// cli.action.start('Creating snapshot');
-		// const time = Date.now();
-		// await createSnapshot(db);
-		// cli.action.stop(`done in ${Date.now() - time}ms`);
-
-		// await observeChainHeight({
-		// 	label: 'Waiting for threshold height',
-		// 	db,
-		// 	height: snapshotHeight + waitThreshold,
-		// 	delay: 500,
-		// });
-
-		// const genesisBlock = await createGenesisBlockFromStorage({
-		// 	db,
-		// 	snapshotHeight,
-		// 	epochTime: config.app.genesisConfig.EPOCH_TIME,
-		// });
-
-		// cli.action.start('Exporting genesis block');
-		// writeGenesisBlock(genesisBlock, outputPath);
-		// cli.action.stop();
-		// this.log(outputPath);
-
-		// db.$pool.end();
 	}
 }
 
