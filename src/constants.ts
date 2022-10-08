@@ -36,7 +36,6 @@ export const INVALID_ED25519_KEY =
 
 export const DUMMY_PROOF_OF_POSSESSION = Buffer.alloc(96, 0).toString('hex');
 export const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = 16270293;
-export const HEIGHT_SNAPSHOT = 1030; // Update once decided
 export const DPOS_INIT_ROUNDS = 60480;
 export const RADIX_HEX = 16;
 export const LOCAL_ID_LENGTH = 8;

@@ -20,7 +20,6 @@ import {
 	DB_KEY_ACCOUNTS_ADDRESS,
 	DB_KEY_BLOCKS_HEIGHT,
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
-	HEIGHT_SNAPSHOT,
 } from './constants';
 import { accountSchema, blockHeaderSchema } from './schemas';
 import { LegacyAccountEntry } from './types';
@@ -55,7 +54,7 @@ export class CreateAsset {
 		this._db = db;
 	}
 
-	public init = async (): Promise<Record<string, unknown>> => {
+	public init = async (snapshotHeight: number): Promise<Record<string, unknown>> => {
 		const encodedUnregisteredAddresses = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
 		);
@@ -76,7 +75,7 @@ export class CreateAsset {
 
 		const blocksStream = this._db.createReadStream({
 			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
-			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_SNAPSHOT)}`,
+			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 		});
 		// TODO: Discuss/verify the response and decode accordingly
 		const blocks = await getDataFromDBStream(blocksStream, blockHeaderSchema);
