@@ -50,12 +50,12 @@ export interface AuthAccountEntry {
 	nonce: string;
 }
 
-export interface AuthDataSubstoreEntry {
+export interface AuthStoreEntry {
 	address: string;
 	authAccount: AuthAccountEntry;
 }
 
-export interface AccountEntry {
+export interface Account {
 	address: Buffer;
 	token: {
 		balance: bigint;
@@ -89,7 +89,7 @@ export interface AccountEntry {
 	};
 }
 
-export interface LegacyAccountEntry {
+export interface LegacyStoreData {
 	address: string;
 	balance: string;
 }
@@ -146,7 +146,7 @@ export interface ValidatorEntry {
 	consecutiveMissedBlocks: number;
 }
 
-export interface VoterEntry {
+export interface Voter {
 	address: string;
 	sentVotes: {
 		delegateAddress: string;
@@ -166,7 +166,7 @@ export interface GenesisDataEntry {
 
 export interface DPoSStoreEntry {
 	validators: ValidatorEntry[];
-	voters: VoterEntry[];
+	voters: Voter[];
 	snapshots: Record<string, unknown>;
 	genesisData: GenesisDataEntry;
 }
@@ -176,7 +176,7 @@ export interface LockedBalance {
 	amount: string;
 }
 
-export interface ModuleResponse {
+export interface GenesisAssetEntry {
 	module: string;
 	data: any;
 }

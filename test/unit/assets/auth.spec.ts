@@ -13,12 +13,12 @@
  */
 import { addAuthModuleEntry } from '../../../src/assets/auth';
 import { MODULE_NAME_AUTH } from '../../../src/constants';
-import { AccountEntry, AuthAccountEntry } from '../../../src/types';
+import { Account, AuthAccountEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { ADDRESS_LISK32 } from '../utils/regex';
 
 describe('Build assets/auth', () => {
-	let accounts: AccountEntry[];
+	let accounts: Account[];
 	beforeAll(async () => {
 		accounts = [
 			createFakeDefaultAccount({

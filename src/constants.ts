@@ -27,12 +27,11 @@ export const DB_KEY_BLOCKS_HEIGHT = 'blocks:height';
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 
-export const TOKEN_ID_LSK_MAINCHAIN = '0000000000000000';
+export const TOKEN_ID_LSK_MAINCHAIN = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]).toString('hex');
 export const LOCAL_ID_LSK = Buffer.from([0, 0, 0, 0]).toString('hex');
 
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
-export const INVALID_ED25519_KEY =
-	'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+export const INVALID_ED25519_KEY = Buffer.alloc(32, 255).toString('hex');
 
 export const DUMMY_PROOF_OF_POSSESSION = Buffer.alloc(96, 0).toString('hex');
 export const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = 16270293;

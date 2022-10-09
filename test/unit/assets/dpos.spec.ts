@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { MODULE_NAME_DPOS } from '../../../src/constants';
-import { AccountEntry } from '../../../src/types';
+import { Account } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
 import { ADDRESS_LISK32 } from '../utils/regex';
@@ -25,7 +25,7 @@ import {
 } from '../../../src/assets/dpos';
 
 describe('Build assets/dpos', () => {
-	let accounts: AccountEntry[];
+	let accounts: Account[];
 	let blocks: any;
 
 	beforeAll(async () => {

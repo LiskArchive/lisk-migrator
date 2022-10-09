@@ -25,19 +25,19 @@ import {
 } from '../constants';
 
 import {
-	AccountEntry,
-	LegacyAccountEntry,
+	Account,
+	LegacyStoreData,
 	SupplySubstoreEntry,
 	TokenStoreEntry,
 	UserSubstoreEntry,
-	ModuleResponse,
+	GenesisAssetEntry,
 	LockedBalance,
 } from '../types';
 
 const nextLexicographicalOrder = (currentID: string) =>
 	(parseInt(currentID, RADIX_HEX) + 1).toString(RADIX_HEX).padStart(LOCAL_ID_LENGTH, '0');
 
-export const getLockedBalances = async (account: AccountEntry): Promise<LockedBalance[]> => {
+export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
 	let amount = 0;
 	for (const vote of account.dpos.sentVotes) {
 		amount += Number(vote.amount);
@@ -54,8 +54,8 @@ export const getLockedBalances = async (account: AccountEntry): Promise<LockedBa
 };
 
 export const createLegacyReserveAccount = async (
-	accounts: AccountEntry[],
-	legacyAccounts: LegacyAccountEntry[],
+	accounts: Account[],
+	legacyAccounts: LegacyStoreData[],
 ): Promise<UserSubstoreEntry> => {
 	const legacyReserveAccount: any = accounts.find(
 		account => account.address.toString('hex') === ADDRESS_LEGACY_RESERVE.toString('hex'),
@@ -84,8 +84,8 @@ export const createLegacyReserveAccount = async (
 };
 
 export const createUserSubstoreArray = async (
-	accounts: AccountEntry[],
-	legacyAccounts: LegacyAccountEntry[],
+	accounts: Account[],
+	legacyAccounts: LegacyStoreData[],
 ): Promise<UserSubstoreEntry[]> => {
 	const userSubstore: UserSubstoreEntry[] = [];
 	for (const account of accounts) {
@@ -104,14 +104,14 @@ export const createUserSubstoreArray = async (
 	userSubstore
 		.concat(legacyReserveAccount)
 		.sort((a: UserSubstoreEntry, b: UserSubstoreEntry) =>
-			a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID)),
+			a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID), 'en'),
 		);
 
 	return userSubstore;
 };
 
 export const createSupplySubstoreArray = async (
-	accounts: AccountEntry[],
+	accounts: Account[],
 ): Promise<SupplySubstoreEntry[]> => {
 	let totalLSKSupply = 0;
 	for (const account of accounts) {
@@ -126,9 +126,9 @@ export const createSupplySubstoreArray = async (
 };
 
 export const addTokenModuleEntry = async (
-	accounts: AccountEntry[],
-	legacyAccounts: LegacyAccountEntry[],
-): Promise<ModuleResponse> => {
+	accounts: Account[],
+	legacyAccounts: LegacyStoreData[],
+): Promise<GenesisAssetEntry> => {
 	const tokenObj: TokenStoreEntry = {
 		userSubstore: await createUserSubstoreArray(accounts, legacyAccounts),
 		supplySubstore: await createSupplySubstoreArray(accounts),

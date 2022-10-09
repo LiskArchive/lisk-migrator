@@ -15,17 +15,17 @@ import { codec } from '@liskhq/lisk-codec';
 
 import { MODULE_NAME_LEGACY } from '../constants';
 import { unregisteredAddressesSchema } from '../schemas';
-import { UnregisteredAddresses, ModuleResponse } from '../types';
+import { UnregisteredAddresses, GenesisAssetEntry, LegacyStoreData } from '../types';
 
 export const addLegacyModuleEntry = async (
 	encodedUnregisteredAddresses: Buffer,
-): Promise<ModuleResponse> => {
+): Promise<GenesisAssetEntry> => {
 	const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
 		unregisteredAddressesSchema,
 		encodedUnregisteredAddresses,
 	);
 
-	const accounts = await Promise.all(
+	const accounts: LegacyStoreData[] = await Promise.all(
 		unregisteredAddresses.map(async account => ({
 			address: account.address.toString('hex'),
 			balance: String(account.balance),

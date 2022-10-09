@@ -26,11 +26,11 @@ import {
 } from '../constants';
 
 import {
-	AccountEntry,
+	Account,
 	BlockEntry,
-	ModuleResponse,
+	GenesisAssetEntry,
 	ValidatorEntry,
-	VoterEntry,
+	Voter,
 	GenesisDataEntry,
 } from '../types';
 
@@ -48,16 +48,17 @@ export const getValidatorKeys = async (blocks: BlockEntry[]): Promise<Record<str
 };
 
 export const createValidatorsArray = async (
-	accounts: AccountEntry[],
+	accounts: Account[],
 	blocks: BlockEntry[],
 ): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntry[] = [];
-	const validatorKeys: any = await getValidatorKeys(blocks);
+	const validatorKeys = await getValidatorKeys(blocks);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
+			const validatorAddress = getLisk32AddressFromAddress(account.address);
 			const validator: ValidatorEntry = {
-				address: getLisk32AddressFromAddress(account.address),
+				address: validatorAddress,
 				name: account.dpos.delegate.username,
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
@@ -67,9 +68,8 @@ export const createValidatorsArray = async (
 				pomHeights: [],
 				consecutiveMissedBlocks: 0,
 			};
-
-			if (validatorKeys[account.address.toString('hex')]) {
-				validator.generatorKey = validatorKeys[account.address.toString('hex')];
+			if (validatorKeys[validatorAddress]) {
+				validator.generatorKey = validatorKeys[validatorAddress];
 			} else {
 				validator.generatorKey = INVALID_ED25519_KEY;
 			}
@@ -83,11 +83,11 @@ export const createValidatorsArray = async (
 	return validators;
 };
 
-export const createVotersArray = async (accounts: AccountEntry[]): Promise<VoterEntry[]> => {
-	const voters: VoterEntry[] = [];
+export const createVotersArray = async (accounts: Account[]): Promise<Voter[]> => {
+	const voters: Voter[] = [];
 	for (const account of accounts) {
-		if (account.dpos.sentVotes && account.dpos.unlocking) {
-			const voter: VoterEntry = {
+		if (account.dpos.sentVotes.length && account.dpos.unlocking.length) {
+			const voter: Voter = {
 				address: getLisk32AddressFromAddress(account.address),
 				sentVotes: account.dpos.sentVotes.map(vote => ({
 					delegateAddress: getLisk32AddressFromAddress(vote.delegateAddress),
@@ -106,13 +106,13 @@ export const createVotersArray = async (accounts: AccountEntry[]): Promise<Voter
 };
 
 export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
-	// const r = Math.ceil((HEIGHT_SNAPSHOT - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
+	// const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
 	// TODO: Discuss and update the logic to resolve top delegates
 	const topDelegates: any = [];
 	const initDelegates = topDelegates.map((delegate: any) =>
 		getLisk32AddressFromAddress(delegate.address),
 	);
-	const genesisDataObj = {
+	const genesisDataObj: GenesisDataEntry = {
 		initRounds: DPOS_INIT_ROUNDS,
 		initDelegates,
 	};
@@ -120,10 +120,10 @@ export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
 };
 
 export const addDPoSModuleEntry = async (
-	accounts: AccountEntry[],
+	accounts: Account[],
 	blocks: BlockEntry[],
-): Promise<ModuleResponse> => {
-	const DPoSObj = {
+): Promise<GenesisAssetEntry> => {
+	const dposObj = {
 		validators: await createValidatorsArray(accounts, blocks),
 		voters: await createVotersArray(accounts),
 		snapshots: [],
@@ -132,6 +132,6 @@ export const addDPoSModuleEntry = async (
 
 	return {
 		module: MODULE_NAME_DPOS,
-		data: DPoSObj,
+		data: dposObj,
 	};
 };

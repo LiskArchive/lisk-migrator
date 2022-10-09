@@ -14,25 +14,26 @@
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import { MODULE_NAME_AUTH } from '../constants';
-import { AuthDataSubstoreEntry, AuthAccountEntry, AccountEntry, ModuleResponse } from '../types';
+import { AuthStoreEntry, AuthAccountEntry, Account, GenesisAssetEntry } from '../types';
 
 const keyMapper = (key: Buffer) => key.toString('hex');
 const keyComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
-export const addAuthModuleEntry = async (accounts: AccountEntry[]): Promise<ModuleResponse> => {
-	const authDataSubstore: AuthDataSubstoreEntry[] = [];
+export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAssetEntry> => {
+	const authDataSubstore: AuthStoreEntry[] = [];
 	await Promise.all(
-		accounts.map(async (account: AccountEntry) => {
+		accounts.map(async (account: Account) => {
 			const authObj: AuthAccountEntry = {
 				numberOfSignatures: account.keys.numberOfSignatures,
 				mandatoryKeys: account.keys.mandatoryKeys.map(keyMapper).sort(keyComparator),
 				optionalKeys: account.keys.optionalKeys.map(keyMapper).sort(keyComparator),
 				nonce: account.sequence.nonce.toString(),
 			};
-			authDataSubstore.push({
+
+			return {
 				address: getLisk32AddressFromAddress(account.address),
 				authAccount: authObj,
-			});
+			};
 		}),
 	);
 

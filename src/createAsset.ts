@@ -22,7 +22,7 @@ import {
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 } from './constants';
 import { accountSchema, blockHeaderSchema } from './schemas';
-import { LegacyAccountEntry } from './types';
+import { LegacyStoreData } from './types';
 
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
@@ -70,7 +70,7 @@ export class CreateAsset {
 
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 
-		const legacyAccounts: LegacyAccountEntry[] = legacyModuleAssets.data.accounts;
+		const legacyAccounts: LegacyStoreData[] = legacyModuleAssets.data.accounts;
 		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts);
 
 		const blocksStream = this._db.createReadStream({

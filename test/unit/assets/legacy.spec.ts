@@ -17,7 +17,7 @@ import { codec } from '@liskhq/lisk-codec';
 import { addLegacyModuleEntry } from '../../../src/assets/legacy';
 import { MODULE_NAME_LEGACY } from '../../../src/constants';
 import { unregisteredAddressesSchema } from '../../../src/schemas';
-import { UnregisteredAccount, LegacyAccountEntry } from '../../../src/types';
+import { UnregisteredAccount, LegacyStoreData } from '../../../src/types';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = getKeys(passphrase);
@@ -67,7 +67,7 @@ describe('Build assets/legacy', () => {
 			// Assert
 			expect(response.module).toEqual(MODULE_NAME_LEGACY);
 			expect(response.data.accounts.length).toBeGreaterThan(0);
-			response.data.accounts.forEach((account: LegacyAccountEntry) => {
+			response.data.accounts.forEach((account: LegacyStoreData) => {
 				expect(Object.getOwnPropertyNames(account)).toEqual(['address', 'balance']);
 			});
 		});

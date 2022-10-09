@@ -25,7 +25,6 @@ import {
 	DB_KEY_BLOCKS_HEIGHT,
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
-	HEIGHT_SNAPSHOT,
 	MODULE_NAME_LEGACY,
 	MODULE_NAME_AUTH,
 	MODULE_NAME_TOKEN,
@@ -35,7 +34,7 @@ import { accountSchema, unregisteredAddressesSchema } from '../../src/schemas';
 
 import { createFakeDefaultAccount } from './utils/account';
 
-import { UnregisteredAccount, AccountEntry } from '../../src/types';
+import { UnregisteredAccount, Account } from '../../src/types';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -46,10 +45,11 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 
 describe('Build assets/legacy', () => {
 	let db: any;
-	let accounts: AccountEntry[];
+	let accounts: Account[];
 	let createAsset: any;
 	let unregisteredAddresses: UnregisteredAccount[];
 	let encodedUnregisteredAddresses: Buffer;
+	const snapshotHeight = 103;
 
 	interface Accounts {
 		[key: string]: {
@@ -122,11 +122,11 @@ describe('Build assets/legacy', () => {
 			when(db.createReadStream)
 				.calledWith({
 					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
-					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_SNAPSHOT)}`,
+					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 				})
 				.mockReturnValue(Readable.from([{ value: Buffer.from('') }]));
 
-			const response = await createAsset.init();
+			const response = await createAsset.init(snapshotHeight);
 
 			// Assert
 			expect(db.get).toHaveBeenCalledTimes(1);

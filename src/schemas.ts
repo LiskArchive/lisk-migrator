@@ -213,3 +213,45 @@ export const blockHeaderSchema = {
 		signature: { dataType: 'bytes', fieldNumber: 9 },
 	},
 };
+
+export declare const transactionSchema: {
+	$id: string;
+	type: string;
+	required: string[];
+	properties: {
+		moduleID: {
+			dataType: string;
+			fieldNumber: number;
+			minimum: number;
+		};
+		assetID: {
+			dataType: string;
+			fieldNumber: number;
+		};
+		nonce: {
+			dataType: string;
+			fieldNumber: number;
+		};
+		fee: {
+			dataType: string;
+			fieldNumber: number;
+		};
+		senderPublicKey: {
+			dataType: string;
+			fieldNumber: number;
+			minLength: number;
+			maxLength: number;
+		};
+		asset: {
+			dataType: string;
+			fieldNumber: number;
+		};
+		signatures: {
+			type: string;
+			items: {
+				dataType: string;
+			};
+			fieldNumber: number;
+		};
+	};
+};
