@@ -17,19 +17,22 @@ import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { ROUND_LENGTH } from './constants';
-import { getClient } from './client';
+import { getAPIClient } from './client';
 import { getConfig, migrateUserConfig } from './utils/config';
 import {
 	observeChainHeight,
 	setBlockIDAtSnapshotHeight,
 	getBlockIDAtSnapshotHeight,
-	getBlockIDAtSnapshotHeightFinalized,
+	getBlockIDAtHeight,
 } from './utils/chain';
 import { createGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 
 // TODO: Import snapshot command from core once implemented
-const createSnapshot = async (snapshotPath: string) => snapshotPath;
+const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
+	liskCorePath,
+	snapshotPath,
+});
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
@@ -98,7 +101,7 @@ class LiskMigrator extends Command {
 			char: 'p',
 			required: false,
 			description:
-				'Path where the state snapshot will be creating. Current directory will be considered the default if not provided.',
+				'Path where the state snapshot will be created. When not supplied, defaults to the current directory.',
 		}),
 	};
 
@@ -122,7 +125,7 @@ class LiskMigrator extends Command {
 		}
 		cli.action.stop('Snapshot Height is valid');
 
-		const client = await getClient(liskCorePath);
+		const client = await getAPIClient(liskCorePath);
 		const info = await client.node.getNodeInfo();
 		const { version: appVersion } = info;
 
@@ -162,7 +165,7 @@ class LiskMigrator extends Command {
 
 		// TODO: Placeholder to issue createSnapshot command from lisk-core
 		cli.action.start('Creating snapshot');
-		await createSnapshot(snapshotPath);
+		await createSnapshot(liskCorePath, snapshotPath);
 		cli.action.stop();
 
 		await observeChainHeight({
@@ -174,18 +177,15 @@ class LiskMigrator extends Command {
 		});
 
 		const blockID = getBlockIDAtSnapshotHeight();
-		const finalizedBlockID = await getBlockIDAtSnapshotHeightFinalized(
-			liskCorePath,
-			snapshotHeight,
-		);
+		const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
 
 		cli.action.start('Verifying blockID');
 		if (blockID !== finalizedBlockID) {
-			this.error('BlockID doesnt match with the finalized blockID');
+			this.error('Snapshotted blockID does not match with the finalized blockID.');
 		}
 		cli.action.stop();
 
-		// TODO: Stop lisk core automatically if stop command is available from SDK
+		// TODO: Stop lisk core automatically when the application management is implemented
 
 		// Create new DB instance based on the snapshot path
 		cli.action.start('Creating database instance');

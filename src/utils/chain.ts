@@ -13,9 +13,9 @@
  */
 
 import cli from 'cli-ux';
-import { getClient } from '../client';
+import { getAPIClient } from '../client';
 
-let blockID: string;
+let blockIDAtSnapshotHeight: string;
 
 interface ObserveParams {
 	readonly label: string;
@@ -25,33 +25,34 @@ interface ObserveParams {
 	readonly isFinal: boolean;
 }
 
-export const getChainHeight = async (liskCorePath: string, isFinal: boolean): Promise<number> => {
-	const client = await getClient(liskCorePath);
+export const getCurrentFinalizedHeight = async (liskCorePath: string): Promise<number> => {
+	const client = await getAPIClient(liskCorePath);
 	const result = await client.node.getNodeInfo();
-	const height = isFinal ? result.finalizedHeight : result.height;
-	return height;
+	return result.height;
+};
+
+export const getCurrentChainHeight = async (liskCorePath: string): Promise<number> => {
+	const client = await getAPIClient(liskCorePath);
+	const result = await client.node.getNodeInfo();
+	return result.finalizedHeight;
 };
 
 export const setBlockIDAtSnapshotHeight = async (
 	liskCorePath: string,
 	height: number,
-): Promise<string> => {
-	const client = await getClient(liskCorePath);
+): Promise<void> => {
+	const client = await getAPIClient(liskCorePath);
 	const result = await client.block.getByHeight(height);
-	blockID = result.header.id.toString('hex');
-	return blockID;
+	blockIDAtSnapshotHeight = result.header.id.toString('hex');
 };
 
-export const getBlockIDAtSnapshotHeight = (): string => blockID;
+export const getBlockIDAtSnapshotHeight = (): string => blockIDAtSnapshotHeight;
 
-export const getBlockIDAtSnapshotHeightFinalized = async (
-	liskCorePath: string,
-	height: number,
-): Promise<string> => {
-	const client = await getClient(liskCorePath);
+export const getBlockIDAtHeight = async (liskCorePath: string, height: number): Promise<string> => {
+	const client = await getAPIClient(liskCorePath);
 	const result = await client.block.getByHeight(height);
-	blockID = result.header.id.toString('hex');
-	return blockID;
+	const blockIDAtSnapshotHeightFinalized = result.header.id.toString('hex');
+	return blockIDAtSnapshotHeightFinalized;
 };
 
 const secondsToHumanString = (seconds: number): string => {
@@ -95,7 +96,9 @@ const getRemainingTime = (currentHeight: number, observedHeight: number): string
 
 export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
 	const observedHeight = options.height;
-	const startHeight = await getChainHeight(options.liskCorePath, options.isFinal);
+	const startHeight = options.isFinal
+		? await getCurrentFinalizedHeight(options.liskCorePath)
+		: await getCurrentChainHeight(options.liskCorePath);
 
 	if (startHeight === observedHeight) {
 		return startHeight;
@@ -126,7 +129,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		const checkHeight = async () => {
 			let height!: number;
 			try {
-				height = await getChainHeight(options.liskCorePath, options.isFinal);
+				height = options.isFinal
+					? await getCurrentFinalizedHeight(options.liskCorePath)
+					: await getCurrentChainHeight(options.liskCorePath);
 			} catch (error) {
 				return reject(error);
 			}
