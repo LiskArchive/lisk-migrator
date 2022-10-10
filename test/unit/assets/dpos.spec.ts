@@ -23,10 +23,11 @@ import {
 	createValidatorsArray,
 	createVotersArray,
 } from '../../../src/assets/dpos';
+import { Block } from '../../../src/types';
 
 describe('Build assets/dpos', () => {
 	let accounts: Account[];
-	let blocks: any;
+	let blocks: Block[];
 
 	beforeAll(async () => {
 		blocks = generateBlocks({

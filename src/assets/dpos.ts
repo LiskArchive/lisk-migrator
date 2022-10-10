@@ -27,14 +27,14 @@ import {
 
 import {
 	Account,
-	BlockEntry,
+	Block,
 	GenesisAssetEntry,
 	ValidatorEntry,
 	Voter,
 	GenesisDataEntry,
 } from '../types';
 
-export const getValidatorKeys = async (blocks: BlockEntry[]): Promise<Record<string, string>> => {
+export const getValidatorKeys = async (blocks: Block[]): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 	for (const block of blocks) {
 		const lskAddress: string = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
@@ -49,7 +49,7 @@ export const getValidatorKeys = async (blocks: BlockEntry[]): Promise<Record<str
 
 export const createValidatorsArray = async (
 	accounts: Account[],
-	blocks: BlockEntry[],
+	blocks: Block[],
 ): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntry[] = [];
 	const validatorKeys = await getValidatorKeys(blocks);
@@ -121,7 +121,7 @@ export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
 
 export const addDPoSModuleEntry = async (
 	accounts: Account[],
-	blocks: BlockEntry[],
+	blocks: Block[],
 ): Promise<GenesisAssetEntry> => {
 	const dposObj = {
 		validators: await createValidatorsArray(accounts, blocks),

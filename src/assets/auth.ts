@@ -20,8 +20,7 @@ const keyMapper = (key: Buffer) => key.toString('hex');
 const keyComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
 export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAssetEntry> => {
-	const authDataSubstore: AuthStoreEntry[] = [];
-	await Promise.all(
+	const authDataSubstore: AuthStoreEntry[] = await Promise.all(
 		accounts.map(async (account: Account) => {
 			const authObj: AuthAccountEntry = {
 				numberOfSignatures: account.keys.numberOfSignatures,

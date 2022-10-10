@@ -27,9 +27,9 @@ import {
 import {
 	Account,
 	LegacyStoreData,
-	SupplySubstoreEntry,
+	SupplyStoreEntry,
 	TokenStoreEntry,
-	UserSubstoreEntry,
+	UserStoreEntry,
 	GenesisAssetEntry,
 	LockedBalance,
 } from '../types';
@@ -38,13 +38,15 @@ const nextLexicographicalOrder = (currentID: string) =>
 	(parseInt(currentID, RADIX_HEX) + 1).toString(RADIX_HEX).padStart(LOCAL_ID_LENGTH, '0');
 
 export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
-	let amount = 0;
-	for (const vote of account.dpos.sentVotes) {
-		amount += Number(vote.amount);
-	}
+	let amount = BigInt('0');
+	if (account) {
+		for (const vote of account.dpos.sentVotes) {
+			amount += BigInt(vote.amount);
+		}
 
-	for (const unlockingObj of account.dpos.unlocking) {
-		amount += Number(unlockingObj.amount);
+		for (const unlockingObj of account.dpos.unlocking) {
+			amount += BigInt(unlockingObj.amount);
+		}
 	}
 
 	if (amount > 0) {
@@ -56,19 +58,19 @@ export const getLockedBalances = async (account: Account): Promise<LockedBalance
 export const createLegacyReserveAccount = async (
 	accounts: Account[],
 	legacyAccounts: LegacyStoreData[],
-): Promise<UserSubstoreEntry> => {
-	const legacyReserveAccount: any = accounts.find(
+): Promise<UserStoreEntry> => {
+	const AMOUNT_ZERO = BigInt('0');
+
+	const [legacyReserveAccount] = accounts.filter(
 		account => account.address.toString('hex') === ADDRESS_LEGACY_RESERVE.toString('hex'),
 	);
-	let legacyReserveAmount;
-	const isEmpty = legacyReserveAmount === undefined;
-
-	legacyReserveAmount = 0;
+	let legacyReserveAmount = legacyReserveAccount?.token.balance || AMOUNT_ZERO;
 
 	for (const account of legacyAccounts) {
-		legacyReserveAmount += Number(account.balance);
+		legacyReserveAmount += BigInt(account.balance);
 	}
-	const lockedBalances = isEmpty ? [] : await getLockedBalances(legacyReserveAccount);
+	const lockedBalances =
+		legacyReserveAmount === AMOUNT_ZERO ? [] : await getLockedBalances(legacyReserveAccount);
 	lockedBalances.push({
 		module: MODULE_NAME_LEGACY,
 		amount: String(legacyReserveAmount),
@@ -76,7 +78,7 @@ export const createLegacyReserveAccount = async (
 	const legacyReserve = {
 		address: getLisk32AddressFromAddress(ADDRESS_LEGACY_RESERVE),
 		tokenID: TOKEN_ID_LSK_MAINCHAIN,
-		availableBalance: isEmpty ? 0 : legacyReserveAccount.token.balance,
+		availableBalance: (legacyReserveAccount?.token.balance || AMOUNT_ZERO).toString(),
 		lockedBalances,
 	};
 
@@ -86,8 +88,8 @@ export const createLegacyReserveAccount = async (
 export const createUserSubstoreArray = async (
 	accounts: Account[],
 	legacyAccounts: LegacyStoreData[],
-): Promise<UserSubstoreEntry[]> => {
-	const userSubstore: UserSubstoreEntry[] = [];
+): Promise<UserStoreEntry[]> => {
+	const userSubstore: UserStoreEntry[] = [];
 	for (const account of accounts) {
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj = {
@@ -103,7 +105,7 @@ export const createUserSubstoreArray = async (
 	const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccounts);
 	userSubstore
 		.concat(legacyReserveAccount)
-		.sort((a: UserSubstoreEntry, b: UserSubstoreEntry) =>
+		.sort((a: UserStoreEntry, b: UserStoreEntry) =>
 			a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID), 'en'),
 		);
 
@@ -112,13 +114,13 @@ export const createUserSubstoreArray = async (
 
 export const createSupplySubstoreArray = async (
 	accounts: Account[],
-): Promise<SupplySubstoreEntry[]> => {
-	let totalLSKSupply = 0;
+): Promise<SupplyStoreEntry[]> => {
+	let totalLSKSupply = BigInt('0');
 	for (const account of accounts) {
-		totalLSKSupply += Number(account.token.balance);
+		totalLSKSupply += account.token.balance;
 		const lockedBalances = await getLockedBalances(account);
 		if (lockedBalances.length) {
-			totalLSKSupply += Number(lockedBalances[0].amount);
+			totalLSKSupply += BigInt(lockedBalances[0].amount);
 		}
 	}
 	const LSKSupply = { localID: LOCAL_ID_LSK, totalSupply: String(totalLSKSupply) };

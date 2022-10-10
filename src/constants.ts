@@ -24,6 +24,8 @@ export const DB_KEY_CHAIN_STATE = 'chain';
 export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
 export const DB_KEY_ACCOUNTS_ADDRESS = 'accounts:address';
 export const DB_KEY_BLOCKS_HEIGHT = 'blocks:height';
+export const DB_KEY_TRANSACTIONS_BLOCK_ID = 'transactions:blockID';
+export const DB_KEY_TRANSACTIONS_ID = 'transactions:id';
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 

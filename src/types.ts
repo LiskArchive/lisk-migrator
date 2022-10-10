@@ -94,7 +94,7 @@ export interface LegacyStoreData {
 	balance: string;
 }
 
-export interface BlockEntry<T = Buffer | string> {
+export interface Block<T = Buffer | string> {
 	header: {
 		[key: string]: unknown;
 		id?: T;
@@ -110,7 +110,7 @@ export interface BlockEntry<T = Buffer | string> {
 	}[];
 }
 
-export interface UserSubstoreEntry {
+export interface UserStoreEntry {
 	address: string;
 	tokenID: string;
 	availableBalance: string;
@@ -120,14 +120,14 @@ export interface UserSubstoreEntry {
 	}[];
 }
 
-export interface SupplySubstoreEntry {
+export interface SupplyStoreEntry {
 	localID: string;
 	totalSupply: string;
 }
 
 export interface TokenStoreEntry {
-	userSubstore: UserSubstoreEntry[];
-	supplySubstore: SupplySubstoreEntry[];
+	userSubstore: UserStoreEntry[];
+	supplySubstore: SupplyStoreEntry[];
 	escrowSubstore: [];
 	availableLocalIDSubstore: {
 		nextAvailableLocalID: string;

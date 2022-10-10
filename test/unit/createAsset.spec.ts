@@ -17,7 +17,6 @@ import { when } from 'jest-when';
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
-
 import { CreateAsset } from '../../src/createAsset';
 import {
 	DB_KEY_CHAIN_STATE,
@@ -124,7 +123,7 @@ describe('Build assets/legacy', () => {
 					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
 					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 				})
-				.mockReturnValue(Readable.from([{ value: Buffer.from('') }]));
+				.mockReturnValue(Readable.from([]));
 
 			const response = await createAsset.init(snapshotHeight);
 

@@ -71,10 +71,5 @@ describe('Build assets/legacy', () => {
 				expect(Object.getOwnPropertyNames(account)).toEqual(['address', 'balance']);
 			});
 		});
-
-		it('should throw error when invalid encodedUnregisteredAddresses', async () => {
-			const invalidEncodedData = Buffer.alloc(48);
-			await expect(addLegacyModuleEntry(invalidEncodedData)).rejects.toThrow();
-		});
 	});
 });
