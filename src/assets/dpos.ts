@@ -36,6 +36,7 @@ import {
 	GenesisDataEntry,
 	DecodedVoteWeights,
 	VoteWeight,
+	DelegateWeight,
 } from '../types';
 
 export const getValidatorKeys = async (blocks: Block[]): Promise<Record<string, string>> => {
@@ -114,7 +115,7 @@ export const createGenesisDataObj = async (
 	snapshotHeight: number,
 ): Promise<GenesisDataEntry> => {
 	const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
-	const topDelegates: any = delegates.voteWeights
+	const topDelegates: DelegateWeight[] | undefined = delegates.voteWeights
 		.find((voteWeight: VoteWeight) => voteWeight.round === r - 2)
 		?.delegates.slice(0, 101);
 
