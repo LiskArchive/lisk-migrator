@@ -18,14 +18,15 @@ import { KVStore, formatInt } from '@liskhq/lisk-db';
 import {
 	DB_KEY_CHAIN_STATE,
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
+	CHAIN_STATE_DELEGATE_VOTE_WEIGHTS,
 	DB_KEY_ACCOUNTS_ADDRESS,
 	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_TRANSACTIONS_BLOCK_ID,
 	DB_KEY_TRANSACTIONS_ID,
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 } from './constants';
-import { accountSchema, blockHeaderSchema, transactionSchema } from './schemas';
-import { LegacyStoreData, Block } from './types';
+import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
+import { LegacyStoreData, Block, DecodedVoteWeights } from './types';
 
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
@@ -130,7 +131,19 @@ export class CreateAsset {
 			}),
 		);
 
-		const dposModuleAssets = await addDPoSModuleEntry(accounts, blocks);
+		const encodedDelegates = await this._db.get(
+			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
+		);
+		const decodedDelegates: DecodedVoteWeights = await codec.decode(
+			voteWeightsSchema,
+			encodedDelegates,
+		);
+		const dposModuleAssets = await addDPoSModuleEntry(
+			accounts,
+			blocks,
+			decodedDelegates,
+			snapshotHeight,
+		);
 
 		const assets: Record<string, any> = [
 			legacyModuleAssets,

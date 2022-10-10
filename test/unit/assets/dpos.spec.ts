@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { MODULE_NAME_DPOS } from '../../../src/constants';
-import { Account } from '../../../src/types';
+import { Account, Block, DecodedVoteWeights } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
 import { ADDRESS_LISK32 } from '../utils/regex';
@@ -23,17 +23,36 @@ import {
 	createValidatorsArray,
 	createVotersArray,
 } from '../../../src/assets/dpos';
-import { Block } from '../../../src/types';
 
 describe('Build assets/dpos', () => {
 	let accounts: Account[];
 	let blocks: Block[];
+	let delegates: DecodedVoteWeights;
+	const snapshotHeight = 103;
 
 	beforeAll(async () => {
 		blocks = generateBlocks({
 			startHeight: 1,
 			numberOfBlocks: 10,
 		});
+		delegates = {
+			voteWeights: [
+				{
+					round: 103,
+					delegates: [
+						{
+							address: Buffer.from('b8982f66903a6bfa5d6994c08ddf97707200d316', 'hex'),
+							voteWeight: BigInt('2130000000000'),
+						},
+						{
+							address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945'),
+							voteWeight: BigInt('5304000000000'),
+						},
+					],
+				},
+			],
+		};
+
 		accounts = [
 			createFakeDefaultAccount({
 				address: Buffer.from('abd2ed5ad35b3a0870aadae6dceacc988ba63895', 'hex'),
@@ -127,7 +146,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create createGenesisDataObj', async () => {
-		const genesisDataObj = await createGenesisDataObj();
+		const genesisDataObj = await createGenesisDataObj(delegates, snapshotHeight);
 
 		// Assert
 		genesisDataObj.initDelegates.forEach(address => {
@@ -137,7 +156,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create DPoS module asset', async () => {
-		const dposModuleAsset = await addDPoSModuleEntry(accounts, blocks);
+		const dposModuleAsset = await addDPoSModuleEntry(accounts, blocks, delegates, snapshotHeight);
 
 		// Assert
 		expect(dposModuleAsset.module).toEqual(MODULE_NAME_DPOS);

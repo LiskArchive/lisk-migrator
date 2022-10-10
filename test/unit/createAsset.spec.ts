@@ -23,17 +23,23 @@ import {
 	DB_KEY_ACCOUNTS_ADDRESS,
 	DB_KEY_BLOCKS_HEIGHT,
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
+	CHAIN_STATE_DELEGATE_VOTE_WEIGHTS,
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 	MODULE_NAME_LEGACY,
 	MODULE_NAME_AUTH,
 	MODULE_NAME_TOKEN,
 	MODULE_NAME_DPOS,
 } from '../../src/constants';
-import { accountSchema, unregisteredAddressesSchema } from '../../src/schemas';
+import { accountSchema, unregisteredAddressesSchema, voteWeightsSchema } from '../../src/schemas';
 
 import { createFakeDefaultAccount } from './utils/account';
 
-import { UnregisteredAccount, Account, GenesisAssetEntry } from '../../src/types';
+import {
+	UnregisteredAccount,
+	Account,
+	GenesisAssetEntry,
+	DecodedVoteWeights,
+} from '../../src/types';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -48,6 +54,8 @@ describe('Build assets/legacy', () => {
 	let createAsset: any;
 	let unregisteredAddresses: UnregisteredAccount[];
 	let encodedUnregisteredAddresses: Buffer;
+	let delegates: DecodedVoteWeights;
+	let encodedVoteWeights: Buffer;
 	const snapshotHeight = 103;
 
 	interface Accounts {
@@ -103,6 +111,25 @@ describe('Build assets/legacy', () => {
 					},
 				}),
 			];
+
+			delegates = {
+				voteWeights: [
+					{
+						round: 103,
+						delegates: [
+							{
+								address: Buffer.from('b8982f66903a6bfa5d6994c08ddf97707200d316', 'hex'),
+								voteWeight: BigInt('2130000000000'),
+							},
+							{
+								address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945'),
+								voteWeight: BigInt('5304000000000'),
+							},
+						],
+					},
+				],
+			};
+			encodedVoteWeights = await codec.encode(voteWeightsSchema, delegates);
 		});
 
 		it('should create assets', async () => {
@@ -125,6 +152,10 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(Readable.from([]));
 
+			when(db.get)
+				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
+				.mockResolvedValue(encodedVoteWeights as never);
+
 			const response = await createAsset.init(snapshotHeight);
 
 			const moduleList = [
@@ -134,9 +165,9 @@ describe('Build assets/legacy', () => {
 				MODULE_NAME_DPOS,
 			];
 			// Assert
-			expect(db.get).toHaveBeenCalledTimes(1);
+			expect(db.get).toHaveBeenCalledTimes(2);
 			expect(db.createReadStream).toHaveBeenCalledTimes(2);
-			expect(response.length).toHaveLength(4);
+			expect(response).toHaveLength(4);
 
 			response.forEach((asset: GenesisAssetEntry) => expect(moduleList).toContain(asset.module));
 		});

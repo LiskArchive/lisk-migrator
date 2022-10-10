@@ -180,3 +180,19 @@ export interface GenesisAssetEntry {
 	module: string;
 	data: any;
 }
+
+export interface DelegateWeight {
+	readonly address: Buffer;
+	readonly voteWeight: bigint;
+}
+
+export interface VoteWeight {
+	readonly round: number;
+	readonly delegates: ReadonlyArray<DelegateWeight>;
+}
+
+export type VoteWeights = VoteWeight[];
+
+export interface DecodedVoteWeights {
+	voteWeights: VoteWeights;
+}

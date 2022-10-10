@@ -16,13 +16,15 @@ import {
 	getLisk32AddressFromAddress,
 	getLisk32AddressFromPublicKey,
 } from '@liskhq/lisk-cryptography';
+
 import {
 	MODULE_NAME_DPOS,
 	INVALID_BLS_KEY,
 	DUMMY_PROOF_OF_POSSESSION,
 	INVALID_ED25519_KEY,
 	DPOS_INIT_ROUNDS,
-	// ROUND_LENGTH,
+	ROUND_LENGTH,
+	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 } from '../constants';
 
 import {
@@ -32,6 +34,8 @@ import {
 	ValidatorEntry,
 	Voter,
 	GenesisDataEntry,
+	DecodedVoteWeights,
+	VoteWeight,
 } from '../types';
 
 export const getValidatorKeys = async (blocks: Block[]): Promise<Record<string, string>> => {
@@ -105,13 +109,19 @@ export const createVotersArray = async (accounts: Account[]): Promise<Voter[]> =
 	return voters;
 };
 
-export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
-	// const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
-	// TODO: Discuss and update the logic to resolve top delegates
-	const topDelegates: any = [];
-	const initDelegates = topDelegates.map((delegate: any) =>
-		getLisk32AddressFromAddress(delegate.address),
-	);
+export const createGenesisDataObj = async (
+	delegates: DecodedVoteWeights,
+	snapshotHeight: number,
+): Promise<GenesisDataEntry> => {
+	const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
+	const topDelegates: any = delegates.voteWeights
+		.find((voteWeight: VoteWeight) => voteWeight.round === r - 2)
+		?.delegates.slice(0, 101);
+
+	const initDelegates = topDelegates
+		? topDelegates.map((delegate: any) => getLisk32AddressFromAddress(delegate.address))
+		: [];
+
 	const genesisDataObj: GenesisDataEntry = {
 		initRounds: DPOS_INIT_ROUNDS,
 		initDelegates,
@@ -122,12 +132,14 @@ export const createGenesisDataObj = async (): Promise<GenesisDataEntry> => {
 export const addDPoSModuleEntry = async (
 	accounts: Account[],
 	blocks: Block[],
+	delegates: DecodedVoteWeights,
+	snapshotHeight: number,
 ): Promise<GenesisAssetEntry> => {
 	const dposObj = {
 		validators: await createValidatorsArray(accounts, blocks),
 		voters: await createVotersArray(accounts),
 		snapshots: [],
-		genesisData: await createGenesisDataObj(),
+		genesisData: await createGenesisDataObj(delegates, snapshotHeight),
 	};
 
 	return {

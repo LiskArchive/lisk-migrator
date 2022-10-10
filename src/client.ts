@@ -15,7 +15,7 @@ import { createIPCClient, APIClient } from '@liskhq/lisk-api-client';
 
 let client: APIClient;
 
-export const getClient = async (liskCorePath: string): Promise<any> => {
+export const getClient = async (liskCorePath: string): Promise<APIClient> => {
 	if (!client) {
 		client = await createIPCClient(liskCorePath);
 	}
