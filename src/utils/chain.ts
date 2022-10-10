@@ -51,8 +51,8 @@ export const getBlockIDAtSnapshotHeight = (): string => blockIDAtSnapshotHeight;
 export const getBlockIDAtHeight = async (liskCorePath: string, height: number): Promise<string> => {
 	const client = await getAPIClient(liskCorePath);
 	const result = await client.block.getByHeight(height);
-	const blockIDAtSnapshotHeightFinalized = result.header.id.toString('hex');
-	return blockIDAtSnapshotHeightFinalized;
+	const blockID = result.header.id.toString('hex');
+	return blockID;
 };
 
 const secondsToHumanString = (seconds: number): string => {
