@@ -33,7 +33,7 @@ import { accountSchema, unregisteredAddressesSchema } from '../../src/schemas';
 
 import { createFakeDefaultAccount } from './utils/account';
 
-import { UnregisteredAccount, Account } from '../../src/types';
+import { UnregisteredAccount, Account, GenesisAssetEntry } from '../../src/types';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -127,19 +127,18 @@ describe('Build assets/legacy', () => {
 
 			const response = await createAsset.init(snapshotHeight);
 
+			const moduleList = [
+				MODULE_NAME_LEGACY,
+				MODULE_NAME_AUTH,
+				MODULE_NAME_TOKEN,
+				MODULE_NAME_DPOS,
+			];
 			// Assert
 			expect(db.get).toHaveBeenCalledTimes(1);
 			expect(db.createReadStream).toHaveBeenCalledTimes(2);
-			expect(Object.getOwnPropertyNames(response)).toEqual([
-				'legacyModuleAssets',
-				'authModuleAssets',
-				'tokenModuleAssets',
-				'dposModuleAssets',
-			]);
-			expect(response.legacyModuleAssets.module).toEqual(MODULE_NAME_LEGACY);
-			expect(response.authModuleAssets.module).toEqual(MODULE_NAME_AUTH);
-			expect(response.tokenModuleAssets.module).toEqual(MODULE_NAME_TOKEN);
-			expect(response.dposModuleAssets.module).toEqual(MODULE_NAME_DPOS);
+			expect(response.length).toHaveLength(4);
+
+			response.forEach((asset: GenesisAssetEntry) => expect(moduleList).toContain(asset.module));
 		});
 	});
 });

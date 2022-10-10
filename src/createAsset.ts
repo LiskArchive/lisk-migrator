@@ -132,12 +132,13 @@ export class CreateAsset {
 
 		const dposModuleAssets = await addDPoSModuleEntry(accounts, blocks);
 
-		// Either return or create assets.json file
-		return {
+		const assets: Record<string, any> = [
 			legacyModuleAssets,
 			authModuleAssets,
 			tokenModuleAssets,
 			dposModuleAssets,
-		};
+		].sort((a, b) => a.module.localeCompare(b.module, 'en'));
+
+		return assets;
 	};
 }

@@ -103,13 +103,11 @@ export const createUserSubstoreArray = async (
 	}
 
 	const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccounts);
-	userSubstore
-		.concat(legacyReserveAccount)
-		.sort((a: UserStoreEntry, b: UserStoreEntry) =>
-			a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID), 'en'),
-		);
+	userSubstore.push(legacyReserveAccount);
 
-	return userSubstore;
+	return userSubstore.sort((a: UserStoreEntry, b: UserStoreEntry) =>
+		a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID), 'en'),
+	);
 };
 
 export const createSupplySubstoreArray = async (
