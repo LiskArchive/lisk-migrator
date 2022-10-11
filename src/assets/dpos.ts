@@ -111,16 +111,16 @@ export const createVotersArray = async (accounts: Account[]): Promise<Voter[]> =
 };
 
 export const createGenesisDataObj = async (
-	delegates: DecodedVoteWeights,
+	delegatesVoteWeights: DecodedVoteWeights,
 	snapshotHeight: number,
 ): Promise<GenesisDataEntry> => {
 	const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
-	const topDelegates: DelegateWeight[] | undefined = delegates.voteWeights
+	const topDelegates: DelegateWeight[] | undefined = delegatesVoteWeights.voteWeights
 		.find((voteWeight: VoteWeight) => voteWeight.round === r - 2)
 		?.delegates.slice(0, 101);
 
 	const initDelegates = topDelegates
-		? topDelegates.map((delegate: any) => getLisk32AddressFromAddress(delegate.address))
+		? topDelegates.map((delegate: DelegateWeight) => getLisk32AddressFromAddress(delegate.address))
 		: [];
 
 	const genesisDataObj: GenesisDataEntry = {
@@ -133,14 +133,14 @@ export const createGenesisDataObj = async (
 export const addDPoSModuleEntry = async (
 	accounts: Account[],
 	blocks: Block[],
-	delegates: DecodedVoteWeights,
+	delegatesVoteWeights: DecodedVoteWeights,
 	snapshotHeight: number,
 ): Promise<GenesisAssetEntry> => {
 	const dposObj = {
 		validators: await createValidatorsArray(accounts, blocks),
 		voters: await createVotersArray(accounts),
 		snapshots: [],
-		genesisData: await createGenesisDataObj(delegates, snapshotHeight),
+		genesisData: await createGenesisDataObj(delegatesVoteWeights, snapshotHeight),
 	};
 
 	return {

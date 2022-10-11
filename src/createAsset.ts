@@ -131,17 +131,17 @@ export class CreateAsset {
 			}),
 		);
 
-		const encodedDelegates = await this._db.get(
+		const encodedDelegatesVoteWeights = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
 		);
-		const decodedDelegates: DecodedVoteWeights = await codec.decode(
+		const decodedDelegatesVoteWeights: DecodedVoteWeights = await codec.decode(
 			voteWeightsSchema,
-			encodedDelegates,
+			encodedDelegatesVoteWeights,
 		);
 		const dposModuleAssets = await addDPoSModuleEntry(
 			accounts,
 			blocks,
-			decodedDelegates,
+			decodedDelegatesVoteWeights,
 			snapshotHeight,
 		);
 
