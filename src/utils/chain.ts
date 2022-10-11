@@ -13,6 +13,7 @@
  */
 
 import cli from 'cli-ux';
+import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
 
 let blockIDAtSnapshotHeight: string;
@@ -42,16 +43,18 @@ export const setBlockIDAtSnapshotHeight = async (
 	height: number,
 ): Promise<void> => {
 	const client = await getAPIClient(liskCorePath);
-	const result: Record<string, any> = await client.block.getByHeight(height);
-	blockIDAtSnapshotHeight = result.header.id.toString('hex');
+	const result = (await client.block.getByHeight(height)) as Record<string, Block>;
+	const blockHeader = (result.header as unknown) as BlockHeader;
+	blockIDAtSnapshotHeight = blockHeader.id.toString('hex');
 };
 
 export const getBlockIDAtSnapshotHeight = (): string => blockIDAtSnapshotHeight;
 
 export const getBlockIDAtHeight = async (liskCorePath: string, height: number): Promise<string> => {
 	const client = await getAPIClient(liskCorePath);
-	const result: Record<string, any> = await client.block.getByHeight(height);
-	const blockID = result.header.id.toString('hex');
+	const result: Record<string, unknown> = await client.block.getByHeight(height);
+	const blockHeader = (result.header as unknown) as BlockHeader;
+	const blockID = blockHeader.id.toString('hex');
 	return blockID;
 };
 
