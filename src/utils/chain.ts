@@ -13,20 +13,45 @@
  */
 
 import cli from 'cli-ux';
-import { getClient } from '../client';
+import { Block, BlockHeader } from '@liskhq/lisk-chain';
+import { getAPIClient } from '../client';
+
+let blockIDAtSnapshotHeight: string;
 
 interface ObserveParams {
 	readonly label: string;
 	readonly height: number;
 	readonly liskCorePath: string;
 	readonly delay: number;
+	readonly isFinal: boolean;
 }
 
-export const getChainHeight = async (liskCorePath: string): Promise<number> => {
-	const client = await getClient(liskCorePath);
-	const result = await client.node.getNodeInfo();
+export const getNodeInfo = async (
+	liskCorePath: string,
+): Promise<{ height: number; finalizedHeight: number }> => {
+	const client = await getAPIClient(liskCorePath);
+	const { height, finalizedHeight } = await client.node.getNodeInfo();
+	return { height, finalizedHeight };
+};
 
-	return result.height;
+export const setBlockIDAtSnapshotHeight = async (
+	liskCorePath: string,
+	height: number,
+): Promise<void> => {
+	const client = await getAPIClient(liskCorePath);
+	const result = (await client.block.getByHeight(height)) as Record<string, Block>;
+	const blockHeader = (result.header as unknown) as BlockHeader;
+	blockIDAtSnapshotHeight = blockHeader.id.toString('hex');
+};
+
+export const getBlockIDAtSnapshotHeight = (): string => blockIDAtSnapshotHeight;
+
+export const getBlockIDAtHeight = async (liskCorePath: string, height: number): Promise<string> => {
+	const client = await getAPIClient(liskCorePath);
+	const result: Record<string, unknown> = await client.block.getByHeight(height);
+	const blockHeader = (result.header as unknown) as BlockHeader;
+	const blockID = blockHeader.id.toString('hex');
+	return blockID;
 };
 
 const secondsToHumanString = (seconds: number): string => {
@@ -70,7 +95,9 @@ const getRemainingTime = (currentHeight: number, observedHeight: number): string
 
 export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
 	const observedHeight = options.height;
-	const startHeight = await getChainHeight(options.liskCorePath);
+	const startHeight = options.isFinal
+		? (await getNodeInfo(options.liskCorePath)).finalizedHeight
+		: (await getNodeInfo(options.liskCorePath)).height;
 
 	if (startHeight === observedHeight) {
 		return startHeight;
@@ -101,7 +128,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		const checkHeight = async () => {
 			let height!: number;
 			try {
-				height = await getChainHeight(options.liskCorePath);
+				height = options.isFinal
+					? (await getNodeInfo(options.liskCorePath)).finalizedHeight
+					: (await getNodeInfo(options.liskCorePath)).height;
 			} catch (error) {
 				return reject(error);
 			}
