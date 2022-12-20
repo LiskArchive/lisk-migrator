@@ -12,5 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 
+import { KVStore } from '@liskhq/lisk-db';
+
 // TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/54
-export const createGenesisBlockFromStorage = async (): Promise<any> => true;
+export const createGenesisBlock = async (db: KVStore, outputPath: string): Promise<any> => ({
+	db,
+	outputPath,
+});

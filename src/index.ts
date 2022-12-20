@@ -11,17 +11,28 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
+import { join } from 'path';
+import { KVStore } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { ROUND_LENGTH } from './constants';
-import { getClient } from './client';
+import { getAPIClient } from './client';
 import { getConfig, migrateUserConfig } from './utils/config';
-import { observeChainHeight } from './utils/chain';
-// import { createDb, verifyConnection, createSnapshot } from './utils/storage';
-// import { createGenesisBlockFromStorage, writeGenesisBlock } from './utils/genesis_block';
+import {
+	observeChainHeight,
+	setBlockIDAtSnapshotHeight,
+	getBlockIDAtSnapshotHeight,
+	getBlockIDAtHeight,
+} from './utils/chain';
+import { createGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
+
+// TODO: Import snapshot command from core once implemented
+const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
+	liskCorePath,
+	snapshotPath,
+});
 
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
@@ -86,25 +97,24 @@ class LiskMigrator extends Command {
 			description: 'Start lisk core v4 automatically. Default to false.',
 			default: false,
 		}),
-		'wait-threshold': flagsParser.integer({
-			char: 'w',
-			required: true,
-			env: 'SNAPSHOT_WAIT_THRESHOLD',
+		'snapshot-path': flagsParser.string({
+			char: 'p',
+			required: false,
 			description:
-				'Blocks to wait before creating a snapshot. Applies only if NODE_ENV=test otherwise 201 value be used.',
-			default: 201,
+				'Path where the state snapshot will be created. When not supplied, defaults to the current directory.',
 		}),
 	};
 
 	public async run(): Promise<void> {
 		const { flags } = this.parse(LiskMigrator);
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		// const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
+		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const compatibleVersions = flags['min-compatible-version'];
-		// const waitThreshold = process.env.NODE_ENV === 'test' ? flags['wait-threshold'] : 201;
+		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
+
 		let config: Config;
 
 		cli.action.start(
@@ -115,7 +125,7 @@ class LiskMigrator extends Command {
 		}
 		cli.action.stop('Snapshot Height is valid');
 
-		const client = await getClient(liskCorePath);
+		const client = await getAPIClient(liskCorePath);
 		const info = await client.node.getNodeInfo();
 		const { version: appVersion } = info;
 
@@ -148,44 +158,47 @@ class LiskMigrator extends Command {
 			liskCorePath,
 			height: snapshotHeight,
 			delay: 500,
+			isFinal: false,
 		});
+
+		await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
+
+		// TODO: Placeholder to issue createSnapshot command from lisk-core
+		cli.action.start('Creating snapshot');
+		await createSnapshot(liskCorePath, snapshotPath);
+		cli.action.stop();
+
+		await observeChainHeight({
+			label: 'Waiting for snapshot height to be finalized',
+			liskCorePath,
+			height: snapshotHeight,
+			delay: 500,
+			isFinal: true,
+		});
+
+		const blockID = getBlockIDAtSnapshotHeight();
+		const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
+
+		cli.action.start('Verifying blockID');
+		if (blockID !== finalizedBlockID) {
+			this.error('Snapshotted blockID does not match with the finalized blockID.');
+		}
+		cli.action.stop();
+
+		// TODO: Stop lisk core automatically when the application management is implemented
+
+		// Create new DB instance based on the snapshot path
+		cli.action.start('Creating database instance');
+		const db = new KVStore(snapshotPath);
+		cli.action.stop();
+
+		cli.action.start('Creating genesis block');
+		await createGenesisBlock(db, outputPath);
+		cli.action.stop();
 
 		if (autoMigrateUserConfig) {
 			await migrateUserConfig();
 		}
-
-		// TODO: This section will be refactored in the next issues
-		// const storageConfig = config.components.storage;
-
-		// cli.action.start(`Verifying connection to database "${storageConfig.database}"`);
-		// const db = createDb(storageConfig);
-		// await verifyConnection(db);
-		// cli.action.stop();
-
-		// cli.action.start('Creating snapshot');
-		// const time = Date.now();
-		// await createSnapshot(db);
-		// cli.action.stop(`done in ${Date.now() - time}ms`);
-
-		// await observeChainHeight({
-		// 	label: 'Waiting for threshold height',
-		// 	db,
-		// 	height: snapshotHeight + waitThreshold,
-		// 	delay: 500,
-		// });
-
-		// const genesisBlock = await createGenesisBlockFromStorage({
-		// 	db,
-		// 	snapshotHeight,
-		// 	epochTime: config.app.genesisConfig.EPOCH_TIME,
-		// });
-
-		// cli.action.start('Exporting genesis block');
-		// writeGenesisBlock(genesisBlock, outputPath);
-		// cli.action.stop();
-		// this.log(outputPath);
-
-		// db.$pool.end();
 	}
 }
 
