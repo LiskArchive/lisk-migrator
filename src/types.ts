@@ -150,11 +150,11 @@ export interface Voter {
 	address: string;
 	sentVotes: {
 		delegateAddress: string;
-		amount: string;
+		amount: bigint;
 	}[];
 	pendingUnlocks: {
 		delegateAddress: string;
-		amount: string;
+		amount: bigint;
 		unvoteHeight: number;
 	}[];
 }

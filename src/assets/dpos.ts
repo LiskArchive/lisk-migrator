@@ -91,16 +91,16 @@ export const createValidatorsArray = async (
 export const createVotersArray = async (accounts: Account[]): Promise<Voter[]> => {
 	const voters: Voter[] = [];
 	for (const account of accounts) {
-		if (account.dpos.sentVotes.length && account.dpos.unlocking.length) {
+		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
 			const voter: Voter = {
 				address: getLisk32AddressFromAddress(account.address),
 				sentVotes: account.dpos.sentVotes.map(vote => ({
 					delegateAddress: getLisk32AddressFromAddress(vote.delegateAddress),
-					amount: String(vote.amount),
+					amount: vote.amount,
 				})),
 				pendingUnlocks: account.dpos.unlocking.map(unlock => ({
 					delegateAddress: getLisk32AddressFromAddress(unlock.delegateAddress),
-					amount: String(unlock.amount),
+					amount: unlock.amount,
 					unvoteHeight: unlock.unvoteHeight,
 				})),
 			};

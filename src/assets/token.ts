@@ -69,8 +69,7 @@ export const createLegacyReserveAccount = async (
 	for (const account of legacyAccounts) {
 		legacyReserveAmount += BigInt(account.balance);
 	}
-	const lockedBalances =
-		legacyReserveAmount === AMOUNT_ZERO ? [] : await getLockedBalances(legacyReserveAccount);
+	const lockedBalances = await getLockedBalances(legacyReserveAccount);
 	lockedBalances.push({
 		module: MODULE_NAME_LEGACY,
 		amount: String(legacyReserveAmount),
