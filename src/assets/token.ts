@@ -17,11 +17,9 @@ import {
 	MODULE_NAME_TOKEN,
 	MODULE_NAME_DPOS,
 	ADDRESS_LEGACY_RESERVE,
-	TOKEN_ID_LSK_MAINCHAIN,
+	TOKEN_ID_LSK,
 	LOCAL_ID_LSK,
-	RADIX_HEX,
 	MODULE_NAME_LEGACY,
-	LOCAL_ID_LENGTH,
 } from '../constants';
 
 import {
@@ -33,9 +31,6 @@ import {
 	GenesisAssetEntry,
 	LockedBalance,
 } from '../types';
-
-const nextLexicographicalOrder = (currentID: string) =>
-	(parseInt(currentID, RADIX_HEX) + 1).toString(RADIX_HEX).padStart(LOCAL_ID_LENGTH, '0');
 
 export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
 	let amount = BigInt('0');
@@ -76,7 +71,7 @@ export const createLegacyReserveAccount = async (
 	});
 	const legacyReserve = {
 		address: getLisk32AddressFromAddress(ADDRESS_LEGACY_RESERVE),
-		tokenID: TOKEN_ID_LSK_MAINCHAIN,
+		tokenID: TOKEN_ID_LSK,
 		availableBalance: (legacyReserveAccount?.token.balance || AMOUNT_ZERO).toString(),
 		lockedBalances,
 	};
@@ -93,7 +88,7 @@ export const createUserSubstoreArray = async (
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj = {
 				address: getLisk32AddressFromAddress(account.address),
-				tokenID: TOKEN_ID_LSK_MAINCHAIN,
+				tokenID: TOKEN_ID_LSK,
 				availableBalance: String(account.token.balance),
 				lockedBalances: await getLockedBalances(account),
 			};
@@ -132,9 +127,7 @@ export const addTokenModuleEntry = async (
 		userSubstore: await createUserSubstoreArray(accounts, legacyAccounts),
 		supplySubstore: await createSupplySubstoreArray(accounts),
 		escrowSubstore: [],
-		availableLocalIDSubstore: {
-			nextAvailableLocalID: nextLexicographicalOrder(LOCAL_ID_LSK),
-		},
+		supportedTokensSubstore: [],
 	};
 	return {
 		module: MODULE_NAME_TOKEN,

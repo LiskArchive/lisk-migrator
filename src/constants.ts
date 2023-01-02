@@ -30,7 +30,7 @@ export const CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = 'dpos:delegateVoteWeights';
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 
-export const TOKEN_ID_LSK_MAINCHAIN = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]).toString('hex');
+export const TOKEN_ID_LSK = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]).toString('hex');
 export const LOCAL_ID_LSK = Buffer.from([0, 0, 0, 0]).toString('hex');
 
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');

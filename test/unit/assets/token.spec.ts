@@ -138,7 +138,7 @@ describe('Build assets/token', () => {
 			'userSubstore',
 			'supplySubstore',
 			'escrowSubstore',
-			'availableLocalIDSubstore',
+			'supportedTokensSubstore',
 		]);
 	});
 });

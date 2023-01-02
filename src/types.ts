@@ -129,9 +129,7 @@ export interface TokenStoreEntry {
 	userSubstore: UserStoreEntry[];
 	supplySubstore: SupplyStoreEntry[];
 	escrowSubstore: [];
-	availableLocalIDSubstore: {
-		nextAvailableLocalID: string;
-	};
+	supportedTokensSubstore: [];
 }
 
 export interface ValidatorEntry {
