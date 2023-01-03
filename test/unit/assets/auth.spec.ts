@@ -43,10 +43,10 @@ describe('Build assets/auth', () => {
 		// Assert
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
 		expect(response.data).toHaveLength(2);
-		expect(Object.getOwnPropertyNames(response.data[0])).toEqual(['address', 'authAccount']);
-		response.data.forEach((asset: { address: string; authAccount: AuthAccountEntry }) => {
-			expect(asset.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(asset.authAccount)).toEqual([
+		expect(Object.getOwnPropertyNames(response.data[0])).toEqual(['storeKey', 'storeValue']);
+		response.data.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
+			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(asset.storeValue)).toEqual([
 				'numberOfSignatures',
 				'mandatoryKeys',
 				'optionalKeys',

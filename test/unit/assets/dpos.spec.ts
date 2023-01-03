@@ -108,7 +108,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create createValidatorsArray', async () => {
-		const validatorsArray = await createValidatorsArray(accounts, []);
+		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight);
 
 		// Assert
 		expect(validatorsArray).toBeInstanceOf(Array);
@@ -124,6 +124,9 @@ describe('Build assets/dpos', () => {
 				'isBanned',
 				'pomHeights',
 				'consecutiveMissedBlocks',
+				'lastCommissionIncreaseHeight',
+				'commission',
+				'sharingCoefficients',
 			]);
 		});
 	});
@@ -163,7 +166,6 @@ describe('Build assets/dpos', () => {
 		expect(Object.getOwnPropertyNames(dposModuleAsset.data)).toEqual([
 			'validators',
 			'voters',
-			'snapshots',
 			'genesisData',
 		]);
 	});
