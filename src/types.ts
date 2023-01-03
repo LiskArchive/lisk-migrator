@@ -132,6 +132,11 @@ export interface TokenStoreEntry {
 	supportedTokensSubstore: [];
 }
 
+export interface SharingCoefficients {
+	tokenID: string;
+	coefficient: string;
+}
+
 export interface ValidatorEntry {
 	address: string;
 	name: string;
@@ -142,6 +147,15 @@ export interface ValidatorEntry {
 	isBanned: boolean;
 	pomHeights: number[];
 	consecutiveMissedBlocks: number;
+	commission: number;
+	lastCommissionIncreaseHeight: number;
+	sharingCoefficients: SharingCoefficients;
+}
+
+export interface SentVote {
+	delegateAddress: string;
+	amount: bigint;
+	voteSharingCoefficients: SharingCoefficients[];
 }
 
 export interface Voter {
