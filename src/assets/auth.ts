@@ -30,8 +30,8 @@ export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAs
 			};
 
 			return {
-				address: getLisk32AddressFromAddress(account.address),
-				authAccount: authObj,
+				storeKey: getLisk32AddressFromAddress(account.address),
+				storeValue: authObj,
 			};
 		}),
 	);

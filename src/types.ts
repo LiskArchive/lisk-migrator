@@ -51,8 +51,8 @@ export interface AuthAccountEntry {
 }
 
 export interface AuthStoreEntry {
-	address: string;
-	authAccount: AuthAccountEntry;
+	storeKey: string;
+	storeValue: AuthAccountEntry;
 }
 
 export interface Account {
