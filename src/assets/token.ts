@@ -102,6 +102,14 @@ export const createUserSubstoreArray = async (
 	return userSubstore.sort((a: UserStoreEntry, b: UserStoreEntry) =>
 		a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID), 'en'),
 	);
+
+	// 	return userSubstore.sort((a: UserStoreEntry, b: UserStoreEntry) =>{
+	// 		if (!a.address.equals(b.address)) {
+	// 			return a.address.compare(b.address);
+	// 		}
+	// 		return a.tokenID.compare(b.tokenID);
+	// 	}
+	// );
 };
 
 export const createSupplySubstoreArray = async (

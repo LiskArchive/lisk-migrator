@@ -39,14 +39,22 @@ import {
 	DelegateWeight,
 } from '../types';
 
-export const getValidatorKeys = async (blocks: Block[]): Promise<Record<string, string>> => {
+export const getValidatorKeys = async (
+	blocks: Block[],
+	accounts: Account[],
+): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 	for (const block of blocks) {
 		const lskAddress: string = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
 		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
 			const trxAddress: string = getLisk32AddressFromPublicKey(trx.senderPublicKey);
-			keys[trxAddress] = trx.senderPublicKey.toString('hex');
+			const account: Account | any = accounts.find(
+				acc => acc.address.toString('hex') === trxAddress,
+			);
+			if (account.dpos.delegate.username) {
+				keys[trxAddress] = trx.senderPublicKey.toString('hex');
+			}
 		}
 	}
 	return keys;
@@ -57,7 +65,7 @@ export const createValidatorsArray = async (
 	blocks: Block[],
 ): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntry[] = [];
-	const validatorKeys = await getValidatorKeys(blocks);
+	const validatorKeys = await getValidatorKeys(blocks, accounts);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
