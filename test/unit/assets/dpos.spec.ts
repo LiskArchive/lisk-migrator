@@ -22,6 +22,7 @@ import {
 	createGenesisDataObj,
 	createValidatorsArray,
 	createVotersArray,
+	getSentVotes,
 } from '../../../src/assets/dpos';
 
 describe('Build assets/dpos', () => {
@@ -168,5 +169,23 @@ describe('Build assets/dpos', () => {
 			'voters',
 			'genesisData',
 		]);
+	});
+
+	it('getSentVotes array', async () => {
+		const sentVotes = await getSentVotes(accounts[1]);
+
+		// Assert
+		expect(sentVotes).toBeInstanceOf(Array);
+		sentVotes.forEach(vote => {
+			expect(vote.delegateAddress).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(vote)).toEqual([
+				'delegateAddress',
+				'amount',
+				'voteSharingCoefficients',
+			]);
+			vote.voteSharingCoefficients.forEach(sharingCoefficient => {
+				expect(Object.getOwnPropertyNames(sharingCoefficient)).toEqual(['tokenID', 'coefficient']);
+			});
+		});
 	});
 });
