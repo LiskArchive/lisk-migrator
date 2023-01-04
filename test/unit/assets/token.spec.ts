@@ -120,7 +120,6 @@ describe('Build assets/token', () => {
 		const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccount);
 
 		// Assert
-		expect(legacyReserveAccount.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
 		expect(Object.getOwnPropertyNames(legacyReserveAccount)).toEqual([
 			'address',
 			'tokenID',

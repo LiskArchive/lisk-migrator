@@ -70,7 +70,7 @@ export const createLegacyReserveAccount = async (
 		amount: String(legacyReserveAmount),
 	});
 	const legacyReserve = {
-		address: getLisk32AddressFromAddress(ADDRESS_LEGACY_RESERVE),
+		address: ADDRESS_LEGACY_RESERVE.toString('hex'),
 		tokenID: TOKEN_ID_LSK,
 		availableBalance: (legacyReserveAccount?.token.balance || AMOUNT_ZERO).toString(),
 		lockedBalances,
@@ -87,7 +87,7 @@ export const createUserSubstoreArray = async (
 	for (const account of accounts) {
 		if (account.address !== ADDRESS_LEGACY_RESERVE) {
 			const userObj = {
-				address: getLisk32AddressFromAddress(account.address),
+				address: account.address.toString('hex'),
 				tokenID: TOKEN_ID_LSK,
 				availableBalance: String(account.token.balance),
 				lockedBalances: await getLockedBalances(account),
@@ -99,17 +99,26 @@ export const createUserSubstoreArray = async (
 	const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccounts);
 	userSubstore.push(legacyReserveAccount);
 
-	return userSubstore.sort((a: UserStoreEntry, b: UserStoreEntry) =>
-		a.address.concat(a.tokenID).localeCompare(b.address.concat(b.tokenID), 'en'),
-	);
+	const sortedUserSubstore = userSubstore.sort((a: UserStoreEntry, b: UserStoreEntry) => {
+		const bufferObjA = {
+			address: Buffer.from(a.address, 'hex'),
+			tokenID: Buffer.from(a.tokenID, 'hex'),
+		};
+		const bufferObjB = {
+			address: Buffer.from(b.address, 'hex'),
+			tokenID: Buffer.from(b.tokenID, 'hex'),
+		};
+		if (!bufferObjA.address.equals(bufferObjB.address)) {
+			return bufferObjA.address.compare(bufferObjB.address);
+		}
+		return bufferObjA.tokenID.compare(bufferObjB.tokenID);
+	});
 
-	// 	return userSubstore.sort((a: UserStoreEntry, b: UserStoreEntry) =>{
-	// 		if (!a.address.equals(b.address)) {
-	// 			return a.address.compare(b.address);
-	// 		}
-	// 		return a.tokenID.compare(b.tokenID);
-	// 	}
-	// );
+	return sortedUserSubstore.map(entry => ({
+		...entry,
+		address: getLisk32AddressFromAddress(Buffer.from(entry.address, 'hex')),
+		tokenID: entry.tokenID,
+	}));
 };
 
 export const createSupplySubstoreArray = async (

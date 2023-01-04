@@ -81,7 +81,7 @@ export const createValidatorsArray = async (
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
 				generatorKey: '',
 				lastGeneratedHeight: 0,
-				isBanned: false,
+				isBanned: true,
 				pomHeights: [],
 				consecutiveMissedBlocks: 0,
 				lastCommissionIncreaseHeight: snapshotHeight,
@@ -97,7 +97,6 @@ export const createValidatorsArray = async (
 				validator.generatorKey = INVALID_ED25519_KEY;
 			}
 			validator.lastGeneratedHeight = account.dpos.delegate.lastForgedHeight;
-			validator.isBanned = true;
 			validator.pomHeights = account.dpos.delegate.pomHeights;
 			validator.consecutiveMissedBlocks = account.dpos.delegate.consecutiveMissedBlocks;
 			validators.push(validator);
@@ -141,6 +140,7 @@ export const createVotersArray = async (accounts: Account[]): Promise<Voter[]> =
 };
 
 export const createGenesisDataObj = async (
+	accounts: Account[],
 	delegatesVoteWeights: DecodedVoteWeights,
 	snapshotHeight: number,
 ): Promise<GenesisDataEntry> => {
@@ -149,14 +149,25 @@ export const createGenesisDataObj = async (
 		.find((voteWeight: VoteWeight) => voteWeight.round === r - 2)
 		?.delegates.slice(0, 101);
 
-	const initDelegates = topDelegates
-		? topDelegates.map((delegate: DelegateWeight) => getLisk32AddressFromAddress(delegate.address))
-		: [];
+	const initDelegates: Buffer[] = [];
+	if (topDelegates?.length) {
+		const accountMap = new Map(accounts.map(account => [account.address.toString('hex'), account]));
+
+		topDelegates.forEach((delegate: DelegateWeight) => {
+			const account = accountMap.get(delegate.address.toString('hex'));
+			if (account && !account.dpos.delegate.isBanned) {
+				initDelegates.push(delegate.address);
+			}
+		});
+	}
+
+	const sortedInitDelegates = initDelegates.sort((a, b) => a.compare(b));
 
 	const genesisDataObj: GenesisDataEntry = {
 		initRounds: DPOS_INIT_ROUNDS,
-		initDelegates,
+		initDelegates: sortedInitDelegates.map(entry => getLisk32AddressFromAddress(entry)),
 	};
+
 	return genesisDataObj;
 };
 
@@ -169,7 +180,7 @@ export const addDPoSModuleEntry = async (
 	const dposObj = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight),
 		voters: await createVotersArray(accounts),
-		genesisData: await createGenesisDataObj(delegatesVoteWeights, snapshotHeight),
+		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
 	};
 
 	return {

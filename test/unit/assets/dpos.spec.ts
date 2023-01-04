@@ -149,7 +149,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create createGenesisDataObj', async () => {
-		const genesisDataObj = await createGenesisDataObj(delegates, snapshotHeight);
+		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
 
 		// Assert
 		genesisDataObj.initDelegates.forEach(address => {
