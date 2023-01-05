@@ -111,7 +111,7 @@ describe('Build assets/token', () => {
 
 		expect(supplySubStore).toBeInstanceOf(Array);
 		supplySubStore.forEach(entry => {
-			expect(Object.getOwnPropertyNames(entry)).toEqual(['localID', 'totalSupply']);
+			expect(Object.getOwnPropertyNames(entry)).toEqual(['tokenID', 'totalSupply']);
 			expect(entry.totalSupply).toEqual(String(totalSupply));
 		});
 	});

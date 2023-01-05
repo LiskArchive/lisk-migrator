@@ -18,7 +18,6 @@ import {
 	MODULE_NAME_DPOS,
 	ADDRESS_LEGACY_RESERVE,
 	TOKEN_ID_LSK,
-	LOCAL_ID_LSK,
 	MODULE_NAME_LEGACY,
 } from '../constants';
 
@@ -132,7 +131,7 @@ export const createSupplySubstoreArray = async (
 			totalLSKSupply += BigInt(lockedBalances[0].amount);
 		}
 	}
-	const LSKSupply = { localID: LOCAL_ID_LSK, totalSupply: String(totalLSKSupply) };
+	const LSKSupply = { tokenID: TOKEN_ID_LSK, totalSupply: String(totalLSKSupply) };
 	return [LSKSupply];
 };
 

@@ -121,7 +121,7 @@ export interface UserStoreEntry {
 }
 
 export interface SupplyStoreEntry {
-	localID: string;
+	tokenID: string;
 	totalSupply: string;
 }
 
