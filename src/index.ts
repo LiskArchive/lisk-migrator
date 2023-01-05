@@ -56,7 +56,7 @@ class LiskMigrator extends Command {
 				'File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.',
 		}),
 		'lisk-core-path': flagsParser.string({
-			char: 'p',
+			char: 'd',
 			required: false,
 			description:
 				'Path where the lisk-core instance is running. Current directory will be considered the default if not provided.',
