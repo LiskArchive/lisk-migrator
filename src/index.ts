@@ -27,6 +27,7 @@ import {
 } from './utils/chain';
 import { createGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
+import { CreateAsset } from './createAsset';
 
 // TODO: Import snapshot command from core once implemented
 const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
@@ -192,8 +193,14 @@ class LiskMigrator extends Command {
 		const db = new KVStore(snapshotPath);
 		cli.action.stop();
 
+		// Create genesis assets
+		cli.action.start('Creating genesis assets');
+		const createAsset = new CreateAsset(db);
+		const genesisAssets = await createAsset.init(snapshotHeight);
+		cli.action.stop();
+
 		cli.action.start('Creating genesis block');
-		await createGenesisBlock(db, outputPath);
+		await createGenesisBlock(genesisAssets, outputPath);
 		cli.action.stop();
 
 		if (autoMigrateUserConfig) {
