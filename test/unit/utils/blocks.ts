@@ -13,7 +13,7 @@
  *
  */
 import { hash, getRandomBytes } from '@liskhq/lisk-cryptography';
-import { BlockHeader } from '@liskhq/lisk-chain';
+import { BlockHeader, Block } from '@liskhq/lisk-chain';
 
 type DeepPartial<T> = T extends Buffer
 	? T
@@ -46,7 +46,7 @@ export const generateBlocks = ({
 }: {
 	readonly startHeight: number;
 	readonly numberOfBlocks: number;
-}): any[] => {
+}): Block[] => {
 	return new Array(numberOfBlocks).fill(0).map((_v, index) => {
 		const height = startHeight + index;
 		return { header: createFakeBlockHeader({ height, version: 2 }), payload: [] };
