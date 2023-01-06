@@ -13,8 +13,9 @@
  *
  */
 import { getRandomBytes } from '@liskhq/lisk-cryptography';
+import { Account } from '../../../src/types';
 
-export const createFakeDefaultAccount = (account: any) => ({
+export const createFakeDefaultAccount = (account: Account) => ({
 	address: account?.address ?? getRandomBytes(20),
 	token: {
 		balance: account?.token?.balance ?? BigInt(0),
