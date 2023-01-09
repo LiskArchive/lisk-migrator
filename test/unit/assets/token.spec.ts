@@ -31,6 +31,7 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 };
 
 describe('Build assets/token', () => {
+	const tokenID = '0400000000000000';
 	let legacyAccount: LegacyStoreData[];
 	let accounts: Account[];
 
@@ -67,6 +68,26 @@ describe('Build assets/token', () => {
 				token: {
 					balance: BigInt(Math.floor(Math.random() * 1000)),
 				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				keys: {
+					mandatoryKeys: [],
+					optionalKeys: [],
+					numberOfSignatures: 0,
+				},
+				dpos: {
+					delegate: {
+						username: '',
+						pomHeights: [],
+						consecutiveMissedBlocks: 0,
+						lastForgedHeight: 0,
+						isBanned: false,
+						totalVotesReceived: BigInt('0'),
+					},
+					sentVotes: [],
+					unlocking: [],
+				},
 			}),
 			createFakeDefaultAccount({
 				address: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
@@ -80,12 +101,27 @@ describe('Build assets/token', () => {
 				token: {
 					balance: BigInt(Math.floor(Math.random() * 1000)),
 				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				dpos: {
+					delegate: {
+						username: '',
+						pomHeights: [],
+						consecutiveMissedBlocks: 0,
+						lastForgedHeight: 0,
+						isBanned: false,
+						totalVotesReceived: BigInt('0'),
+					},
+					sentVotes: [],
+					unlocking: [],
+				},
 			}),
 		];
 	});
 
 	it('should create userSubstore', async () => {
-		const userSubstore = await createUserSubstoreArray(accounts, legacyAccount);
+		const userSubstore = await createUserSubstoreArray(accounts, legacyAccount, tokenID);
 
 		// Assert
 		expect(userSubstore).toBeInstanceOf(Array);
@@ -101,7 +137,7 @@ describe('Build assets/token', () => {
 	});
 
 	it('should create supplySubStore', async () => {
-		const supplySubStore = await createSupplySubstoreArray(accounts);
+		const supplySubStore = await createSupplySubstoreArray(accounts, tokenID);
 
 		// Assert
 		let totalSupply = 0;
@@ -117,7 +153,7 @@ describe('Build assets/token', () => {
 	});
 
 	it('should create legacyReserveAccount', async () => {
-		const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccount);
+		const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccount, tokenID);
 
 		// Assert
 		expect(Object.getOwnPropertyNames(legacyReserveAccount)).toEqual([
@@ -129,7 +165,7 @@ describe('Build assets/token', () => {
 	});
 
 	it('should create token module asset', async () => {
-		const response = await addTokenModuleEntry(accounts, legacyAccount);
+		const response = await addTokenModuleEntry(accounts, legacyAccount, tokenID);
 
 		// Assert
 		expect(response.module).toEqual(MODULE_NAME_TOKEN);

@@ -14,6 +14,7 @@
 import { hash } from '@liskhq/lisk-cryptography';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Block } from '@liskhq/lisk-chain';
 
 import {
 	DB_KEY_CHAIN_STATE,
@@ -26,7 +27,7 @@ import {
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 } from './constants';
 import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
-import { LegacyStoreData, Block, DecodedVoteWeights } from './types';
+import { LegacyStoreData, DecodedVoteWeights } from './types';
 
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
@@ -79,7 +80,10 @@ export class CreateAsset {
 		this._db = db;
 	}
 
-	public init = async (snapshotHeight: number): Promise<Record<string, unknown>> => {
+	public init = async (
+		snapshotHeight: number,
+		TOKEN_ID_LSK: string,
+	): Promise<Record<string, unknown>> => {
 		const encodedUnregisteredAddresses = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
 		);
@@ -96,7 +100,7 @@ export class CreateAsset {
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 
 		const legacyAccounts: LegacyStoreData[] = legacyModuleAssets.data.accounts;
-		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts);
+		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, TOKEN_ID_LSK);
 
 		const blocksStream = this._db.createReadStream({
 			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
@@ -143,6 +147,7 @@ export class CreateAsset {
 			blocks,
 			decodedDelegatesVoteWeights,
 			snapshotHeight,
+			TOKEN_ID_LSK,
 		);
 
 		const assets: Record<string, any> = [

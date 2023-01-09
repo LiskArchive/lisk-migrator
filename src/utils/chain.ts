@@ -15,8 +15,10 @@
 import cli from 'cli-ux';
 import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
+import { NETWORKS } from '../constants';
 
 let blockIDAtSnapshotHeight: string;
+let TOKEN_ID_LSK: string;
 
 interface ObserveParams {
 	readonly label: string;
@@ -26,11 +28,18 @@ interface ObserveParams {
 	readonly isFinal: boolean;
 }
 
+export const getTokenIDLisk = (): string => TOKEN_ID_LSK;
+
+export const setTokenIDLisk = async (networkIdentifier: string): Promise<void> => {
+	TOKEN_ID_LSK = NETWORKS[networkIdentifier];
+};
+
 export const getNodeInfo = async (
 	liskCorePath: string,
 ): Promise<{ height: number; finalizedHeight: number }> => {
 	const client = await getAPIClient(liskCorePath);
-	const { height, finalizedHeight } = await client.node.getNodeInfo();
+	const { height, finalizedHeight, networkIdentifier } = await client.node.getNodeInfo();
+	await setTokenIDLisk(networkIdentifier);
 	return { height, finalizedHeight };
 };
 

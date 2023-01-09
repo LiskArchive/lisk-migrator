@@ -94,22 +94,6 @@ export interface LegacyStoreData {
 	balance: string;
 }
 
-export interface Block<T = Buffer | string> {
-	header: {
-		[key: string]: unknown;
-		id?: T;
-		generatorPublicKey: Buffer;
-		version: number;
-		transactions: Record<string, unknown>;
-		asset: Record<string, unknown>;
-	};
-	payload: {
-		[key: string]: unknown;
-		id?: T;
-		senderPublicKey: Buffer;
-	}[];
-}
-
 export interface UserStoreEntry {
 	address: string;
 	tokenID: string;
