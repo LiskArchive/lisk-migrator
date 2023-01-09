@@ -31,7 +31,7 @@ describe('Build assets/dpos', () => {
 	let accounts: Account[];
 	let blocks: Block[];
 	let delegates: DecodedVoteWeights;
-	const snapshotHeight = 103;
+	const snapshotHeight = 16281018;
 
 	beforeAll(async () => {
 		blocks = generateBlocks({
