@@ -28,7 +28,6 @@ export const CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = 'dpos:delegateVoteWeights';
 export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
-export const TOKEN_ID_LSK = Buffer.from([0, 0, 0, 0, 0, 0, 0, 0]).toString('hex');
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
 export const INVALID_ED25519_KEY = Buffer.alloc(32, 255).toString('hex');
 export const DUMMY_PROOF_OF_POSSESSION = Buffer.alloc(96, 0).toString('hex');
@@ -37,3 +36,11 @@ export const DPOS_INIT_ROUNDS = 60480;
 export const ROUND_LENGTH = 103;
 export const RADIX_HEX = 16;
 export const Q96_ZERO = '';
+
+export const TOKEN_ID_MAINNET = '0400000000000000';
+export const TOKEN_ID_TESTNET = '0300000000000000';
+
+export const NETWORKS: { [key: string]: string } = {
+	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': TOKEN_ID_MAINNET,
+	'15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c': TOKEN_ID_TESTNET,
+};

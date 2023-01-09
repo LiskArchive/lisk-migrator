@@ -23,6 +23,29 @@ describe('Build assets/auth', () => {
 		accounts = [
 			createFakeDefaultAccount({
 				address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
+				token: {
+					balance: BigInt('0'),
+				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				keys: {
+					mandatoryKeys: [],
+					optionalKeys: [],
+					numberOfSignatures: 0,
+				},
+				dpos: {
+					delegate: {
+						username: '',
+						pomHeights: [],
+						consecutiveMissedBlocks: 0,
+						lastForgedHeight: 0,
+						isBanned: false,
+						totalVotesReceived: BigInt('0'),
+					},
+					sentVotes: [],
+					unlocking: [],
+				},
 			}),
 			createFakeDefaultAccount({
 				address: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
@@ -32,6 +55,24 @@ describe('Build assets/auth', () => {
 					],
 					optionalKeys: [],
 					numberOfSignatures: 3,
+				},
+				token: {
+					balance: BigInt('0'),
+				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				dpos: {
+					delegate: {
+						username: '',
+						pomHeights: [],
+						consecutiveMissedBlocks: 0,
+						lastForgedHeight: 0,
+						isBanned: false,
+						totalVotesReceived: BigInt('0'),
+					},
+					sentVotes: [],
+					unlocking: [],
 				},
 			}),
 		];

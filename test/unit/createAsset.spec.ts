@@ -56,7 +56,8 @@ describe('Build assets/legacy', () => {
 	let encodedUnregisteredAddresses: Buffer;
 	let delegates: DecodedVoteWeights;
 	let encodedVoteWeights: Buffer;
-	const snapshotHeight = 103;
+	const snapshotHeight = 16281018;
+	const tokenID = '0400000000000000';
 
 	interface Accounts {
 		[key: string]: {
@@ -197,7 +198,7 @@ describe('Build assets/legacy', () => {
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const response = await createAsset.init(snapshotHeight);
+			const response = await createAsset.init(snapshotHeight, tokenID);
 
 			const moduleList = [
 				MODULE_NAME_LEGACY,

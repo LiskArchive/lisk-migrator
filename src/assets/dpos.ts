@@ -16,6 +16,7 @@ import {
 	getLisk32AddressFromAddress,
 	getLisk32AddressFromPublicKey,
 } from '@liskhq/lisk-cryptography';
+import { Block } from '@liskhq/lisk-chain';
 
 import {
 	MODULE_NAME_DPOS,
@@ -25,13 +26,11 @@ import {
 	DPOS_INIT_ROUNDS,
 	ROUND_LENGTH,
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
-	TOKEN_ID_LSK,
 	Q96_ZERO,
 } from '../constants';
 
 import {
 	Account,
-	Block,
 	GenesisAssetEntry,
 	ValidatorEntry,
 	Voter,
@@ -51,12 +50,12 @@ export const getValidatorKeys = async (
 		const lskAddress: string = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
 		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
-			const trxAddress: string = getLisk32AddressFromPublicKey(trx.senderPublicKey);
-			const account: Account | any = accounts.find(
-				acc => acc.address.toString('hex') === trxAddress,
+			const trxSenderAddress: string = getLisk32AddressFromPublicKey(trx.senderPublicKey);
+			const account: Account | undefined = accounts.find(
+				acc => acc.address.toString('hex') === trxSenderAddress,
 			);
-			if (account.dpos.delegate.username) {
-				keys[trxAddress] = trx.senderPublicKey.toString('hex');
+			if (account?.dpos.delegate.username) {
+				keys[trxSenderAddress] = trx.senderPublicKey.toString('hex');
 			}
 		}
 	}
@@ -67,6 +66,7 @@ export const createValidatorsArray = async (
 	accounts: Account[],
 	blocks: Block[],
 	snapshotHeight: number,
+	tokenID: string,
 ): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntry[] = [];
 	const validatorKeys = await getValidatorKeys(blocks, accounts);
@@ -76,7 +76,7 @@ export const createValidatorsArray = async (
 			const validatorAddress = getLisk32AddressFromAddress(account.address);
 			const validator: ValidatorEntry = {
 				address: validatorAddress,
-				name: account.dpos.delegate.username,
+				name: '',
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
 				generatorKey: '',
@@ -87,7 +87,7 @@ export const createValidatorsArray = async (
 				lastCommissionIncreaseHeight: snapshotHeight,
 				commission: 10000,
 				sharingCoefficients: {
-					tokenID: TOKEN_ID_LSK,
+					tokenID,
 					coefficient: Q96_ZERO,
 				},
 			};
@@ -96,6 +96,7 @@ export const createValidatorsArray = async (
 			} else {
 				validator.generatorKey = INVALID_ED25519_KEY;
 			}
+			validator.name = account.dpos.delegate.username;
 			validator.lastGeneratedHeight = account.dpos.delegate.lastForgedHeight;
 			validator.pomHeights = account.dpos.delegate.pomHeights;
 			validator.consecutiveMissedBlocks = account.dpos.delegate.consecutiveMissedBlocks;
@@ -105,13 +106,13 @@ export const createValidatorsArray = async (
 	return validators;
 };
 
-export const getSentVotes = async (account: Account): Promise<SentVote[]> => {
+export const getSentVotes = async (account: Account, tokenID: string): Promise<SentVote[]> => {
 	const sentVotes = account.dpos.sentVotes.map(vote => ({
 		...vote,
 		delegateAddress: getLisk32AddressFromAddress(vote.delegateAddress),
 		voteSharingCoefficients: [
 			{
-				tokenID: TOKEN_ID_LSK,
+				tokenID,
 				coefficient: Q96_ZERO,
 			},
 		],
@@ -120,13 +121,13 @@ export const getSentVotes = async (account: Account): Promise<SentVote[]> => {
 	return sentVotes;
 };
 
-export const createVotersArray = async (accounts: Account[]): Promise<Voter[]> => {
+export const createVotersArray = async (accounts: Account[], tokenID: string): Promise<Voter[]> => {
 	const voters: Voter[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
 			const voter: Voter = {
 				address: getLisk32AddressFromAddress(account.address),
-				sentVotes: await getSentVotes(account),
+				sentVotes: await getSentVotes(account, tokenID),
 				pendingUnlocks: account.dpos.unlocking.map(unlock => ({
 					delegateAddress: getLisk32AddressFromAddress(unlock.delegateAddress),
 					amount: unlock.amount,
@@ -145,23 +146,27 @@ export const createGenesisDataObj = async (
 	snapshotHeight: number,
 ): Promise<GenesisDataEntry> => {
 	const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
-	const topDelegates: DelegateWeight[] | undefined = delegatesVoteWeights.voteWeights
-		.find((voteWeight: VoteWeight) => voteWeight.round === r - 2)
-		?.delegates.slice(0, 101);
-
-	const initDelegates: Buffer[] = [];
-	if (topDelegates?.length) {
-		const accountMap = new Map(accounts.map(account => [account.address.toString('hex'), account]));
-
-		topDelegates.forEach((delegate: DelegateWeight) => {
-			const account = accountMap.get(delegate.address.toString('hex'));
-			if (account && !account.dpos.delegate.isBanned) {
-				initDelegates.push(delegate.address);
-			}
-		});
+	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
+		(voteWeight: VoteWeight) => voteWeight.round === r - 2,
+	);
+	if (!voteWeightR2 || voteWeightR2.delegates.length === 0) {
+		throw new Error(`Top delegates for round r-2 (${r - 2}) unavailable, cannot proceed.`);
 	}
 
-	const sortedInitDelegates = initDelegates.sort((a, b) => a.compare(b));
+	const topDelegates = voteWeightR2.delegates;
+
+	const initDelegates: Buffer[] = [];
+	const accountMap = new Map(accounts.map(account => [account.address.toString('hex'), account]));
+
+	topDelegates.forEach((delegate: DelegateWeight) => {
+		const account = accountMap.get(delegate.address.toString('hex'));
+		if (account && !account.dpos.delegate.isBanned) {
+			initDelegates.push(delegate.address);
+		}
+	});
+
+	// Verify
+	const sortedInitDelegates = initDelegates.slice(0, 101).sort((a, b) => a.compare(b));
 
 	const genesisDataObj: GenesisDataEntry = {
 		initRounds: DPOS_INIT_ROUNDS,
@@ -176,10 +181,11 @@ export const addDPoSModuleEntry = async (
 	blocks: Block[],
 	delegatesVoteWeights: DecodedVoteWeights,
 	snapshotHeight: number,
+	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
 	const dposObj = {
-		validators: await createValidatorsArray(accounts, blocks, snapshotHeight),
-		voters: await createVotersArray(accounts),
+		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
+		voters: await createVotersArray(accounts, tokenID),
 		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
 	};
 

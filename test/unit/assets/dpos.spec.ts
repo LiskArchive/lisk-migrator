@@ -11,8 +11,9 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { Block } from '@liskhq/lisk-chain';
 import { MODULE_NAME_DPOS } from '../../../src/constants';
-import { Account, Block, DecodedVoteWeights } from '../../../src/types';
+import { Account, DecodedVoteWeights } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
 import { ADDRESS_LISK32 } from '../utils/regex';
@@ -26,10 +27,11 @@ import {
 } from '../../../src/assets/dpos';
 
 describe('Build assets/dpos', () => {
+	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
 	let delegates: DecodedVoteWeights;
-	const snapshotHeight = 103;
+	const snapshotHeight = 16281018;
 
 	beforeAll(async () => {
 		blocks = generateBlocks({
@@ -67,9 +69,18 @@ describe('Build assets/dpos', () => {
 						isBanned: false,
 						pomHeights: [],
 						consecutiveMissedBlocks: 0,
+						totalVotesReceived: BigInt('0'),
 					},
 					sentVotes: [],
 					unlocking: [],
+				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				keys: {
+					mandatoryKeys: [],
+					optionalKeys: [],
+					numberOfSignatures: 0,
 				},
 			}),
 			createFakeDefaultAccount({
@@ -91,25 +102,29 @@ describe('Build assets/dpos', () => {
 						isBanned: false,
 						pomHeights: [],
 						consecutiveMissedBlocks: 0,
+						totalVotesReceived: BigInt('0'),
 					},
 					sentVotes: [
 						{
 							delegateAddress: Buffer.from('03f6d90b7dbd0497dc3a52d1c27e23bb8c75897f', 'hex'),
-							amount: '1000000000000',
+							amount: BigInt('1000000000000'),
 						},
 						{
 							delegateAddress: Buffer.from('0903f4c5cb599a7928aef27e314e98291d1e3888', 'hex'),
-							amount: '1000000000000',
+							amount: BigInt('1000000000000'),
 						},
 					],
 					unlocking: [],
+				},
+				sequence: {
+					nonce: BigInt('0'),
 				},
 			}),
 		];
 	});
 
 	it('should create createValidatorsArray', async () => {
-		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight);
+		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight, tokenID);
 
 		// Assert
 		expect(validatorsArray).toBeInstanceOf(Array);
@@ -133,7 +148,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create createVotersArray', async () => {
-		const votersArray = await createVotersArray(accounts);
+		const votersArray = await createVotersArray(accounts, tokenID);
 
 		// Assert
 		expect(votersArray).toBeInstanceOf(Array);
@@ -160,7 +175,13 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create DPoS module asset', async () => {
-		const dposModuleAsset = await addDPoSModuleEntry(accounts, blocks, delegates, snapshotHeight);
+		const dposModuleAsset = await addDPoSModuleEntry(
+			accounts,
+			blocks,
+			delegates,
+			snapshotHeight,
+			tokenID,
+		);
 
 		// Assert
 		expect(dposModuleAsset.module).toEqual(MODULE_NAME_DPOS);
@@ -172,7 +193,7 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('getSentVotes array', async () => {
-		const sentVotes = await getSentVotes(accounts[1]);
+		const sentVotes = await getSentVotes(accounts[1], tokenID);
 
 		// Assert
 		expect(sentVotes).toBeInstanceOf(Array);
