@@ -82,7 +82,7 @@ export class CreateAsset {
 
 	public init = async (
 		snapshotHeight: number,
-		TOKEN_ID_LSK: string,
+		tokenID: string,
 	): Promise<Record<string, unknown>> => {
 		const encodedUnregisteredAddresses = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
@@ -100,7 +100,7 @@ export class CreateAsset {
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 
 		const legacyAccounts: LegacyStoreData[] = legacyModuleAssets.data.accounts;
-		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, TOKEN_ID_LSK);
+		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, tokenID);
 
 		const blocksStream = this._db.createReadStream({
 			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
@@ -147,7 +147,7 @@ export class CreateAsset {
 			blocks,
 			decodedDelegatesVoteWeights,
 			snapshotHeight,
-			TOKEN_ID_LSK,
+			tokenID,
 		);
 
 		const assets: Record<string, any> = [
