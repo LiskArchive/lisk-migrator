@@ -13,7 +13,7 @@
  */
 import { addAuthModuleEntry } from '../../../src/assets/auth';
 import { MODULE_NAME_AUTH } from '../../../src/constants';
-import { Account, AuthAccountEntry } from '../../../src/types';
+import { Account, AuthAccountEntry, AuthStoreEntry, GenesisAssetEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { ADDRESS_LISK32 } from '../utils/regex';
 
@@ -79,13 +79,13 @@ describe('Build assets/auth', () => {
 	});
 
 	it('should get auth accounts', async () => {
-		const response = await addAuthModuleEntry(accounts);
+		const response: GenesisAssetEntry = await addAuthModuleEntry(accounts);
+		const data = (response.data as unknown) as AuthStoreEntry[];
 
-		// Assert
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
 		expect(response.data).toHaveLength(2);
 		expect(Object.getOwnPropertyNames(response.data[0])).toEqual(['storeKey', 'storeValue']);
-		response.data.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
+		data.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
 			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
 			expect(Object.getOwnPropertyNames(asset.storeValue)).toEqual([
 				'numberOfSignatures',

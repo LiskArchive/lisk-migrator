@@ -22,7 +22,7 @@ import {
 
 import {
 	Account,
-	LegacyStoreData,
+	LegacyStoreEntry,
 	SupplyStoreEntry,
 	TokenStoreEntry,
 	UserStoreEntry,
@@ -53,7 +53,7 @@ export const getLockedBalances = async (account: Account): Promise<LockedBalance
 
 export const createLegacyReserveAccount = async (
 	accounts: Account[],
-	legacyAccounts: LegacyStoreData[],
+	legacyAccounts: LegacyStoreEntry[],
 	tokenID: string,
 ): Promise<UserStoreEntry> => {
 	const legacyReserveAccount: Account | undefined = accounts.find(account =>
@@ -84,7 +84,7 @@ export const createLegacyReserveAccount = async (
 
 export const createUserSubstoreArray = async (
 	accounts: Account[],
-	legacyAccounts: LegacyStoreData[],
+	legacyAccounts: LegacyStoreEntry[],
 	tokenID: string,
 ): Promise<UserStoreEntry[]> => {
 	const userSubstore: UserStoreEntry[] = [];
@@ -143,7 +143,7 @@ export const createSupplySubstoreArray = async (
 
 export const addTokenModuleEntry = async (
 	accounts: Account[],
-	legacyAccounts: LegacyStoreData[],
+	legacyAccounts: LegacyStoreEntry[],
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
 	const tokenObj: TokenStoreEntry = {
@@ -154,6 +154,6 @@ export const addTokenModuleEntry = async (
 	};
 	return {
 		module: MODULE_NAME_TOKEN,
-		data: tokenObj,
+		data: (tokenObj as unknown) as Record<string, unknown>,
 	};
 };

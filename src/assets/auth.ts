@@ -38,6 +38,6 @@ export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAs
 
 	return {
 		module: MODULE_NAME_AUTH,
-		data: authDataSubstore,
+		data: (authDataSubstore as unknown) as Record<string, unknown>,
 	};
 };

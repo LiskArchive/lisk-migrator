@@ -80,9 +80,7 @@ export const createValidatorsArray = async (
 				name: account.dpos.delegate.username,
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
-				generatorKey: validatorKeys[validatorAddress]
-					? validatorKeys[validatorAddress]
-					: INVALID_ED25519_KEY,
+				generatorKey: validatorKeys[validatorAddress] || INVALID_ED25519_KEY,
 				lastGeneratedHeight: account.dpos.delegate.lastForgedHeight,
 				isBanned: true,
 				pomHeights: account.dpos.delegate.pomHeights,
@@ -184,6 +182,6 @@ export const addDPoSModuleEntry = async (
 
 	return {
 		module: MODULE_NAME_DPOS,
-		data: dposObj,
+		data: (dposObj as unknown) as Record<string, unknown>,
 	};
 };

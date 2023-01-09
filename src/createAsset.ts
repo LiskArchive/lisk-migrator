@@ -27,7 +27,7 @@ import {
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 } from './constants';
 import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
-import { LegacyStoreData, DecodedVoteWeights } from './types';
+import { LegacyStoreEntry, DecodedVoteWeights, GenesisAssetEntry } from './types';
 
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
@@ -80,10 +80,7 @@ export class CreateAsset {
 		this._db = db;
 	}
 
-	public init = async (
-		snapshotHeight: number,
-		tokenID: string,
-	): Promise<Record<string, unknown>> => {
+	public init = async (snapshotHeight: number, tokenID: string): Promise<GenesisAssetEntry[]> => {
 		const encodedUnregisteredAddresses = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
 		);
@@ -99,7 +96,8 @@ export class CreateAsset {
 
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 
-		const legacyAccounts: LegacyStoreData[] = legacyModuleAssets.data.accounts;
+		const legacyAccounts: LegacyStoreEntry[] = legacyModuleAssets.data
+			.accounts as LegacyStoreEntry[];
 		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, tokenID);
 
 		const blocksStream = this._db.createReadStream({
@@ -150,7 +148,7 @@ export class CreateAsset {
 			tokenID,
 		);
 
-		const assets: Record<string, any> = [
+		const assets: GenesisAssetEntry[] = [
 			legacyModuleAssets,
 			authModuleAssets,
 			tokenModuleAssets,
