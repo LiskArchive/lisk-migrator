@@ -18,6 +18,7 @@ import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
+import { TOKEN_ID_LSK } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
@@ -57,6 +58,14 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	cli.action.stop();
 
 	return config;
+};
+
+export const resolveConfigPath = async (tokenID: string): Promise<string> => {
+	const network = Object.keys(TOKEN_ID_LSK).find(
+		(key: string) => TOKEN_ID_LSK[key] === tokenID,
+	) as string;
+	const configFilePath = `${process.cwd()}/config/${network.toLowerCase()}/config.json`;
+	return configFilePath;
 };
 
 // TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55

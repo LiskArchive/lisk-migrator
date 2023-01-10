@@ -20,7 +20,7 @@ import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { ROUND_LENGTH } from './constants';
 import { getAPIClient } from './client';
-import { getConfig, migrateUserConfig } from './utils/config';
+import { getConfig, migrateUserConfig, resolveConfigPath } from './utils/config';
 import {
 	observeChainHeight,
 	setBlockIDAtSnapshotHeight,
@@ -29,7 +29,7 @@ import {
 	getTokenIDLisk,
 } from './utils/chain';
 import { createGenesisBlock } from './utils/genesis_block';
-// import { Config } from './types';
+import { Config } from './types';
 import { CreateAsset } from './createAsset';
 
 // TODO: Import snapshot command from core once implemented
@@ -112,14 +112,14 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		const { flags } = this.parse(LiskMigrator);
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
+		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const compatibleVersions = flags['min-compatible-version'];
 		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
 
-		let config: any;
+		let config: Config;
 
 		cli.action.start(
 			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -200,12 +200,14 @@ class LiskMigrator extends Command {
 		cli.action.start('Creating genesis assets');
 		const createAsset = new CreateAsset(db);
 		const tokenID = getTokenIDLisk();
+		// const tokenID = '0400000000000000';
 		const genesisAssets = await createAsset.init(snapshotHeight, tokenID);
 		cli.action.stop();
 
 		// Create an app instance for creating genesis block
-		config = await fs.readJSON(config);
-		const { app } = await Application.defaultApplication(config);
+		const configFilePath = await resolveConfigPath(tokenID);
+		const configCoreV4 = await fs.readJSON(configFilePath);
+		const { app } = await Application.defaultApplication(configCoreV4);
 
 		cli.action.start('Creating genesis block');
 		await createGenesisBlock(app, genesisAssets, outputPath);

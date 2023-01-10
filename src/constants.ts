@@ -36,10 +36,11 @@ export const DPOS_INIT_ROUNDS = 60480;
 export const ROUND_LENGTH = 103;
 export const Q96_ZERO = '';
 export const MAX_COMMISSION = 10000;
-const TOKEN_ID_LSK = Object.freeze({
+
+export const TOKEN_ID_LSK = Object.freeze({
 	MAINNET: '0400000000000000',
 	TESTNET: '0300000000000000',
-});
+}) as { [key: string]: string };
 
 export const NETWORKS: { [key: string]: string } = {
 	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': TOKEN_ID_LSK.MAINNET,

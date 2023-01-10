@@ -30,5 +30,6 @@ export const createGenesisBlock = async (
 	});
 
 	fs.mkdirSync(outputPath, { recursive: true });
+	fs.writeFileSync(resolve(outputPath, 'genesis_block.json'), JSON.stringify(genesisBlock));
 	fs.writeFileSync(resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
 };
