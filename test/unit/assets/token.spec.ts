@@ -14,7 +14,7 @@
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 
 import { MODULE_NAME_TOKEN } from '../../../src/constants';
-import { Account, LegacyStoreData } from '../../../src/types';
+import { Account, LegacyStoreEntry } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { ADDRESS_LISK32 } from '../utils/regex';
 
@@ -32,7 +32,7 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 
 describe('Build assets/token', () => {
 	const tokenID = '0400000000000000';
-	let legacyAccount: LegacyStoreData[];
+	let legacyAccount: LegacyStoreEntry[];
 	let accounts: Account[];
 
 	interface legacyAccounts {

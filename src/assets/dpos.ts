@@ -27,6 +27,7 @@ import {
 	ROUND_LENGTH,
 	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 	Q96_ZERO,
+	MAX_COMMISSION,
 } from '../constants';
 
 import {
@@ -75,32 +76,23 @@ export const createValidatorsArray = async (
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
 			const validatorAddress = getLisk32AddressFromAddress(account.address);
-			const validator: ValidatorEntry = {
+			const validator: ValidatorEntry = Object.freeze({
 				address: validatorAddress,
-				name: '',
+				name: account.dpos.delegate.username,
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
-				generatorKey: '',
-				lastGeneratedHeight: 0,
+				generatorKey: validatorKeys[validatorAddress] || INVALID_ED25519_KEY,
+				lastGeneratedHeight: account.dpos.delegate.lastForgedHeight,
 				isBanned: true,
-				pomHeights: [],
-				consecutiveMissedBlocks: 0,
+				pomHeights: account.dpos.delegate.pomHeights,
+				consecutiveMissedBlocks: account.dpos.delegate.consecutiveMissedBlocks,
 				lastCommissionIncreaseHeight: snapshotHeight,
-				commission: 10000,
+				commission: MAX_COMMISSION,
 				sharingCoefficients: {
 					tokenID,
 					coefficient: Q96_ZERO,
 				},
-			};
-			if (validatorKeys[validatorAddress]) {
-				validator.generatorKey = validatorKeys[validatorAddress];
-			} else {
-				validator.generatorKey = INVALID_ED25519_KEY;
-			}
-			validator.name = account.dpos.delegate.username;
-			validator.lastGeneratedHeight = account.dpos.delegate.lastForgedHeight;
-			validator.pomHeights = account.dpos.delegate.pomHeights;
-			validator.consecutiveMissedBlocks = account.dpos.delegate.consecutiveMissedBlocks;
+			});
 			validators.push(validator);
 		}
 	}
@@ -166,7 +158,6 @@ export const createGenesisDataObj = async (
 		}
 	});
 
-	// Verify
 	const sortedInitDelegates = initDelegates.slice(0, 101).sort((a, b) => a.compare(b));
 
 	const genesisDataObj: GenesisDataEntry = {
@@ -192,7 +183,7 @@ export const addDPoSModuleEntry = async (
 
 	return {
 		module: MODULE_NAME_DPOS,
-		data: dposObj,
+		data: (dposObj as unknown) as Record<string, unknown>,
 		schema: genesisDPoSSchema,
 	};
 };

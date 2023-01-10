@@ -89,9 +89,13 @@ export interface Account {
 	};
 }
 
-export interface LegacyStoreData {
+export interface LegacyStoreEntry {
 	address: string;
 	balance: string;
+}
+
+export interface LegacyStoreData {
+	accounts: LegacyStoreEntry[];
 }
 
 export interface UserStoreEntry {
@@ -174,7 +178,7 @@ export interface LockedBalance {
 
 export interface GenesisAssetEntry {
 	module: string;
-	data: any;
+	data: Record<string, unknown>;
 	schema: any;
 }
 
