@@ -11,11 +11,24 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/54
+import * as fs from 'fs-extra';
+import { resolve } from 'path';
+import { codec, Schema } from '@liskhq/lisk-codec';
+
 export const createGenesisBlock = async (
-	assets: Record<string, unknown>,
+	app: any,
+	assets: any,
 	outputPath: string,
-): Promise<any> => ({
-	assets,
-	outputPath,
-});
+): Promise<any> => {
+	const genesisBlock = await app.generateGenesisBlock({
+		assets: assets.map((a: { module: any; schema: Schema; data: object }) => ({
+			module: a.module,
+			data: codec.fromJSON(a.schema, a.data),
+			schema: a.schema,
+		})),
+		chainID: Buffer.from(app.config.genesis.chainID, 'hex'),
+	});
+
+	fs.mkdirSync(outputPath, { recursive: true });
+	fs.writeFileSync(resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
+};

@@ -40,6 +40,7 @@ import {
 	DelegateWeight,
 	SentVote,
 } from '../types';
+import { genesisDPoSSchema } from '../schemas';
 
 export const getValidatorKeys = async (
 	blocks: Block[],
@@ -192,5 +193,6 @@ export const addDPoSModuleEntry = async (
 	return {
 		module: MODULE_NAME_DPOS,
 		data: dposObj,
+		schema: genesisDPoSSchema,
 	};
 };

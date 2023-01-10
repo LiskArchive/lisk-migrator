@@ -175,6 +175,7 @@ export interface LockedBalance {
 export interface GenesisAssetEntry {
 	module: string;
 	data: any;
+	schema: any;
 }
 
 export interface DelegateWeight {

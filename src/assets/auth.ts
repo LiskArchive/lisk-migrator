@@ -15,12 +15,13 @@ import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import { MODULE_NAME_AUTH } from '../constants';
 import { AuthStoreEntry, AuthAccountEntry, Account, GenesisAssetEntry } from '../types';
+import { genesisAuthStoreSchema } from '../schemas';
 
 const keyMapper = (key: Buffer) => key.toString('hex');
 const keyComparator = (a: string, b: string) => a.localeCompare(b, 'en');
 
 export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAssetEntry> => {
-	const authDataSubstore: AuthStoreEntry[] = await Promise.all(
+	const authDataSubstorekeys: AuthStoreEntry[] = await Promise.all(
 		accounts.map(async (account: Account) => {
 			const authObj: AuthAccountEntry = {
 				numberOfSignatures: account.keys.numberOfSignatures,
@@ -38,6 +39,7 @@ export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAs
 
 	return {
 		module: MODULE_NAME_AUTH,
-		data: authDataSubstore,
+		data: { authDataSubstore: authDataSubstorekeys },
+		schema: genesisAuthStoreSchema,
 	};
 };

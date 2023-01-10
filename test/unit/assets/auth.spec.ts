@@ -83,9 +83,11 @@ describe('Build assets/auth', () => {
 
 		// Assert
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
-		expect(response.data).toHaveLength(2);
-		expect(Object.getOwnPropertyNames(response.data[0])).toEqual(['storeKey', 'storeValue']);
-		response.data.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
+
+		const { authDataSubstore } = response.data;
+		expect(authDataSubstore).toHaveLength(2);
+		expect(Object.getOwnPropertyNames(authDataSubstore[0])).toEqual(['storeKey', 'storeValue']);
+		authDataSubstore.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
 			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
 			expect(Object.getOwnPropertyNames(asset.storeValue)).toEqual([
 				'numberOfSignatures',

@@ -29,6 +29,7 @@ import {
 	GenesisAssetEntry,
 	LockedBalance,
 } from '../types';
+import { genesisTokenStoreSchema } from '../schemas';
 
 const AMOUNT_ZERO = BigInt('0');
 const ADDRESS_LEGACY_RESERVE_HEX = ADDRESS_LEGACY_RESERVE.toString('hex');
@@ -141,6 +142,7 @@ export const createSupplySubstoreArray = async (
 			totalLSKSupply,
 		);
 	}
+
 	const LSKSupply = { tokenID: TOKEN_ID_LSK, totalSupply: String(totalLSKSupply) };
 	return [LSKSupply];
 };
@@ -159,5 +161,6 @@ export const addTokenModuleEntry = async (
 	return {
 		module: MODULE_NAME_TOKEN,
 		data: tokenObj,
+		schema: genesisTokenStoreSchema,
 	};
 };

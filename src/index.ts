@@ -11,7 +11,9 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import * as fs from 'fs-extra';
 import { join } from 'path';
+import { Application } from 'lisk-framework';
 import { KVStore } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
@@ -24,9 +26,10 @@ import {
 	setBlockIDAtSnapshotHeight,
 	getBlockIDAtSnapshotHeight,
 	getBlockIDAtHeight,
+	getTokenIDLisk,
 } from './utils/chain';
 import { createGenesisBlock } from './utils/genesis_block';
-import { Config } from './types';
+// import { Config } from './types';
 import { CreateAsset } from './createAsset';
 
 // TODO: Import snapshot command from core once implemented
@@ -116,7 +119,7 @@ class LiskMigrator extends Command {
 		const compatibleVersions = flags['min-compatible-version'];
 		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
 
-		let config: Config;
+		let config: any;
 
 		cli.action.start(
 			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -164,7 +167,7 @@ class LiskMigrator extends Command {
 
 		await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
 
-		// TODO: Placeholder to issue createSnapshot command from lisk-core
+		// // TODO: Placeholder to issue createSnapshot command from lisk-core
 		cli.action.start('Creating snapshot');
 		await createSnapshot(liskCorePath, snapshotPath);
 		cli.action.stop();
@@ -196,11 +199,16 @@ class LiskMigrator extends Command {
 		// Create genesis assets
 		cli.action.start('Creating genesis assets');
 		const createAsset = new CreateAsset(db);
-		const genesisAssets = await createAsset.init(snapshotHeight);
+		const tokenID = getTokenIDLisk();
+		const genesisAssets = await createAsset.init(snapshotHeight, tokenID);
 		cli.action.stop();
 
+		// Create an app instance for creating genesis block
+		config = await fs.readJSON(config);
+		const { app } = await Application.defaultApplication(config);
+
 		cli.action.start('Creating genesis block');
-		await createGenesisBlock(genesisAssets, outputPath);
+		await createGenesisBlock(app, genesisAssets, outputPath);
 		cli.action.stop();
 
 		if (autoMigrateUserConfig) {
