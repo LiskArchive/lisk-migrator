@@ -14,12 +14,12 @@
 import * as fs from 'fs-extra';
 import { resolve } from 'path';
 import { codec, Schema } from '@liskhq/lisk-codec';
+import { GenesisBlockGenerateInput } from '../types';
 
 export const createGenesisBlock = async (
 	app: any,
 	assets: any,
-	outputPath: string,
-): Promise<any> => {
+): Promise<GenesisBlockGenerateInput> => {
 	const genesisBlock = await app.generateGenesisBlock({
 		assets: assets.map((a: { module: any; schema: Schema; data: object }) => ({
 			module: a.module,
@@ -29,7 +29,21 @@ export const createGenesisBlock = async (
 		chainID: Buffer.from(app.config.genesis.chainID, 'hex'),
 	});
 
+	return genesisBlock;
+};
+
+export const writeGenesisBlock = async (
+	genesisBlock: GenesisBlockGenerateInput,
+	outputPath: string,
+): Promise<any> => {
+	if (fs.existsSync(outputPath)) {
+		fs.unlinkSync(outputPath);
+	}
+
 	fs.mkdirSync(outputPath, { recursive: true });
-	fs.writeFileSync(resolve(outputPath, 'genesis_block.json'), JSON.stringify(genesisBlock));
+	fs.writeFileSync(
+		resolve(outputPath, 'genesis_block.json'),
+		JSON.stringify(genesisBlock, null, '\t'),
+	);
 	fs.writeFileSync(resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
 };

@@ -28,7 +28,7 @@ import {
 	getBlockIDAtHeight,
 	getTokenIDLisk,
 } from './utils/chain';
-import { createGenesisBlock } from './utils/genesis_block';
+import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 import { CreateAsset } from './createAsset';
 
@@ -210,7 +210,11 @@ class LiskMigrator extends Command {
 		const { app } = await Application.defaultApplication(configCoreV4);
 
 		cli.action.start('Creating genesis block');
-		await createGenesisBlock(app, genesisAssets, outputPath);
+		const genesisBlock = await createGenesisBlock(app, genesisAssets);
+		cli.action.stop();
+
+		cli.action.start(`Exporting genesis block to the path ${outputPath}`);
+		await writeGenesisBlock(genesisBlock, outputPath);
 		cli.action.stop();
 
 		if (autoMigrateUserConfig) {

@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { Schema } from '@liskhq/lisk-codec';
 
 export interface StorageConfig {
 	readonly user: string;
@@ -196,4 +197,17 @@ export type VoteWeights = VoteWeight[];
 
 export interface DecodedVoteWeights {
 	voteWeights: VoteWeights;
+}
+
+export interface GenesisBlockGenerateInput {
+	chainID: Buffer;
+	height?: number;
+	timestamp?: number;
+	previousBlockID?: Buffer;
+	assets: {
+		schema: Schema;
+		module: string;
+		data: Record<string, unknown>;
+	}[];
+	getBytes: () => Buffer;
 }
