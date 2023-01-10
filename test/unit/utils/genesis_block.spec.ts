@@ -81,7 +81,7 @@ describe('Build assets/legacy', () => {
 		},
 	};
 
-	describe('createAsset', () => {
+	describe('Create/Export Genesis block', () => {
 		beforeAll(async () => {
 			db = new KVStore('testDB');
 			createAsset = new CreateAsset(db);
