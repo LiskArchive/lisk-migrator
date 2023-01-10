@@ -37,8 +37,8 @@ export const ROUND_LENGTH = 103;
 export const Q96_ZERO = '';
 export const MAX_COMMISSION = 10000;
 const TOKEN_ID_LSK = Object.freeze({
-	MAINNET: '0400000000000000',
-	TESTNET: '0300000000000000',
+	MAINNET: '0000000000000000',
+	TESTNET: '0100000000000000',
 });
 
 export const NETWORKS: { [key: string]: string } = {
