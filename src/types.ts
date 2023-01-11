@@ -56,6 +56,10 @@ export interface AuthStoreEntry {
 	storeValue: AuthAccountEntry;
 }
 
+export interface AuthStoreEntryBuffer extends Omit<AuthStoreEntry, 'storeKey'> {
+	storeKey: Buffer;
+}
+
 export interface Account {
 	address: Buffer;
 	token: {
@@ -93,6 +97,10 @@ export interface Account {
 export interface LegacyStoreEntry {
 	address: string;
 	balance: string;
+}
+
+export interface LegacyStoreEntryBuffer extends Omit<LegacyStoreEntry, 'address'> {
+	address: Buffer;
 }
 
 export interface LegacyStoreData {
@@ -139,6 +147,10 @@ export interface ValidatorEntry {
 	commission: number;
 	lastCommissionIncreaseHeight: number;
 	sharingCoefficients: SharingCoefficients;
+}
+
+export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
+	address: Buffer;
 }
 
 export interface SentVote {
@@ -211,4 +223,48 @@ export interface GenesisBlockGenerateInput {
 	}[];
 	getBytes: () => Buffer;
 	validateGenesis(): void;
+}
+
+export interface RegisteredModule {
+	id: number;
+	name: string;
+	actions: string[];
+	events: string[];
+	reducers: string[];
+	transactionAssets: {
+		id: number;
+		name: string;
+	}[];
+}
+
+export interface GenesisConfig {
+	[key: string]: unknown;
+	readonly bftThreshold: number;
+	readonly communityIdentifier: string;
+	readonly blockTime: number;
+	readonly maxPayloadLength: number;
+	readonly rewards: {
+		readonly milestones: string[];
+		readonly offset: number;
+		readonly distance: number;
+	};
+	readonly minFeePerByte: number;
+	readonly baseFees: {
+		readonly moduleID: number;
+		readonly assetID: number;
+		readonly baseFee: string;
+	}[];
+}
+export interface NodeInfo {
+	readonly version: string;
+	readonly networkVersion: string;
+	readonly networkIdentifier: string;
+	readonly lastBlockID: string;
+	readonly genesisHeight: number;
+	readonly height: number;
+	readonly finalizedHeight: number;
+	readonly syncing: boolean;
+	readonly unconfirmedTransactions: number;
+	readonly genesisConfig: GenesisConfig;
+	readonly registeredModules: RegisteredModule[];
 }
