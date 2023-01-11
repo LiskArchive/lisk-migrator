@@ -24,7 +24,6 @@ import {
 	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_TRANSACTIONS_BLOCK_ID,
 	DB_KEY_TRANSACTIONS_ID,
-	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 } from './constants';
 import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
 import { LegacyStoreEntry, DecodedVoteWeights, GenesisAssetEntry } from './types';
@@ -80,7 +79,11 @@ export class CreateAsset {
 		this._db = db;
 	}
 
-	public init = async (snapshotHeight: number, tokenID: string): Promise<GenesisAssetEntry[]> => {
+	public init = async (
+		snapshotHeight: number,
+		snapshotHeightPrevBlock: number,
+		tokenID: string,
+	): Promise<GenesisAssetEntry[]> => {
 		const encodedUnregisteredAddresses = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
 		);
@@ -101,7 +104,7 @@ export class CreateAsset {
 		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, tokenID);
 
 		const blocksStream = this._db.createReadStream({
-			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(HEIGHT_PREVIOUS_SNAPSHOT_BLOCK + 1)}`,
+			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevBlock + 1)}`,
 			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 		});
 		// TODO: Discuss/verify the response and decode accordingly
@@ -145,6 +148,7 @@ export class CreateAsset {
 			blocks,
 			decodedDelegatesVoteWeights,
 			snapshotHeight,
+			snapshotHeightPrevBlock,
 			tokenID,
 		);
 

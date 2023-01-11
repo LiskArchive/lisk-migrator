@@ -32,6 +32,7 @@ describe('Build assets/dpos', () => {
 	let blocks: Block[];
 	let delegates: DecodedVoteWeights;
 	const snapshotHeight = 16281107;
+	const snapshotHeightPrevBlock = 16270293;
 
 	beforeAll(async () => {
 		blocks = generateBlocks({
@@ -165,7 +166,12 @@ describe('Build assets/dpos', () => {
 	});
 
 	it('should create createGenesisDataObj', async () => {
-		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
+		const genesisDataObj = await createGenesisDataObj(
+			accounts,
+			delegates,
+			snapshotHeight,
+			snapshotHeightPrevBlock,
+		);
 
 		// Assert
 		genesisDataObj.initDelegates.forEach(address => {
@@ -180,6 +186,7 @@ describe('Build assets/dpos', () => {
 			blocks,
 			delegates,
 			snapshotHeight,
+			snapshotHeightPrevBlock,
 			tokenID,
 		);
 
