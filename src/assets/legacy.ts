@@ -15,7 +15,12 @@ import { codec } from '@liskhq/lisk-codec';
 
 import { MODULE_NAME_LEGACY } from '../constants';
 import { unregisteredAddressesSchema } from '../schemas';
-import { UnregisteredAddresses, GenesisAssetEntry, LegacyStoreEntry } from '../types';
+import {
+	UnregisteredAddresses,
+	GenesisAssetEntry,
+	LegacyStoreEntry,
+	LegacyStoreEntryBuffer,
+} from '../types';
 
 export const addLegacyModuleEntry = async (
 	encodedUnregisteredAddresses: Buffer,
@@ -25,15 +30,22 @@ export const addLegacyModuleEntry = async (
 		encodedUnregisteredAddresses,
 	);
 
-	const accounts: LegacyStoreEntry[] = await Promise.all(
+	const accounts: LegacyStoreEntryBuffer[] = await Promise.all(
 		unregisteredAddresses.map(async account => ({
-			address: account.address.toString('hex'),
+			address: account.address,
 			balance: String(account.balance),
 		})),
 	);
 
+	const sortedAccounts: LegacyStoreEntry[] = accounts
+		.sort((a, b) => a.address.compare(b.address))
+		.map(entry => ({
+			...entry,
+			address: entry.address.toString('hex'),
+		}));
+
 	return {
 		module: MODULE_NAME_LEGACY,
-		data: ({ accounts } as unknown) as Record<string, unknown>,
+		data: ({ accounts: sortedAccounts } as unknown) as Record<string, unknown>,
 	};
 };

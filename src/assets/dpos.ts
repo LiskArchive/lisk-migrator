@@ -14,7 +14,7 @@
 
 import {
 	getLisk32AddressFromAddress,
-	getLisk32AddressFromPublicKey,
+	getBase32AddressFromPublicKey,
 } from '@liskhq/lisk-cryptography';
 import { Block } from '@liskhq/lisk-chain';
 
@@ -39,6 +39,7 @@ import {
 	VoteWeight,
 	DelegateWeight,
 	SentVote,
+	ValidatorEntryBuffer,
 } from '../types';
 
 export const getValidatorKeys = async (
@@ -47,10 +48,10 @@ export const getValidatorKeys = async (
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 	for (const block of blocks) {
-		const lskAddress: string = getLisk32AddressFromPublicKey(block.header.generatorPublicKey);
+		const lskAddress: string = getBase32AddressFromPublicKey(block.header.generatorPublicKey);
 		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
-			const trxSenderAddress: string = getLisk32AddressFromPublicKey(trx.senderPublicKey);
+			const trxSenderAddress: string = getBase32AddressFromPublicKey(trx.senderPublicKey);
 			const account: Account | undefined = accounts.find(
 				acc => acc.address.toString('hex') === trxSenderAddress,
 			);
@@ -68,14 +69,15 @@ export const createValidatorsArray = async (
 	snapshotHeight: number,
 	tokenID: string,
 ): Promise<ValidatorEntry[]> => {
-	const validators: ValidatorEntry[] = [];
+	const validators: ValidatorEntryBuffer[] = [];
 	const validatorKeys = await getValidatorKeys(blocks, accounts);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
-			const validatorAddress = getLisk32AddressFromAddress(account.address);
-			const validator: ValidatorEntry = Object.freeze({
-				address: validatorAddress,
+			const validatorAddress = account.address.toString('hex');
+
+			const validator: ValidatorEntryBuffer = Object.freeze({
+				address: account.address,
 				name: account.dpos.delegate.username,
 				blsKey: INVALID_BLS_KEY,
 				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
@@ -94,13 +96,18 @@ export const createValidatorsArray = async (
 			validators.push(validator);
 		}
 	}
-	return validators;
+
+	return validators
+		.sort((a, b) => a.address.compare(b.address))
+		.map(entry => ({
+			...entry,
+			address: getLisk32AddressFromAddress(entry.address),
+		}));
 };
 
 export const getSentVotes = async (account: Account, tokenID: string): Promise<SentVote[]> => {
 	const sentVotes = account.dpos.sentVotes.map(vote => ({
 		...vote,
-		delegateAddress: getLisk32AddressFromAddress(vote.delegateAddress),
 		voteSharingCoefficients: [
 			{
 				tokenID,
@@ -109,7 +116,14 @@ export const getSentVotes = async (account: Account, tokenID: string): Promise<S
 		],
 	}));
 
-	return sentVotes;
+	const sortedSentVotes = sentVotes
+		.sort((a, b) => a.delegateAddress.compare(b.delegateAddress))
+		.map(entry => ({
+			...entry,
+			delegateAddress: getLisk32AddressFromAddress(entry.delegateAddress),
+		}));
+
+	return sortedSentVotes;
 };
 
 export const createVotersArray = async (accounts: Account[], tokenID: string): Promise<Voter[]> => {
