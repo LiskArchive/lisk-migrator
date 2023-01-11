@@ -17,15 +17,15 @@ import { MODULE_NAME_AUTH } from '../constants';
 import { AuthStoreEntry, AuthAccountEntry, Account, GenesisAssetEntry } from '../types';
 
 const keyMapper = (key: Buffer) => key.toString('hex');
-const keyComparator = (a: string, b: string) => a.localeCompare(b, 'en');
+const keyComparator = (a: Buffer, b: Buffer) => a.compare(b);
 
 export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAssetEntry> => {
 	const authDataSubstore: AuthStoreEntry[] = await Promise.all(
 		accounts.map(async (account: Account) => {
 			const authObj: AuthAccountEntry = {
 				numberOfSignatures: account.keys.numberOfSignatures,
-				mandatoryKeys: account.keys.mandatoryKeys.map(keyMapper).sort(keyComparator),
-				optionalKeys: account.keys.optionalKeys.map(keyMapper).sort(keyComparator),
+				mandatoryKeys: account.keys.mandatoryKeys.sort(keyComparator).map(keyMapper),
+				optionalKeys: account.keys.optionalKeys.sort(keyComparator).map(keyMapper),
 				nonce: account.sequence.nonce.toString(),
 			};
 
