@@ -19,6 +19,7 @@ import { NETWORKS } from '../constants';
 
 let blockIDAtSnapshotHeight: string;
 let TOKEN_ID_LSK: string;
+let HEIGHT_PREVIOUS_SNAPSHOT_BLOCK: number;
 
 interface ObserveParams {
 	readonly label: string;
@@ -31,7 +32,13 @@ interface ObserveParams {
 export const getTokenIDLisk = (): string => TOKEN_ID_LSK;
 
 export const setTokenIDLisk = async (networkIdentifier: string): Promise<void> => {
-	TOKEN_ID_LSK = NETWORKS[networkIdentifier];
+	TOKEN_ID_LSK = NETWORKS[networkIdentifier].tokenID;
+};
+
+export const getSnapshotHeightPrevBlock = (): number => HEIGHT_PREVIOUS_SNAPSHOT_BLOCK;
+
+export const setSnapshotHeightPrevBlock = async (networkIdentifier: string): Promise<void> => {
+	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[networkIdentifier].snapshotHeightPrevBlock;
 };
 
 export const getNodeInfo = async (
@@ -40,6 +47,7 @@ export const getNodeInfo = async (
 	const client = await getAPIClient(liskCorePath);
 	const { height, finalizedHeight, networkIdentifier } = await client.node.getNodeInfo();
 	await setTokenIDLisk(networkIdentifier);
+	await setSnapshotHeightPrevBlock(networkIdentifier);
 	return { height, finalizedHeight };
 };
 
