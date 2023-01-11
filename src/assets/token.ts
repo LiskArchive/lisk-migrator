@@ -33,6 +33,7 @@ import { genesisTokenStoreSchema } from '../schemas';
 
 const AMOUNT_ZERO = BigInt('0');
 const ADDRESS_LEGACY_RESERVE_HEX = ADDRESS_LEGACY_RESERVE.toString('hex');
+let legacyReserveAmount: bigint;
 
 export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
 	let amount = AMOUNT_ZERO;
@@ -61,7 +62,7 @@ export const createLegacyReserveAccount = async (
 		ADDRESS_LEGACY_RESERVE.equals(account.address),
 	);
 
-	let legacyReserveAmount = legacyReserveAccount ? legacyReserveAccount.token.balance : AMOUNT_ZERO;
+	legacyReserveAmount = legacyReserveAccount ? legacyReserveAccount.token.balance : AMOUNT_ZERO;
 
 	for (const account of legacyAccounts) {
 		legacyReserveAmount += BigInt(account.balance);
@@ -139,7 +140,11 @@ export const createSupplySubstoreArray = async (
 		);
 	}
 
-	const LSKSupply = { tokenID, totalSupply: String(totalLSKSupply) };
+	const LSKSupply = {
+		tokenID,
+		totalSupply: String(BigInt(totalLSKSupply) + BigInt(legacyReserveAmount)),
+	};
+
 	return [LSKSupply];
 };
 
