@@ -25,7 +25,6 @@ import {
 	INVALID_ED25519_KEY,
 	DPOS_INIT_ROUNDS,
 	ROUND_LENGTH,
-	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK,
 	Q96_ZERO,
 	MAX_COMMISSION,
 } from '../constants';
@@ -137,8 +136,9 @@ export const createGenesisDataObj = async (
 	accounts: Account[],
 	delegatesVoteWeights: DecodedVoteWeights,
 	snapshotHeight: number,
+	snapshotHeightPrevBlock: number,
 ): Promise<GenesisDataEntry> => {
-	const r = Math.ceil((snapshotHeight - HEIGHT_PREVIOUS_SNAPSHOT_BLOCK) / ROUND_LENGTH);
+	const r = Math.ceil((snapshotHeight - snapshotHeightPrevBlock) / ROUND_LENGTH);
 	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
 		(voteWeight: VoteWeight) => voteWeight.round === r - 2,
 	);
@@ -173,12 +173,18 @@ export const addDPoSModuleEntry = async (
 	blocks: Block[],
 	delegatesVoteWeights: DecodedVoteWeights,
 	snapshotHeight: number,
+	snapshotHeightPrevBlock: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
 	const dposObj = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
 		voters: await createVotersArray(accounts, tokenID),
-		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
+		genesisData: await createGenesisDataObj(
+			accounts,
+			delegatesVoteWeights,
+			snapshotHeight,
+			snapshotHeightPrevBlock,
+		),
 	};
 
 	return {
