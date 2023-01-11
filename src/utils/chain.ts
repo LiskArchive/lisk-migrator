@@ -11,11 +11,11 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
 import cli from 'cli-ux';
 import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
 import { NETWORKS } from '../constants';
+import { NodeInfo } from '../types';
 
 let blockIDAtSnapshotHeight: string;
 let TOKEN_ID_LSK: string;
@@ -37,18 +37,21 @@ export const setTokenIDLisk = async (networkIdentifier: string): Promise<void> =
 
 export const getSnapshotHeightPrevBlock = (): number => HEIGHT_PREVIOUS_SNAPSHOT_BLOCK;
 
-export const setSnapshotHeightPrevBlock = async (networkIdentifier: string): Promise<void> => {
-	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[networkIdentifier].snapshotHeightPrevBlock;
+export const setSnapshotHeightPrevBlock = async (nodeInfo: NodeInfo): Promise<void> => {
+	if (!NETWORKS[nodeInfo.networkIdentifier]) {
+		HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = nodeInfo.genesisHeight;
+	}
+	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[nodeInfo.networkIdentifier].snapshotHeightPrevBlock;
 };
 
 export const getNodeInfo = async (
 	liskCorePath: string,
 ): Promise<{ height: number; finalizedHeight: number }> => {
 	const client = await getAPIClient(liskCorePath);
-	const { height, finalizedHeight, networkIdentifier } = await client.node.getNodeInfo();
-	await setTokenIDLisk(networkIdentifier);
-	await setSnapshotHeightPrevBlock(networkIdentifier);
-	return { height, finalizedHeight };
+	const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
+	await setTokenIDLisk(nodeInfo.networkIdentifier);
+	await setSnapshotHeightPrevBlock(nodeInfo);
+	return { height: nodeInfo.height, finalizedHeight: nodeInfo.finalizedHeight };
 };
 
 export const setBlockIDAtSnapshotHeight = async (
