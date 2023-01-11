@@ -11,10 +11,29 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
-import { resolve } from 'path';
+import path from 'path';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { GenesisBlockGenerateInput } from '../types';
+
+export const createChecksum = async (filePath: string): Promise<string> => {
+	const fileStream = fs.createReadStream(filePath);
+	const dataHash = crypto.createHash('sha256');
+	const fileHash = await new Promise<Buffer>((resolve, reject) => {
+		fileStream.on('data', (datum: Buffer) => {
+			dataHash.update(datum);
+		});
+		fileStream.on('error', error => {
+			reject(error);
+		});
+		fileStream.on('end', () => {
+			resolve(dataHash.digest());
+		});
+	});
+
+	return fileHash.toString('hex');
+};
 
 export const createGenesisBlock = async (
 	app: any,
@@ -42,8 +61,11 @@ export const writeGenesisBlock = async (
 
 	fs.mkdirSync(outputPath, { recursive: true });
 	fs.writeFileSync(
-		resolve(outputPath, 'genesis_block.json'),
+		path.resolve(outputPath, 'genesis_block.json'),
 		JSON.stringify(genesisBlock, null, '\t'),
 	);
-	fs.writeFileSync(resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
+	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
+
+	const genesisBlockHash = await createChecksum(path.resolve(outputPath, 'genesis_block.json'));
+	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
 };

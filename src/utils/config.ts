@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
+import path from 'path';
 import debugInit from 'debug';
 import cli from 'cli-ux';
 import { existsSync, readdirSync } from 'fs';
@@ -64,7 +64,7 @@ export const resolveConfigPath = async (tokenID: string): Promise<string> => {
 	const network = Object.keys(TOKEN_ID_LSK).find(
 		(key: string) => TOKEN_ID_LSK[key] === tokenID,
 	) as string;
-	const configFilePath = `${process.cwd()}/config/${network.toLowerCase()}/config.json`;
+	const configFilePath = path.resolve(process.cwd(), `config/${network.toLowerCase()}/config.json`);
 	return configFilePath;
 };
 

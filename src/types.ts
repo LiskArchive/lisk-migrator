@@ -210,4 +210,5 @@ export interface GenesisBlockGenerateInput {
 		data: Record<string, unknown>;
 	}[];
 	getBytes: () => Buffer;
+	validateGenesis(): void;
 }

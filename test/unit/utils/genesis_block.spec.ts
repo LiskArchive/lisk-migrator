@@ -221,6 +221,7 @@ describe('Build assets/legacy', () => {
 			expect(fs.existsSync(genesisBlockPath)).toBe(true);
 			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json`)).toBe(true);
 			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.blob`)).toBe(true);
+			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json.SHA256`)).toBe(true);
 
 			expect(() => genesisBlock.validateGenesis()).not.toThrow();
 		});
