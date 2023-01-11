@@ -40,8 +40,9 @@ export const getSnapshotHeightPrevBlock = (): number => HEIGHT_PREVIOUS_SNAPSHOT
 export const setSnapshotHeightPrevBlock = async (nodeInfo: NodeInfo): Promise<void> => {
 	if (!NETWORKS[nodeInfo.networkIdentifier]) {
 		HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = nodeInfo.genesisHeight;
+	} else {
+		HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[nodeInfo.networkIdentifier].snapshotHeightPrevBlock;
 	}
-	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[nodeInfo.networkIdentifier].snapshotHeightPrevBlock;
 };
 
 export const getNodeInfo = async (
