@@ -200,7 +200,6 @@ class LiskMigrator extends Command {
 		cli.action.start('Creating genesis assets');
 		const createAsset = new CreateAsset(db);
 		const tokenID = getTokenIDLisk();
-		// const tokenID = '0400000000000000';
 		const genesisAssets = await createAsset.init(snapshotHeight, tokenID);
 		cli.action.stop();
 
