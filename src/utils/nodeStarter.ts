@@ -14,9 +14,11 @@
 import { exec } from 'child_process';
 import { createServer } from 'net';
 
-type Port = number;
+// Export for testing
+export type Port = number;
 
-const isPortAvailable = async (port: number): Promise<boolean> =>
+// Export for testing
+export const isPortAvailable = async (port: number): Promise<boolean> =>
 	new Promise((resolve, reject) => {
 		const server = createServer();
 
@@ -37,7 +39,8 @@ const isPortAvailable = async (port: number): Promise<boolean> =>
 		server.listen(port);
 	});
 
-const execAsync = async (cmd: string): Promise<string> =>
+// Export for testing
+export const execAsync = async (cmd: string): Promise<string> =>
 	new Promise((resolve, reject) => {
 		exec(cmd, (error, stdout) => {
 			if (error) {
@@ -50,6 +53,7 @@ const execAsync = async (cmd: string): Promise<string> =>
 
 export const installLiskCore = async (): Promise<string> => execAsync('npm i -g lisk-core');
 
+// Export for testing
 export const isLiskCoreV3Running = (version: string): boolean =>
 	version.length > 0 && version.startsWith('3');
 
