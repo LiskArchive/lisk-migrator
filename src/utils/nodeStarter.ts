@@ -18,7 +18,7 @@ import { createServer } from 'net';
 export type Port = number;
 
 // Export for testing
-export const isPortAvailable = async (port: number): Promise<boolean> =>
+export const isPortAvailable = async (port: Port): Promise<boolean | Error> =>
 	new Promise((resolve, reject) => {
 		const server = createServer();
 
@@ -27,7 +27,7 @@ export const isPortAvailable = async (port: number): Promise<boolean> =>
 				// port is currently in use
 				resolve(false);
 			} else {
-				reject(err.code);
+				reject(err);
 			}
 		});
 
@@ -60,7 +60,7 @@ export const isLiskCoreV3Running = (version: string): boolean =>
 export const startLiskCore = async (
 	configPath: string,
 	perviousLiskCoreVersion: string,
-): Promise<void> => {
+): Promise<string | Error> => {
 	if (isLiskCoreV3Running(perviousLiskCoreVersion)) {
 		throw new Error('Lisk core V3 is still running!');
 	}
@@ -73,5 +73,5 @@ export const startLiskCore = async (
 		throw new Error(`Required ports are not available! required ports:${requiredPort}`);
 	}
 
-	await execAsync('lisk-core start --network devnet --api-ipc --log info');
+	return execAsync('lisk-core start --network devnet --api-ipc --log info');
 };

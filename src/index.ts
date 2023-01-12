@@ -235,7 +235,7 @@ class LiskMigrator extends Command {
 			try {
 				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion);
 			} catch (err) {
-				this.error('Failed to start lisk core v4.');
+				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
 			}
 		}
 	}
