@@ -38,7 +38,7 @@ export const getHeightPreviousSnapshotBlock = (): number => heightPreviousSnapsh
 
 export const setHeightPreviousSnapshotBlock = async (networkIdentifier: string): Promise<void> => {
 	heightPreviousSnapshotBlock = NETWORK_CONSTANT[networkIdentifier]
-		.snapshotHeightPrevBlock as number;
+		.snapshotHeightPrevious as number;
 };
 
 export const getNodeInfo = async (

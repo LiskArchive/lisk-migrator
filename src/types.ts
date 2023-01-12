@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { BlockHeader } from '@liskhq/lisk-chain';
 import { Schema } from '@liskhq/lisk-codec';
 
 export interface StorageConfig {

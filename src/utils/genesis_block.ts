@@ -42,22 +42,20 @@ export const createGenesisBlock = async (
 	assets: GenesisAssetEntry[],
 	blockAtSnapshotHeight: Block,
 ): Promise<GenesisBlockGenerateInput> => {
-	const genesisBlock = await app.generateGenesisBlock({
+	const input = {
 		assets: assets.map((a: { module: string; schema: Schema; data: object }) => ({
 			module: a.module,
 			data: codec.fromJSON(a.schema, a.data),
 			schema: a.schema,
 		})),
 		chainID: Buffer.from(app.config.genesis.chainID, 'hex'),
-	});
+		timestamp: blockAtSnapshotHeight.header.timestamp + SNAPSHOT_TIME_GAP,
+		height: blockAtSnapshotHeight.header.height + 1,
+		previousBlockID: blockAtSnapshotHeight.header.previousBlockID,
+	};
 
+	const genesisBlock = await app.generateGenesisBlock(input);
 	genesisBlock.header.version = SNAPSHOT_BLOCK_VERSION;
-	genesisBlock.header.timestamp = blockAtSnapshotHeight.header.timestamp + SNAPSHOT_TIME_GAP;
-	genesisBlock.header.height = blockAtSnapshotHeight.header.height + 1;
-	genesisBlock.header.previousBlockID = blockAtSnapshotHeight.header.previousBlockID;
-	// TODO: Verify
-	genesisBlock.header.maxHeightPrevoted = genesisBlock.header.height;
-
 	return genesisBlock;
 };
 

@@ -202,8 +202,8 @@ class LiskMigrator extends Command {
 		cli.action.start('Creating genesis assets');
 		const createAsset = new CreateAsset(db);
 		const tokenID = getTokenIDLsk();
-		const snapshotHeightPrevBlock = getHeightPreviousSnapshotBlock();
-		const genesisAssets = await createAsset.init(snapshotHeight, snapshotHeightPrevBlock, tokenID);
+		const snapshotHeightPrevious = getHeightPreviousSnapshotBlock();
+		const genesisAssets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
 		cli.action.stop();
 
 		// Create an app instance for creating genesis block

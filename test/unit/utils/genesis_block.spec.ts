@@ -62,7 +62,7 @@ describe('Build assets/legacy', () => {
 	let encodedVoteWeights: Buffer;
 	let app: any;
 	const snapshotHeight = 16281107;
-	const snapshotHeightPrevBlock = 16270293;
+	const snapshotHeightPrevious = 16270293;
 	const tokenID = '0400000000000000';
 	const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
 
@@ -212,7 +212,7 @@ describe('Build assets/legacy', () => {
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevBlock + 1)}`,
+					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
 					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 				})
 				.mockReturnValue(Readable.from([]));
@@ -221,7 +221,7 @@ describe('Build assets/legacy', () => {
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevBlock, tokenID);
+			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
 			const genesisBlock: GenesisBlockGenerateInput = await createGenesisBlock(
 				app.app,
 				assets,
