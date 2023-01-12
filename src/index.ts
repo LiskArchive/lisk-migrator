@@ -18,9 +18,10 @@ import { KVStore } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
+import { Block } from '@liskhq/lisk-chain';
 import { ROUND_LENGTH } from './constants';
 import { getAPIClient } from './client';
-import { getConfig, migrateUserConfig, resolveConfigPath } from './utils/config';
+import { getConfig, migrateUserConfig, resolveConfigPathByNetworkID } from './utils/config';
 import {
 	observeChainHeight,
 	setBlockIDAtSnapshotHeight,
@@ -168,7 +169,7 @@ class LiskMigrator extends Command {
 
 		await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
 
-		// // TODO: Placeholder to issue createSnapshot command from lisk-core
+		// TODO: Placeholder to issue createSnapshot command from lisk-core
 		cli.action.start('Creating snapshot');
 		await createSnapshot(liskCorePath, snapshotPath);
 		cli.action.stop();
@@ -206,14 +207,16 @@ class LiskMigrator extends Command {
 		cli.action.stop();
 
 		// Create an app instance for creating genesis block
-		const configFilePath = await resolveConfigPath(tokenID);
+		const configFilePath = await resolveConfigPathByNetworkID(info.networkIdentifier);
 		const configCoreV4 = await fs.readJSON(configFilePath);
 		const { app } = await Application.defaultApplication(configCoreV4);
 
 		cli.action.start('Creating genesis block');
-		const genesisBlock = await createGenesisBlock(app, genesisAssets);
+		const blockAtSnapshotHeight = ((await client.block.getByHeight(
+			snapshotHeight,
+		)) as unknown) as Block;
+		const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
 		cli.action.stop();
-
 		cli.action.start(`Exporting genesis block to the path ${outputPath}`);
 		await writeGenesisBlock(genesisBlock, outputPath);
 		cli.action.stop();

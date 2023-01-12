@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { BlockHeader } from '@liskhq/lisk-chain';
 import { Schema } from '@liskhq/lisk-codec';
 
 export interface StorageConfig {
@@ -197,7 +198,7 @@ export interface LockedBalance {
 export interface GenesisAssetEntry {
 	module: string;
 	data: Record<string, unknown>;
-	schema: any;
+	schema: Schema;
 }
 
 export interface DelegateWeight {
@@ -208,12 +209,6 @@ export interface DelegateWeight {
 export interface VoteWeight {
 	readonly round: number;
 	readonly delegates: ReadonlyArray<DelegateWeight>;
-}
-
-export type VoteWeights = VoteWeight[];
-
-export interface DecodedVoteWeights {
-	voteWeights: VoteWeights;
 }
 
 export interface GenesisBlockGenerateInput {

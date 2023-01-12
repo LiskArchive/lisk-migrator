@@ -35,8 +35,10 @@ export const DPOS_INIT_ROUNDS = 60480;
 export const ROUND_LENGTH = 103;
 export const Q96_ZERO = '';
 export const MAX_COMMISSION = 10000;
+export const SNAPSHOT_BLOCK_VERSION = 0;
+export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided
 
-export const TOKEN_ID_LSK = Object.freeze({
+const TOKEN_ID_LSK = Object.freeze({
 	MAINNET: '0000000000000000',
 	TESTNET: '0100000000000000',
 }) as { [key: string]: string };
@@ -48,10 +50,12 @@ const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = Object.freeze({
 
 export const NETWORK_CONSTANT: { [key: string]: Record<string, string | number> } = {
 	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': {
+		name: 'mainnet',
 		tokenID: TOKEN_ID_LSK.MAINNET,
 		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.MAINNET,
 	},
 	'15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c': {
+		name: 'testnet',
 		tokenID: TOKEN_ID_LSK.TESTNET,
 		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.TESTNET,
 	},

@@ -16,24 +16,24 @@ import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 import {
 	MODULE_NAME_TOKEN,
 	MODULE_NAME_DPOS,
-	ADDRESS_LEGACY_RESERVE,
 	MODULE_NAME_LEGACY,
+	ADDRESS_LEGACY_RESERVE,
 } from '../constants';
 
 import {
 	Account,
+	LockedBalance,
+	GenesisAssetEntry,
+	TokenStoreEntry,
 	LegacyStoreEntry,
 	SupplySubstoreEntry,
-	TokenStoreEntry,
 	UserSubstoreEntry,
-	GenesisAssetEntry,
-	LockedBalance,
 	UserSubstoreEntryBuffer,
 } from '../types';
 import { genesisTokenStoreSchema } from '../schemas';
 
 const AMOUNT_ZERO = BigInt('0');
-let legacyReserveAmount: bigint;
+let legacyReserveAmount: bigint = AMOUNT_ZERO;
 
 export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
 	let amount = AMOUNT_ZERO;
@@ -135,7 +135,7 @@ export const createSupplySubstoreArray = async (
 		);
 	}
 
-	const LSKSupply = {
+	const LSKSupply: SupplySubstoreEntry = {
 		tokenID,
 		totalSupply: String(BigInt(totalLSKSupply) + BigInt(legacyReserveAmount)),
 	};

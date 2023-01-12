@@ -18,6 +18,7 @@ import { Application } from 'lisk-framework';
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Block } from '@liskhq/lisk-chain';
 import { CreateAsset } from '../../../src/createAsset';
 import { createGenesisBlock, writeGenesisBlock } from '../../../src/utils/genesis_block';
 import {
@@ -38,9 +39,10 @@ import { createFakeDefaultAccount } from './account';
 import {
 	UnregisteredAccount,
 	Account,
-	DecodedVoteWeights,
+	VoteWeightsWrapper,
 	GenesisBlockGenerateInput,
 } from '../../../src/types';
+import { generateBlocks } from './blocks';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -52,10 +54,11 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 describe('Build assets/legacy', () => {
 	let db: any;
 	let accounts: Account[];
+	let block: Block;
 	let createAsset: any;
 	let unregisteredAddresses: UnregisteredAccount[];
 	let encodedUnregisteredAddresses: Buffer;
-	let delegates: DecodedVoteWeights;
+	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
 	let app: any;
 	const snapshotHeight = 16281107;
@@ -86,6 +89,10 @@ describe('Build assets/legacy', () => {
 			db = new KVStore('testDB');
 			createAsset = new CreateAsset(db);
 			app = Application.defaultApplication({ genesis: { chainID: '04000000' } });
+			[block] = generateBlocks({
+				startHeight: 1,
+				numberOfBlocks: 1,
+			});
 
 			for (const account of Object.values(testAccounts)) {
 				unregisteredAddresses = [];
@@ -215,7 +222,11 @@ describe('Build assets/legacy', () => {
 				.mockResolvedValue(encodedVoteWeights as never);
 
 			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevBlock, tokenID);
-			const genesisBlock: GenesisBlockGenerateInput = await createGenesisBlock(app.app, assets);
+			const genesisBlock: GenesisBlockGenerateInput = await createGenesisBlock(
+				app.app,
+				assets,
+				block,
+			);
 
 			await writeGenesisBlock(genesisBlock, genesisBlockPath);
 			expect(fs.existsSync(genesisBlockPath)).toBe(true);

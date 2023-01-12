@@ -18,7 +18,7 @@ import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
-import { TOKEN_ID_LSK } from '../constants';
+import { NETWORK_CONSTANT } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
@@ -60,11 +60,9 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	return config;
 };
 
-export const resolveConfigPath = async (tokenID: string): Promise<string> => {
-	const network = Object.keys(TOKEN_ID_LSK).find(
-		(key: string) => TOKEN_ID_LSK[key] === tokenID,
-	) as string;
-	const configFilePath = path.resolve(process.cwd(), `config/${network.toLowerCase()}/config.json`);
+export const resolveConfigPathByNetworkID = async (networkIdentifier: string): Promise<string> => {
+	const network = NETWORK_CONSTANT[networkIdentifier].name;
+	const configFilePath = path.resolve(process.cwd(), `config/${network}/config.json`);
 	return configFilePath;
 };
 
