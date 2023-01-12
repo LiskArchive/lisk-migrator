@@ -15,11 +15,11 @@ import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import { MODULE_NAME_AUTH } from '../constants';
 import {
-	AuthStoreEntry,
-	AuthAccountEntry,
 	Account,
-	GenesisAssetEntry,
+	AuthAccountEntry,
+	AuthStoreEntry,
 	AuthStoreEntryBuffer,
+	GenesisAssetEntry,
 } from '../types';
 
 const keyMapper = (key: Buffer) => key.toString('hex');
@@ -32,7 +32,7 @@ export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAs
 				numberOfSignatures: account.keys.numberOfSignatures,
 				mandatoryKeys: account.keys.mandatoryKeys.sort(keyComparator).map(keyMapper),
 				optionalKeys: account.keys.optionalKeys.sort(keyComparator).map(keyMapper),
-				nonce: account.sequence.nonce.toString(),
+				nonce: String(account.sequence.nonce),
 			};
 
 			return {

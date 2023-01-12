@@ -31,7 +31,6 @@ export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8'))
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
 export const INVALID_ED25519_KEY = Buffer.alloc(32, 255).toString('hex');
 export const DUMMY_PROOF_OF_POSSESSION = Buffer.alloc(96, 0).toString('hex');
-// export const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = 16270293;
 export const DPOS_INIT_ROUNDS = 60480;
 export const ROUND_LENGTH = 103;
 export const Q96_ZERO = '';
@@ -46,13 +45,13 @@ const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = Object.freeze({
 	TESTNET: 14075260,
 });
 
-export const NETWORKS: { [key: string]: any } = {
+export const NETWORK_CONSTANT: { [key: string]: Record<string, string | number> } = {
 	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': {
 		tokenID: TOKEN_ID_LSK.MAINNET,
-		snapshotHeightPrevBlock: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.MAINNET,
+		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.MAINNET,
 	},
 	'15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c': {
 		tokenID: TOKEN_ID_LSK.TESTNET,
-		snapshotHeightPrevBlock: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.TESTNET,
+		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.TESTNET,
 	},
 };

@@ -14,12 +14,11 @@
 import cli from 'cli-ux';
 import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
-import { NETWORKS } from '../constants';
-import { NodeInfo } from '../types';
+import { NETWORK_CONSTANT } from '../constants';
 
 let blockIDAtSnapshotHeight: string;
-let TOKEN_ID_LSK: string;
-let HEIGHT_PREVIOUS_SNAPSHOT_BLOCK: number;
+let tokenIDLsk: string;
+let heightPreviousSnapshotBlock: number;
 
 interface ObserveParams {
 	readonly label: string;
@@ -29,30 +28,27 @@ interface ObserveParams {
 	readonly isFinal: boolean;
 }
 
-export const getTokenIDLisk = (): string => TOKEN_ID_LSK;
+export const getTokenIDLsk = (): string => tokenIDLsk;
 
-export const setTokenIDLisk = async (networkIdentifier: string): Promise<void> => {
-	TOKEN_ID_LSK = NETWORKS[networkIdentifier].tokenID;
+export const setTokenIDLsk = async (networkIdentifier: string): Promise<void> => {
+	tokenIDLsk = NETWORK_CONSTANT[networkIdentifier].tokenID as string;
 };
 
-export const getSnapshotHeightPrevBlock = (): number => HEIGHT_PREVIOUS_SNAPSHOT_BLOCK;
+export const getHeightPreviousSnapshotBlock = (): number => heightPreviousSnapshotBlock;
 
-export const setSnapshotHeightPrevBlock = async (nodeInfo: NodeInfo): Promise<void> => {
-	if (!NETWORKS[nodeInfo.networkIdentifier]) {
-		HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = nodeInfo.genesisHeight;
-	} else {
-		HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[nodeInfo.networkIdentifier].snapshotHeightPrevBlock;
-	}
+export const setHeightPreviousSnapshotBlock = async (networkIdentifier: string): Promise<void> => {
+	heightPreviousSnapshotBlock = NETWORK_CONSTANT[networkIdentifier]
+		.snapshotHeightPrevBlock as number;
 };
 
 export const getNodeInfo = async (
 	liskCorePath: string,
 ): Promise<{ height: number; finalizedHeight: number }> => {
 	const client = await getAPIClient(liskCorePath);
-	const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
-	await setTokenIDLisk(nodeInfo.networkIdentifier);
-	await setSnapshotHeightPrevBlock(nodeInfo);
-	return { height: nodeInfo.height, finalizedHeight: nodeInfo.finalizedHeight };
+	const { height, finalizedHeight, networkIdentifier } = await client.node.getNodeInfo();
+	await setTokenIDLsk(networkIdentifier);
+	await setHeightPreviousSnapshotBlock(networkIdentifier);
+	return { height, finalizedHeight };
 };
 
 export const setBlockIDAtSnapshotHeight = async (

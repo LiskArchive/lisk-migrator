@@ -32,13 +32,13 @@ import {
 import {
 	Account,
 	GenesisAssetEntry,
-	ValidatorEntry,
 	Voter,
 	GenesisDataEntry,
-	DecodedVoteWeights,
+	VoteWeightsWrapper,
 	VoteWeight,
 	DelegateWeight,
 	SentVote,
+	ValidatorEntry,
 	ValidatorEntryBuffer,
 } from '../types';
 
@@ -97,12 +97,14 @@ export const createValidatorsArray = async (
 		}
 	}
 
-	return validators
+	const sortedValidators = validators
 		.sort((a, b) => a.address.compare(b.address))
 		.map(entry => ({
 			...entry,
 			address: getLisk32AddressFromAddress(entry.address),
 		}));
+
+	return sortedValidators;
 };
 
 export const getSentVotes = async (account: Account, tokenID: string): Promise<SentVote[]> => {
@@ -147,31 +149,33 @@ export const createVotersArray = async (accounts: Account[], tokenID: string): P
 
 export const createGenesisDataObj = async (
 	accounts: Account[],
-	delegatesVoteWeights: DecodedVoteWeights,
+	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
-	snapshotHeightPrevBlock: number,
+	snapshotHeightPrevious: number,
 ): Promise<GenesisDataEntry> => {
-	const r = Math.ceil((snapshotHeight - snapshotHeightPrevBlock) / ROUND_LENGTH);
+	const r = Math.ceil((snapshotHeight - snapshotHeightPrevious) / ROUND_LENGTH);
 	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
 		(voteWeight: VoteWeight) => voteWeight.round === r - 2,
 	);
 	if (!voteWeightR2 || voteWeightR2.delegates.length === 0) {
-		throw new Error(`Top delegates for round r-2 (${r - 2}) unavailable, cannot proceed.`);
+		throw new Error(`Top delegates for round ${r - 2}(r-2)  unavailable, cannot proceed.`);
 	}
 
 	const topDelegates = voteWeightR2.delegates;
 
 	const initDelegates: Buffer[] = [];
-	const accountMap = new Map(accounts.map(account => [account.address.toString('hex'), account]));
+	const accountbannedMap = new Map(
+		accounts.map(account => [account.address, account.dpos.delegate.isBanned]),
+	);
 
 	topDelegates.forEach((delegate: DelegateWeight) => {
-		const account = accountMap.get(delegate.address.toString('hex'));
-		if (account && !account.dpos.delegate.isBanned) {
+		const isAccountBanned = accountbannedMap.get(delegate.address);
+		if (!isAccountBanned) {
 			initDelegates.push(delegate.address);
 		}
 	});
 
-	const sortedInitDelegates = initDelegates.slice(0, 101).sort((a, b) => a.compare(b));
+	const sortedInitDelegates = initDelegates.sort((a, b) => a.compare(b)).slice(0, 101);
 
 	const genesisDataObj: GenesisDataEntry = {
 		initRounds: DPOS_INIT_ROUNDS,
@@ -184,9 +188,9 @@ export const createGenesisDataObj = async (
 export const addDPoSModuleEntry = async (
 	accounts: Account[],
 	blocks: Block[],
-	delegatesVoteWeights: DecodedVoteWeights,
+	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
-	snapshotHeightPrevBlock: number,
+	snapshotHeightPrevious: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
 	const dposObj = {
@@ -196,7 +200,7 @@ export const addDPoSModuleEntry = async (
 			accounts,
 			delegatesVoteWeights,
 			snapshotHeight,
-			snapshotHeightPrevBlock,
+			snapshotHeightPrevious,
 		),
 	};
 
