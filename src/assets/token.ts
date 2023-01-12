@@ -137,7 +137,7 @@ export const createSupplySubstoreArray = async (
 
 	const LSKSupply: SupplySubstoreEntry = {
 		tokenID,
-		totalSupply: String(BigInt(totalLSKSupply) + BigInt(legacyReserveAmount)),
+		totalSupply: String(totalLSKSupply + legacyReserveAmount),
 	};
 
 	return [LSKSupply];

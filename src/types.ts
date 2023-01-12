@@ -212,9 +212,9 @@ export interface VoteWeight {
 
 export interface GenesisBlockGenerateInput {
 	chainID: Buffer;
-	height?: number;
-	timestamp?: number;
-	previousBlockID?: Buffer;
+	height: number;
+	timestamp: number;
+	previousBlockID: Buffer;
 	assets: {
 		schema: Schema;
 		module: string;

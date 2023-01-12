@@ -217,6 +217,7 @@ class LiskMigrator extends Command {
 		)) as unknown) as Block;
 		const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
 		cli.action.stop();
+
 		cli.action.start(`Exporting genesis block to the path ${outputPath}`);
 		await writeGenesisBlock(genesisBlock, outputPath);
 		cli.action.stop();
