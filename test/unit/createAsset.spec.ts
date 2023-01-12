@@ -37,7 +37,7 @@ import {
 	UnregisteredAccount,
 	Account,
 	GenesisAssetEntry,
-	DecodedVoteWeights,
+	VoteWeightsWrapper,
 } from '../../src/types';
 
 jest.mock('@liskhq/lisk-db');
@@ -53,10 +53,10 @@ describe('Build assets/legacy', () => {
 	let createAsset: any;
 	let unregisteredAddresses: UnregisteredAccount[];
 	let encodedUnregisteredAddresses: Buffer;
-	let delegates: DecodedVoteWeights;
+	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
 	const snapshotHeight = 16281107;
-	const snapshotHeightPrevBlock = 16270293;
+	const snapshotHeightPrevious = 16270293;
 	const tokenID = '0400000000000000';
 
 	interface Accounts {
@@ -189,7 +189,7 @@ describe('Build assets/legacy', () => {
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevBlock + 1)}`,
+					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
 					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 				})
 				.mockReturnValue(Readable.from([]));
@@ -198,7 +198,7 @@ describe('Build assets/legacy', () => {
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const response = await createAsset.init(snapshotHeight, snapshotHeightPrevBlock, tokenID);
+			const response = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
 
 			const moduleList = [
 				MODULE_NAME_LEGACY,

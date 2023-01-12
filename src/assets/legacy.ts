@@ -30,14 +30,14 @@ export const addLegacyModuleEntry = async (
 		encodedUnregisteredAddresses,
 	);
 
-	const accounts: LegacyStoreEntryBuffer[] = await Promise.all(
+	const legacyAccounts: LegacyStoreEntryBuffer[] = await Promise.all(
 		unregisteredAddresses.map(async account => ({
 			address: account.address,
 			balance: String(account.balance),
 		})),
 	);
 
-	const sortedAccounts: LegacyStoreEntry[] = accounts
+	const sortedLegacyAccounts: LegacyStoreEntry[] = legacyAccounts
 		.sort((a, b) => a.address.compare(b.address))
 		.map(entry => ({
 			...entry,
@@ -46,7 +46,7 @@ export const addLegacyModuleEntry = async (
 
 	return {
 		module: MODULE_NAME_LEGACY,
-		data: ({ accounts: sortedAccounts } as unknown) as Record<string, unknown>,
+		data: ({ accounts: sortedLegacyAccounts } as unknown) as Record<string, unknown>,
 		schema: genesisLegacyStoreSchema,
 	};
 };

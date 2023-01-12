@@ -17,16 +17,16 @@ import { KVStore, formatInt } from '@liskhq/lisk-db';
 import { Block } from '@liskhq/lisk-chain';
 
 import {
-	DB_KEY_CHAIN_STATE,
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
 	CHAIN_STATE_DELEGATE_VOTE_WEIGHTS,
+	DB_KEY_CHAIN_STATE,
 	DB_KEY_ACCOUNTS_ADDRESS,
 	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_TRANSACTIONS_BLOCK_ID,
 	DB_KEY_TRANSACTIONS_ID,
 } from './constants';
 import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
-import { LegacyStoreEntry, DecodedVoteWeights, GenesisAssetEntry } from './types';
+import { LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types';
 
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
@@ -81,7 +81,7 @@ export class CreateAsset {
 
 	public init = async (
 		snapshotHeight: number,
-		snapshotHeightPrevBlock: number,
+		snapshotHeightPrevious: number,
 		tokenID: string,
 	): Promise<GenesisAssetEntry[]> => {
 		const encodedUnregisteredAddresses = await this._db.get(
@@ -104,12 +104,11 @@ export class CreateAsset {
 		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, tokenID);
 
 		const blocksStream = this._db.createReadStream({
-			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevBlock + 1)}`,
+			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
 			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 		});
-		// TODO: Discuss/verify the response and decode accordingly
-		const blocksHeader = await getDataFromDBStream(blocksStream, blockHeaderSchema);
 
+		const blocksHeader = await getDataFromDBStream(blocksStream, blockHeaderSchema);
 		const blocks: Block[] = await Promise.all(
 			blocksHeader.map(async (blockHeader: string | Buffer) => {
 				const blockID = hash(blockHeader);
@@ -139,7 +138,7 @@ export class CreateAsset {
 		const encodedDelegatesVoteWeights = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
 		);
-		const decodedDelegatesVoteWeights: DecodedVoteWeights = await codec.decode(
+		const decodedDelegatesVoteWeights: VoteWeightsWrapper = await codec.decode(
 			voteWeightsSchema,
 			encodedDelegatesVoteWeights,
 		);
@@ -148,7 +147,7 @@ export class CreateAsset {
 			blocks,
 			decodedDelegatesVoteWeights,
 			snapshotHeight,
-			snapshotHeightPrevBlock,
+			snapshotHeightPrevious,
 			tokenID,
 		);
 

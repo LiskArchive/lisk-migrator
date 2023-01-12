@@ -107,7 +107,7 @@ export interface LegacyStoreData {
 	accounts: LegacyStoreEntry[];
 }
 
-export interface UserStoreEntry {
+export interface UserSubstoreEntry {
 	address: string;
 	tokenID: string;
 	availableBalance: string;
@@ -117,14 +117,19 @@ export interface UserStoreEntry {
 	}[];
 }
 
-export interface SupplyStoreEntry {
+export interface UserSubstoreEntryBuffer extends Omit<UserSubstoreEntry, 'address' | 'tokenID'> {
+	address: Buffer;
+	tokenID: Buffer;
+}
+
+export interface SupplySubstoreEntry {
 	tokenID: string;
 	totalSupply: string;
 }
 
 export interface TokenStoreEntry {
-	userSubstore: UserStoreEntry[];
-	supplySubstore: SupplyStoreEntry[];
+	userSubstore: UserSubstoreEntry[];
+	supplySubstore: SupplySubstoreEntry[];
 	escrowSubstore: [];
 	supportedTokensSubstore: [];
 }
@@ -225,46 +230,6 @@ export interface GenesisBlockGenerateInput {
 	validateGenesis(): void;
 }
 
-export interface RegisteredModule {
-	id: number;
-	name: string;
-	actions: string[];
-	events: string[];
-	reducers: string[];
-	transactionAssets: {
-		id: number;
-		name: string;
-	}[];
-}
-
-export interface GenesisConfig {
-	[key: string]: unknown;
-	readonly bftThreshold: number;
-	readonly communityIdentifier: string;
-	readonly blockTime: number;
-	readonly maxPayloadLength: number;
-	readonly rewards: {
-		readonly milestones: string[];
-		readonly offset: number;
-		readonly distance: number;
-	};
-	readonly minFeePerByte: number;
-	readonly baseFees: {
-		readonly moduleID: number;
-		readonly assetID: number;
-		readonly baseFee: string;
-	}[];
-}
-export interface NodeInfo {
-	readonly version: string;
-	readonly networkVersion: string;
-	readonly networkIdentifier: string;
-	readonly lastBlockID: string;
-	readonly genesisHeight: number;
-	readonly height: number;
-	readonly finalizedHeight: number;
-	readonly syncing: boolean;
-	readonly unconfirmedTransactions: number;
-	readonly genesisConfig: GenesisConfig;
-	readonly registeredModules: RegisteredModule[];
+export interface VoteWeightsWrapper {
+	voteWeights: VoteWeight[];
 }

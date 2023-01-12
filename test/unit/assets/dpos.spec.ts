@@ -13,7 +13,7 @@
  */
 import { Block } from '@liskhq/lisk-chain';
 import { MODULE_NAME_DPOS } from '../../../src/constants';
-import { Account, DecodedVoteWeights } from '../../../src/types';
+import { Account, VoteWeightsWrapper } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
 import { ADDRESS_LISK32 } from '../utils/regex';
@@ -30,9 +30,9 @@ describe('Build assets/dpos', () => {
 	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
-	let delegates: DecodedVoteWeights;
+	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 16281107;
-	const snapshotHeightPrevBlock = 16270293;
+	const snapshotHeightPrevious = 16270293;
 
 	beforeAll(async () => {
 		blocks = generateBlocks({
@@ -49,7 +49,7 @@ describe('Build assets/dpos', () => {
 							voteWeight: BigInt('2130000000000'),
 						},
 						{
-							address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945'),
+							address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945', 'hex'),
 							voteWeight: BigInt('5304000000000'),
 						},
 					],
@@ -170,7 +170,7 @@ describe('Build assets/dpos', () => {
 			accounts,
 			delegates,
 			snapshotHeight,
-			snapshotHeightPrevBlock,
+			snapshotHeightPrevious,
 		);
 
 		// Assert
@@ -186,7 +186,7 @@ describe('Build assets/dpos', () => {
 			blocks,
 			delegates,
 			snapshotHeight,
-			snapshotHeightPrevBlock,
+			snapshotHeightPrevious,
 			tokenID,
 		);
 

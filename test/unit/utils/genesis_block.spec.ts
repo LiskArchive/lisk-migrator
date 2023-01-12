@@ -178,7 +178,7 @@ describe('Build assets/legacy', () => {
 								voteWeight: BigInt('2130000000000'),
 							},
 							{
-								address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945'),
+								address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945', 'hex'),
 								voteWeight: BigInt('5304000000000'),
 							},
 						],
