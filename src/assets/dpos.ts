@@ -49,8 +49,8 @@ export const getValidatorKeys = async (
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 	for (const block of blocks) {
-		const lskAddress: string = getBase32AddressFromPublicKey(block.header.generatorPublicKey);
-		keys[lskAddress] = block.header.generatorPublicKey.toString('hex');
+		const base32Address: string = getBase32AddressFromPublicKey(block.header.generatorPublicKey);
+		keys[base32Address] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
 			const trxSenderAddress: string = getBase32AddressFromPublicKey(trx.senderPublicKey);
 			const account: Account | undefined = accounts.find(
