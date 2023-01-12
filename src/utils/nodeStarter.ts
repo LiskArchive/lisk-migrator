@@ -11,8 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-// var exec = require('child_process').exec;
-// var child;
 import { exec } from 'child_process';
 import { createServer } from 'net';
 
@@ -39,8 +37,6 @@ const isPortAvailable = async (port: number): Promise<boolean> =>
 		server.listen(port);
 	});
 
-isPortAvailable(9901);
-
 const execAsync = async (cmd: string): Promise<string> =>
 	new Promise((resolve, reject) => {
 		exec(cmd, (error, stdout) => {
@@ -54,13 +50,24 @@ const execAsync = async (cmd: string): Promise<string> =>
 
 export const installLiskCore = async (): Promise<string> => execAsync('npm i -g lisk-core');
 
-export const startLiskCore = async (configPath: string): Promise<void> => {
+export const isLiskCoreV3Running = (version: string): boolean =>
+	version.length > 0 && version.startsWith('3');
+
+export const startLiskCore = async (
+	configPath: string,
+	perviousLiskCoreVersion: string,
+): Promise<void> => {
+	if (isLiskCoreV3Running(perviousLiskCoreVersion)) {
+		throw new Error('Lisk core V3 is still running!');
+	}
+
+	// TODO: Remove this line
 	configPath.slice();
 	// Figureout required port from the config path
 	const requiredPort: Port = 0;
-
 	if (!(await isPortAvailable(requiredPort))) {
 		throw new Error(`Required ports are not available! required ports:${requiredPort}`);
 	}
+
 	await execAsync('lisk-core start --network devnet --api-ipc --log info');
 };

@@ -233,7 +233,7 @@ class LiskMigrator extends Command {
 
 		if (autoStartLiskCoreV4) {
 			try {
-				await startLiskCore('PASS THE CONFIGURATION PATH');
+				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion);
 			} catch (err) {
 				this.error('Failed to start lisk core v4.');
 			}
