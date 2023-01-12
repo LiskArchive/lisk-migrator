@@ -32,6 +32,7 @@ import {
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 import { CreateAsset } from './createAsset';
+import { installLiskCore, startLiskCore } from './utils/nodeStarter';
 
 // TODO: Import snapshot command from core once implemented
 const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
@@ -119,6 +120,8 @@ class LiskMigrator extends Command {
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const compatibleVersions = flags['min-compatible-version'];
 		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
+		const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
+		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 		let config: Config;
 
@@ -222,6 +225,18 @@ class LiskMigrator extends Command {
 			cli.action.start('Migrate user configuration');
 			await migrateUserConfig();
 			cli.action.stop();
+		}
+
+		if (autoDownloadLiskCoreV4) {
+			await installLiskCore();
+		}
+
+		if (autoStartLiskCoreV4) {
+			try {
+				await startLiskCore('PASS THE CONFIGURATION PATH');
+			} catch (err) {
+				this.error('Failed to start lisk core v4.');
+			}
 		}
 	}
 }
