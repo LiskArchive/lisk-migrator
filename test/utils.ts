@@ -7,7 +7,7 @@ export const startServer = async (server: any, port: Port): Promise<boolean | Er
 		});
 
 		server.once('listening', () => {
-			// close the server if listening doesn't fail
+			// Close the server if listening doesn't fail
 			resolve(true);
 		});
 

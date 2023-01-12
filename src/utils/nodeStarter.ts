@@ -24,7 +24,7 @@ export const isPortAvailable = async (port: Port): Promise<boolean | Error> =>
 
 		server.once('error', (err: { code: string }) => {
 			if (err.code === 'EADDRINUSE') {
-				// port is currently in use
+				// Port is currently in use
 				resolve(false);
 			} else {
 				reject(err);
@@ -32,7 +32,7 @@ export const isPortAvailable = async (port: Port): Promise<boolean | Error> =>
 		});
 
 		server.once('listening', () => {
-			// close the server if listening doesn't fail
+			// Close the server if listening doesn't fail
 			server.close(() => resolve(true));
 		});
 
