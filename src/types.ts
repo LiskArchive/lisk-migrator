@@ -56,6 +56,10 @@ export interface AuthStoreEntry {
 	storeValue: AuthAccountEntry;
 }
 
+export interface AuthStoreEntryBuffer extends Omit<AuthStoreEntry, 'storeKey'> {
+	storeKey: Buffer;
+}
+
 export interface Account {
 	address: Buffer;
 	token: {
@@ -95,11 +99,15 @@ export interface LegacyStoreEntry {
 	balance: string;
 }
 
+export interface LegacyStoreEntryBuffer extends Omit<LegacyStoreEntry, 'address'> {
+	address: Buffer;
+}
+
 export interface LegacyStoreData {
 	accounts: LegacyStoreEntry[];
 }
 
-export interface UserStoreEntry {
+export interface UserSubstoreEntry {
 	address: string;
 	tokenID: string;
 	availableBalance: string;
@@ -109,14 +117,19 @@ export interface UserStoreEntry {
 	}[];
 }
 
-export interface SupplyStoreEntry {
+export interface UserSubstoreEntryBuffer extends Omit<UserSubstoreEntry, 'address' | 'tokenID'> {
+	address: Buffer;
+	tokenID: Buffer;
+}
+
+export interface SupplySubstoreEntry {
 	tokenID: string;
 	totalSupply: string;
 }
 
 export interface TokenStoreEntry {
-	userSubstore: UserStoreEntry[];
-	supplySubstore: SupplyStoreEntry[];
+	userSubstore: UserSubstoreEntry[];
+	supplySubstore: SupplySubstoreEntry[];
 	escrowSubstore: [];
 	supportedTokensSubstore: [];
 }
@@ -139,6 +152,10 @@ export interface ValidatorEntry {
 	commission: number;
 	lastCommissionIncreaseHeight: number;
 	sharingCoefficients: SharingCoefficients;
+}
+
+export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
+	address: Buffer;
 }
 
 export interface SentVote {
@@ -211,4 +228,8 @@ export interface GenesisBlockGenerateInput {
 	}[];
 	getBytes: () => Buffer;
 	validateGenesis(): void;
+}
+
+export interface VoteWeightsWrapper {
+	voteWeights: VoteWeight[];
 }

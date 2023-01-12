@@ -26,8 +26,8 @@ import {
 	setBlockIDAtSnapshotHeight,
 	getBlockIDAtSnapshotHeight,
 	getBlockIDAtHeight,
-	getTokenIDLisk,
-	getSnapshotHeightPrevBlock,
+	getTokenIDLsk,
+	getHeightPreviousSnapshotBlock,
 } from './utils/chain';
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
@@ -203,8 +203,8 @@ class LiskMigrator extends Command {
 		// Create genesis assets
 		cli.action.start('Creating genesis assets');
 		const createAsset = new CreateAsset(db);
-		const tokenID = getTokenIDLisk();
-		const snapshotHeightPrevBlock = getSnapshotHeightPrevBlock();
+		const tokenID = getTokenIDLsk();
+		const snapshotHeightPrevBlock = getHeightPreviousSnapshotBlock();
 		const genesisAssets = await createAsset.init(snapshotHeight, snapshotHeightPrevBlock, tokenID);
 		cli.action.stop();
 

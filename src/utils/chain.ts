@@ -11,15 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
 import cli from 'cli-ux';
 import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
-import { NETWORKS } from '../constants';
+import { NETWORK_CONSTANT } from '../constants';
 
 let blockIDAtSnapshotHeight: string;
-let TOKEN_ID_LSK: string;
-let HEIGHT_PREVIOUS_SNAPSHOT_BLOCK: number;
+let tokenIDLsk: string;
+let heightPreviousSnapshotBlock: number;
 
 interface ObserveParams {
 	readonly label: string;
@@ -29,16 +28,17 @@ interface ObserveParams {
 	readonly isFinal: boolean;
 }
 
-export const getTokenIDLisk = (): string => TOKEN_ID_LSK;
+export const getTokenIDLsk = (): string => tokenIDLsk;
 
-export const setTokenIDLisk = async (networkIdentifier: string): Promise<void> => {
-	TOKEN_ID_LSK = NETWORKS[networkIdentifier].tokenID;
+export const setTokenIDLsk = async (networkIdentifier: string): Promise<void> => {
+	tokenIDLsk = NETWORK_CONSTANT[networkIdentifier].tokenID as string;
 };
 
-export const getSnapshotHeightPrevBlock = (): number => HEIGHT_PREVIOUS_SNAPSHOT_BLOCK;
+export const getHeightPreviousSnapshotBlock = (): number => heightPreviousSnapshotBlock;
 
-export const setSnapshotHeightPrevBlock = async (networkIdentifier: string): Promise<void> => {
-	HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = NETWORKS[networkIdentifier].snapshotHeightPrevBlock;
+export const setHeightPreviousSnapshotBlock = async (networkIdentifier: string): Promise<void> => {
+	heightPreviousSnapshotBlock = NETWORK_CONSTANT[networkIdentifier]
+		.snapshotHeightPrevBlock as number;
 };
 
 export const getNodeInfo = async (
@@ -46,8 +46,8 @@ export const getNodeInfo = async (
 ): Promise<{ height: number; finalizedHeight: number }> => {
 	const client = await getAPIClient(liskCorePath);
 	const { height, finalizedHeight, networkIdentifier } = await client.node.getNodeInfo();
-	await setTokenIDLisk(networkIdentifier);
-	await setSnapshotHeightPrevBlock(networkIdentifier);
+	await setTokenIDLsk(networkIdentifier);
+	await setHeightPreviousSnapshotBlock(networkIdentifier);
 	return { height, finalizedHeight };
 };
 
