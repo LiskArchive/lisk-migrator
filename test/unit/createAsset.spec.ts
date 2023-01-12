@@ -27,7 +27,7 @@ import {
 	MODULE_NAME_LEGACY,
 	MODULE_NAME_AUTH,
 	MODULE_NAME_TOKEN,
-	MODULE_NAME_DPOS,
+	MODULE_NAME_POS,
 } from '../../src/constants';
 import { accountSchema, unregisteredAddressesSchema, voteWeightsSchema } from '../../src/schemas';
 
@@ -200,12 +200,7 @@ describe('Build assets/legacy', () => {
 
 			const response = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
 
-			const moduleList = [
-				MODULE_NAME_LEGACY,
-				MODULE_NAME_AUTH,
-				MODULE_NAME_TOKEN,
-				MODULE_NAME_DPOS,
-			];
+			const moduleList = [MODULE_NAME_LEGACY, MODULE_NAME_AUTH, MODULE_NAME_TOKEN, MODULE_NAME_POS];
 			// Assert
 			expect(db.get).toHaveBeenCalledTimes(2);
 			expect(db.createReadStream).toHaveBeenCalledTimes(2);

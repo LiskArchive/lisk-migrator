@@ -31,7 +31,7 @@ import { LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
 import { addTokenModuleEntry } from './assets/token';
-import { addDPoSModuleEntry } from './assets/dpos';
+import { addPoSModuleEntry } from './assets/pos';
 
 export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema: Schema) => {
 	const data = await new Promise<any>((resolve, reject) => {
@@ -142,7 +142,7 @@ export class CreateAsset {
 			voteWeightsSchema,
 			encodedDelegatesVoteWeights,
 		);
-		const dposModuleAssets = await addDPoSModuleEntry(
+		const posModuleAssets = await addPoSModuleEntry(
 			accounts,
 			blocks,
 			decodedDelegatesVoteWeights,
@@ -155,7 +155,7 @@ export class CreateAsset {
 			legacyModuleAssets,
 			authModuleAssets,
 			tokenModuleAssets,
-			dposModuleAssets,
+			posModuleAssets,
 		].sort((a, b) => a.module.localeCompare(b.module, 'en'));
 
 		return assets;
