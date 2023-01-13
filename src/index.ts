@@ -135,8 +135,8 @@ class LiskMigrator extends Command {
 		cli.action.stop('Snapshot Height is valid');
 
 		const client = await getAPIClient(liskCorePath);
-		const info = await client.node.getNodeInfo();
-		const { version: appVersion } = info;
+		const nodeInfo = await client.node.getNodeInfo();
+		const { version: appVersion } = nodeInfo;
 
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(appVersion);
@@ -210,7 +210,7 @@ class LiskMigrator extends Command {
 		cli.action.stop();
 
 		// Create an app instance for creating genesis block
-		const configFilePath = await resolveConfigPathByNetworkID(info.networkIdentifier);
+		const configFilePath = await resolveConfigPathByNetworkID(nodeInfo.networkIdentifier);
 		const configCoreV4 = await fs.readJSON(configFilePath);
 		const { app } = await Application.defaultApplication(configCoreV4);
 
@@ -240,7 +240,7 @@ class LiskMigrator extends Command {
 		if (autoStartLiskCoreV4) {
 			cli.action.start('Starting lisk-core v4');
 			try {
-				const network = NETWORK_CONSTANT[info.networkIdentifier].name as string;
+				const network = NETWORK_CONSTANT[nodeInfo.networkIdentifier].name as string;
 				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, { network });
 			} catch (err) {
 				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
