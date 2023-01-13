@@ -19,7 +19,7 @@ import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { Block } from '@liskhq/lisk-chain';
-import { ROUND_LENGTH } from './constants';
+import { NETWORK_CONSTANT, ROUND_LENGTH } from './constants';
 import { getAPIClient } from './client';
 import { getConfig, migrateUserConfig, resolveConfigPathByNetworkID } from './utils/config';
 import {
@@ -240,7 +240,8 @@ class LiskMigrator extends Command {
 		if (autoStartLiskCoreV4) {
 			cli.action.start('Starting lisk-core v4');
 			try {
-				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, { network: 'devnet' });
+				const network = NETWORK_CONSTANT[info.networkIdentifier].name as string;
+				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, { network });
 			} catch (err) {
 				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
 			}

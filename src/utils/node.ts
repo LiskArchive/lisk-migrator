@@ -15,7 +15,9 @@ import { Port } from '../types';
 import { isPortAvailable } from './network';
 import { execAsync } from './process';
 
-export const installLiskCore = async (): Promise<string> => execAsync('npm i -g lisk-core');
+const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core';
+
+export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
 // Export for testing
 export const isAppVersion3 = (version: string): boolean =>
