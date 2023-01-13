@@ -210,20 +210,6 @@ export interface VoteWeight {
 	readonly delegates: ReadonlyArray<DelegateWeight>;
 }
 
-export interface GenesisBlockGenerateInput {
-	chainID: Buffer;
-	height: number;
-	timestamp: number;
-	previousBlockID: Buffer;
-	assets: {
-		schema: Schema;
-		module: string;
-		data: Record<string, unknown>;
-	}[];
-	getBytes: () => Buffer;
-	validateGenesis(): void;
-}
-
 export interface VoteWeightsWrapper {
 	voteWeights: VoteWeight[];
 }

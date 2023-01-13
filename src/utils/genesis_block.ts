@@ -14,9 +14,10 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import path from 'path';
+import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
+import { Block as BlockVersion4 } from 'lisk-framework';
 import { codec, Schema } from '@liskhq/lisk-codec';
-import { Block } from '@liskhq/lisk-chain';
-import { GenesisAssetEntry, GenesisBlockGenerateInput } from '../types';
+import { GenesisAssetEntry } from '../types';
 import { SNAPSHOT_BLOCK_VERSION, SNAPSHOT_TIME_GAP } from '../constants';
 
 export const createChecksum = async (filePath: string): Promise<string> => {
@@ -40,8 +41,8 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 export const createGenesisBlock = async (
 	app: any,
 	assets: GenesisAssetEntry[],
-	blockAtSnapshotHeight: Block,
-): Promise<GenesisBlockGenerateInput> => {
+	blockAtSnapshotHeight: BlockVersion3,
+): Promise<BlockVersion4> => {
 	const input = {
 		assets: assets.map((a: { module: string; schema: Schema; data: object }) => ({
 			module: a.module,
@@ -60,7 +61,7 @@ export const createGenesisBlock = async (
 };
 
 export const writeGenesisBlock = async (
-	genesisBlock: GenesisBlockGenerateInput,
+	genesisBlock: BlockVersion4,
 	outputPath: string,
 ): Promise<void> => {
 	if (fs.existsSync(outputPath)) {
