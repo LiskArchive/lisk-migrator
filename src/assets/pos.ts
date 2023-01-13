@@ -167,21 +167,21 @@ export const createGenesisDataObj = async (
 		throw new Error(`Top delegates for round ${r - 2}(r-2)  unavailable, cannot proceed.`);
 	}
 
-	const topDelegates = voteWeightR2.delegates;
+	const topValidators = voteWeightR2.delegates;
 
-	const initDelegates: Buffer[] = [];
+	const initValidators: Buffer[] = [];
 	const accountbannedMap = new Map(
 		accounts.map(account => [account.address, account.dpos.delegate.isBanned]),
 	);
 
-	topDelegates.forEach((delegate: DelegateWeight) => {
+	topValidators.forEach((delegate: DelegateWeight) => {
 		const isAccountBanned = accountbannedMap.get(delegate.address);
 		if (!isAccountBanned) {
-			initDelegates.push(delegate.address);
+			initValidators.push(delegate.address);
 		}
 	});
 
-	const sortedInitDelegates = initDelegates.sort((a, b) => a.compare(b)).slice(0, 101);
+	const sortedInitDelegates = initValidators.sort((a, b) => a.compare(b)).slice(0, 101);
 
 	const genesisDataObj: GenesisDataEntry = {
 		initRounds: POS_INIT_ROUNDS,
