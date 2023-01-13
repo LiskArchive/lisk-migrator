@@ -181,11 +181,11 @@ export const createGenesisDataObj = async (
 		}
 	});
 
-	const sortedInitDelegates = initValidators.sort((a, b) => a.compare(b)).slice(0, 101);
+	const sortedInitValidators = initValidators.sort((a, b) => a.compare(b)).slice(0, 101);
 
 	const genesisDataObj: GenesisDataEntry = {
 		initRounds: POS_INIT_ROUNDS,
-		initValidators: sortedInitDelegates.map(entry => getLisk32AddressFromAddress(entry)),
+		initValidators: sortedInitValidators.map(entry => getLisk32AddressFromAddress(entry)),
 	};
 
 	return genesisDataObj;

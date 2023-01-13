@@ -37,7 +37,7 @@ export const Q96_ZERO = '';
 export const MAX_COMMISSION = 10000;
 export const SNAPSHOT_BLOCK_VERSION = 0;
 export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided
-export declare const TOKEN_ID_LENGTH: number;
+export const TOKEN_ID_LENGTH = 8;
 export declare const MAX_NUMBER_BYTES_Q96 = 24;
 
 const TOKEN_ID_LSK = Object.freeze({
