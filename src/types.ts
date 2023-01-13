@@ -35,10 +35,179 @@ export interface Config {
 }
 
 export interface UnregisteredAccount {
-	readonly address: Buffer;
-	readonly balance: bigint;
+	address: Buffer;
+	balance: bigint;
 }
 
 export interface UnregisteredAddresses {
-	readonly unregisteredAddresses: UnregisteredAccount[];
+	unregisteredAddresses: UnregisteredAccount[];
+}
+
+export interface AuthAccountEntry {
+	numberOfSignatures: number;
+	mandatoryKeys: string[];
+	optionalKeys: string[];
+	nonce: string;
+}
+
+export interface AuthStoreEntry {
+	storeKey: string;
+	storeValue: AuthAccountEntry;
+}
+
+export interface AuthStoreEntryBuffer extends Omit<AuthStoreEntry, 'storeKey'> {
+	storeKey: Buffer;
+}
+
+export interface Account {
+	address: Buffer;
+	token: {
+		balance: bigint;
+	};
+	sequence: {
+		nonce: bigint;
+	};
+	keys: {
+		mandatoryKeys: Buffer[];
+		optionalKeys: Buffer[];
+		numberOfSignatures: number;
+	};
+	dpos: {
+		delegate: {
+			username: string;
+			pomHeights: number[];
+			consecutiveMissedBlocks: number;
+			lastForgedHeight: number;
+			isBanned: boolean;
+			totalVotesReceived: bigint;
+		};
+		sentVotes: {
+			delegateAddress: Buffer;
+			amount: bigint;
+		}[];
+		unlocking: {
+			delegateAddress: Buffer;
+			amount: bigint;
+			unvoteHeight: number;
+		}[];
+	};
+}
+
+export interface LegacyStoreEntry {
+	address: string;
+	balance: string;
+}
+
+export interface LegacyStoreEntryBuffer extends Omit<LegacyStoreEntry, 'address'> {
+	address: Buffer;
+}
+
+export interface LegacyStoreData {
+	accounts: LegacyStoreEntry[];
+}
+
+export interface UserSubstoreEntry {
+	address: string;
+	tokenID: string;
+	availableBalance: string;
+	lockedBalances: {
+		module: string;
+		amount: string;
+	}[];
+}
+
+export interface UserSubstoreEntryBuffer extends Omit<UserSubstoreEntry, 'address' | 'tokenID'> {
+	address: Buffer;
+	tokenID: Buffer;
+}
+
+export interface SupplySubstoreEntry {
+	tokenID: string;
+	totalSupply: string;
+}
+
+export interface TokenStoreEntry {
+	userSubstore: UserSubstoreEntry[];
+	supplySubstore: SupplySubstoreEntry[];
+	escrowSubstore: [];
+	supportedTokensSubstore: [];
+}
+
+export interface SharingCoefficients {
+	tokenID: string;
+	coefficient: string;
+}
+
+export interface ValidatorEntry {
+	address: string;
+	name: string;
+	blsKey: string;
+	proofOfPossession: string;
+	generatorKey: string;
+	lastGeneratedHeight: number;
+	isBanned: boolean;
+	pomHeights: number[];
+	consecutiveMissedBlocks: number;
+	commission: number;
+	lastCommissionIncreaseHeight: number;
+	sharingCoefficients: SharingCoefficients;
+}
+
+export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
+	address: Buffer;
+}
+
+export interface SentVote {
+	delegateAddress: string;
+	amount: bigint;
+	voteSharingCoefficients: SharingCoefficients[];
+}
+
+export interface Voter {
+	address: string;
+	sentVotes: {
+		delegateAddress: string;
+		amount: bigint;
+	}[];
+	pendingUnlocks: {
+		delegateAddress: string;
+		amount: bigint;
+		unvoteHeight: number;
+	}[];
+}
+
+export interface GenesisDataEntry {
+	initRounds: number;
+	initDelegates: string[];
+}
+
+export interface DPoSStoreEntry {
+	validators: ValidatorEntry[];
+	voters: Voter[];
+	snapshots: Record<string, unknown>;
+	genesisData: GenesisDataEntry;
+}
+
+export interface LockedBalance {
+	module: string;
+	amount: string;
+}
+
+export interface GenesisAssetEntry {
+	module: string;
+	data: Record<string, unknown>;
+}
+
+export interface DelegateWeight {
+	readonly address: Buffer;
+	readonly voteWeight: bigint;
+}
+
+export interface VoteWeight {
+	readonly round: number;
+	readonly delegates: ReadonlyArray<DelegateWeight>;
+}
+
+export interface VoteWeightsWrapper {
+	voteWeights: VoteWeight[];
 }

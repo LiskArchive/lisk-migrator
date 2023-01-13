@@ -12,43 +12,40 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
 
-import {
-	MODULE_NAME_LEGACY,
-	DB_KEY_CHAIN_STATE,
-	CHAIN_STATE_UNREGISTERED_ADDRESSES,
-} from '../constants';
+import { MODULE_NAME_LEGACY } from '../constants';
 import { unregisteredAddressesSchema } from '../schemas';
-import { UnregisteredAddresses } from '../types';
+import {
+	UnregisteredAddresses,
+	GenesisAssetEntry,
+	LegacyStoreEntry,
+	LegacyStoreEntryBuffer,
+} from '../types';
 
-export class LegacyModuleAsset {
-	private readonly _db: KVStore;
+export const addLegacyModuleEntry = async (
+	encodedUnregisteredAddresses: Buffer,
+): Promise<GenesisAssetEntry> => {
+	const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
+		unregisteredAddressesSchema,
+		encodedUnregisteredAddresses,
+	);
 
-	public constructor(db: KVStore) {
-		this._db = db;
-	}
+	const legacyAccounts: LegacyStoreEntryBuffer[] = await Promise.all(
+		unregisteredAddresses.map(async account => ({
+			address: account.address,
+			balance: String(account.balance),
+		})),
+	);
 
-	public addLegacyModuleEntry = async (): Promise<any> => {
-		const encodedUnregisteredAddresses = await this._db.get(
-			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
-		);
+	const sortedLegacyAccounts: LegacyStoreEntry[] = legacyAccounts
+		.sort((a, b) => a.address.compare(b.address))
+		.map(entry => ({
+			...entry,
+			address: entry.address.toString('hex'),
+		}));
 
-		const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
-			unregisteredAddressesSchema,
-			encodedUnregisteredAddresses,
-		);
-
-		const accounts = await Promise.all(
-			unregisteredAddresses.map(async account => ({
-				address: account.address.toString('hex'),
-				balance: String(account.balance),
-			})),
-		);
-
-		return {
-			module: MODULE_NAME_LEGACY,
-			data: { accounts },
-		};
+	return {
+		module: MODULE_NAME_LEGACY,
+		data: ({ accounts: sortedLegacyAccounts } as unknown) as Record<string, unknown>,
 	};
-}
+};
