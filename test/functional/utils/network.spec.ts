@@ -21,7 +21,7 @@ import { Port } from '../../../src/types';
 
 describe('isPortAvailable', () => {
 	it('Should return port availablity properly', async () => {
-		// Keep trying untill a free port is found for testing
+		// Keep trying until a free port is found for testing
 		while (true) {
 			const port: Port = Math.round(Math.random() * 65536);
 			try {

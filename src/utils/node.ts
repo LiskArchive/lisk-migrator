@@ -33,7 +33,7 @@ export const startLiskCore = async (
 	// Figureout required port from the config path
 	const requiredPort: Port = 0;
 	if (!(await isPortAvailable(requiredPort))) {
-		throw new Error(`Required ports are not available! required ports:${requiredPort}`);
+		throw new Error(`Required port is not available! required port:${requiredPort}`);
 	}
 
 	return execAsync(`lisk-core start --network ${params.network} --api-ipc --log info`);
