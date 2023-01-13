@@ -15,7 +15,9 @@ import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { codec, Schema } from '@liskhq/lisk-codec';
-import { GenesisBlockGenerateInput } from '../types';
+import { Block } from '@liskhq/lisk-chain';
+import { GenesisAssetEntry, GenesisBlockGenerateInput } from '../types';
+import { SNAPSHOT_BLOCK_VERSION, SNAPSHOT_TIME_GAP } from '../constants';
 
 export const createChecksum = async (filePath: string): Promise<string> => {
 	const fileStream = fs.createReadStream(filePath);
@@ -37,24 +39,30 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 
 export const createGenesisBlock = async (
 	app: any,
-	assets: any,
+	assets: GenesisAssetEntry[],
+	blockAtSnapshotHeight: Block,
 ): Promise<GenesisBlockGenerateInput> => {
-	const genesisBlock = await app.generateGenesisBlock({
-		assets: assets.map((a: { module: any; schema: Schema; data: object }) => ({
+	const input = {
+		assets: assets.map((a: { module: string; schema: Schema; data: object }) => ({
 			module: a.module,
 			data: codec.fromJSON(a.schema, a.data),
 			schema: a.schema,
 		})),
 		chainID: Buffer.from(app.config.genesis.chainID, 'hex'),
-	});
+		timestamp: blockAtSnapshotHeight.header.timestamp + SNAPSHOT_TIME_GAP,
+		height: blockAtSnapshotHeight.header.height + 1,
+		previousBlockID: blockAtSnapshotHeight.header.previousBlockID,
+	};
 
+	const genesisBlock = await app.generateGenesisBlock(input);
+	genesisBlock.header.version = SNAPSHOT_BLOCK_VERSION;
 	return genesisBlock;
 };
 
 export const writeGenesisBlock = async (
 	genesisBlock: GenesisBlockGenerateInput,
 	outputPath: string,
-): Promise<any> => {
+): Promise<void> => {
 	if (fs.existsSync(outputPath)) {
 		fs.unlinkSync(outputPath);
 	}

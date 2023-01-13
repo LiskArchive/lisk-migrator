@@ -197,7 +197,7 @@ export interface LockedBalance {
 export interface GenesisAssetEntry {
 	module: string;
 	data: Record<string, unknown>;
-	schema: any;
+	schema: Schema;
 }
 
 export interface DelegateWeight {
@@ -210,17 +210,11 @@ export interface VoteWeight {
 	readonly delegates: ReadonlyArray<DelegateWeight>;
 }
 
-export type VoteWeights = VoteWeight[];
-
-export interface DecodedVoteWeights {
-	voteWeights: VoteWeights;
-}
-
 export interface GenesisBlockGenerateInput {
 	chainID: Buffer;
-	height?: number;
-	timestamp?: number;
-	previousBlockID?: Buffer;
+	height: number;
+	timestamp: number;
+	previousBlockID: Buffer;
 	assets: {
 		schema: Schema;
 		module: string;

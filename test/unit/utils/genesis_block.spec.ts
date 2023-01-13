@@ -18,6 +18,7 @@ import { Application } from 'lisk-framework';
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Block } from '@liskhq/lisk-chain';
 import { CreateAsset } from '../../../src/createAsset';
 import { createGenesisBlock, writeGenesisBlock } from '../../../src/utils/genesis_block';
 import {
@@ -38,9 +39,10 @@ import { createFakeDefaultAccount } from './account';
 import {
 	UnregisteredAccount,
 	Account,
-	DecodedVoteWeights,
+	VoteWeightsWrapper,
 	GenesisBlockGenerateInput,
 } from '../../../src/types';
+import { generateBlocks } from './blocks';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -52,14 +54,15 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 describe('Build assets/legacy', () => {
 	let db: any;
 	let accounts: Account[];
+	let block: Block;
 	let createAsset: any;
 	let unregisteredAddresses: UnregisteredAccount[];
 	let encodedUnregisteredAddresses: Buffer;
-	let delegates: DecodedVoteWeights;
+	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
 	let app: any;
 	const snapshotHeight = 16281107;
-	const snapshotHeightPrevBlock = 16270293;
+	const snapshotHeightPrevious = 16270293;
 	const tokenID = '0400000000000000';
 	const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
 
@@ -86,6 +89,10 @@ describe('Build assets/legacy', () => {
 			db = new KVStore('testDB');
 			createAsset = new CreateAsset(db);
 			app = Application.defaultApplication({ genesis: { chainID: '04000000' } });
+			[block] = generateBlocks({
+				startHeight: 1,
+				numberOfBlocks: 1,
+			});
 
 			for (const account of Object.values(testAccounts)) {
 				unregisteredAddresses = [];
@@ -205,7 +212,7 @@ describe('Build assets/legacy', () => {
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevBlock + 1)}`,
+					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
 					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 				})
 				.mockReturnValue(Readable.from([]));
@@ -214,8 +221,12 @@ describe('Build assets/legacy', () => {
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevBlock, tokenID);
-			const genesisBlock: GenesisBlockGenerateInput = await createGenesisBlock(app.app, assets);
+			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
+			const genesisBlock: GenesisBlockGenerateInput = await createGenesisBlock(
+				app.app,
+				assets,
+				block,
+			);
 
 			await writeGenesisBlock(genesisBlock, genesisBlockPath);
 			expect(fs.existsSync(genesisBlockPath)).toBe(true);
