@@ -193,6 +193,7 @@ describe('Build assets/legacy', () => {
 
 		afterAll(async () => fs.removeSync(genesisBlockPath));
 
+		// TODO: This test case is failing, will be fixed once this issue https://github.com/LiskHQ/lisk-sdk/issues/8006 is resolved.
 		it('should create genesis block', async () => {
 			when(db.get)
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
