@@ -19,20 +19,14 @@ const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
-// Export for testing
-export const isAppVersion3 = (version: string): boolean =>
-	version.length > 0 && version.startsWith('3');
-
 export const startLiskCore = async (
 	_config: any,
 	previousLiskCoreVersion: string,
 	params: { network: string },
 ): Promise<string | Error> => {
-	if (isAppVersion3(previousLiskCoreVersion)) {
-		throw new Error('Lisk core V3 is still running!');
-	}
+	// TODO: Add check if lisk-core is still running
 
-	// Figureout required port from the config path
+	// TODO: Figureout required port from the config
 	const requiredPort: Port = 0;
 	if (!(await isPortAvailable(requiredPort))) {
 		throw new Error(`Required port is not available! required port:${requiredPort}`);
