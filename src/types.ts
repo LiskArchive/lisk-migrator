@@ -233,3 +233,5 @@ export interface GenesisBlockGenerateInput {
 export interface VoteWeightsWrapper {
 	voteWeights: VoteWeight[];
 }
+
+export type Port = number;

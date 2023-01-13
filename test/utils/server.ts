@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Port } from '../src/utils/nodeStarter';
+import { Port } from '../../src/types';
 
 export const startServer = async (server: any, port: Port): Promise<boolean | Error> =>
 	new Promise((resolve, reject) => {

@@ -32,7 +32,7 @@ import {
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 import { CreateAsset } from './createAsset';
-import { installLiskCore, startLiskCore } from './utils/nodeStarter';
+import { installLiskCore, startLiskCore } from './utils/node';
 
 // TODO: Import snapshot command from core once implemented
 const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
@@ -228,15 +228,19 @@ class LiskMigrator extends Command {
 		}
 
 		if (autoDownloadLiskCoreV4) {
+			cli.action.start('Installing lisk-core v4');
 			await installLiskCore();
+			cli.action.stop();
 		}
 
 		if (autoStartLiskCoreV4) {
+			cli.action.start('Starting lisk-core v4');
 			try {
-				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion);
+				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, { network: 'devnet' });
 			} catch (err) {
 				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
 			}
+			cli.action.stop();
 		}
 	}
 }
