@@ -13,21 +13,17 @@
  */
 import { createServer } from 'net';
 
-import { execAsync, isPortAvailable } from '../../../src/utils/node';
+import { isPortAvailable } from '../../../src/utils/network';
+
 import { startServer, closeServer } from '../../utils/server';
 
-describe('execAsync', () => {
-	it('Should execute ls command succesfully', async () => {
-		const response = await execAsync('ls');
-		expect(response.length).toBeGreaterThan(0);
-	});
-});
+import { Port } from '../../../src/types';
 
 describe('isPortAvailable', () => {
 	it('Should return port availablity properly', async () => {
 		// Keep trying untill a free port is found for testing
 		while (true) {
-			const port = Math.round(Math.random() * 65536);
+			const port: Port = Math.round(Math.random() * 65536);
 			try {
 				const isPortAvailableBefore = await isPortAvailable(port);
 				expect(isPortAvailableBefore).toBe(true);

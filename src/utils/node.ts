@@ -22,8 +22,7 @@ export const isAppVersion3 = (version: string): boolean =>
 	version.length > 0 && version.startsWith('3');
 
 export const startLiskCore = async (
-	/* tslint:disable-next-line */
-	config: any,
+	_config: any,
 	previousLiskCoreVersion: string,
 	params: { network: string },
 ): Promise<string | Error> => {
