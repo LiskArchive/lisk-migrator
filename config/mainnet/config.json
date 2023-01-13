@@ -19,9 +19,7 @@
 		"maxTransactionsSize": 15360
 	},
 	"generator": {
-		"keys": {
-			"fromFile": "./config/dev-validators.json"
-		}
+		"keys": {}
 	},
 	"network": {
 		"version": "4.0",
