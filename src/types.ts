@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { Schema } from '@liskhq/lisk-codec';
 
 export interface StorageConfig {
 	readonly user: string;
@@ -196,6 +197,7 @@ export interface LockedBalance {
 export interface GenesisAssetEntry {
 	module: string;
 	data: Record<string, unknown>;
+	schema: Schema;
 }
 
 export interface DelegateWeight {

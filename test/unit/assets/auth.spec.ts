@@ -80,12 +80,12 @@ describe('Build assets/auth', () => {
 
 	it('should get auth accounts', async () => {
 		const response: GenesisAssetEntry = await addAuthModuleEntry(accounts);
-		const data = (response.data as unknown) as AuthStoreEntry[];
+		const authDataSubstore = (response.data.authDataSubstore as unknown) as AuthStoreEntry[];
 
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
-		expect(response.data).toHaveLength(2);
-		expect(Object.getOwnPropertyNames(response.data[0])).toEqual(['storeKey', 'storeValue']);
-		data.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
+		expect(authDataSubstore).toHaveLength(2);
+		expect(Object.getOwnPropertyNames(authDataSubstore[0])).toEqual(['storeKey', 'storeValue']);
+		authDataSubstore.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
 			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
 			expect(Object.getOwnPropertyNames(asset.storeValue)).toEqual([
 				'numberOfSignatures',

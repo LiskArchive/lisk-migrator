@@ -11,13 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
+import path from 'path';
 import debugInit from 'debug';
 import cli from 'cli-ux';
 import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { join } from 'path';
 import { Config } from '../types';
+import { NETWORK_CONSTANT } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
@@ -57,6 +58,12 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 	cli.action.stop();
 
 	return config;
+};
+
+export const resolveConfigPathByNetworkID = async (networkIdentifier: string): Promise<string> => {
+	const network = NETWORK_CONSTANT[networkIdentifier].name;
+	const configFilePath = path.resolve(process.cwd(), `config/${network}/config.json`);
+	return configFilePath;
 };
 
 // TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55

@@ -14,7 +14,7 @@
 import { codec } from '@liskhq/lisk-codec';
 
 import { MODULE_NAME_LEGACY } from '../constants';
-import { unregisteredAddressesSchema } from '../schemas';
+import { genesisLegacyStoreSchema, unregisteredAddressesSchema } from '../schemas';
 import {
 	UnregisteredAddresses,
 	GenesisAssetEntry,
@@ -47,5 +47,6 @@ export const addLegacyModuleEntry = async (
 	return {
 		module: MODULE_NAME_LEGACY,
 		data: ({ accounts: sortedLegacyAccounts } as unknown) as Record<string, unknown>,
+		schema: genesisLegacyStoreSchema,
 	};
 };

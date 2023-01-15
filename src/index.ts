@@ -11,22 +11,28 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import * as fs from 'fs-extra';
 import { join } from 'path';
+import { Application } from 'lisk-framework';
 import { KVStore } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
+import { Block } from '@liskhq/lisk-chain';
 import { ROUND_LENGTH } from './constants';
 import { getAPIClient } from './client';
-import { getConfig, migrateUserConfig } from './utils/config';
+import { getConfig, migrateUserConfig, resolveConfigPathByNetworkID } from './utils/config';
 import {
 	observeChainHeight,
 	setBlockIDAtSnapshotHeight,
 	getBlockIDAtSnapshotHeight,
 	getBlockIDAtHeight,
+	getTokenIDLsk,
+	getHeightPreviousSnapshotBlock,
 } from './utils/chain';
-import { createGenesisBlock } from './utils/genesis_block';
+import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
+import { CreateAsset } from './createAsset';
 
 // TODO: Import snapshot command from core once implemented
 const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
@@ -108,7 +114,7 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		const { flags } = this.parse(LiskMigrator);
 		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block.json');
+		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block');
 		const snapshotHeight = flags['snapshot-height'];
 		const customConfigPath = flags.config;
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
@@ -192,12 +198,34 @@ class LiskMigrator extends Command {
 		const db = new KVStore(snapshotPath);
 		cli.action.stop();
 
+		// Create genesis assets
+		cli.action.start('Creating genesis assets');
+		const createAsset = new CreateAsset(db);
+		const tokenID = getTokenIDLsk();
+		const snapshotHeightPrevious = getHeightPreviousSnapshotBlock();
+		const genesisAssets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
+		cli.action.stop();
+
+		// Create an app instance for creating genesis block
+		const configFilePath = await resolveConfigPathByNetworkID(info.networkIdentifier);
+		const configCoreV4 = await fs.readJSON(configFilePath);
+		const { app } = await Application.defaultApplication(configCoreV4);
+
 		cli.action.start('Creating genesis block');
-		await createGenesisBlock(db, outputPath);
+		const blockAtSnapshotHeight = ((await client.block.getByHeight(
+			snapshotHeight,
+		)) as unknown) as Block;
+		const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
+		cli.action.stop();
+
+		cli.action.start(`Exporting genesis block to the path ${outputPath}`);
+		await writeGenesisBlock(genesisBlock, outputPath);
 		cli.action.stop();
 
 		if (autoMigrateUserConfig) {
+			cli.action.start('Migrate user configuration');
 			await migrateUserConfig();
+			cli.action.stop();
 		}
 	}
 }

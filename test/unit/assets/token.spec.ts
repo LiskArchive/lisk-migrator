@@ -32,8 +32,10 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 
 describe('Build assets/token', () => {
 	const tokenID = '0400000000000000';
+	const AMOUNT_ZERO = BigInt('0');
 	let legacyAccount: LegacyStoreEntry[];
 	let accounts: Account[];
+	let legacyAccountBalance: bigint = AMOUNT_ZERO;
 
 	interface legacyAccounts {
 		[key: string]: {
@@ -54,11 +56,12 @@ describe('Build assets/token', () => {
 	};
 
 	beforeAll(async () => {
+		legacyAccountBalance = BigInt(Math.floor(Math.random() * 1000));
 		for (const account of Object.values(testAccounts)) {
 			legacyAccount = [];
 			legacyAccount.push({
 				address: getLegacyBytesFromPassphrase(account.passphrase).toString('hex'),
-				balance: String(Math.floor(Math.random() * 1000)),
+				balance: String(legacyAccountBalance),
 			});
 		}
 
@@ -140,10 +143,12 @@ describe('Build assets/token', () => {
 		const supplySubStore = await createSupplySubstoreArray(accounts, tokenID);
 
 		// Assert
-		let totalSupply = 0;
+		let totalSupply = AMOUNT_ZERO;
 		for (const account of accounts) {
-			totalSupply += Number(account.token.balance);
+			totalSupply += BigInt(account.token.balance);
 		}
+
+		totalSupply += legacyAccountBalance;
 
 		expect(supplySubStore).toBeInstanceOf(Array);
 		supplySubStore.forEach(entry => {

@@ -14,6 +14,7 @@
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import { MODULE_NAME_AUTH } from '../constants';
+import { genesisAuthStoreSchema } from '../schemas';
 import {
 	Account,
 	AuthAccountEntry,
@@ -26,7 +27,7 @@ const keyMapper = (key: Buffer) => key.toString('hex');
 const keyComparator = (a: Buffer, b: Buffer) => a.compare(b);
 
 export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAssetEntry> => {
-	const authDataSubstore: AuthStoreEntryBuffer[] = await Promise.all(
+	const authSubstoreEntries: AuthStoreEntryBuffer[] = await Promise.all(
 		accounts.map(async (account: Account) => {
 			const authObj: AuthAccountEntry = {
 				numberOfSignatures: account.keys.numberOfSignatures,
@@ -42,7 +43,7 @@ export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAs
 		}),
 	);
 
-	const sortedAuthDataSubstore: AuthStoreEntry[] = authDataSubstore
+	const sortedAuthSubstoreEntries: AuthStoreEntry[] = authSubstoreEntries
 		.sort((a, b) => a.storeKey.compare(b.storeKey))
 		.map(entry => ({
 			...entry,
@@ -51,6 +52,7 @@ export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAs
 
 	return {
 		module: MODULE_NAME_AUTH,
-		data: (sortedAuthDataSubstore as unknown) as Record<string, unknown>,
+		data: ({ authDataSubstore: sortedAuthSubstoreEntries } as unknown) as Record<string, unknown>,
+		schema: genesisAuthStoreSchema,
 	};
 };

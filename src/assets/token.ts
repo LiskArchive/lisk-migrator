@@ -16,22 +16,24 @@ import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 import {
 	MODULE_NAME_TOKEN,
 	MODULE_NAME_DPOS,
-	ADDRESS_LEGACY_RESERVE,
 	MODULE_NAME_LEGACY,
+	ADDRESS_LEGACY_RESERVE,
 } from '../constants';
 
 import {
 	Account,
+	LockedBalance,
+	GenesisAssetEntry,
+	TokenStoreEntry,
 	LegacyStoreEntry,
 	SupplySubstoreEntry,
-	TokenStoreEntry,
 	UserSubstoreEntry,
-	GenesisAssetEntry,
-	LockedBalance,
 	UserSubstoreEntryBuffer,
 } from '../types';
+import { genesisTokenStoreSchema } from '../schemas';
 
 const AMOUNT_ZERO = BigInt('0');
+let legacyReserveAmount: bigint = AMOUNT_ZERO;
 
 export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
 	let amount = AMOUNT_ZERO;
@@ -62,7 +64,7 @@ export const createLegacyReserveAccount = async (
 		ADDRESS_LEGACY_RESERVE.equals(account.address),
 	);
 
-	let legacyReserveAmount = legacyReserveAccount ? legacyReserveAccount.token.balance : AMOUNT_ZERO;
+	legacyReserveAmount = legacyReserveAccount ? legacyReserveAccount.token.balance : AMOUNT_ZERO;
 
 	for (const account of legacyAccounts) {
 		legacyReserveAmount += BigInt(account.balance);
@@ -132,7 +134,12 @@ export const createSupplySubstoreArray = async (
 			totalLSKSupply,
 		);
 	}
-	const LSKSupply = { tokenID, totalSupply: String(totalLSKSupply) };
+
+	const LSKSupply: SupplySubstoreEntry = {
+		tokenID,
+		totalSupply: String(totalLSKSupply + legacyReserveAmount),
+	};
+
 	return [LSKSupply];
 };
 
@@ -143,6 +150,7 @@ export const addTokenModuleEntry = async (
 ): Promise<GenesisAssetEntry> => {
 	const tokenObj: TokenStoreEntry = {
 		userSubstore: await createUserSubstoreArray(accounts, legacyAccounts, tokenID),
+		// TODO: Update implementation once LIP-0063 is updated
 		supplySubstore: await createSupplySubstoreArray(accounts, tokenID),
 		escrowSubstore: [],
 		supportedTokensSubstore: [],
@@ -150,5 +158,6 @@ export const addTokenModuleEntry = async (
 	return {
 		module: MODULE_NAME_TOKEN,
 		data: (tokenObj as unknown) as Record<string, unknown>,
+		schema: genesisTokenStoreSchema,
 	};
 };
