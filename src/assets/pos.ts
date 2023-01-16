@@ -19,11 +19,11 @@ import {
 import { Block } from '@liskhq/lisk-chain';
 
 import {
-	MODULE_NAME_DPOS,
+	MODULE_NAME_POS,
 	INVALID_BLS_KEY,
 	DUMMY_PROOF_OF_POSSESSION,
 	INVALID_ED25519_KEY,
-	DPOS_INIT_ROUNDS,
+	POS_INIT_ROUNDS,
 	ROUND_LENGTH,
 	Q96_ZERO,
 	MAX_COMMISSION,
@@ -32,16 +32,17 @@ import {
 import {
 	Account,
 	GenesisAssetEntry,
-	Voter,
 	GenesisDataEntry,
 	VoteWeightsWrapper,
 	VoteWeight,
 	DelegateWeight,
-	SentVote,
 	ValidatorEntry,
 	ValidatorEntryBuffer,
+	Staker,
+	Stake,
+	PoSStoreEntry,
 } from '../types';
-import { genesisDPoSSchema } from '../schemas';
+import { genesisPoSSchema } from '../schemas';
 
 export const getValidatorKeys = async (
 	blocks: Block[],
@@ -108,10 +109,10 @@ export const createValidatorsArray = async (
 	return sortedValidators;
 };
 
-export const getSentVotes = async (account: Account, tokenID: string): Promise<SentVote[]> => {
-	const sentVotes = account.dpos.sentVotes.map(vote => ({
+export const getStakes = async (account: Account, tokenID: string): Promise<Stake[]> => {
+	const stakes = account.dpos.sentVotes.map(vote => ({
 		...vote,
-		voteSharingCoefficients: [
+		stakeSharingCoefficients: [
 			{
 				tokenID,
 				coefficient: Q96_ZERO,
@@ -119,33 +120,38 @@ export const getSentVotes = async (account: Account, tokenID: string): Promise<S
 		],
 	}));
 
-	const sortedSentVotes = sentVotes
+	const sortedStakes = stakes
 		.sort((a, b) => a.delegateAddress.compare(b.delegateAddress))
-		.map(entry => ({
+		.map(({ delegateAddress, ...entry }) => ({
 			...entry,
-			delegateAddress: getLisk32AddressFromAddress(entry.delegateAddress),
+			validatorAddress: getLisk32AddressFromAddress(delegateAddress),
 		}));
 
-	return sortedSentVotes;
+	return sortedStakes;
 };
 
-export const createVotersArray = async (accounts: Account[], tokenID: string): Promise<Voter[]> => {
-	const voters: Voter[] = [];
+export const createStakersArray = async (
+	accounts: Account[],
+	tokenID: string,
+): Promise<Staker[]> => {
+	const stakers: Staker[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
-			const voter: Voter = {
+			const staker: Staker = {
 				address: getLisk32AddressFromAddress(account.address),
-				sentVotes: await getSentVotes(account, tokenID),
-				pendingUnlocks: account.dpos.unlocking.map(unlock => ({
-					delegateAddress: getLisk32AddressFromAddress(unlock.delegateAddress),
-					amount: unlock.amount,
-					unvoteHeight: unlock.unvoteHeight,
-				})),
+				sentStakes: await getStakes(account, tokenID),
+				pendingUnlocks: account.dpos.unlocking.map(
+					({ delegateAddress, unvoteHeight, ...unlock }) => ({
+						validatorAddress: getLisk32AddressFromAddress(delegateAddress),
+						amount: unlock.amount,
+						unstakeHeight: unvoteHeight,
+					}),
+				),
 			};
-			voters.push(voter);
+			stakers.push(staker);
 		}
 	}
-	return voters;
+	return stakers;
 };
 
 export const createGenesisDataObj = async (
@@ -162,31 +168,31 @@ export const createGenesisDataObj = async (
 		throw new Error(`Top delegates for round ${r - 2}(r-2)  unavailable, cannot proceed.`);
 	}
 
-	const topDelegates = voteWeightR2.delegates;
+	const topValidators = voteWeightR2.delegates;
 
-	const initDelegates: Buffer[] = [];
+	const initValidators: Buffer[] = [];
 	const accountbannedMap = new Map(
 		accounts.map(account => [account.address, account.dpos.delegate.isBanned]),
 	);
 
-	topDelegates.forEach((delegate: DelegateWeight) => {
+	topValidators.forEach((delegate: DelegateWeight) => {
 		const isAccountBanned = accountbannedMap.get(delegate.address);
 		if (!isAccountBanned) {
-			initDelegates.push(delegate.address);
+			initValidators.push(delegate.address);
 		}
 	});
 
-	const sortedInitDelegates = initDelegates.sort((a, b) => a.compare(b)).slice(0, 101);
+	const sortedInitValidators = initValidators.sort((a, b) => a.compare(b)).slice(0, 101);
 
 	const genesisDataObj: GenesisDataEntry = {
-		initRounds: DPOS_INIT_ROUNDS,
-		initDelegates: sortedInitDelegates.map(entry => getLisk32AddressFromAddress(entry)),
+		initRounds: POS_INIT_ROUNDS,
+		initValidators: sortedInitValidators.map(entry => getLisk32AddressFromAddress(entry)),
 	};
 
 	return genesisDataObj;
 };
 
-export const addDPoSModuleEntry = async (
+export const addPoSModuleEntry = async (
 	accounts: Account[],
 	blocks: Block[],
 	delegatesVoteWeights: VoteWeightsWrapper,
@@ -194,9 +200,9 @@ export const addDPoSModuleEntry = async (
 	snapshotHeightPrevious: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
-	const dposObj = {
+	const posObj: PoSStoreEntry = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
-		voters: await createVotersArray(accounts, tokenID),
+		stakers: await createStakersArray(accounts, tokenID),
 		genesisData: await createGenesisDataObj(
 			accounts,
 			delegatesVoteWeights,
@@ -206,8 +212,8 @@ export const addDPoSModuleEntry = async (
 	};
 
 	return {
-		module: MODULE_NAME_DPOS,
-		data: (dposObj as unknown) as Record<string, unknown>,
-		schema: genesisDPoSSchema,
+		module: MODULE_NAME_POS,
+		data: (posObj as unknown) as Record<string, unknown>,
+		schema: genesisPoSSchema,
 	};
 };

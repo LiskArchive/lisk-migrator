@@ -86,7 +86,7 @@ describe('Build assets/legacy', () => {
 			createAsset = new CreateAsset(db);
 			app = Application.defaultApplication({ genesis: { chainID: '04000000' } });
 			[block] = generateBlocks({
-				startHeight: 1,
+				startHeight: 16281110,
 				numberOfBlocks: 1,
 			});
 
@@ -118,7 +118,7 @@ describe('Build assets/legacy', () => {
 					},
 					dpos: {
 						delegate: {
-							username: '',
+							username: 'test1',
 							pomHeights: [],
 							consecutiveMissedBlocks: 0,
 							lastForgedHeight: 0,
@@ -149,7 +149,7 @@ describe('Build assets/legacy', () => {
 					},
 					dpos: {
 						delegate: {
-							username: '',
+							username: 'test2',
 							pomHeights: [],
 							consecutiveMissedBlocks: 0,
 							lastForgedHeight: 0,
@@ -158,11 +158,11 @@ describe('Build assets/legacy', () => {
 						},
 						sentVotes: [
 							{
-								delegateAddress: Buffer.from('03f6d90b7dbd0497dc3a52d1c27e23bb8c75897f', 'hex'),
+								delegateAddress: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
 								amount: BigInt('1000000000000'),
 							},
 							{
-								delegateAddress: Buffer.from('0903f4c5cb599a7928aef27e314e98291d1e3888', 'hex'),
+								delegateAddress: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
 								amount: BigInt('1000000000000'),
 							},
 						],
@@ -177,12 +177,8 @@ describe('Build assets/legacy', () => {
 						round: 103,
 						delegates: [
 							{
-								address: Buffer.from('b8982f66903a6bfa5d6994c08ddf97707200d316', 'hex'),
+								address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
 								voteWeight: BigInt('2130000000000'),
-							},
-							{
-								address: Buffer.from('f1b5b0c9d35957ca463b817467782ffa5d2e6945', 'hex'),
-								voteWeight: BigInt('5304000000000'),
 							},
 						],
 					},
@@ -193,6 +189,7 @@ describe('Build assets/legacy', () => {
 
 		afterAll(async () => fs.removeSync(genesisBlockPath));
 
+		// TODO: This test case is failing, will be fixed once this issue https://github.com/LiskHQ/lisk-sdk/issues/8006 is resolved.
 		it('should create genesis block', async () => {
 			when(db.get)
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)

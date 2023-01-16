@@ -11,6 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { MAX_NUMBER_BYTES_Q96, TOKEN_ID_LENGTH, MAX_COMMISSION } from './constants';
+
 export const unregisteredAddressesSchema = {
 	$id: '/legacyAccount/unregisteredAddresses',
 	type: 'object',
@@ -416,10 +418,10 @@ export const genesisTokenStoreSchema = {
 	},
 };
 
-export const genesisDPoSSchema = {
+export const genesisPoSSchema = {
 	$id: '/pos/module/genesis',
 	type: 'object',
-	required: ['validators', 'voters', 'genesisData'],
+	required: ['validators', 'stakers', 'genesisData'],
 	properties: {
 		validators: {
 			type: 'array',
@@ -481,9 +483,7 @@ export const genesisDPoSSchema = {
 					pomHeights: {
 						type: 'array',
 						fieldNumber: 8,
-						items: {
-							dataType: 'uint32',
-						},
+						items: { dataType: 'uint32' },
 					},
 					consecutiveMissedBlocks: {
 						dataType: 'uint32',
@@ -492,6 +492,7 @@ export const genesisDPoSSchema = {
 					commission: {
 						dataType: 'uint32',
 						fieldNumber: 10,
+						maximum: MAX_COMMISSION,
 					},
 					lastCommissionIncreaseHeight: {
 						dataType: 'uint32',
@@ -506,10 +507,13 @@ export const genesisDPoSSchema = {
 							properties: {
 								tokenID: {
 									dataType: 'bytes',
+									minLength: TOKEN_ID_LENGTH,
+									maxLength: TOKEN_ID_LENGTH,
 									fieldNumber: 1,
 								},
 								coefficient: {
 									dataType: 'bytes',
+									maxLength: MAX_NUMBER_BYTES_Q96,
 									fieldNumber: 2,
 								},
 							},
@@ -518,26 +522,26 @@ export const genesisDPoSSchema = {
 				},
 			},
 		},
-		voters: {
+		stakers: {
 			type: 'array',
 			fieldNumber: 2,
 			items: {
 				type: 'object',
-				required: ['address', 'sentVotes', 'pendingUnlocks'],
+				required: ['address', 'sentStakes', 'pendingUnlocks'],
 				properties: {
 					address: {
 						dataType: 'bytes',
 						format: 'lisk32',
 						fieldNumber: 1,
 					},
-					sentVotes: {
+					sentStakes: {
 						type: 'array',
 						fieldNumber: 2,
 						items: {
 							type: 'object',
-							required: ['delegateAddress', 'amount'],
+							required: ['validatorAddress', 'amount'],
 							properties: {
-								delegateAddress: {
+								validatorAddress: {
 									dataType: 'bytes',
 									format: 'lisk32',
 									fieldNumber: 1,
@@ -546,7 +550,7 @@ export const genesisDPoSSchema = {
 									dataType: 'uint64',
 									fieldNumber: 2,
 								},
-								voteSharingCoefficients: {
+								stakeSharingCoefficients: {
 									type: 'array',
 									fieldNumber: 3,
 									items: {
@@ -555,10 +559,13 @@ export const genesisDPoSSchema = {
 										properties: {
 											tokenID: {
 												dataType: 'bytes',
+												minLength: TOKEN_ID_LENGTH,
+												maxLength: TOKEN_ID_LENGTH,
 												fieldNumber: 1,
 											},
 											coefficient: {
 												dataType: 'bytes',
+												maxLength: MAX_NUMBER_BYTES_Q96,
 												fieldNumber: 2,
 											},
 										},
@@ -572,18 +579,18 @@ export const genesisDPoSSchema = {
 						fieldNumber: 3,
 						items: {
 							type: 'object',
-							required: ['delegateAddress', 'amount', 'unvoteHeight'],
+							required: ['validatorAddress', 'amount', 'unstakeHeight'],
 							properties: {
-								delegateAddress: {
+								validatorAddress: {
 									dataType: 'bytes',
-									format: 'lisk32',
 									fieldNumber: 1,
+									format: 'lisk32',
 								},
 								amount: {
 									dataType: 'uint64',
 									fieldNumber: 2,
 								},
-								unvoteHeight: {
+								unstakeHeight: {
 									dataType: 'uint32',
 									fieldNumber: 3,
 								},
@@ -596,19 +603,16 @@ export const genesisDPoSSchema = {
 		genesisData: {
 			type: 'object',
 			fieldNumber: 3,
-			required: ['initRounds', 'initDelegates'],
+			required: ['initRounds', 'initValidators'],
 			properties: {
 				initRounds: {
 					dataType: 'uint32',
 					fieldNumber: 1,
 				},
-				initDelegates: {
+				initValidators: {
 					type: 'array',
 					fieldNumber: 2,
-					items: {
-						dataType: 'bytes',
-						format: 'lisk32',
-					},
+					items: { dataType: 'bytes', format: 'lisk32' },
 				},
 			},
 		},

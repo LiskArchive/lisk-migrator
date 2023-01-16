@@ -158,34 +158,33 @@ export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
 	address: Buffer;
 }
 
-export interface SentVote {
-	delegateAddress: string;
+export interface Stake {
+	validatorAddress: string;
 	amount: bigint;
-	voteSharingCoefficients: SharingCoefficients[];
+	stakeSharingCoefficients: SharingCoefficients[];
 }
 
-export interface Voter {
+export interface Staker {
 	address: string;
-	sentVotes: {
-		delegateAddress: string;
+	sentStakes: {
+		validatorAddress: string;
 		amount: bigint;
 	}[];
 	pendingUnlocks: {
-		delegateAddress: string;
+		validatorAddress: string;
 		amount: bigint;
-		unvoteHeight: number;
+		unstakeHeight: number;
 	}[];
 }
 
 export interface GenesisDataEntry {
 	initRounds: number;
-	initDelegates: string[];
+	initValidators: string[];
 }
 
-export interface DPoSStoreEntry {
+export interface PoSStoreEntry {
 	validators: ValidatorEntry[];
-	voters: Voter[];
-	snapshots: Record<string, unknown>;
+	stakers: Staker[];
 	genesisData: GenesisDataEntry;
 }
 

@@ -15,7 +15,7 @@ import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import {
 	MODULE_NAME_TOKEN,
-	MODULE_NAME_DPOS,
+	MODULE_NAME_POS,
 	MODULE_NAME_LEGACY,
 	ADDRESS_LEGACY_RESERVE,
 } from '../constants';
@@ -48,7 +48,7 @@ export const getLockedBalances = async (account: Account): Promise<LockedBalance
 	}
 
 	if (amount > AMOUNT_ZERO) {
-		return [{ module: MODULE_NAME_DPOS, amount: String(amount) }];
+		return [{ module: MODULE_NAME_POS, amount: String(amount) }];
 	}
 	return [];
 };
