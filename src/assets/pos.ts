@@ -199,7 +199,7 @@ export const addPoSModuleEntry = async (
 	snapshotHeightPrevious: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
-	const dposObj = {
+	const posObj = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
 		stakers: await createStakersArray(accounts, tokenID),
 		genesisData: await createGenesisDataObj(
@@ -212,7 +212,7 @@ export const addPoSModuleEntry = async (
 
 	return {
 		module: MODULE_NAME_POS,
-		data: (dposObj as unknown) as Record<string, unknown>,
+		data: (posObj as unknown) as Record<string, unknown>,
 		schema: genesisPoSSchema,
 	};
 };
