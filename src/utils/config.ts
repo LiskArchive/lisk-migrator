@@ -16,13 +16,13 @@ import debugInit from 'debug';
 import cli from 'cli-ux';
 import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
-import { join } from 'path';
 import { Config } from '../types';
 import { NETWORK_CONSTANT } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
-export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
+export const isBinaryBuild = (corePath: string): boolean =>
+	existsSync(path.join(corePath, '.build'));
 
 export const getConfig = async (corePath: string, customConfigPath?: string): Promise<Config> => {
 	const command = [];
