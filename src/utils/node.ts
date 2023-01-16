@@ -21,7 +21,7 @@ export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LI
 
 export const startLiskCore = async (
 	_config: any,
-	previousLiskCoreVersion: string,
+	_previousLiskCoreVersion: string,
 	params: { network: string },
 ): Promise<string | Error> => {
 	// TODO: Add check if lisk-core is still running
