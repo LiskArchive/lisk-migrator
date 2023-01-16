@@ -182,10 +182,9 @@ export interface GenesisDataEntry {
 	initValidators: string[];
 }
 
-export interface DPoSStoreEntry {
+export interface PoSStoreEntry {
 	validators: ValidatorEntry[];
 	stakers: Staker[];
-	snapshots: Record<string, unknown>;
 	genesisData: GenesisDataEntry;
 }
 

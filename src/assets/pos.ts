@@ -40,6 +40,7 @@ import {
 	ValidatorEntryBuffer,
 	Staker,
 	Stake,
+	PoSStoreEntry,
 } from '../types';
 import { genesisPoSSchema } from '../schemas';
 
@@ -199,7 +200,7 @@ export const addPoSModuleEntry = async (
 	snapshotHeightPrevious: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
-	const posObj = {
+	const posObj: PoSStoreEntry = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
 		stakers: await createStakersArray(accounts, tokenID),
 		genesisData: await createGenesisDataObj(
