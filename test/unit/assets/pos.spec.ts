@@ -12,21 +12,21 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { Block } from '@liskhq/lisk-chain';
-import { MODULE_NAME_DPOS } from '../../../src/constants';
+import { MODULE_NAME_POS } from '../../../src/constants';
 import { Account, VoteWeightsWrapper } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
 import { ADDRESS_LISK32 } from '../utils/regex';
 
 import {
-	addDPoSModuleEntry,
+	addPoSModuleEntry,
 	createGenesisDataObj,
 	createValidatorsArray,
-	createVotersArray,
-	getSentVotes,
-} from '../../../src/assets/dpos';
+	createStakersArray,
+	getStakes,
+} from '../../../src/assets/pos';
 
-describe('Build assets/dpos', () => {
+describe('Build assets/pos', () => {
 	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
@@ -148,19 +148,23 @@ describe('Build assets/dpos', () => {
 		});
 	});
 
-	it('should create createVotersArray', async () => {
-		const votersArray = await createVotersArray(accounts, tokenID);
+	it('should create createStakersArray', async () => {
+		const stakers = await createStakersArray(accounts, tokenID);
 
 		// Assert
-		expect(votersArray).toBeInstanceOf(Array);
-		votersArray.forEach(voter => {
-			expect(voter.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(voter)).toEqual(['address', 'sentVotes', 'pendingUnlocks']);
-			voter.sentVotes.forEach(vote =>
-				expect(vote.delegateAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
+		expect(stakers).toBeInstanceOf(Array);
+		stakers.forEach(staker => {
+			expect(staker.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(staker)).toEqual([
+				'address',
+				'sentStakes',
+				'pendingUnlocks',
+			]);
+			staker.sentStakes.forEach(stake =>
+				expect(stake.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
 			);
-			voter.pendingUnlocks.forEach(unlock =>
-				expect(unlock.delegateAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
+			staker.pendingUnlocks.forEach(unlock =>
+				expect(unlock.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
 			);
 		});
 	});
@@ -174,14 +178,14 @@ describe('Build assets/dpos', () => {
 		);
 
 		// Assert
-		genesisDataObj.initDelegates.forEach(address => {
+		genesisDataObj.initValidators.forEach(address => {
 			expect(address).toEqual(expect.stringMatching(ADDRESS_LISK32));
 		});
-		expect(Object.getOwnPropertyNames(genesisDataObj)).toEqual(['initRounds', 'initDelegates']);
+		expect(Object.getOwnPropertyNames(genesisDataObj)).toEqual(['initRounds', 'initValidators']);
 	});
 
-	it('should create DPoS module asset', async () => {
-		const dposModuleAsset = await addDPoSModuleEntry(
+	it('should create PoS module asset', async () => {
+		const posModuleAsset = await addPoSModuleEntry(
 			accounts,
 			blocks,
 			delegates,
@@ -191,27 +195,27 @@ describe('Build assets/dpos', () => {
 		);
 
 		// Assert
-		expect(dposModuleAsset.module).toEqual(MODULE_NAME_DPOS);
-		expect(Object.getOwnPropertyNames(dposModuleAsset.data)).toEqual([
+		expect(posModuleAsset.module).toEqual(MODULE_NAME_POS);
+		expect(Object.getOwnPropertyNames(posModuleAsset.data)).toEqual([
 			'validators',
-			'voters',
+			'stakers',
 			'genesisData',
 		]);
 	});
 
-	it('getSentVotes array', async () => {
-		const sentVotes = await getSentVotes(accounts[1], tokenID);
+	it('getStakes array', async () => {
+		const stakes = await getStakes(accounts[1], tokenID);
 
 		// Assert
-		expect(sentVotes).toBeInstanceOf(Array);
-		sentVotes.forEach(vote => {
-			expect(vote.delegateAddress).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(vote)).toEqual([
-				'delegateAddress',
+		expect(stakes).toBeInstanceOf(Array);
+		stakes.forEach(stake => {
+			expect(stake.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(stake)).toEqual([
 				'amount',
-				'voteSharingCoefficients',
+				'stakeSharingCoefficients',
+				'validatorAddress',
 			]);
-			vote.voteSharingCoefficients.forEach(sharingCoefficient => {
+			stake.stakeSharingCoefficients.forEach(sharingCoefficient => {
 				expect(Object.getOwnPropertyNames(sharingCoefficient)).toEqual(['tokenID', 'coefficient']);
 			});
 		});
