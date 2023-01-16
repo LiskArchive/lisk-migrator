@@ -19,7 +19,7 @@ import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { Block } from '@liskhq/lisk-chain';
-import { ROUND_LENGTH } from './constants';
+import { NETWORK_CONSTANT, ROUND_LENGTH } from './constants';
 import { getAPIClient } from './client';
 import { getConfig, migrateUserConfig, resolveConfigPathByNetworkID } from './utils/config';
 import {
@@ -33,6 +33,7 @@ import {
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { Config } from './types';
 import { CreateAsset } from './createAsset';
+import { installLiskCore, startLiskCore } from './utils/node';
 
 // TODO: Import snapshot command from core once implemented
 const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
@@ -120,6 +121,8 @@ class LiskMigrator extends Command {
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const compatibleVersions = flags['min-compatible-version'];
 		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
+		const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
+		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 		let config: Config;
 
@@ -132,8 +135,8 @@ class LiskMigrator extends Command {
 		cli.action.stop('Snapshot Height is valid');
 
 		const client = await getAPIClient(liskCorePath);
-		const info = await client.node.getNodeInfo();
-		const { version: appVersion } = info;
+		const nodeInfo = await client.node.getNodeInfo();
+		const { version: appVersion } = nodeInfo;
 
 		cli.action.start('Verifying Lisk-Core version');
 		const liskCoreVersion = semver.coerce(appVersion);
@@ -207,7 +210,7 @@ class LiskMigrator extends Command {
 		cli.action.stop();
 
 		// Create an app instance for creating genesis block
-		const configFilePath = await resolveConfigPathByNetworkID(info.networkIdentifier);
+		const configFilePath = await resolveConfigPathByNetworkID(nodeInfo.networkIdentifier);
 		const configCoreV4 = await fs.readJSON(configFilePath);
 		const { app } = await Application.defaultApplication(configCoreV4);
 
@@ -225,6 +228,23 @@ class LiskMigrator extends Command {
 		if (autoMigrateUserConfig) {
 			cli.action.start('Migrate user configuration');
 			await migrateUserConfig();
+			cli.action.stop();
+		}
+
+		if (autoDownloadLiskCoreV4) {
+			cli.action.start('Installing lisk-core v4');
+			await installLiskCore();
+			cli.action.stop();
+		}
+
+		if (autoStartLiskCoreV4) {
+			cli.action.start('Starting lisk-core v4');
+			try {
+				const network = NETWORK_CONSTANT[nodeInfo.networkIdentifier].name as string;
+				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, { network });
+			} catch (err) {
+				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
+			}
 			cli.action.stop();
 		}
 	}

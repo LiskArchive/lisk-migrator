@@ -213,3 +213,5 @@ export interface VoteWeight {
 export interface VoteWeightsWrapper {
 	voteWeights: VoteWeight[];
 }
+
+export type Port = number;
