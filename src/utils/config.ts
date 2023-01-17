@@ -11,18 +11,17 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import path from 'path';
 import debugInit from 'debug';
 import cli from 'cli-ux';
 import { existsSync, readdirSync } from 'fs';
 import { execSync } from 'child_process';
+import { join, resolve } from 'path';
 import { Config } from '../types';
 import { NETWORK_CONSTANT } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
-export const isBinaryBuild = (corePath: string): boolean =>
-	existsSync(path.join(corePath, '.build'));
+export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
 
 export const getConfig = async (corePath: string, customConfigPath?: string): Promise<Config> => {
 	const command = [];
@@ -62,7 +61,7 @@ export const getConfig = async (corePath: string, customConfigPath?: string): Pr
 
 export const resolveConfigPathByNetworkID = async (networkIdentifier: string): Promise<string> => {
 	const network = NETWORK_CONSTANT[networkIdentifier].name;
-	const configFilePath = path.resolve(process.cwd(), `config/${network}/config.json`);
+	const configFilePath = resolve(process.cwd(), `config/${network}/config.json`);
 	return configFilePath;
 };
 
