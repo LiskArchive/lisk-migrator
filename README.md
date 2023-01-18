@@ -4,24 +4,9 @@ Lisk Migrator is a command line tool to migrate the blockchain data to the lates
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
-## Usage
+## Setup
 
-<!-- usage -->
-
-```sh-session
-$ npm install -g lisk-migrator
-$ lisk-migrator COMMAND
-running command...
-$ lisk-migrator (-v|--version|version)
-lisk-migrator/1.0.0 darwin-x64 node-v12.22.1
-$ lisk-migrator --help [COMMAND]
-USAGE
-  $ lisk-migrator COMMAND
-...
-```
-
-<!-- usagestop -->
-
+Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator)
 ## Build Distributions (Linux, Darwin)
 
 <!-- build -->
