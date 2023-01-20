@@ -7,6 +7,7 @@ Lisk Migrator is a command line tool to migrate the blockchain data to the lates
 ## Setup
 
 Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator)
+
 ## Build Distributions (Linux, Darwin)
 
 <!-- build -->

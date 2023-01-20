@@ -13,7 +13,7 @@
  */
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { Config } from '../types';
@@ -63,6 +63,12 @@ export const resolveConfigPathByNetworkID = async (networkIdentifier: string): P
 	const network = NETWORK_CONSTANT[networkIdentifier].name;
 	const configFilePath = resolve(process.cwd(), `config/${network}/config.json`);
 	return configFilePath;
+};
+
+export const createBackup = async (config: Config): Promise<any> => {
+	const backupPath = `${process.cwd()}/backup`;
+	mkdirSync(backupPath, { recursive: true });
+	writeFileSync(resolve(backupPath), JSON.stringify(config, null, '\t'));
 };
 
 // TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55

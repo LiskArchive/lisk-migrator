@@ -21,7 +21,12 @@ import cli from 'cli-ux';
 import { Block } from '@liskhq/lisk-chain';
 import { NETWORK_CONSTANT, ROUND_LENGTH } from './constants';
 import { getAPIClient } from './client';
-import { getConfig, migrateUserConfig, resolveConfigPathByNetworkID } from './utils/config';
+import {
+	getConfig,
+	migrateUserConfig,
+	resolveConfigPathByNetworkID,
+	createBackup,
+} from './utils/config';
 import {
 	observeChainHeight,
 	setBlockIDAtSnapshotHeight,
@@ -226,6 +231,10 @@ class LiskMigrator extends Command {
 		cli.action.stop();
 
 		if (autoMigrateUserConfig) {
+			cli.action.start('Creating backup for old config');
+			await createBackup(config);
+			cli.action.stop();
+
 			cli.action.start('Migrate user configuration');
 			await migrateUserConfig();
 			cli.action.stop();
@@ -241,7 +250,7 @@ class LiskMigrator extends Command {
 			cli.action.start('Starting lisk-core v4');
 			try {
 				const network = NETWORK_CONSTANT[nodeInfo.networkIdentifier].name as string;
-				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, { network });
+				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, client, { network });
 			} catch (err) {
 				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
 			}
