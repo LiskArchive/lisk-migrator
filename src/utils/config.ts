@@ -78,6 +78,7 @@ export const createBackup = async (config: Config): Promise<any> => {
 export const migrateUserConfig = async (
 	config: Config,
 	liskCorePath: string,
+	tokenID: string,
 ): Promise<Record<string, unknown>> => {
 	const liskCoreV4Config = {
 		system: {
@@ -97,7 +98,7 @@ export const migrateUserConfig = async (
 			},
 			blockTime: config.genesisConfig.blockTime,
 			bftBatchSize: config.genesisConfig.bftThreshold, // TODO: Verify
-			chainID: '04000000',
+			chainID: tokenID.slice(0, 8),
 			maxTransactionsSize: config.genesisConfig.maxPayloadLength,
 		},
 		network: {
@@ -130,5 +131,5 @@ export const writeConfig = async (config: ApplicationConfig, outputPath: string)
 
 	mkdirSync(outputPath, { recursive: true });
 
-	writeFileSync(resolve(outputPath, 'configk.json'), JSON.stringify(config));
+	writeFileSync(resolve(outputPath, 'config.json'), JSON.stringify(config));
 };

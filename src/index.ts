@@ -240,6 +240,7 @@ class LiskMigrator extends Command {
 			const configV4 = ((await migrateUserConfig(
 				config,
 				liskCorePath,
+				tokenID,
 			)) as unknown) as ApplicationConfig;
 			cli.action.stop();
 
