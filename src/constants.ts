@@ -62,3 +62,7 @@ export const NETWORK_CONSTANT: { [key: string]: Record<string, string | number> 
 		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.TESTNET,
 	},
 };
+
+export const DEFAULT_HOST = '127.0.0.1';
+export const DEFAULT_PORT_P2P = 7667;
+export const DEFAULT_PORT_RPC = 7887;

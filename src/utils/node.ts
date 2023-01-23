@@ -20,7 +20,7 @@ const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
-export const isLiskCoreV3Running = async (client: APIClient): Promise<Boolean> => {
+export const isLiskCoreV3Running = async (client: APIClient): Promise<boolean> => {
 	const nodeInfo = await client.node.getNodeInfo();
 	return !!nodeInfo;
 };

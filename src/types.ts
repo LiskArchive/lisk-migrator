@@ -22,6 +22,10 @@ export interface StorageConfig {
 }
 
 export interface Config {
+	plugins: Record<string, unknown>;
+	genesisConfig: Record<string, unknown>;
+	network: Record<string, unknown>;
+	logger: Record<string, unknown>;
 	readonly app: {
 		readonly version: string;
 		readonly minVersion: string;

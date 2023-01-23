@@ -16,8 +16,11 @@ import cli from 'cli-ux';
 import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
+import { validator } from '@liskhq/lisk-validator';
+
 import { Config } from '../types';
 import { NETWORK_CONSTANT } from '../constants';
+import { applicationConfigSchema } from '../schemas';
 
 const debug = debugInit('lisk:migrator');
 
@@ -71,5 +74,53 @@ export const createBackup = async (config: Config): Promise<any> => {
 	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
 };
 
-// TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55
-export const migrateUserConfig = async (): Promise<any> => true;
+export const migrateUserConfig = async (
+	config: Config,
+	liskCorePath: string,
+): Promise<Record<string, unknown>> => {
+	const liskCoreV4Config = {
+		system: {
+			dataPath: liskCorePath,
+			keepEventsForHeights: 300,
+			logLevel: config.logger.consoleLogLevel,
+		},
+		rpc: {
+			modes: ['ipc', 'ws'],
+			port: 7887,
+			host: '127.0.0.1',
+		},
+		genesis: {
+			block: {
+				fromFile: './config/genesis_block.blob',
+			},
+			blockTime: config.genesisConfig.blockTime,
+			bftBatchSize: config.genesisConfig.bftThreshold, // TODO: Verify
+			chainID: '04000000',
+			maxTransactionsSize: config.genesisConfig.maxPayloadLength,
+		},
+		network: {
+			...config.network,
+			version: '1.0',
+		},
+		transactionPool: {
+			maxTransactions: 4096,
+			maxTransactionsPerAccount: 64,
+			transactionExpiryTime: 10800000,
+			minEntranceFeePriority: '0',
+			minReplacementFeeDifference: '10',
+		},
+		generator: {
+			keys: {},
+		},
+		modules: {},
+		plugins: config.plugins,
+	};
+
+	const isConfigValid = (validator.validate(
+		applicationConfigSchema,
+		liskCoreV4Config,
+	) as unknown) as boolean;
+
+	if (isConfigValid) return liskCoreV4Config;
+	throw new Error('Config created is invalid');
+};

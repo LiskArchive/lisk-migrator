@@ -236,7 +236,7 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			cli.action.start('Migrate user configuration');
-			await migrateUserConfig();
+			await migrateUserConfig(config, liskCorePath);
 			cli.action.stop();
 		}
 
