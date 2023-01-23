@@ -13,11 +13,12 @@
  */
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
+import { existsSync, readdirSync, mkdirSync, writeFileSync, unlinkSync } from 'fs';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 
+import { ApplicationConfig } from 'lisk-framework';
 import { Config } from '../types';
 import { NETWORK_CONSTANT } from '../constants';
 import { applicationConfigSchema } from '../schemas';
@@ -80,6 +81,7 @@ export const migrateUserConfig = async (
 ): Promise<Record<string, unknown>> => {
 	const liskCoreV4Config = {
 		system: {
+			version: '4.0.0',
 			dataPath: liskCorePath,
 			keepEventsForHeights: 300,
 			logLevel: config.logger.consoleLogLevel,
@@ -116,11 +118,17 @@ export const migrateUserConfig = async (
 		plugins: config.plugins,
 	};
 
-	const isConfigValid = (validator.validate(
-		applicationConfigSchema,
-		liskCoreV4Config,
-	) as unknown) as boolean;
+	await validator.validate(applicationConfigSchema, liskCoreV4Config);
 
-	if (isConfigValid) return liskCoreV4Config;
-	throw new Error('Config created is invalid');
+	return liskCoreV4Config;
+};
+
+export const writeConfig = async (config: ApplicationConfig, outputPath: string): Promise<void> => {
+	if (existsSync(outputPath)) {
+		unlinkSync(outputPath);
+	}
+
+	mkdirSync(outputPath, { recursive: true });
+
+	writeFileSync(resolve(outputPath, 'configk.json'), JSON.stringify(config));
 };

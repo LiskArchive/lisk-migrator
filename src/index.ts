@@ -13,7 +13,7 @@
  */
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { Application } from 'lisk-framework';
+import { Application, ApplicationConfig } from 'lisk-framework';
 import { KVStore } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
@@ -26,6 +26,7 @@ import {
 	migrateUserConfig,
 	resolveConfigPathByNetworkID,
 	createBackup,
+	writeConfig,
 } from './utils/config';
 import {
 	observeChainHeight,
@@ -236,7 +237,14 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			cli.action.start('Migrate user configuration');
-			await migrateUserConfig(config, liskCorePath);
+			const configV4 = ((await migrateUserConfig(
+				config,
+				liskCorePath,
+			)) as unknown) as ApplicationConfig;
+			cli.action.stop();
+
+			cli.action.start('Exporting user configuration');
+			await writeConfig(configV4, outputPath);
 			cli.action.stop();
 		}
 
