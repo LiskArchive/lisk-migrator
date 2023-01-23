@@ -20,13 +20,18 @@ const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
+export const isLiskCoreV3Running = async (client: APIClient): Promise<Boolean> => {
+	const nodeInfo = await client.node.getNodeInfo();
+	return !!nodeInfo;
+};
+
 export const startLiskCore = async (
 	_config: any,
 	_previousLiskCoreVersion: string,
 	client: APIClient,
 	params: { network: string },
 ): Promise<string | Error> => {
-	const nodeInfo = await client.node.getNodeInfo();
+	const nodeInfo = await isLiskCoreV3Running(client);
 	if (nodeInfo) throw new Error('Lisk Core v3 is still running');
 
 	// TODO: Figureout required port from the config

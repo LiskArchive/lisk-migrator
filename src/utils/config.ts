@@ -68,7 +68,7 @@ export const resolveConfigPathByNetworkID = async (networkIdentifier: string): P
 export const createBackup = async (config: Config): Promise<any> => {
 	const backupPath = `${process.cwd()}/backup`;
 	mkdirSync(backupPath, { recursive: true });
-	writeFileSync(resolve(backupPath), JSON.stringify(config, null, '\t'));
+	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
 };
 
 // TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55
