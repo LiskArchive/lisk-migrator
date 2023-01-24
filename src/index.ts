@@ -27,6 +27,7 @@ import {
 	resolveConfigPathByNetworkID,
 	createBackup,
 	writeConfig,
+	validateConfig,
 } from './utils/config';
 import {
 	observeChainHeight,
@@ -244,6 +245,11 @@ class LiskMigrator extends Command {
 			)) as unknown) as ApplicationConfig;
 			cli.action.stop();
 
+			cli.action.start('Validating migrated user configuration');
+			const isValidConfig = await validateConfig(configV4);
+			cli.action.stop();
+
+			if (!isValidConfig) throw new Error('Migrated user configuration is invalid');
 			cli.action.start('Exporting user configuration');
 			await writeConfig(configV4, outputPath);
 			cli.action.stop();

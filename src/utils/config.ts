@@ -119,9 +119,13 @@ export const migrateUserConfig = async (
 		plugins: config.plugins,
 	};
 
-	await validator.validate(applicationConfigSchema, liskCoreV4Config);
-
 	return liskCoreV4Config;
+};
+
+export const validateConfig = async (config: ApplicationConfig): Promise<boolean> => {
+	const isValidConfig = (await validator.validate(applicationConfigSchema, config)) as unknown;
+	if (!isValidConfig) return false;
+	return true;
 };
 
 export const writeConfig = async (config: ApplicationConfig, outputPath: string): Promise<void> => {
