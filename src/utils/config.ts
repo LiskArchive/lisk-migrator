@@ -20,7 +20,12 @@ import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig } from 'lisk-framework';
 import { Config } from '../types';
-import { KEEP_EVENTS_FOR_HEIGHTS, NETWORK_CONSTANT } from '../constants';
+import {
+	DEFAULT_HOST,
+	DEFAULT_PORT_RPC,
+	KEEP_EVENTS_FOR_HEIGHTS,
+	NETWORK_CONSTANT,
+} from '../constants';
 import { applicationConfigSchema } from '../schemas';
 
 const debug = debugInit('lisk:migrator');
@@ -89,8 +94,8 @@ export const migrateUserConfig = async (
 		},
 		rpc: {
 			modes: ['ipc', 'ws'],
-			port: config.rpc.port || 7887,
-			host: config.rpc.host || '127.0.0.1',
+			port: config.rpc.port || DEFAULT_PORT_RPC,
+			host: config.rpc.host || DEFAULT_HOST,
 		},
 		genesis: {
 			block: {
@@ -123,9 +128,12 @@ export const migrateUserConfig = async (
 };
 
 export const validateConfig = async (config: ApplicationConfig): Promise<boolean> => {
-	const isValidConfig = (await validator.validate(applicationConfigSchema, config)) as unknown;
-	if (!isValidConfig) return false;
-	return true;
+	try {
+		(await validator.validate(applicationConfigSchema, config)) as unknown;
+		return true;
+	} catch (_) {
+		return false;
+	}
 };
 
 export const writeConfig = async (config: ApplicationConfig, outputPath: string): Promise<void> => {

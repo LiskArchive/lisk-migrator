@@ -31,8 +31,8 @@ export const startLiskCore = async (
 	client: APIClient,
 	params: { network: string },
 ): Promise<string | Error> => {
-	const nodeInfo = await isLiskCoreV3Running(client);
-	if (nodeInfo) throw new Error('Lisk Core v3 is still running');
+	const isCoreV3Running = await isLiskCoreV3Running(client);
+	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running');
 
 	// TODO: Figureout required port from the config
 	const requiredPort: Port = 0;

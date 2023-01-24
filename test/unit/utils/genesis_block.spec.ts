@@ -47,7 +47,7 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	return getFirstEightBytesReversed(hash(publicKey));
 };
 
-describe('Build assets/legacy', () => {
+describe('Create genesis block', () => {
 	let db: any;
 	let accounts: Account[];
 	let block: BlockVersion3;
