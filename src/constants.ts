@@ -66,3 +66,4 @@ export const NETWORK_CONSTANT: { [key: string]: Record<string, string | number> 
 export const DEFAULT_HOST = '127.0.0.1';
 export const DEFAULT_PORT_P2P = 7667;
 export const DEFAULT_PORT_RPC = 7887;
+export const KEEP_EVENTS_FOR_HEIGHTS = 300;

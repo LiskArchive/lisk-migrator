@@ -250,7 +250,8 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			if (!isValidConfig) throw new Error('Migrated user configuration is invalid');
-			cli.action.start('Exporting user configuration');
+
+			cli.action.start(`Exporting user configuration to the path: ${outputPath}`);
 			await writeConfig(configV4, outputPath);
 			cli.action.stop();
 		}

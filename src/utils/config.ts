@@ -20,7 +20,7 @@ import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig } from 'lisk-framework';
 import { Config } from '../types';
-import { NETWORK_CONSTANT } from '../constants';
+import { KEEP_EVENTS_FOR_HEIGHTS, NETWORK_CONSTANT } from '../constants';
 import { applicationConfigSchema } from '../schemas';
 
 const debug = debugInit('lisk:migrator');
@@ -84,20 +84,20 @@ export const migrateUserConfig = async (
 		system: {
 			version: '4.0.0',
 			dataPath: liskCorePath,
-			keepEventsForHeights: 300,
+			keepEventsForHeights: KEEP_EVENTS_FOR_HEIGHTS,
 			logLevel: config.logger.consoleLogLevel,
 		},
 		rpc: {
 			modes: ['ipc', 'ws'],
-			port: 7887,
-			host: '127.0.0.1',
+			port: config.rpc.port || 7887,
+			host: config.rpc.host || '127.0.0.1',
 		},
 		genesis: {
 			block: {
 				fromFile: './config/genesis_block.blob',
 			},
 			blockTime: config.genesisConfig.blockTime,
-			bftBatchSize: config.genesisConfig.bftThreshold, // TODO: Verify
+			bftBatchSize: 103,
 			chainID: tokenID.slice(0, 8),
 			maxTransactionsSize: config.genesisConfig.maxPayloadLength,
 		},

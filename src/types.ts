@@ -22,6 +22,7 @@ export interface StorageConfig {
 }
 
 export interface Config {
+	rpc: Record<string, unknown>;
 	plugins: Record<string, unknown>;
 	genesisConfig: Record<string, unknown>;
 	network: Record<string, unknown>;
