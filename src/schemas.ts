@@ -443,7 +443,7 @@ export const genesisPoSSchema = {
 					'generatorKey',
 					'lastGeneratedHeight',
 					'isBanned',
-					'pomHeights',
+					'reportMisbehaviorHeights',
 					'consecutiveMissedBlocks',
 					'commission',
 					'lastCommissionIncreaseHeight',
@@ -487,7 +487,7 @@ export const genesisPoSSchema = {
 						dataType: 'boolean',
 						fieldNumber: 7,
 					},
-					pomHeights: {
+					reportMisbehaviorHeights: {
 						type: 'array',
 						fieldNumber: 8,
 						items: { dataType: 'uint32' },
@@ -534,19 +534,19 @@ export const genesisPoSSchema = {
 			fieldNumber: 2,
 			items: {
 				type: 'object',
-				required: ['address', 'sentStakes', 'pendingUnlocks'],
+				required: ['address', 'stakes', 'pendingUnlocks'],
 				properties: {
 					address: {
 						dataType: 'bytes',
 						format: 'lisk32',
 						fieldNumber: 1,
 					},
-					sentStakes: {
+					stakes: {
 						type: 'array',
 						fieldNumber: 2,
 						items: {
 							type: 'object',
-							required: ['validatorAddress', 'amount'],
+							required: ['validatorAddress', 'amount', 'sharingCoefficients'],
 							properties: {
 								validatorAddress: {
 									dataType: 'bytes',
@@ -557,7 +557,7 @@ export const genesisPoSSchema = {
 									dataType: 'uint64',
 									fieldNumber: 2,
 								},
-								stakeSharingCoefficients: {
+								sharingCoefficients: {
 									type: 'array',
 									fieldNumber: 3,
 									items: {

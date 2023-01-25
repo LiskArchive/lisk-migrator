@@ -152,7 +152,7 @@ export interface ValidatorEntry {
 	generatorKey: string;
 	lastGeneratedHeight: number;
 	isBanned: boolean;
-	pomHeights: number[];
+	reportMisbehaviorHeights: number[];
 	consecutiveMissedBlocks: number;
 	commission: number;
 	lastCommissionIncreaseHeight: number;
@@ -166,12 +166,12 @@ export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
 export interface Stake {
 	validatorAddress: string;
 	amount: bigint;
-	stakeSharingCoefficients: SharingCoefficients[];
+	sharingCoefficients: SharingCoefficients[];
 }
 
 export interface Staker {
 	address: string;
-	sentStakes: {
+	stakes: {
 		validatorAddress: string;
 		amount: bigint;
 	}[];

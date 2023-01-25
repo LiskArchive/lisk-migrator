@@ -139,7 +139,7 @@ describe('Build assets/pos', () => {
 				'generatorKey',
 				'lastGeneratedHeight',
 				'isBanned',
-				'pomHeights',
+				'reportMisbehaviorHeights',
 				'consecutiveMissedBlocks',
 				'lastCommissionIncreaseHeight',
 				'commission',
@@ -155,12 +155,8 @@ describe('Build assets/pos', () => {
 		expect(stakers).toBeInstanceOf(Array);
 		stakers.forEach(staker => {
 			expect(staker.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(staker)).toEqual([
-				'address',
-				'sentStakes',
-				'pendingUnlocks',
-			]);
-			staker.sentStakes.forEach(stake =>
+			expect(Object.getOwnPropertyNames(staker)).toEqual(['address', 'stakes', 'pendingUnlocks']);
+			staker.stakes.forEach(stake =>
 				expect(stake.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
 			);
 			staker.pendingUnlocks.forEach(unlock =>
@@ -212,10 +208,10 @@ describe('Build assets/pos', () => {
 			expect(stake.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32));
 			expect(Object.getOwnPropertyNames(stake)).toEqual([
 				'amount',
-				'stakeSharingCoefficients',
+				'sharingCoefficients',
 				'validatorAddress',
 			]);
-			stake.stakeSharingCoefficients.forEach(sharingCoefficient => {
+			stake.sharingCoefficients.forEach(sharingCoefficient => {
 				expect(Object.getOwnPropertyNames(sharingCoefficient)).toEqual(['tokenID', 'coefficient']);
 			});
 		});
