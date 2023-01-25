@@ -38,7 +38,7 @@ import {
 	getHeightPreviousSnapshotBlock,
 } from './utils/chain';
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
-import { Config } from './types';
+import { ConfigV3 } from './types';
 import { CreateAsset } from './createAsset';
 import { installLiskCore, startLiskCore } from './utils/node';
 
@@ -120,157 +120,168 @@ class LiskMigrator extends Command {
 	};
 
 	public async run(): Promise<void> {
-		const { flags } = this.parse(LiskMigrator);
-		const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-		const outputPath = flags.output ?? join(process.cwd(), 'genesis_block');
-		const snapshotHeight = flags['snapshot-height'];
-		const customConfigPath = flags.config;
-		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
-		const compatibleVersions = flags['min-compatible-version'];
-		const snapshotPath = flags['snapshot-path'] ?? process.cwd();
-		const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
-		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
+		try {
+			const { flags } = this.parse(LiskMigrator);
+			const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
+			const outputPath = flags.output ?? join(process.cwd(), 'genesis_block');
+			const snapshotHeight = flags['snapshot-height'];
+			const customConfigPath = flags.config;
+			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
+			const compatibleVersions = flags['min-compatible-version'];
+			const snapshotPath = flags['snapshot-path'] ?? process.cwd();
+			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
+			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
-		let config: Config;
+			let config: ConfigV3;
 
-		cli.action.start(
-			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
-		);
-		if (snapshotHeight % ROUND_LENGTH !== 0) {
-			this.error(`Invalid Snapshot Height: ${snapshotHeight}.`);
-		}
-		cli.action.stop('Snapshot Height is valid');
-
-		const client = await getAPIClient(liskCorePath);
-		const nodeInfo = await client.node.getNodeInfo();
-		const { version: appVersion } = nodeInfo;
-
-		cli.action.start('Verifying Lisk-Core version');
-		const liskCoreVersion = semver.coerce(appVersion);
-		if (!liskCoreVersion) {
-			this.error(
-				`Unsupported lisk-core version detected. Supported version range ${compatibleVersions}`,
+			cli.action.start(
+				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
 			);
-		}
-		if (!semver.satisfies(liskCoreVersion, compatibleVersions)) {
-			this.error(
-				`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${compatibleVersions}`,
-			);
-		}
-		cli.action.stop(`${liskCoreVersion.version} detected`);
+			if (snapshotHeight % ROUND_LENGTH !== 0) {
+				this.error(`Invalid Snapshot Height: ${snapshotHeight}.`);
+			}
+			cli.action.stop('Snapshot Height is valid');
 
-		// User specified custom config file
-		if (customConfigPath) {
-			config = await getConfig(liskCorePath, customConfigPath);
-		} else {
-			config = await getConfig(liskCorePath);
-		}
+			const client = await getAPIClient(liskCorePath);
+			const nodeInfo = await client.node.getNodeInfo();
+			const { version: appVersion } = nodeInfo;
 
-		// TODO: Remove the debug, added only to fix unused variable error
-		this.debug(config);
+			const networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
+			if (!networkConstant) {
+				this.error(
+					`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${nodeInfo.networkIdentifier}.`,
+				);
+			}
 
-		await observeChainHeight({
-			label: 'Waiting for snapshot height',
-			liskCorePath,
-			height: snapshotHeight,
-			delay: 500,
-			isFinal: false,
-		});
+			cli.action.start('Verifying Lisk-Core version');
+			const liskCoreVersion = semver.coerce(appVersion);
+			if (!liskCoreVersion) {
+				this.error(
+					`Unsupported lisk-core version detected. Supported version range ${compatibleVersions}`,
+				);
+			}
+			if (!semver.satisfies(liskCoreVersion, compatibleVersions)) {
+				this.error(
+					`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${compatibleVersions}`,
+				);
+			}
+			cli.action.stop(`${liskCoreVersion.version} detected`);
 
-		await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
+			// User specified custom config file
+			if (customConfigPath) {
+				config = await getConfig(liskCorePath, customConfigPath);
+			} else {
+				config = await getConfig(liskCorePath);
+			}
 
-		// TODO: Placeholder to issue createSnapshot command from lisk-core
-		cli.action.start('Creating snapshot');
-		await createSnapshot(liskCorePath, snapshotPath);
-		cli.action.stop();
+			// TODO: Remove the debug, added only to fix unused variable error
+			this.debug(config);
 
-		await observeChainHeight({
-			label: 'Waiting for snapshot height to be finalized',
-			liskCorePath,
-			height: snapshotHeight,
-			delay: 500,
-			isFinal: true,
-		});
-
-		const blockID = getBlockIDAtSnapshotHeight();
-		const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
-
-		cli.action.start('Verifying blockID');
-		if (blockID !== finalizedBlockID) {
-			this.error('Snapshotted blockID does not match with the finalized blockID.');
-		}
-		cli.action.stop();
-
-		// TODO: Stop lisk core automatically when the application management is implemented
-
-		// Create new DB instance based on the snapshot path
-		cli.action.start('Creating database instance');
-		const db = new KVStore(snapshotPath);
-		cli.action.stop();
-
-		// Create genesis assets
-		cli.action.start('Creating genesis assets');
-		const createAsset = new CreateAsset(db);
-		const tokenID = getTokenIDLsk();
-		const snapshotHeightPrevious = getHeightPreviousSnapshotBlock();
-		const genesisAssets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
-		cli.action.stop();
-
-		// Create an app instance for creating genesis block
-		const configFilePath = await resolveConfigPathByNetworkID(nodeInfo.networkIdentifier);
-		const configCoreV4 = await fs.readJSON(configFilePath);
-		const { app } = await Application.defaultApplication(configCoreV4);
-
-		cli.action.start('Creating genesis block');
-		const blockAtSnapshotHeight = ((await client.block.getByHeight(
-			snapshotHeight,
-		)) as unknown) as Block;
-		const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
-		cli.action.stop();
-
-		cli.action.start(`Exporting genesis block to the path ${outputPath}`);
-		await writeGenesisBlock(genesisBlock, outputPath);
-		cli.action.stop();
-
-		if (autoMigrateUserConfig) {
-			cli.action.start('Creating backup for old config');
-			await createBackup(config);
-			cli.action.stop();
-
-			cli.action.start('Migrate user configuration');
-			const configV4 = ((await migrateUserConfig(
-				config,
+			await observeChainHeight({
+				label: 'Waiting for snapshot height',
 				liskCorePath,
-				tokenID,
-			)) as unknown) as ApplicationConfig;
+				height: snapshotHeight,
+				delay: 500,
+				isFinal: false,
+			});
+
+			await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
+
+			// TODO: Placeholder to issue createSnapshot command from lisk-core
+			cli.action.start('Creating snapshot');
+			await createSnapshot(liskCorePath, snapshotPath);
 			cli.action.stop();
 
-			cli.action.start('Validating migrated user configuration');
-			const isValidConfig = await validateConfig(configV4);
-			cli.action.stop();
+			await observeChainHeight({
+				label: 'Waiting for snapshot height to be finalized',
+				liskCorePath,
+				height: snapshotHeight,
+				delay: 500,
+				isFinal: true,
+			});
 
-			if (!isValidConfig) throw new Error('Migrated user configuration is invalid');
+			const blockID = getBlockIDAtSnapshotHeight();
+			const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
 
-			cli.action.start(`Exporting user configuration to the path: ${outputPath}`);
-			await writeConfig(configV4, outputPath);
-			cli.action.stop();
-		}
-
-		if (autoDownloadLiskCoreV4) {
-			cli.action.start('Installing lisk-core v4');
-			await installLiskCore();
-			cli.action.stop();
-		}
-
-		if (autoStartLiskCoreV4) {
-			cli.action.start('Starting lisk-core v4');
-			try {
-				const network = NETWORK_CONSTANT[nodeInfo.networkIdentifier].name as string;
-				await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, client, { network });
-			} catch (err) {
-				this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
+			cli.action.start('Verifying blockID');
+			if (blockID !== finalizedBlockID) {
+				this.error('Snapshotted blockID does not match with the finalized blockID.');
 			}
 			cli.action.stop();
+
+			// TODO: Stop lisk core automatically when the application management is implemented
+
+			// Create new DB instance based on the snapshot path
+			cli.action.start('Creating database instance');
+			const db = new KVStore(snapshotPath);
+			cli.action.stop();
+
+			// Create genesis assets
+			cli.action.start('Creating genesis assets');
+			const createAsset = new CreateAsset(db);
+			const tokenID = getTokenIDLsk();
+			const snapshotHeightPrevious = getHeightPreviousSnapshotBlock();
+			const genesisAssets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
+			cli.action.stop();
+
+			// Create an app instance for creating genesis block
+			const configFilePath = await resolveConfigPathByNetworkID(nodeInfo.networkIdentifier);
+			const configCoreV4 = await fs.readJSON(configFilePath);
+			const { app } = await Application.defaultApplication(configCoreV4);
+
+			cli.action.start('Creating genesis block');
+			const blockAtSnapshotHeight = ((await client.block.getByHeight(
+				snapshotHeight,
+			)) as unknown) as Block;
+			const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
+			cli.action.stop();
+
+			cli.action.start(`Exporting genesis block to the path ${outputPath}`);
+			await writeGenesisBlock(genesisBlock, outputPath);
+			cli.action.stop();
+
+			if (autoMigrateUserConfig) {
+				cli.action.start('Creating backup for old config');
+				await createBackup(config);
+				cli.action.stop();
+
+				cli.action.start('Migrate user configuration');
+				const configV4 = (await migrateUserConfig(
+					config,
+					liskCorePath,
+					tokenID,
+				)) as ApplicationConfig;
+				cli.action.stop();
+
+				cli.action.start('Validating migrated user configuration');
+				const isValidConfig = await validateConfig(configV4);
+				cli.action.stop();
+
+				if (!isValidConfig) throw new Error('Migrated user configuration is invalid.');
+
+				cli.action.start(`Exporting user configuration to the path: ${outputPath}`);
+				await writeConfig(configV4, outputPath);
+				cli.action.stop();
+			}
+
+			if (autoDownloadLiskCoreV4) {
+				cli.action.start('Installing lisk-core v4');
+				await installLiskCore();
+				cli.action.stop();
+			}
+
+			if (autoStartLiskCoreV4) {
+				cli.action.start('Starting lisk-core v4');
+				try {
+					const network = networkConstant.name as string;
+					await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, client, { network });
+				} catch (err) {
+					this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
+				}
+				cli.action.stop();
+			}
+		} catch (error) {
+			this.error(error as string);
 		}
 	}
 }

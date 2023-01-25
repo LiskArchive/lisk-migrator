@@ -19,7 +19,7 @@ import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig } from 'lisk-framework';
-import { Config } from '../types';
+import { ConfigV3 } from '../types';
 import {
 	DEFAULT_HOST,
 	DEFAULT_PORT_RPC,
@@ -32,7 +32,7 @@ const debug = debugInit('lisk:migrator');
 
 export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
 
-export const getConfig = async (corePath: string, customConfigPath?: string): Promise<Config> => {
+export const getConfig = async (corePath: string, customConfigPath?: string): Promise<ConfigV3> => {
 	const command = [];
 
 	const [network] = readdirSync(`${corePath}/config`);
@@ -74,17 +74,18 @@ export const resolveConfigPathByNetworkID = async (networkIdentifier: string): P
 	return configFilePath;
 };
 
-export const createBackup = async (config: Config): Promise<any> => {
+export const createBackup = async (config: ConfigV3): Promise<void> => {
 	const backupPath = `${process.cwd()}/backup`;
 	mkdirSync(backupPath, { recursive: true });
 	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
 };
 
+// TODO: Set up a default config file. Log properties and map migrated config values
 export const migrateUserConfig = async (
-	config: Config,
+	config: ConfigV3,
 	liskCorePath: string,
 	tokenID: string,
-): Promise<Record<string, unknown>> => {
+): Promise<ApplicationConfig> => {
 	const liskCoreV4Config = {
 		system: {
 			version: '4.0.0',
@@ -95,7 +96,7 @@ export const migrateUserConfig = async (
 		rpc: {
 			modes: ['ipc', 'ws'],
 			port: config.rpc.port || DEFAULT_PORT_RPC,
-			host: config.rpc.host || DEFAULT_HOST,
+			host: DEFAULT_HOST,
 		},
 		genesis: {
 			block: {
@@ -124,14 +125,14 @@ export const migrateUserConfig = async (
 		plugins: config.plugins,
 	};
 
-	return liskCoreV4Config;
+	return (liskCoreV4Config as unknown) as ApplicationConfig;
 };
 
 export const validateConfig = async (config: ApplicationConfig): Promise<boolean> => {
 	try {
 		(await validator.validate(applicationConfigSchema, config)) as unknown;
 		return true;
-	} catch (_) {
+	} catch (error) {
 		return false;
 	}
 };
