@@ -146,23 +146,16 @@ class LiskMigrator extends Command {
 			const nodeInfo = await client.node.getNodeInfo();
 			const { version: appVersion } = nodeInfo;
 
-			const networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
-			if (!networkConstant) {
-				this.error(
-					`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${nodeInfo.networkIdentifier}.`,
-				);
-			}
-
 			cli.action.start('Verifying Lisk-Core version');
 			const liskCoreVersion = semver.coerce(appVersion);
 			if (!liskCoreVersion) {
 				this.error(
-					`Unsupported lisk-core version detected. Supported version range ${compatibleVersions}`,
+					`Unsupported lisk-core version detected. Supported version range ${compatibleVersions}.`,
 				);
 			}
 			if (!semver.satisfies(liskCoreVersion, compatibleVersions)) {
 				this.error(
-					`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${compatibleVersions}`,
+					`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${compatibleVersions}.`,
 				);
 			}
 			cli.action.stop(`${liskCoreVersion.version} detected`);
@@ -173,9 +166,6 @@ class LiskMigrator extends Command {
 			} else {
 				config = await getConfig(liskCorePath);
 			}
-
-			// TODO: Remove the debug, added only to fix unused variable error
-			this.debug(config);
 
 			await observeChainHeight({
 				label: 'Waiting for snapshot height',
@@ -271,6 +261,13 @@ class LiskMigrator extends Command {
 			}
 
 			if (autoStartLiskCoreV4) {
+				const networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
+				if (!networkConstant) {
+					this.error(
+						`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${nodeInfo.networkIdentifier}.`,
+					);
+				}
+
 				cli.action.start('Starting lisk-core v4');
 				try {
 					const network = networkConstant.name as string;

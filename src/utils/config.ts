@@ -132,7 +132,7 @@ export const validateConfig = async (config: ApplicationConfig): Promise<boolean
 	try {
 		(await validator.validate(applicationConfigSchema, config)) as unknown;
 		return true;
-	} catch (error) {
+	} catch (_) {
 		return false;
 	}
 };
