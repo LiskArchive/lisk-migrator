@@ -86,7 +86,7 @@ export const createValidatorsArray = async (
 				generatorKey: validatorKeys[validatorAddress] || INVALID_ED25519_KEY,
 				lastGeneratedHeight: account.dpos.delegate.lastForgedHeight,
 				isBanned: true,
-				pomHeights: account.dpos.delegate.pomHeights,
+				reportMisbehaviorHeights: account.dpos.delegate.pomHeights,
 				consecutiveMissedBlocks: account.dpos.delegate.consecutiveMissedBlocks,
 				lastCommissionIncreaseHeight: snapshotHeight,
 				commission: MAX_COMMISSION,
@@ -112,7 +112,7 @@ export const createValidatorsArray = async (
 export const getStakes = async (account: Account, tokenID: string): Promise<Stake[]> => {
 	const stakes = account.dpos.sentVotes.map(vote => ({
 		...vote,
-		stakeSharingCoefficients: [
+		sharingCoefficients: [
 			{
 				tokenID,
 				coefficient: Q96_ZERO,
@@ -139,7 +139,7 @@ export const createStakersArray = async (
 		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
 			const staker: Staker = {
 				address: getLisk32AddressFromAddress(account.address),
-				sentStakes: await getStakes(account, tokenID),
+				stakes: await getStakes(account, tokenID),
 				pendingUnlocks: account.dpos.unlocking.map(
 					({ delegateAddress, unvoteHeight, ...unlock }) => ({
 						validatorAddress: getLisk32AddressFromAddress(delegateAddress),

@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { APIClient } from '@liskhq/lisk-api-client';
 import { Port } from '../types';
 import { isPortAvailable } from './network';
 import { execAsync } from './process';
@@ -19,12 +20,19 @@ const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
+export const isLiskCoreV3Running = async (client: APIClient): Promise<boolean> => {
+	const nodeInfo = await client.node.getNodeInfo();
+	return !!nodeInfo;
+};
+
 export const startLiskCore = async (
 	_config: any,
 	_previousLiskCoreVersion: string,
+	client: APIClient,
 	params: { network: string },
 ): Promise<string | Error> => {
-	// TODO: Add check if lisk-core is still running
+	const isCoreV3Running = await isLiskCoreV3Running(client);
+	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running');
 
 	// TODO: Figureout required port from the config
 	const requiredPort: Port = 0;

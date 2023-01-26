@@ -13,26 +13,59 @@
  */
 import { Schema } from '@liskhq/lisk-codec';
 
-export interface StorageConfig {
-	readonly user: string;
-	readonly password: string;
-	readonly database: string;
-	readonly host: string;
-	readonly port: number;
+interface RPCConfig {
+	enable: boolean;
+	mode: 'ipc' | 'ws';
+	port: number;
 }
 
-export interface Config {
-	readonly app: {
-		readonly version: string;
-		readonly minVersion: string;
-		readonly protocolVersion: string;
-		readonly genesisConfig: {
-			readonly EPOCH_TIME: string;
-		};
+export interface NetworkConfig {
+	port: number;
+	seedPeers: { ip: string; port: number }[];
+}
+
+export interface GenesisConfig {
+	[key: string]: unknown;
+	bftThreshold: number;
+	communityIdentifier: string;
+	blockTime: number;
+	maxPayloadLength: number;
+	rewards: {
+		milestones: string[];
+		offset: number;
+		distance: number;
 	};
-	readonly components: {
-		readonly storage: StorageConfig;
+	minFeePerByte: number;
+	baseFees: {
+		moduleID: number;
+		assetID: number;
+		baseFee: string;
+	}[];
+}
+
+export interface PluginOptions extends Record<string, unknown> {
+	readonly loadAsChildProcess?: boolean;
+	readonly alias?: string;
+}
+
+export interface ConfigV3 {
+	label: string;
+	version: string;
+	networkVersion: string;
+	rootPath: string;
+	forging: Record<string, unknown>;
+	network: NetworkConfig;
+	logger: {
+		logFileName: string;
+		fileLogLevel: string;
+		consoleLogLevel: string;
 	};
+	genesisConfig: GenesisConfig;
+	plugins: {
+		[key: string]: PluginOptions;
+	};
+	transactionPool: Record<string, unknown>;
+	rpc: RPCConfig;
 }
 
 export interface UnregisteredAccount {
@@ -147,7 +180,7 @@ export interface ValidatorEntry {
 	generatorKey: string;
 	lastGeneratedHeight: number;
 	isBanned: boolean;
-	pomHeights: number[];
+	reportMisbehaviorHeights: number[];
 	consecutiveMissedBlocks: number;
 	commission: number;
 	lastCommissionIncreaseHeight: number;
@@ -161,12 +194,12 @@ export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
 export interface Stake {
 	validatorAddress: string;
 	amount: bigint;
-	stakeSharingCoefficients: SharingCoefficients[];
+	sharingCoefficients: SharingCoefficients[];
 }
 
 export interface Staker {
 	address: string;
-	sentStakes: {
+	stakes: {
 		validatorAddress: string;
 		amount: bigint;
 	}[];

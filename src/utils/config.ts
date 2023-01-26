@@ -13,17 +13,26 @@
  */
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readdirSync, mkdirSync, writeFileSync, unlinkSync } from 'fs';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
-import { Config } from '../types';
-import { NETWORK_CONSTANT } from '../constants';
+import { validator } from '@liskhq/lisk-validator';
+
+import { ApplicationConfig } from 'lisk-framework';
+import { ConfigV3 } from '../types';
+import {
+	DEFAULT_HOST,
+	DEFAULT_PORT_RPC,
+	KEEP_EVENTS_FOR_HEIGHTS,
+	NETWORK_CONSTANT,
+} from '../constants';
+import { applicationConfigSchema } from '../schemas';
 
 const debug = debugInit('lisk:migrator');
 
 export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
 
-export const getConfig = async (corePath: string, customConfigPath?: string): Promise<Config> => {
+export const getConfig = async (corePath: string, customConfigPath?: string): Promise<ConfigV3> => {
 	const command = [];
 
 	const [network] = readdirSync(`${corePath}/config`);
@@ -65,5 +74,75 @@ export const resolveConfigPathByNetworkID = async (networkIdentifier: string): P
 	return configFilePath;
 };
 
-// TODO: Implement with the issue https://github.com/LiskHQ/lisk-migrator/issues/55
-export const migrateUserConfig = async (): Promise<any> => true;
+export const createBackup = async (config: ConfigV3): Promise<void> => {
+	const backupPath = `${process.cwd()}/backup`;
+	mkdirSync(backupPath, { recursive: true });
+	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
+};
+
+// TODO: Set up a default config file. Log properties and map migrated config values
+export const migrateUserConfig = async (
+	config: ConfigV3,
+	liskCorePath: string,
+	tokenID: string,
+): Promise<ApplicationConfig> => {
+	const liskCoreV4Config = {
+		system: {
+			version: '4.0.0',
+			dataPath: liskCorePath,
+			keepEventsForHeights: KEEP_EVENTS_FOR_HEIGHTS,
+			logLevel: config.logger.consoleLogLevel,
+		},
+		rpc: {
+			modes: ['ipc', 'ws'],
+			port: config.rpc.port || DEFAULT_PORT_RPC,
+			host: DEFAULT_HOST,
+		},
+		genesis: {
+			block: {
+				fromFile: './config/genesis_block.blob',
+			},
+			blockTime: config.genesisConfig.blockTime,
+			bftBatchSize: 103,
+			chainID: tokenID.slice(0, 8),
+			maxTransactionsSize: config.genesisConfig.maxPayloadLength,
+		},
+		network: {
+			...config.network,
+			version: '1.0',
+		},
+		transactionPool: {
+			maxTransactions: 4096,
+			maxTransactionsPerAccount: 64,
+			transactionExpiryTime: 10800000,
+			minEntranceFeePriority: '0',
+			minReplacementFeeDifference: '10',
+		},
+		generator: {
+			keys: {},
+		},
+		modules: {},
+		plugins: config.plugins,
+	};
+
+	return (liskCoreV4Config as unknown) as ApplicationConfig;
+};
+
+export const validateConfig = async (config: ApplicationConfig): Promise<boolean> => {
+	try {
+		(await validator.validate(applicationConfigSchema, config)) as unknown;
+		return true;
+	} catch (_) {
+		return false;
+	}
+};
+
+export const writeConfig = async (config: ApplicationConfig, outputPath: string): Promise<void> => {
+	if (existsSync(outputPath)) {
+		unlinkSync(outputPath);
+	}
+
+	mkdirSync(outputPath, { recursive: true });
+
+	writeFileSync(resolve(outputPath, 'config.json'), JSON.stringify(config));
+};
