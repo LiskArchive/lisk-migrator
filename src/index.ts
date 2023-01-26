@@ -133,6 +133,7 @@ class LiskMigrator extends Command {
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 			let config: ConfigV3;
+			let networkConstant;
 
 			cli.action.start(
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -145,6 +146,15 @@ class LiskMigrator extends Command {
 			const client = await getAPIClient(liskCorePath);
 			const nodeInfo = await client.node.getNodeInfo();
 			const { version: appVersion } = nodeInfo;
+
+			if (autoStartLiskCoreV4) {
+				networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
+				if (!networkConstant) {
+					this.error(
+						`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${nodeInfo.networkIdentifier}.`,
+					);
+				}
+			}
 
 			cli.action.start('Verifying Lisk-Core version');
 			const liskCoreVersion = semver.coerce(appVersion);
@@ -261,16 +271,9 @@ class LiskMigrator extends Command {
 			}
 
 			if (autoStartLiskCoreV4) {
-				const networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
-				if (!networkConstant) {
-					this.error(
-						`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${nodeInfo.networkIdentifier}.`,
-					);
-				}
-
 				cli.action.start('Starting lisk-core v4');
 				try {
-					const network = networkConstant.name as string;
+					const network = networkConstant?.name as string;
 					await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, client, { network });
 				} catch (err) {
 					this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
