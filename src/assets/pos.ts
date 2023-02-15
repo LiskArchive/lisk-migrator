@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { posGenesisStoreSchema } from 'lisk-framework';
 
 import {
 	getLisk32AddressFromAddress,
@@ -42,7 +43,6 @@ import {
 	Stake,
 	PoSStoreEntry,
 } from '../types';
-import { genesisPoSSchema } from '../schemas';
 
 export const getValidatorKeys = async (
 	blocks: Block[],
@@ -216,6 +216,6 @@ export const addPoSModuleEntry = async (
 	return {
 		module: MODULE_NAME_POS,
 		data: (posObj as unknown) as Record<string, unknown>,
-		schema: genesisPoSSchema,
+		schema: posGenesisStoreSchema,
 	};
 };

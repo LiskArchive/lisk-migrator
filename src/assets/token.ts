@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { tokenGenesisStoreSchema } from 'lisk-framework';
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import {
@@ -30,7 +31,6 @@ import {
 	UserSubstoreEntry,
 	UserSubstoreEntryBuffer,
 } from '../types';
-import { genesisTokenStoreSchema } from '../schemas';
 
 const AMOUNT_ZERO = BigInt('0');
 let legacyReserveAmount: bigint = AMOUNT_ZERO;
@@ -159,6 +159,6 @@ export const addTokenModuleEntry = async (
 	return {
 		module: MODULE_NAME_TOKEN,
 		data: (tokenObj as unknown) as Record<string, unknown>,
-		schema: genesisTokenStoreSchema,
+		schema: tokenGenesisStoreSchema,
 	};
 };

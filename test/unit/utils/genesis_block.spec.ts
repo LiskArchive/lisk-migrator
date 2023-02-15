@@ -84,7 +84,14 @@ describe('Create genesis block', () => {
 		beforeAll(async () => {
 			db = new KVStore('testDB');
 			createAsset = new CreateAsset(db);
-			app = Application.defaultApplication({ genesis: { chainID: '04000000' } });
+			app = Application.defaultApplication({
+				genesis: { chainID: '04000000' },
+				modules: {
+					pos: {
+						useInvalidBLSKey: true,
+					},
+				},
+			});
 			[block] = generateBlocks({
 				startHeight: 16281110,
 				numberOfBlocks: 1,
