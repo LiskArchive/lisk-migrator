@@ -24,8 +24,9 @@ import {
 	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_TRANSACTIONS_BLOCK_ID,
 	DB_KEY_TRANSACTIONS_ID,
+	DB_KEY_BLOCKS_ID,
 } from './constants';
-import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
+import { accountSchema, transactionSchema, voteWeightsSchema, blockHeaderSchema } from './schemas';
 import { LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types';
 
 import { addInteropModuleEntry } from './assets/interoperability';
@@ -33,6 +34,8 @@ import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
 import { addTokenModuleEntry } from './assets/token';
 import { addPoSModuleEntry } from './assets/pos';
+
+export const keyString = (key: Buffer): string => key.toString('binary');
 
 export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema: Schema) => {
 	const data = await new Promise<any>((resolve, reject) => {
@@ -52,25 +55,56 @@ export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema:
 	return data;
 };
 
-export const keyString = (key: Buffer): string => key.toString('binary');
+export const getBlockHeadersByIDs = async (
+	db: KVStore,
+	arrayOfBlockIds: ReadonlyArray<Buffer>,
+): Promise<Buffer[]> => {
+	const blocks = [];
+	for (const id of arrayOfBlockIds) {
+		const block = await db.get(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`);
+		blocks.push(block);
+	}
+	return blocks;
+};
+
+export const getBlocksIDsFromDBStream = async (stream: NodeJS.ReadableStream) => {
+	const blockIDs = await new Promise<Buffer[]>((resolve, reject) => {
+		const ids: Buffer[] = [];
+		stream
+			.on('data', ({ value }: { value: Buffer }) => {
+				ids.push(value);
+			})
+			.on('error', error => {
+				reject(error);
+			})
+			.on('end', () => {
+				resolve(ids);
+			});
+	});
+	return blockIDs;
+};
 
 export const getTransactions = async (blockID: Buffer, db: KVStore): Promise<Buffer[]> => {
-	const txIDs: Buffer[] = [];
-	const ids = await db.get(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${keyString(blockID)}`);
-	const idLength = 32;
-	for (let i = 0; i < ids.length; i += idLength) {
-		txIDs.push(ids.slice(i, i + idLength));
-	}
-	if (txIDs.length === 0) {
+	try {
+		const txIDs: Buffer[] = [];
+		const ids = await db.get(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${keyString(blockID)}`);
+		const idLength = 32;
+		for (let i = 0; i < ids.length; i += idLength) {
+			txIDs.push(ids.slice(i, i + idLength));
+		}
+		if (txIDs.length === 0) {
+			return [];
+		}
+		const transactions = [];
+		for (const txID of txIDs) {
+			const tx = await db.get(`${DB_KEY_TRANSACTIONS_ID}:${keyString(txID)}`);
+			transactions.push(tx);
+		}
+
+		return transactions;
+	} catch (error) {
 		return [];
 	}
-	const transactions = [];
-	for (const txID of txIDs) {
-		const tx = await db.get(`${DB_KEY_TRANSACTIONS_ID}:${keyString(txID)}`);
-		transactions.push(tx);
-	}
-
-	return transactions;
 };
 
 export class CreateAsset {
@@ -97,7 +131,6 @@ export class CreateAsset {
 		});
 
 		const accounts = await getDataFromDBStream(accountStream, accountSchema);
-
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 
 		const legacyAccounts: LegacyStoreEntry[] = legacyModuleAssets.data
@@ -109,10 +142,13 @@ export class CreateAsset {
 			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 		});
 
-		const blocksHeader = await getDataFromDBStream(blocksStream, blockHeaderSchema);
-		const blocks: Block[] = await Promise.all(
-			blocksHeader.map(async (blockHeader: string | Buffer) => {
+		const arrayOfBlockIds = await getBlocksIDsFromDBStream(blocksStream);
+		const blocksHeader = await getBlockHeadersByIDs(this._db, arrayOfBlockIds);
+
+		const blocks = ((await Promise.all(
+			blocksHeader.map(async (blockHeader: Buffer) => {
 				const blockID = hash(blockHeader);
+				const decodedBlockHeader = codec.decode(blockHeaderSchema, blockHeader);
 				const encodedTransactions = await getTransactions(blockID, this._db);
 				const decodedTransactions = await encodedTransactions.map(async tx => {
 					const transactions = await codec.decode<{
@@ -130,11 +166,11 @@ export class CreateAsset {
 				});
 
 				return {
-					blockHeader,
+					header: decodedBlockHeader,
 					payload: decodedTransactions,
 				};
 			}),
-		);
+		)) as unknown) as Block[];
 
 		const encodedDelegatesVoteWeights = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
