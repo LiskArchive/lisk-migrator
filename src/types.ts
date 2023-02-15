@@ -167,7 +167,7 @@ export interface TokenStoreEntry {
 	supportedTokensSubstore: [];
 }
 
-export interface SharingCoefficients {
+export interface SharingCoefficient {
 	tokenID: string;
 	coefficient: string;
 }
@@ -184,7 +184,7 @@ export interface ValidatorEntry {
 	consecutiveMissedBlocks: number;
 	commission: number;
 	lastCommissionIncreaseHeight: number;
-	sharingCoefficients: SharingCoefficients;
+	sharingCoefficients: SharingCoefficient[];
 }
 
 export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
@@ -194,7 +194,7 @@ export interface ValidatorEntryBuffer extends Omit<ValidatorEntry, 'address'> {
 export interface Stake {
 	validatorAddress: string;
 	amount: bigint;
-	sharingCoefficients: SharingCoefficients[];
+	sharingCoefficients: SharingCoefficient[];
 }
 
 export interface Staker {

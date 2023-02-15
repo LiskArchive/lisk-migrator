@@ -90,10 +90,12 @@ export const createValidatorsArray = async (
 				consecutiveMissedBlocks: account.dpos.delegate.consecutiveMissedBlocks,
 				lastCommissionIncreaseHeight: snapshotHeight,
 				commission: MAX_COMMISSION,
-				sharingCoefficients: {
-					tokenID,
-					coefficient: Q96_ZERO,
-				},
+				sharingCoefficients: [
+					{
+						tokenID,
+						coefficient: Q96_ZERO,
+					},
+				],
 			});
 			validators.push(validator);
 		}

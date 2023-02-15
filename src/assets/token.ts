@@ -74,6 +74,7 @@ export const createLegacyReserveAccount = async (
 		module: MODULE_NAME_LEGACY,
 		amount: String(legacyReserveAmount),
 	});
+	lockedBalances.sort((a, b) => a.module.localeCompare(b.module, 'en'));
 	const legacyReserve = {
 		address: ADDRESS_LEGACY_RESERVE,
 		tokenID: tokenIDBuffer,

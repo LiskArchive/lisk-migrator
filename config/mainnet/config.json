@@ -15,7 +15,7 @@
 		},
 		"blockTime": 10,
 		"bftBatchSize": 103,
-		"chainID": "04000000",
+		"chainID": "00000000",
 		"maxTransactionsSize": 15360
 	},
 	"generator": {
@@ -77,6 +77,9 @@
 	"modules": {
 		"fee": {
 			"feeTokenID": "0000000000000000"
+		},
+		"pos": {
+			"useInvalidBLSKey": true
 		},
 		"reward": {
 			"tokenID": "0000000000000000",
