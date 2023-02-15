@@ -17,6 +17,7 @@ export const MODULE_NAME_LEGACY = 'legacy';
 export const MODULE_NAME_AUTH = 'auth';
 export const MODULE_NAME_TOKEN = 'token';
 export const MODULE_NAME_POS = 'pos';
+export const MODULE_NAME_INTEROPERABILITY = 'interoperability';
 
 export const DB_KEY_CHAIN_STATE = 'chain';
 export const DB_KEY_ACCOUNTS_ADDRESS = 'accounts:address';
@@ -67,3 +68,9 @@ export const DEFAULT_HOST = '127.0.0.1';
 export const DEFAULT_PORT_P2P = 7667;
 export const DEFAULT_PORT_RPC = 7887;
 export const KEEP_EVENTS_FOR_HEIGHTS = 300;
+export const HASH_LENGTH = 32;
+export const MAX_NUM_VALIDATORS = 199;
+export const BLS_PUBLIC_KEY_LENGTH = 48;
+export const CHAIN_ID_LENGTH = 4;
+export const EMPTY_BYTES = Buffer.alloc(0);
+export const CHAIN_NAME_MAINCHAIN = 'lisk_mainchain';

@@ -18,6 +18,10 @@ import {
 	DEFAULT_HOST,
 	DEFAULT_PORT_P2P,
 	DEFAULT_PORT_RPC,
+	HASH_LENGTH,
+	MAX_NUM_VALIDATORS,
+	BLS_PUBLIC_KEY_LENGTH,
+	CHAIN_ID_LENGTH,
 } from './constants';
 
 export const unregisteredAddressesSchema = {
@@ -1007,5 +1011,397 @@ export const applicationConfigSchema = {
 		},
 		modules: {},
 		plugins: {},
+	},
+};
+
+export const outboxRootSchema = {
+	$id: '/modules/interoperability/outbox',
+	type: 'object',
+	required: ['root'],
+	properties: {
+		root: {
+			dataType: 'bytes',
+			minLength: HASH_LENGTH,
+			maxLength: HASH_LENGTH,
+			fieldNumber: 1,
+		},
+	},
+};
+
+const chainDataJSONSchema = {
+	type: 'object',
+	required: ['name', 'lastCertificate', 'status'],
+	properties: {
+		name: {
+			dataType: 'string',
+			fieldNumber: 1,
+		},
+		lastCertificate: {
+			type: 'object',
+			fieldNumber: 2,
+			required: ['height', 'timestamp', 'stateRoot', 'validatorsHash'],
+			properties: {
+				height: {
+					dataType: 'uint32',
+					fieldNumber: 1,
+				},
+				timestamp: {
+					dataType: 'uint32',
+					fieldNumber: 2,
+				},
+				stateRoot: {
+					dataType: 'bytes',
+					minLength: HASH_LENGTH,
+					maxLength: HASH_LENGTH,
+					fieldNumber: 3,
+				},
+				validatorsHash: {
+					dataType: 'bytes',
+					minLength: HASH_LENGTH,
+					maxLength: HASH_LENGTH,
+					fieldNumber: 4,
+				},
+			},
+		},
+		status: {
+			dataType: 'uint32',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const chainDataSchema = {
+	$id: '/modules/interoperability/chainData',
+	...chainDataJSONSchema,
+};
+
+const inboxOutboxProps = {
+	appendPath: {
+		type: 'array',
+		items: {
+			dataType: 'bytes',
+			minLength: HASH_LENGTH,
+			maxLength: HASH_LENGTH,
+		},
+		fieldNumber: 1,
+	},
+	size: {
+		dataType: 'uint32',
+		fieldNumber: 2,
+	},
+	root: {
+		dataType: 'bytes',
+		minLength: HASH_LENGTH,
+		maxLength: HASH_LENGTH,
+		fieldNumber: 3,
+	},
+};
+
+export const channelSchema = {
+	$id: '/modules/interoperability/channel',
+	type: 'object',
+	required: ['inbox', 'outbox', 'partnerChainOutboxRoot', 'messageFeeTokenID'],
+	properties: {
+		inbox: {
+			type: 'object',
+			fieldNumber: 1,
+			required: ['appendPath', 'size', 'root'],
+			properties: inboxOutboxProps,
+		},
+		outbox: {
+			type: 'object',
+			fieldNumber: 2,
+			required: ['appendPath', 'size', 'root'],
+			properties: inboxOutboxProps,
+		},
+		partnerChainOutboxRoot: {
+			dataType: 'bytes',
+			minLength: HASH_LENGTH,
+			maxLength: HASH_LENGTH,
+			fieldNumber: 3,
+		},
+		messageFeeTokenID: {
+			dataType: 'bytes',
+			minLength: TOKEN_ID_LENGTH,
+			maxLength: TOKEN_ID_LENGTH,
+			fieldNumber: 4,
+		},
+	},
+};
+
+export const chainValidatorsSchema = {
+	$id: '/modules/interoperability/chainValidators',
+	type: 'object',
+	required: ['activeValidators', 'certificateThreshold'],
+	properties: {
+		activeValidators: {
+			type: 'array',
+			fieldNumber: 1,
+			minItems: 1,
+			maxItems: MAX_NUM_VALIDATORS,
+			items: {
+				type: 'object',
+				required: ['blsKey', 'bftWeight'],
+				properties: {
+					blsKey: {
+						dataType: 'bytes',
+						minLength: BLS_PUBLIC_KEY_LENGTH,
+						maxLength: BLS_PUBLIC_KEY_LENGTH,
+						fieldNumber: 1,
+					},
+					bftWeight: {
+						dataType: 'uint64',
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		certificateThreshold: {
+			dataType: 'uint64',
+			fieldNumber: 2,
+		},
+	},
+};
+
+export const ownChainAccountSchema = {
+	$id: '/modules/interoperability/ownChainAccount',
+	type: 'object',
+	required: ['name', 'chainID', 'nonce'],
+	properties: {
+		name: {
+			dataType: 'string',
+			fieldNumber: 1,
+		},
+		chainID: {
+			dataType: 'bytes',
+			minLength: CHAIN_ID_LENGTH,
+			maxLength: CHAIN_ID_LENGTH,
+			fieldNumber: 2,
+		},
+		nonce: {
+			dataType: 'uint64',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const terminatedStateSchema = {
+	$id: '/modules/interoperability/terminatedState',
+	type: 'object',
+	required: ['stateRoot', 'mainchainStateRoot', 'initialized'],
+	properties: {
+		stateRoot: {
+			dataType: 'bytes',
+			minLength: HASH_LENGTH,
+			maxLength: HASH_LENGTH,
+			fieldNumber: 1,
+		},
+		mainchainStateRoot: {
+			dataType: 'bytes',
+			minLength: HASH_LENGTH,
+			maxLength: HASH_LENGTH,
+			fieldNumber: 2,
+		},
+		initialized: {
+			dataType: 'boolean',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const terminatedOutboxSchema = {
+	$id: '/modules/interoperability/terminatedOutbox',
+	type: 'object',
+	required: ['outboxRoot', 'outboxSize', 'partnerChainInboxSize'],
+	properties: {
+		outboxRoot: {
+			dataType: 'bytes',
+			minLength: HASH_LENGTH,
+			maxLength: HASH_LENGTH,
+			fieldNumber: 1,
+		},
+		outboxSize: {
+			dataType: 'uint32',
+			fieldNumber: 2,
+		},
+		partnerChainInboxSize: {
+			dataType: 'uint32',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const registeredNamesSchema = {
+	$id: '/modules/interoperability/chainId',
+	type: 'object',
+	required: ['chainID'],
+	properties: {
+		chainID: {
+			dataType: 'bytes',
+			minLength: CHAIN_ID_LENGTH,
+			maxLength: CHAIN_ID_LENGTH,
+			fieldNumber: 1,
+		},
+	},
+};
+
+export const genesisInteroperabilitySchema = {
+	$id: '/interoperability/module/genesis',
+	type: 'object',
+	required: [
+		'outboxRootSubstore',
+		'chainDataSubstore',
+		'channelDataSubstore',
+		'chainValidatorsSubstore',
+		'ownChainDataSubstore',
+		'terminatedStateSubstore',
+		'terminatedOutboxSubstore',
+		'registeredNamesSubstore',
+	],
+	properties: {
+		outboxRootSubstore: {
+			type: 'array',
+			fieldNumber: 1,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...outboxRootSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		chainDataSubstore: {
+			type: 'array',
+			fieldNumber: 2,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...chainDataSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		channelDataSubstore: {
+			type: 'array',
+			fieldNumber: 3,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...channelSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		chainValidatorsSubstore: {
+			type: 'array',
+			fieldNumber: 4,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						fieldNumber: 2,
+						...chainValidatorsSchema,
+					},
+				},
+			},
+		},
+		ownChainDataSubstore: {
+			type: 'array',
+			fieldNumber: 5,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...ownChainAccountSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		terminatedStateSubstore: {
+			type: 'array',
+			fieldNumber: 6,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...terminatedStateSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		terminatedOutboxSubstore: {
+			type: 'array',
+			fieldNumber: 7,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...terminatedOutboxSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		registeredNamesSubstore: {
+			type: 'array',
+			fieldNumber: 8,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...registeredNamesSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
 	},
 };

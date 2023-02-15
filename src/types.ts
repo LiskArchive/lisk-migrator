@@ -247,3 +247,102 @@ export interface VoteWeightsWrapper {
 }
 
 export type Port = number;
+
+export interface OutboxRoot {
+	root: Buffer;
+}
+
+export interface LastCertificate {
+	height: number;
+	timestamp: number;
+	stateRoot: Buffer;
+	validatorsHash: Buffer;
+}
+
+export interface ChainAccount {
+	name: string;
+	lastCertificate: LastCertificate;
+	status: number;
+}
+
+type InboxOutbox = {
+	appendPath: Buffer[];
+	size: number;
+	root: Buffer;
+};
+export type Inbox = InboxOutbox;
+export type Outbox = InboxOutbox;
+
+export interface ChannelData {
+	inbox: Inbox;
+	outbox: Outbox;
+	partnerChainOutboxRoot: Buffer;
+	messageFeeTokenID: Buffer;
+}
+
+export interface ActiveValidator {
+	blsKey: Buffer;
+	bftWeight: bigint;
+}
+
+export interface ValidatorsHashInput {
+	activeValidators: ActiveValidator[];
+	certificateThreshold: bigint;
+}
+
+export interface OwnChainAccount {
+	name: string;
+	chainID: Buffer;
+	nonce: bigint;
+}
+
+export interface TerminatedStateAccount {
+	stateRoot: Buffer;
+	mainchainStateRoot: Buffer;
+	initialized?: boolean;
+}
+
+export interface TerminatedOutboxAccount {
+	outboxRoot: Buffer;
+	outboxSize: number;
+	partnerChainInboxSize: number;
+}
+
+export interface ChainID {
+	chainID: Buffer;
+}
+
+export interface GenesisInteroperability {
+	outboxRootSubstore: {
+		storeKey: Buffer;
+		storeValue: OutboxRoot;
+	}[];
+	chainDataSubstore: {
+		storeKey: Buffer;
+		storeValue: ChainAccount;
+	}[];
+	channelDataSubstore: {
+		storeKey: Buffer;
+		storeValue: ChannelData;
+	}[];
+	chainValidatorsSubstore: {
+		storeKey: Buffer;
+		storeValue: ValidatorsHashInput;
+	}[];
+	ownChainDataSubstore: {
+		storeKey: Buffer;
+		storeValue: OwnChainAccount;
+	}[];
+	terminatedStateSubstore: {
+		storeKey: Buffer;
+		storeValue: TerminatedStateAccount;
+	}[];
+	terminatedOutboxSubstore: {
+		storeKey: Buffer;
+		storeValue: TerminatedOutboxAccount;
+	}[];
+	registeredNamesSubstore: {
+		storeKey: Buffer;
+		storeValue: ChainID;
+	}[];
+}
