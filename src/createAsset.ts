@@ -28,6 +28,7 @@ import {
 import { accountSchema, blockHeaderSchema, transactionSchema, voteWeightsSchema } from './schemas';
 import { LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types';
 
+import { addInteropModuleEntry } from './assets/interoperability';
 import { addLegacyModuleEntry } from './assets/legacy';
 import { addAuthModuleEntry } from './assets/auth';
 import { addTokenModuleEntry } from './assets/token';
@@ -151,11 +152,14 @@ export class CreateAsset {
 			tokenID,
 		);
 
+		const interoperabilityModuleAssets = await addInteropModuleEntry(tokenID);
+
 		const assets: GenesisAssetEntry[] = [
 			legacyModuleAssets,
 			authModuleAssets,
 			tokenModuleAssets,
 			posModuleAssets,
+			interoperabilityModuleAssets,
 		].sort((a, b) => a.module.localeCompare(b.module, 'en'));
 
 		return assets;
