@@ -13,10 +13,7 @@
  */
 import { posGenesisStoreSchema } from 'lisk-framework';
 
-import {
-	getLisk32AddressFromAddress,
-	getBase32AddressFromPublicKey,
-} from '@liskhq/lisk-cryptography';
+import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
 import { Block } from '@liskhq/lisk-chain';
 
 import {
@@ -44,16 +41,23 @@ import {
 	PoSStoreEntry,
 } from '../types';
 
+const celing = (a: number, b: number) => {
+	if (b === 0) throw new Error('Can not divide by 0.');
+	return Math.floor((a + b) / b);
+};
+
 export const getValidatorKeys = async (
 	blocks: Block[],
 	accounts: Account[],
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 	for (const block of blocks) {
-		const base32Address: string = getBase32AddressFromPublicKey(block.header.generatorPublicKey);
+		const base32Address: string = getAddressFromPublicKey(block.header.generatorPublicKey).toString(
+			'hex',
+		);
 		keys[base32Address] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
-			const trxSenderAddress: string = getBase32AddressFromPublicKey(trx.senderPublicKey);
+			const trxSenderAddress: string = getAddressFromPublicKey(trx.senderPublicKey).toString('hex');
 			const account: Account | undefined = accounts.find(
 				acc => acc.address.toString('hex') === trxSenderAddress,
 			);
@@ -162,10 +166,12 @@ export const createGenesisDataObj = async (
 	snapshotHeight: number,
 	snapshotHeightPrevious: number,
 ): Promise<GenesisDataEntry> => {
-	const r = Math.ceil((snapshotHeight - snapshotHeightPrevious) / ROUND_LENGTH);
+	const r = celing(snapshotHeight - snapshotHeightPrevious, ROUND_LENGTH);
+
 	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
 		(voteWeight: VoteWeight) => voteWeight.round === r - 2,
 	);
+
 	if (!voteWeightR2 || voteWeightR2.delegates.length === 0) {
 		throw new Error(`Top delegates for round ${r - 2}(r-2)  unavailable, cannot proceed.`);
 	}
