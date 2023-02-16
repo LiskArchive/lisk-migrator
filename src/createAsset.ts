@@ -178,7 +178,6 @@ export class CreateAsset {
 			blocks,
 			decodedDelegatesVoteWeights,
 			snapshotHeight,
-			snapshotHeightPrevious,
 			tokenID,
 		);
 

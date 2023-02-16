@@ -57,8 +57,8 @@ describe('Create genesis block', () => {
 	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
 	let app: any;
-	const snapshotHeight = 16281107;
-	const snapshotHeightPrevious = 16270293;
+	const snapshotHeight = 10815;
+	const snapshotHeightPrevious = 5000;
 	const tokenID = '0400000000000000';
 	const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
 

@@ -43,7 +43,7 @@ import {
 
 const celing = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');
-	return Math.floor((a + b) / b);
+	return Math.floor((a + b - 1) / b);
 };
 
 export const getValidatorKeys = async (
@@ -164,9 +164,8 @@ export const createGenesisDataObj = async (
 	accounts: Account[],
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
-	snapshotHeightPrevious: number,
 ): Promise<GenesisDataEntry> => {
-	const r = celing(snapshotHeight - snapshotHeightPrevious, ROUND_LENGTH);
+	const r = celing(snapshotHeight, ROUND_LENGTH);
 
 	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
 		(voteWeight: VoteWeight) => voteWeight.round === r - 2,
@@ -205,18 +204,12 @@ export const addPoSModuleEntry = async (
 	blocks: Block[],
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
-	snapshotHeightPrevious: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
 	const posObj: PoSStoreEntry = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
 		stakers: await createStakersArray(accounts, tokenID),
-		genesisData: await createGenesisDataObj(
-			accounts,
-			delegatesVoteWeights,
-			snapshotHeight,
-			snapshotHeightPrevious,
-		),
+		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
 	};
 
 	return {

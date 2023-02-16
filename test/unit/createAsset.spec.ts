@@ -56,8 +56,8 @@ describe('Build assets/legacy', () => {
 	let encodedUnregisteredAddresses: Buffer;
 	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
-	const snapshotHeight = 16281107;
-	const snapshotHeightPrevious = 16270293;
+	const snapshotHeight = 10815;
+	const snapshotHeightPrevious = 5000;
 	const tokenID = '0400000000000000';
 
 	interface Accounts {

@@ -97,13 +97,16 @@ export const createUserSubstoreArray = async (
 
 	for (const account of accounts) {
 		if (!ADDRESS_LEGACY_RESERVE.equals(account.address)) {
-			const userObj = {
-				address: account.address,
-				tokenID: tokenIDBuffer,
-				availableBalance: String(account.token.balance),
-				lockedBalances: await getLockedBalances(account),
-			};
-			userSubstore.push(userObj);
+			const lockedBalances = await getLockedBalances(account);
+			if (account.token.balance !== AMOUNT_ZERO || lockedBalances.length) {
+				const userObj = {
+					address: account.address,
+					tokenID: tokenIDBuffer,
+					availableBalance: String(account.token.balance),
+					lockedBalances,
+				};
+				userSubstore.push(userObj);
+			}
 		}
 	}
 
