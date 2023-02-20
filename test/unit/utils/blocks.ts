@@ -16,7 +16,7 @@ import { hash, getRandomBytes } from '@liskhq/lisk-cryptography';
 import { BlockHeader, Block } from '@liskhq/lisk-chain';
 
 type DeepPartial<T> = T extends Buffer
-	? T
+	? T // eslint-disable-next-line @typescript-eslint/ban-types
 	: T extends Function
 	? T
 	: T extends object

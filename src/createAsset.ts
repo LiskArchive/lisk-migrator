@@ -29,7 +29,7 @@ import {
 	TRANSACTION_ID_LENGTH,
 } from './constants';
 import { accountSchema, voteWeightsSchema, blockHeaderSchema } from './schemas';
-import { LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types';
+import { Account, LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types';
 
 import { addInteropModuleEntry } from './assets/interoperability';
 import { addLegacyModuleEntry } from './assets/legacy';
@@ -40,11 +40,11 @@ import { addPoSModuleEntry } from './assets/pos';
 export const keyString = (key: Buffer): string => key.toString('binary');
 
 export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema: Schema) => {
-	const data = await new Promise<any>((resolve, reject) => {
-		const result: any[] = [];
+	const data = await new Promise<Record<string, unknown>[]>((resolve, reject) => {
+		const result: Record<string, unknown>[] = [];
 		stream
 			.on('data', async ({ value }) => {
-				const decodedResult = await codec.decode(schema, value);
+				const decodedResult: Record<string, unknown> = await codec.decode(schema, value);
 				result.push(decodedResult);
 			})
 			.on('error', error => {
@@ -108,6 +108,7 @@ export const getTransactions = async (blockID: Buffer, db: KVStore) => {
 
 		return transactions;
 	} catch (error) {
+		console.warn(error);
 		return [];
 	}
 };
@@ -135,9 +136,14 @@ export class CreateAsset {
 			lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
 		});
 
-		const allAccounts = await getDataFromDBStream(accountStream, accountSchema);
+		const allAccounts = ((await getDataFromDBStream(
+			accountStream,
+			accountSchema,
+		)) as unknown) as Account[];
 		// TODO: Verify and remove
-		const accounts = allAccounts.filter((acc: any) => acc.address.length === BINARY_ADDRESS_LENGTH);
+		const accounts: Account[] = allAccounts.filter(
+			(acc: Account) => acc.address.length === BINARY_ADDRESS_LENGTH,
+		);
 
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 

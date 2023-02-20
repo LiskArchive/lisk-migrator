@@ -12,6 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { APIClient } from '@liskhq/lisk-api-client';
+import { PartialApplicationConfig } from 'lisk-framework';
 import { Port } from '../types';
 import { isPortAvailable } from './network';
 import { execAsync } from './process';
@@ -26,7 +27,7 @@ export const isLiskCoreV3Running = async (client: APIClient): Promise<boolean> =
 };
 
 export const startLiskCore = async (
-	_config: any,
+	_config: PartialApplicationConfig,
 	_previousLiskCoreVersion: string,
 	client: APIClient,
 	params: { network: string },

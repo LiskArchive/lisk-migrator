@@ -274,7 +274,7 @@ class LiskMigrator extends Command {
 				cli.action.start('Starting lisk-core v4');
 				try {
 					const network = networkConstant?.name as string;
-					await startLiskCore('PASS THE CONFIGURATION PATH', appVersion, client, { network });
+					await startLiskCore(configCoreV4, appVersion, client, { network });
 				} catch (err) {
 					this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
 				}

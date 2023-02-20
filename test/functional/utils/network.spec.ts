@@ -22,6 +22,7 @@ import { Port } from '../../../src/types';
 describe('isPortAvailable', () => {
 	it('Should return port availablity properly', async () => {
 		// Keep trying until a free port is found for testing
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const port: Port = Math.round(Math.random() * 65536);
 			try {
