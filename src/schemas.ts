@@ -16,7 +16,7 @@ import {
 	DEFAULT_HOST,
 	DEFAULT_PORT_P2P,
 	DEFAULT_PORT_RPC,
-	HASH_LENGTH,
+	SHA_256_HASH_LENGTH,
 	MAX_NUM_VALIDATORS,
 	BLS_PUBLIC_KEY_LENGTH,
 	CHAIN_ID_LENGTH,
@@ -696,8 +696,8 @@ export const outboxRootSchema = {
 	properties: {
 		root: {
 			dataType: 'bytes',
-			minLength: HASH_LENGTH,
-			maxLength: HASH_LENGTH,
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
 			fieldNumber: 1,
 		},
 	},
@@ -726,14 +726,14 @@ const chainDataJSONSchema = {
 				},
 				stateRoot: {
 					dataType: 'bytes',
-					minLength: HASH_LENGTH,
-					maxLength: HASH_LENGTH,
+					minLength: SHA_256_HASH_LENGTH,
+					maxLength: SHA_256_HASH_LENGTH,
 					fieldNumber: 3,
 				},
 				validatorsHash: {
 					dataType: 'bytes',
-					minLength: HASH_LENGTH,
-					maxLength: HASH_LENGTH,
+					minLength: SHA_256_HASH_LENGTH,
+					maxLength: SHA_256_HASH_LENGTH,
 					fieldNumber: 4,
 				},
 			},
@@ -755,8 +755,8 @@ const inboxOutboxProps = {
 		type: 'array',
 		items: {
 			dataType: 'bytes',
-			minLength: HASH_LENGTH,
-			maxLength: HASH_LENGTH,
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
 		},
 		fieldNumber: 1,
 	},
@@ -766,8 +766,8 @@ const inboxOutboxProps = {
 	},
 	root: {
 		dataType: 'bytes',
-		minLength: HASH_LENGTH,
-		maxLength: HASH_LENGTH,
+		minLength: SHA_256_HASH_LENGTH,
+		maxLength: SHA_256_HASH_LENGTH,
 		fieldNumber: 3,
 	},
 };
@@ -791,8 +791,8 @@ export const channelSchema = {
 		},
 		partnerChainOutboxRoot: {
 			dataType: 'bytes',
-			minLength: HASH_LENGTH,
-			maxLength: HASH_LENGTH,
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
 			fieldNumber: 3,
 		},
 		messageFeeTokenID: {
@@ -867,14 +867,14 @@ export const terminatedStateSchema = {
 	properties: {
 		stateRoot: {
 			dataType: 'bytes',
-			minLength: HASH_LENGTH,
-			maxLength: HASH_LENGTH,
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
 			fieldNumber: 1,
 		},
 		mainchainStateRoot: {
 			dataType: 'bytes',
-			minLength: HASH_LENGTH,
-			maxLength: HASH_LENGTH,
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
 			fieldNumber: 2,
 		},
 		initialized: {
@@ -891,8 +891,8 @@ export const terminatedOutboxSchema = {
 	properties: {
 		outboxRoot: {
 			dataType: 'bytes',
-			minLength: HASH_LENGTH,
-			maxLength: HASH_LENGTH,
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
 			fieldNumber: 1,
 		},
 		outboxSize: {

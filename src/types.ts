@@ -210,6 +210,10 @@ export interface Staker {
 	}[];
 }
 
+export interface StakerBuffer extends Omit<Staker, 'address'> {
+	address: Buffer;
+}
+
 export interface GenesisDataEntry {
 	initRounds: number;
 	initValidators: string[];

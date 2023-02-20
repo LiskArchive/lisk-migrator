@@ -39,9 +39,10 @@ import {
 	Staker,
 	Stake,
 	PoSStoreEntry,
+	StakerBuffer,
 } from '../types';
 
-const celing = (a: number, b: number) => {
+const ceiling = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');
 	return Math.floor((a + b - 1) / b);
 };
@@ -140,11 +141,11 @@ export const createStakersArray = async (
 	accounts: Account[],
 	tokenID: string,
 ): Promise<Staker[]> => {
-	const stakers: Staker[] = [];
+	const stakers: StakerBuffer[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
-			const staker: Staker = {
-				address: getLisk32AddressFromAddress(account.address),
+			const staker: StakerBuffer = {
+				address: account.address,
 				stakes: await getStakes(account, tokenID),
 				pendingUnlocks: account.dpos.unlocking.map(
 					({ delegateAddress, unvoteHeight, ...unlock }) => ({
@@ -157,7 +158,15 @@ export const createStakersArray = async (
 			stakers.push(staker);
 		}
 	}
-	return stakers;
+
+	const sortedStakers = stakers
+		.sort((a, b) => a.address.compare(b.address))
+		.map(({ address, ...entry }) => ({
+			...entry,
+			address: getLisk32AddressFromAddress(address),
+		}));
+
+	return sortedStakers;
 };
 
 export const createGenesisDataObj = async (
@@ -165,7 +174,7 @@ export const createGenesisDataObj = async (
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
 ): Promise<GenesisDataEntry> => {
-	const r = celing(snapshotHeight, ROUND_LENGTH);
+	const r = ceiling(snapshotHeight, ROUND_LENGTH);
 
 	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
 		(voteWeight: VoteWeight) => voteWeight.round === r - 2,

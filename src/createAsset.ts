@@ -25,6 +25,8 @@ import {
 	DB_KEY_TRANSACTIONS_BLOCK_ID,
 	DB_KEY_TRANSACTIONS_ID,
 	DB_KEY_BLOCKS_ID,
+	BINARY_ADDRESS_LENGTH,
+	TRANSACTION_ID_LENGTH,
 } from './constants';
 import { accountSchema, voteWeightsSchema, blockHeaderSchema } from './schemas';
 import { LegacyStoreEntry, VoteWeightsWrapper, GenesisAssetEntry } from './types';
@@ -57,10 +59,10 @@ export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema:
 
 export const getBlockHeadersByIDs = async (
 	db: KVStore,
-	arrayOfBlockIds: ReadonlyArray<Buffer>,
+	blockIDs: ReadonlyArray<Buffer>,
 ): Promise<Buffer[]> => {
 	const blocks = [];
-	for (const id of arrayOfBlockIds) {
+	for (const id of blockIDs) {
 		const block = await db.get(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`);
 		blocks.push(block);
 	}
@@ -88,9 +90,9 @@ export const getTransactions = async (blockID: Buffer, db: KVStore) => {
 	try {
 		const txIDs: Buffer[] = [];
 		const ids = await db.get(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${keyString(blockID)}`);
-		const idLength = 32;
-		for (let i = 0; i < ids.length; i += idLength) {
-			txIDs.push(ids.slice(i, i + idLength));
+		const txIDLength = TRANSACTION_ID_LENGTH;
+		for (let i = 0; i < ids.length; i += txIDLength) {
+			txIDs.push(ids.slice(i, i + txIDLength));
 		}
 		if (txIDs.length === 0) {
 			return [];
@@ -135,7 +137,7 @@ export class CreateAsset {
 
 		const allAccounts = await getDataFromDBStream(accountStream, accountSchema);
 		// TODO: Verify and remove
-		const accounts = allAccounts.filter((acc: any) => acc.address.length === 20);
+		const accounts = allAccounts.filter((acc: any) => acc.address.length === BINARY_ADDRESS_LENGTH);
 
 		const authModuleAssets = await addAuthModuleEntry(accounts);
 
@@ -148,8 +150,8 @@ export class CreateAsset {
 			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 		});
 
-		const arrayOfBlockIds = await getBlocksIDsFromDBStream(blocksStream);
-		const blocksHeader = await getBlockHeadersByIDs(this._db, arrayOfBlockIds);
+		const blockIDs: Buffer[] = await getBlocksIDsFromDBStream(blocksStream);
+		const blocksHeader = await getBlockHeadersByIDs(this._db, blockIDs);
 
 		const blocks = [] as Block[];
 		for (const header of blocksHeader) {

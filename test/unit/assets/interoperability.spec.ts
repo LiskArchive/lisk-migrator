@@ -13,6 +13,7 @@
  */
 import { addInteropModuleEntry } from '../../../src/assets/interoperability';
 import {
+	CHAIN_ID_LENGTH,
 	CHAIN_NAME_MAINCHAIN,
 	EMPTY_BYTES,
 	MODULE_NAME_INTEROPERABILITY,
@@ -25,14 +26,13 @@ import {
 
 describe('Build assets/interoperability', () => {
 	const tokenID = '0400000000000000';
-	const chainID = tokenID.slice(0, 8);
+	const chainID = tokenID.slice(0, CHAIN_ID_LENGTH * 2);
 
 	it('should create interoperability module asset', async () => {
 		const response: GenesisAssetEntry = await addInteropModuleEntry(tokenID);
-		const ownChainDataSubstore = (response.data
-			.ownChainDataSubstore as unknown) as OwnChainDataSubstore;
-		const registeredNamesSubstore = (response.data
-			.registeredNamesSubstore as unknown) as RegisteredNamesSubstore;
+		const ownChainDataSubstore = response.data.ownChainDataSubstore as OwnChainDataSubstore;
+		const registeredNamesSubstore = response.data
+			.registeredNamesSubstore as RegisteredNamesSubstore;
 
 		expect(response.module).toEqual(MODULE_NAME_INTEROPERABILITY);
 		expect(Object.getOwnPropertyNames(response.data)).toEqual([

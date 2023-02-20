@@ -11,12 +11,18 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { MODULE_NAME_INTEROPERABILITY, CHAIN_NAME_MAINCHAIN, EMPTY_BYTES } from '../constants';
+import {
+	MODULE_NAME_INTEROPERABILITY,
+	CHAIN_ID_LENGTH,
+	CHAIN_NAME_MAINCHAIN,
+	EMPTY_BYTES,
+} from '../constants';
 import { genesisInteroperabilitySchema } from '../schemas';
 import { GenesisAssetEntry, GenesisInteroperability } from '../types';
 
 export const addInteropModuleEntry = async (tokenID: string): Promise<GenesisAssetEntry> => {
-	const chainID = tokenID.slice(0, 8);
+	// CHAIN_ID_LENGTH * 2 because of hex representation of bytes
+	const chainID = tokenID.slice(0, CHAIN_ID_LENGTH * 2);
 	const chainIDBuffer = Buffer.from(chainID, 'hex');
 
 	const interopObj: GenesisInteroperability = {
@@ -36,12 +42,10 @@ export const addInteropModuleEntry = async (tokenID: string): Promise<GenesisAss
 		nonce: BigInt('0'),
 	};
 
-	interopObj.ownChainDataSubstore = [
-		{
-			storeKey: EMPTY_BYTES,
-			storeValue: ownChainAccount,
-		},
-	];
+	interopObj.ownChainDataSubstore.push({
+		storeKey: EMPTY_BYTES,
+		storeValue: ownChainAccount,
+	});
 
 	const registeredNamesStore = { chainID: chainIDBuffer };
 

@@ -154,7 +154,7 @@ describe('Build assets/pos', () => {
 		expect(stakers).toBeInstanceOf(Array);
 		stakers.forEach(staker => {
 			expect(staker.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(staker)).toEqual(['address', 'stakes', 'pendingUnlocks']);
+			expect(Object.getOwnPropertyNames(staker)).toEqual(['stakes', 'pendingUnlocks', 'address']);
 			staker.stakes.forEach(stake =>
 				expect(stake.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
 			);
