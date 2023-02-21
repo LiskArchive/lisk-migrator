@@ -90,9 +90,8 @@ export const getTransactions = async (blockID: Buffer, db: KVStore) => {
 	try {
 		const txIDs: Buffer[] = [];
 		const ids = await db.get(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${keyString(blockID)}`);
-		const txIDLength = TRANSACTION_ID_LENGTH;
-		for (let i = 0; i < ids.length; i += txIDLength) {
-			txIDs.push(ids.slice(i, i + txIDLength));
+		for (let idx = 0; idx < ids.length; idx += TRANSACTION_ID_LENGTH) {
+			txIDs.push(ids.slice(idx, idx + TRANSACTION_ID_LENGTH));
 		}
 		if (txIDs.length === 0) {
 			return [];
