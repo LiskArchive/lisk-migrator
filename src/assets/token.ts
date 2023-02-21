@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { tokenGenesisStoreSchema } from 'lisk-framework';
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import {
@@ -30,7 +31,6 @@ import {
 	UserSubstoreEntry,
 	UserSubstoreEntryBuffer,
 } from '../types';
-import { genesisTokenStoreSchema } from '../schemas';
 
 const AMOUNT_ZERO = BigInt('0');
 let legacyReserveAmount: bigint = AMOUNT_ZERO;
@@ -74,6 +74,7 @@ export const createLegacyReserveAccount = async (
 		module: MODULE_NAME_LEGACY,
 		amount: String(legacyReserveAmount),
 	});
+	lockedBalances.sort((a, b) => a.module.localeCompare(b.module, 'en'));
 	const legacyReserve = {
 		address: ADDRESS_LEGACY_RESERVE,
 		tokenID: tokenIDBuffer,
@@ -96,13 +97,16 @@ export const createUserSubstoreArray = async (
 
 	for (const account of accounts) {
 		if (!ADDRESS_LEGACY_RESERVE.equals(account.address)) {
-			const userObj = {
-				address: account.address,
-				tokenID: tokenIDBuffer,
-				availableBalance: String(account.token.balance),
-				lockedBalances: await getLockedBalances(account),
-			};
-			userSubstore.push(userObj);
+			const lockedBalances = await getLockedBalances(account);
+			if (account.token.balance !== AMOUNT_ZERO || lockedBalances.length) {
+				const userObj = {
+					address: account.address,
+					tokenID: tokenIDBuffer,
+					availableBalance: String(account.token.balance),
+					lockedBalances,
+				};
+				userSubstore.push(userObj);
+			}
 		}
 	}
 
@@ -158,6 +162,6 @@ export const addTokenModuleEntry = async (
 	return {
 		module: MODULE_NAME_TOKEN,
 		data: (tokenObj as unknown) as Record<string, unknown>,
-		schema: genesisTokenStoreSchema,
+		schema: tokenGenesisStoreSchema,
 	};
 };

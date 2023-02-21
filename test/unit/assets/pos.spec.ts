@@ -31,8 +31,7 @@ describe('Build assets/pos', () => {
 	let accounts: Account[];
 	let blocks: Block[];
 	let delegates: VoteWeightsWrapper;
-	const snapshotHeight = 16281107;
-	const snapshotHeightPrevious = 16270293;
+	const snapshotHeight = 10815;
 
 	beforeAll(async () => {
 		blocks = generateBlocks({
@@ -155,7 +154,7 @@ describe('Build assets/pos', () => {
 		expect(stakers).toBeInstanceOf(Array);
 		stakers.forEach(staker => {
 			expect(staker.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(staker)).toEqual(['address', 'stakes', 'pendingUnlocks']);
+			expect(Object.getOwnPropertyNames(staker)).toEqual(['stakes', 'pendingUnlocks', 'address']);
 			staker.stakes.forEach(stake =>
 				expect(stake.validatorAddress).toEqual(expect.stringMatching(ADDRESS_LISK32)),
 			);
@@ -166,12 +165,7 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create createGenesisDataObj', async () => {
-		const genesisDataObj = await createGenesisDataObj(
-			accounts,
-			delegates,
-			snapshotHeight,
-			snapshotHeightPrevious,
-		);
+		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
 
 		// Assert
 		genesisDataObj.initValidators.forEach(address => {
@@ -186,7 +180,6 @@ describe('Build assets/pos', () => {
 			blocks,
 			delegates,
 			snapshotHeight,
-			snapshotHeightPrevious,
 			tokenID,
 		);
 

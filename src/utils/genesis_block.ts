@@ -39,6 +39,7 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 };
 
 export const createGenesisBlock = async (
+	// TODO: Update type any once GenesisBlockGenerateInput exported by SDK
 	app: any,
 	assets: GenesisAssetEntry[],
 	blockAtSnapshotHeight: BlockVersion3,

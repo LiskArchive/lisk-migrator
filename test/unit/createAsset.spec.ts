@@ -28,6 +28,7 @@ import {
 	MODULE_NAME_AUTH,
 	MODULE_NAME_TOKEN,
 	MODULE_NAME_POS,
+	MODULE_NAME_INTEROPERABILITY,
 } from '../../src/constants';
 import { accountSchema, unregisteredAddressesSchema, voteWeightsSchema } from '../../src/schemas';
 
@@ -55,8 +56,8 @@ describe('Build assets/legacy', () => {
 	let encodedUnregisteredAddresses: Buffer;
 	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
-	const snapshotHeight = 16281107;
-	const snapshotHeightPrevious = 16270293;
+	const snapshotHeight = 10815;
+	const snapshotHeightPrevious = 5000;
 	const tokenID = '0400000000000000';
 
 	interface Accounts {
@@ -200,11 +201,17 @@ describe('Build assets/legacy', () => {
 
 			const response = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
 
-			const moduleList = [MODULE_NAME_LEGACY, MODULE_NAME_AUTH, MODULE_NAME_TOKEN, MODULE_NAME_POS];
+			const moduleList = [
+				MODULE_NAME_LEGACY,
+				MODULE_NAME_AUTH,
+				MODULE_NAME_TOKEN,
+				MODULE_NAME_POS,
+				MODULE_NAME_INTEROPERABILITY,
+			];
 			// Assert
 			expect(db.get).toHaveBeenCalledTimes(2);
 			expect(db.createReadStream).toHaveBeenCalledTimes(2);
-			expect(response).toHaveLength(4);
+			expect(response).toHaveLength(moduleList.length);
 
 			response.forEach((asset: GenesisAssetEntry) => expect(moduleList).toContain(asset.module));
 		});

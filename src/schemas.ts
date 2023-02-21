@@ -12,12 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import {
-	MAX_NUMBER_BYTES_Q96,
 	TOKEN_ID_LENGTH,
-	MAX_COMMISSION,
 	DEFAULT_HOST,
 	DEFAULT_PORT_P2P,
 	DEFAULT_PORT_RPC,
+	SHA_256_HASH_LENGTH,
+	MAX_NUM_VALIDATORS,
+	BLS_PUBLIC_KEY_LENGTH,
+	CHAIN_ID_LENGTH,
 } from './constants';
 
 export const unregisteredAddressesSchema = {
@@ -301,329 +303,6 @@ export const voteWeightsSchema = {
 		},
 	},
 	required: ['voteWeights'],
-};
-
-export const genesisTokenStoreSchema = {
-	$id: '/token/module/genesis',
-	type: 'object',
-	required: ['userSubstore', 'supplySubstore', 'escrowSubstore', 'supportedTokensSubstore'],
-	properties: {
-		userSubstore: {
-			type: 'array',
-			fieldNumber: 1,
-			items: {
-				type: 'object',
-				required: ['address', 'tokenID', 'availableBalance', 'lockedBalances'],
-				properties: {
-					address: {
-						dataType: 'bytes',
-						format: 'lisk32',
-						fieldNumber: 1,
-					},
-					tokenID: {
-						dataType: 'bytes',
-						fieldNumber: 2,
-						minLength: 8,
-						maxLength: 8,
-					},
-					availableBalance: {
-						dataType: 'uint64',
-						fieldNumber: 3,
-					},
-					lockedBalances: {
-						type: 'array',
-						fieldNumber: 4,
-						items: {
-							type: 'object',
-							required: ['module', 'amount'],
-							properties: {
-								module: {
-									dataType: 'string',
-									fieldNumber: 1,
-								},
-								amount: {
-									dataType: 'uint64',
-									fieldNumber: 2,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		supplySubstore: {
-			type: 'array',
-			fieldNumber: 2,
-			items: {
-				type: 'object',
-				required: ['tokenID', 'totalSupply'],
-				properties: {
-					tokenID: {
-						dataType: 'bytes',
-						fieldNumber: 1,
-						minLength: 8,
-						maxLength: 8,
-					},
-					totalSupply: {
-						dataType: 'uint64',
-						fieldNumber: 2,
-					},
-				},
-			},
-		},
-		escrowSubstore: {
-			type: 'array',
-			fieldNumber: 3,
-			items: {
-				type: 'object',
-				required: ['escrowChainID', 'tokenID', 'amount'],
-				properties: {
-					escrowChainID: {
-						dataType: 'bytes',
-						fieldNumber: 1,
-						minLength: 4,
-						maxLength: 4,
-					},
-					tokenID: {
-						dataType: 'bytes',
-						fieldNumber: 2,
-						minLength: 8,
-						maxLength: 8,
-					},
-					amount: {
-						dataType: 'uint64',
-						fieldNumber: 3,
-					},
-				},
-			},
-		},
-		supportedTokensSubstore: {
-			type: 'array',
-			fieldNumber: 4,
-			items: {
-				type: 'object',
-				required: ['chainID', 'supportedTokenIDs'],
-				properties: {
-					chainID: {
-						dataType: 'bytes',
-						minLength: 4,
-						maxLength: 4,
-						fieldNumber: 1,
-					},
-					supportedTokenIDs: {
-						type: 'array',
-						fieldNumber: 2,
-						items: {
-							dataType: 'bytes',
-							minLength: 8,
-							maxLength: 8,
-						},
-					},
-				},
-			},
-		},
-	},
-};
-
-export const genesisPoSSchema = {
-	$id: '/pos/module/genesis',
-	type: 'object',
-	required: ['validators', 'stakers', 'genesisData'],
-	properties: {
-		validators: {
-			type: 'array',
-			fieldNumber: 1,
-			items: {
-				type: 'object',
-				required: [
-					'address',
-					'name',
-					'blsKey',
-					'proofOfPossession',
-					'generatorKey',
-					'lastGeneratedHeight',
-					'isBanned',
-					'reportMisbehaviorHeights',
-					'consecutiveMissedBlocks',
-					'commission',
-					'lastCommissionIncreaseHeight',
-					'sharingCoefficients',
-				],
-				properties: {
-					address: {
-						dataType: 'bytes',
-						format: 'lisk32',
-						fieldNumber: 1,
-					},
-					name: {
-						dataType: 'string',
-						fieldNumber: 2,
-						minLength: 1,
-						maxLength: 20,
-					},
-					blsKey: {
-						dataType: 'bytes',
-						fieldNumber: 3,
-						minLength: 48,
-						maxLength: 48,
-					},
-					proofOfPossession: {
-						dataType: 'bytes',
-						fieldNumber: 4,
-						minLength: 96,
-						maxLength: 96,
-					},
-					generatorKey: {
-						dataType: 'bytes',
-						fieldNumber: 5,
-						minLength: 32,
-						maxLength: 32,
-					},
-					lastGeneratedHeight: {
-						dataType: 'uint32',
-						fieldNumber: 6,
-					},
-					isBanned: {
-						dataType: 'boolean',
-						fieldNumber: 7,
-					},
-					reportMisbehaviorHeights: {
-						type: 'array',
-						fieldNumber: 8,
-						items: { dataType: 'uint32' },
-					},
-					consecutiveMissedBlocks: {
-						dataType: 'uint32',
-						fieldNumber: 9,
-					},
-					commission: {
-						dataType: 'uint32',
-						fieldNumber: 10,
-						maximum: MAX_COMMISSION,
-					},
-					lastCommissionIncreaseHeight: {
-						dataType: 'uint32',
-						fieldNumber: 11,
-					},
-					sharingCoefficients: {
-						type: 'array',
-						fieldNumber: 12,
-						items: {
-							type: 'object',
-							required: ['tokenID', 'coefficient'],
-							properties: {
-								tokenID: {
-									dataType: 'bytes',
-									minLength: TOKEN_ID_LENGTH,
-									maxLength: TOKEN_ID_LENGTH,
-									fieldNumber: 1,
-								},
-								coefficient: {
-									dataType: 'bytes',
-									maxLength: MAX_NUMBER_BYTES_Q96,
-									fieldNumber: 2,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		stakers: {
-			type: 'array',
-			fieldNumber: 2,
-			items: {
-				type: 'object',
-				required: ['address', 'stakes', 'pendingUnlocks'],
-				properties: {
-					address: {
-						dataType: 'bytes',
-						format: 'lisk32',
-						fieldNumber: 1,
-					},
-					stakes: {
-						type: 'array',
-						fieldNumber: 2,
-						items: {
-							type: 'object',
-							required: ['validatorAddress', 'amount', 'sharingCoefficients'],
-							properties: {
-								validatorAddress: {
-									dataType: 'bytes',
-									format: 'lisk32',
-									fieldNumber: 1,
-								},
-								amount: {
-									dataType: 'uint64',
-									fieldNumber: 2,
-								},
-								sharingCoefficients: {
-									type: 'array',
-									fieldNumber: 3,
-									items: {
-										type: 'object',
-										required: ['tokenID', 'coefficient'],
-										properties: {
-											tokenID: {
-												dataType: 'bytes',
-												minLength: TOKEN_ID_LENGTH,
-												maxLength: TOKEN_ID_LENGTH,
-												fieldNumber: 1,
-											},
-											coefficient: {
-												dataType: 'bytes',
-												maxLength: MAX_NUMBER_BYTES_Q96,
-												fieldNumber: 2,
-											},
-										},
-									},
-								},
-							},
-						},
-					},
-					pendingUnlocks: {
-						type: 'array',
-						fieldNumber: 3,
-						items: {
-							type: 'object',
-							required: ['validatorAddress', 'amount', 'unstakeHeight'],
-							properties: {
-								validatorAddress: {
-									dataType: 'bytes',
-									fieldNumber: 1,
-									format: 'lisk32',
-								},
-								amount: {
-									dataType: 'uint64',
-									fieldNumber: 2,
-								},
-								unstakeHeight: {
-									dataType: 'uint32',
-									fieldNumber: 3,
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-		genesisData: {
-			type: 'object',
-			fieldNumber: 3,
-			required: ['initRounds', 'initValidators'],
-			properties: {
-				initRounds: {
-					dataType: 'uint32',
-					fieldNumber: 1,
-				},
-				initValidators: {
-					type: 'array',
-					fieldNumber: 2,
-					items: { dataType: 'bytes', format: 'lisk32' },
-				},
-			},
-		},
-	},
 };
 
 export const genesisLegacyStoreSchema = {
@@ -1007,5 +686,398 @@ export const applicationConfigSchema = {
 		},
 		modules: {},
 		plugins: {},
+	},
+};
+
+export const outboxRootSchema = {
+	$id: '/modules/interoperability/outbox',
+	type: 'object',
+	required: ['root'],
+	properties: {
+		root: {
+			dataType: 'bytes',
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
+			fieldNumber: 1,
+		},
+	},
+};
+
+const chainDataJSONSchema = {
+	type: 'object',
+	required: ['name', 'lastCertificate', 'status'],
+	properties: {
+		name: {
+			dataType: 'string',
+			fieldNumber: 1,
+		},
+		lastCertificate: {
+			type: 'object',
+			fieldNumber: 2,
+			required: ['height', 'timestamp', 'stateRoot', 'validatorsHash'],
+			properties: {
+				height: {
+					dataType: 'uint32',
+					fieldNumber: 1,
+				},
+				timestamp: {
+					dataType: 'uint32',
+					fieldNumber: 2,
+				},
+				stateRoot: {
+					dataType: 'bytes',
+					minLength: SHA_256_HASH_LENGTH,
+					maxLength: SHA_256_HASH_LENGTH,
+					fieldNumber: 3,
+				},
+				validatorsHash: {
+					dataType: 'bytes',
+					minLength: SHA_256_HASH_LENGTH,
+					maxLength: SHA_256_HASH_LENGTH,
+					fieldNumber: 4,
+				},
+			},
+		},
+		status: {
+			dataType: 'uint32',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const chainDataSchema = {
+	$id: '/modules/interoperability/chainData',
+	...chainDataJSONSchema,
+};
+
+const inboxOutboxProps = {
+	appendPath: {
+		type: 'array',
+		items: {
+			dataType: 'bytes',
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
+		},
+		fieldNumber: 1,
+	},
+	size: {
+		dataType: 'uint32',
+		fieldNumber: 2,
+	},
+	root: {
+		dataType: 'bytes',
+		minLength: SHA_256_HASH_LENGTH,
+		maxLength: SHA_256_HASH_LENGTH,
+		fieldNumber: 3,
+	},
+};
+
+export const channelSchema = {
+	$id: '/modules/interoperability/channel',
+	type: 'object',
+	required: ['inbox', 'outbox', 'partnerChainOutboxRoot', 'messageFeeTokenID'],
+	properties: {
+		inbox: {
+			type: 'object',
+			fieldNumber: 1,
+			required: ['appendPath', 'size', 'root'],
+			properties: inboxOutboxProps,
+		},
+		outbox: {
+			type: 'object',
+			fieldNumber: 2,
+			required: ['appendPath', 'size', 'root'],
+			properties: inboxOutboxProps,
+		},
+		partnerChainOutboxRoot: {
+			dataType: 'bytes',
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
+			fieldNumber: 3,
+		},
+		messageFeeTokenID: {
+			dataType: 'bytes',
+			minLength: TOKEN_ID_LENGTH,
+			maxLength: TOKEN_ID_LENGTH,
+			fieldNumber: 4,
+		},
+	},
+};
+
+export const chainValidatorsSchema = {
+	$id: '/modules/interoperability/chainValidators',
+	type: 'object',
+	required: ['activeValidators', 'certificateThreshold'],
+	properties: {
+		activeValidators: {
+			type: 'array',
+			fieldNumber: 1,
+			minItems: 1,
+			maxItems: MAX_NUM_VALIDATORS,
+			items: {
+				type: 'object',
+				required: ['blsKey', 'bftWeight'],
+				properties: {
+					blsKey: {
+						dataType: 'bytes',
+						minLength: BLS_PUBLIC_KEY_LENGTH,
+						maxLength: BLS_PUBLIC_KEY_LENGTH,
+						fieldNumber: 1,
+					},
+					bftWeight: {
+						dataType: 'uint64',
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		certificateThreshold: {
+			dataType: 'uint64',
+			fieldNumber: 2,
+		},
+	},
+};
+
+export const ownChainAccountSchema = {
+	$id: '/modules/interoperability/ownChainAccount',
+	type: 'object',
+	required: ['name', 'chainID', 'nonce'],
+	properties: {
+		name: {
+			dataType: 'string',
+			fieldNumber: 1,
+		},
+		chainID: {
+			dataType: 'bytes',
+			minLength: CHAIN_ID_LENGTH,
+			maxLength: CHAIN_ID_LENGTH,
+			fieldNumber: 2,
+		},
+		nonce: {
+			dataType: 'uint64',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const terminatedStateSchema = {
+	$id: '/modules/interoperability/terminatedState',
+	type: 'object',
+	required: ['stateRoot', 'mainchainStateRoot', 'initialized'],
+	properties: {
+		stateRoot: {
+			dataType: 'bytes',
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
+			fieldNumber: 1,
+		},
+		mainchainStateRoot: {
+			dataType: 'bytes',
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
+			fieldNumber: 2,
+		},
+		initialized: {
+			dataType: 'boolean',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const terminatedOutboxSchema = {
+	$id: '/modules/interoperability/terminatedOutbox',
+	type: 'object',
+	required: ['outboxRoot', 'outboxSize', 'partnerChainInboxSize'],
+	properties: {
+		outboxRoot: {
+			dataType: 'bytes',
+			minLength: SHA_256_HASH_LENGTH,
+			maxLength: SHA_256_HASH_LENGTH,
+			fieldNumber: 1,
+		},
+		outboxSize: {
+			dataType: 'uint32',
+			fieldNumber: 2,
+		},
+		partnerChainInboxSize: {
+			dataType: 'uint32',
+			fieldNumber: 3,
+		},
+	},
+};
+
+export const registeredNamesSchema = {
+	$id: '/modules/interoperability/chainId',
+	type: 'object',
+	required: ['chainID'],
+	properties: {
+		chainID: {
+			dataType: 'bytes',
+			minLength: CHAIN_ID_LENGTH,
+			maxLength: CHAIN_ID_LENGTH,
+			fieldNumber: 1,
+		},
+	},
+};
+
+// TODO: Import genesis store schema directly from SDK once exported
+export const genesisInteroperabilitySchema = {
+	$id: '/interoperability/module/genesis',
+	type: 'object',
+	required: [
+		'outboxRootSubstore',
+		'chainDataSubstore',
+		'channelDataSubstore',
+		'chainValidatorsSubstore',
+		'ownChainDataSubstore',
+		'terminatedStateSubstore',
+		'terminatedOutboxSubstore',
+		'registeredNamesSubstore',
+	],
+	properties: {
+		outboxRootSubstore: {
+			type: 'array',
+			fieldNumber: 1,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...outboxRootSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		chainDataSubstore: {
+			type: 'array',
+			fieldNumber: 2,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...chainDataSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		channelDataSubstore: {
+			type: 'array',
+			fieldNumber: 3,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...channelSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		chainValidatorsSubstore: {
+			type: 'array',
+			fieldNumber: 4,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						fieldNumber: 2,
+						...chainValidatorsSchema,
+					},
+				},
+			},
+		},
+		ownChainDataSubstore: {
+			type: 'array',
+			fieldNumber: 5,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...ownChainAccountSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		terminatedStateSubstore: {
+			type: 'array',
+			fieldNumber: 6,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...terminatedStateSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		terminatedOutboxSubstore: {
+			type: 'array',
+			fieldNumber: 7,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...terminatedOutboxSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
+		registeredNamesSubstore: {
+			type: 'array',
+			fieldNumber: 8,
+			items: {
+				type: 'object',
+				required: ['storeKey', 'storeValue'],
+				properties: {
+					storeKey: {
+						dataType: 'bytes',
+						fieldNumber: 1,
+					},
+					storeValue: {
+						...registeredNamesSchema,
+						fieldNumber: 2,
+					},
+				},
+			},
+		},
 	},
 };

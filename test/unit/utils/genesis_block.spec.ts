@@ -57,8 +57,8 @@ describe('Create genesis block', () => {
 	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
 	let app: any;
-	const snapshotHeight = 16281107;
-	const snapshotHeightPrevious = 16270293;
+	const snapshotHeight = 10815;
+	const snapshotHeightPrevious = 5000;
 	const tokenID = '0400000000000000';
 	const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
 
@@ -84,7 +84,14 @@ describe('Create genesis block', () => {
 		beforeAll(async () => {
 			db = new KVStore('testDB');
 			createAsset = new CreateAsset(db);
-			app = Application.defaultApplication({ genesis: { chainID: '04000000' } });
+			app = Application.defaultApplication({
+				genesis: { chainID: '04000000' },
+				modules: {
+					pos: {
+						useInvalidBLSKey: true,
+					},
+				},
+			});
 			[block] = generateBlocks({
 				startHeight: 16281110,
 				numberOfBlocks: 1,

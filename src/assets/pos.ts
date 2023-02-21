@@ -11,11 +11,9 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { posGenesisStoreSchema } from 'lisk-framework';
 
-import {
-	getLisk32AddressFromAddress,
-	getBase32AddressFromPublicKey,
-} from '@liskhq/lisk-cryptography';
+import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
 import { Block } from '@liskhq/lisk-chain';
 
 import {
@@ -41,8 +39,13 @@ import {
 	Staker,
 	Stake,
 	PoSStoreEntry,
+	StakerBuffer,
 } from '../types';
-import { genesisPoSSchema } from '../schemas';
+
+const ceiling = (a: number, b: number) => {
+	if (b === 0) throw new Error('Can not divide by 0.');
+	return Math.floor((a + b - 1) / b);
+};
 
 export const getValidatorKeys = async (
 	blocks: Block[],
@@ -50,10 +53,12 @@ export const getValidatorKeys = async (
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 	for (const block of blocks) {
-		const base32Address: string = getBase32AddressFromPublicKey(block.header.generatorPublicKey);
+		const base32Address: string = getAddressFromPublicKey(block.header.generatorPublicKey).toString(
+			'hex',
+		);
 		keys[base32Address] = block.header.generatorPublicKey.toString('hex');
 		for (const trx of block.payload) {
-			const trxSenderAddress: string = getBase32AddressFromPublicKey(trx.senderPublicKey);
+			const trxSenderAddress: string = getAddressFromPublicKey(trx.senderPublicKey).toString('hex');
 			const account: Account | undefined = accounts.find(
 				acc => acc.address.toString('hex') === trxSenderAddress,
 			);
@@ -90,10 +95,12 @@ export const createValidatorsArray = async (
 				consecutiveMissedBlocks: account.dpos.delegate.consecutiveMissedBlocks,
 				lastCommissionIncreaseHeight: snapshotHeight,
 				commission: MAX_COMMISSION,
-				sharingCoefficients: {
-					tokenID,
-					coefficient: Q96_ZERO,
-				},
+				sharingCoefficients: [
+					{
+						tokenID,
+						coefficient: Q96_ZERO,
+					},
+				],
 			});
 			validators.push(validator);
 		}
@@ -134,11 +141,11 @@ export const createStakersArray = async (
 	accounts: Account[],
 	tokenID: string,
 ): Promise<Staker[]> => {
-	const stakers: Staker[] = [];
+	const stakers: StakerBuffer[] = [];
 	for (const account of accounts) {
 		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
-			const staker: Staker = {
-				address: getLisk32AddressFromAddress(account.address),
+			const staker: StakerBuffer = {
+				address: account.address,
 				stakes: await getStakes(account, tokenID),
 				pendingUnlocks: account.dpos.unlocking.map(
 					({ delegateAddress, unvoteHeight, ...unlock }) => ({
@@ -151,19 +158,28 @@ export const createStakersArray = async (
 			stakers.push(staker);
 		}
 	}
-	return stakers;
+
+	const sortedStakers = stakers
+		.sort((a, b) => a.address.compare(b.address))
+		.map(({ address, ...entry }) => ({
+			...entry,
+			address: getLisk32AddressFromAddress(address),
+		}));
+
+	return sortedStakers;
 };
 
 export const createGenesisDataObj = async (
 	accounts: Account[],
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
-	snapshotHeightPrevious: number,
 ): Promise<GenesisDataEntry> => {
-	const r = Math.ceil((snapshotHeight - snapshotHeightPrevious) / ROUND_LENGTH);
+	const r = ceiling(snapshotHeight, ROUND_LENGTH);
+
 	const voteWeightR2 = delegatesVoteWeights.voteWeights.find(
 		(voteWeight: VoteWeight) => voteWeight.round === r - 2,
 	);
+
 	if (!voteWeightR2 || voteWeightR2.delegates.length === 0) {
 		throw new Error(`Top delegates for round ${r - 2}(r-2)  unavailable, cannot proceed.`);
 	}
@@ -197,23 +213,17 @@ export const addPoSModuleEntry = async (
 	blocks: Block[],
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
-	snapshotHeightPrevious: number,
 	tokenID: string,
 ): Promise<GenesisAssetEntry> => {
 	const posObj: PoSStoreEntry = {
 		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
 		stakers: await createStakersArray(accounts, tokenID),
-		genesisData: await createGenesisDataObj(
-			accounts,
-			delegatesVoteWeights,
-			snapshotHeight,
-			snapshotHeightPrevious,
-		),
+		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
 	};
 
 	return {
 		module: MODULE_NAME_POS,
 		data: (posObj as unknown) as Record<string, unknown>,
-		schema: genesisPoSSchema,
+		schema: posGenesisStoreSchema,
 	};
 };
