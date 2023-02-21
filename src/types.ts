@@ -169,7 +169,7 @@ export interface TokenStoreEntry {
 
 export interface SharingCoefficient {
 	tokenID: string;
-	coefficient: string;
+	coefficient: Buffer;
 }
 
 export interface ValidatorEntry {
