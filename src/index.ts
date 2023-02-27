@@ -36,6 +36,8 @@ import {
 	getBlockIDAtHeight,
 	getTokenIDLsk,
 	getHeightPreviousSnapshotBlock,
+	setTokenIDLsk,
+	setHeightPreviousSnapshotBlock,
 } from './utils/chain';
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { ConfigV3 } from './types';
@@ -117,23 +119,37 @@ class LiskMigrator extends Command {
 			description:
 				'Path where the state snapshot will be created. When not supplied, defaults to the current directory.',
 		}),
+		// TODO: Remove once createSnapshot command is available
+		'use-existing-snapshot': flagsParser.boolean({
+			required: false,
+			env: 'AUTO_DOWNLOADUSE_EXISTING_SNAPSHOT_LISK_CORE',
+			description: 'Use existing database snapshot.',
+			default: false,
+		}),
 	};
 
 	public async run(): Promise<void> {
 		try {
 			const { flags } = this.parse(LiskMigrator);
 			const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
-			const outputPath = flags.output ?? join(process.cwd(), 'genesis_block');
+			const outputPath = flags.output ?? join(__dirname);
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const compatibleVersions = flags['min-compatible-version'];
-			const snapshotPath = flags['snapshot-path'] ?? process.cwd();
+			const useExistingSnapshot = flags['use-existing-snapshot'];
+			const snapshotPath = ((useExistingSnapshot
+				? flags['snapshot-path']
+				: flags['snapshot-path'] ?? process.cwd()) as unknown) as string;
 			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 			let config: ConfigV3;
 			let networkConstant;
+
+			if (useExistingSnapshot && !snapshotPath) {
+				this.error(" Snapshot path is required when 'use-existing-snapshot' set to true");
+			}
 
 			cli.action.start(
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -177,39 +193,43 @@ class LiskMigrator extends Command {
 				config = await getConfig(liskCorePath);
 			}
 
-			await observeChainHeight({
-				label: 'Waiting for snapshot height',
-				liskCorePath,
-				height: snapshotHeight,
-				delay: 500,
-				isFinal: false,
-			});
+			if (!useExistingSnapshot) {
+				await observeChainHeight({
+					label: 'Waiting for snapshot height',
+					liskCorePath,
+					height: snapshotHeight,
+					delay: 500,
+					isFinal: false,
+				});
 
-			await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
+				await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
 
-			// TODO: Placeholder to issue createSnapshot command from lisk-core
-			cli.action.start('Creating snapshot');
-			await createSnapshot(liskCorePath, snapshotPath);
-			cli.action.stop();
+				// TODO: Placeholder to issue createSnapshot command from lisk-core
+				cli.action.start('Creating snapshot');
+				await createSnapshot(liskCorePath, snapshotPath);
+				cli.action.stop();
 
-			await observeChainHeight({
-				label: 'Waiting for snapshot height to be finalized',
-				liskCorePath,
-				height: snapshotHeight,
-				delay: 500,
-				isFinal: true,
-			});
+				await observeChainHeight({
+					label: 'Waiting for snapshot height to be finalized',
+					liskCorePath,
+					height: snapshotHeight,
+					delay: 500,
+					isFinal: true,
+				});
 
-			const blockID = getBlockIDAtSnapshotHeight();
-			const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
+				const blockID = getBlockIDAtSnapshotHeight();
+				const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
 
-			cli.action.start('Verifying blockID');
-			if (blockID !== finalizedBlockID) {
-				this.error('Snapshotted blockID does not match with the finalized blockID.');
+				cli.action.start('Verifying blockID');
+				if (blockID !== finalizedBlockID) {
+					this.error('Snapshotted blockID does not match with the finalized blockID.');
+				}
+				cli.action.stop();
 			}
-			cli.action.stop();
-
 			// TODO: Stop lisk core automatically when the application management is implemented
+
+			await setTokenIDLsk(nodeInfo.networkIdentifier);
+			await setHeightPreviousSnapshotBlock(nodeInfo.networkIdentifier);
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');

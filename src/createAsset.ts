@@ -107,7 +107,7 @@ export const getTransactions = async (blockID: Buffer, db: KVStore) => {
 
 		return transactions;
 	} catch (error) {
-		console.warn(error);
+		// console.warn(error);
 		return [];
 	}
 };
