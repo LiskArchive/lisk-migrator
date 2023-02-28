@@ -66,14 +66,13 @@ export const writeGenesisBlock = async (
 	outputPath: string,
 ): Promise<void> => {
 	if (fs.existsSync(outputPath)) fs.rmdirSync(outputPath, { recursive: true });
-
 	fs.mkdirSync(outputPath, { recursive: true });
-	fs.writeFileSync(
-		path.resolve(outputPath, 'genesis_block.json'),
-		JSON.stringify(genesisBlock, null, '\t'),
-	);
+
 	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
 
-	const genesisBlockHash = await createChecksum(path.resolve(outputPath, 'genesis_block.json'));
+	const genesisBlockJsonFilepath = path.resolve(outputPath, 'genesis_block.json');
+	fs.writeFileSync(genesisBlockJsonFilepath, JSON.stringify(genesisBlock, null, '\t'));
+
+	const genesisBlockHash = await createChecksum(genesisBlockJsonFilepath);
 	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
 };

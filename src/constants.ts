@@ -13,6 +13,8 @@
  */
 import { hash } from '@liskhq/lisk-cryptography';
 
+import { NetworkConfigLocal } from './types';
+
 export const MODULE_NAME_LEGACY = 'legacy';
 export const MODULE_NAME_AUTH = 'auth';
 export const MODULE_NAME_TOKEN = 'token';
@@ -59,7 +61,7 @@ const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = Object.freeze({
 	TESTNET: 14075260,
 });
 
-export const NETWORK_CONSTANT: { [key: string]: Record<string, string | number> } = {
+export const NETWORK_CONSTANT: { [key: string]: NetworkConfigLocal } = {
 	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': {
 		name: 'mainnet',
 		tokenID: TOKEN_ID_LSK.MAINNET,

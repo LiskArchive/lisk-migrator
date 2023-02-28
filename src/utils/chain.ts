@@ -30,13 +30,15 @@ interface ObserveParams {
 
 export const getTokenIDLsk = (): string => tokenIDLsk;
 
-export const setTokenIDLsk = async (networkIdentifier: string): Promise<void> => {
+export const setTokenIDLskByNetID = async (networkIdentifier: string): Promise<void> => {
 	tokenIDLsk = NETWORK_CONSTANT[networkIdentifier].tokenID as string;
 };
 
-export const getHeightPreviousSnapshotBlock = (): number => heightPreviousSnapshotBlock;
+export const getHeightPrevSnapshotBlock = (): number => heightPreviousSnapshotBlock;
 
-export const setHeightPreviousSnapshotBlock = async (networkIdentifier: string): Promise<void> => {
+export const setHeightPrevSnapshotBlockByNetID = async (
+	networkIdentifier: string,
+): Promise<void> => {
 	heightPreviousSnapshotBlock = NETWORK_CONSTANT[networkIdentifier]
 		.snapshotHeightPrevious as number;
 };

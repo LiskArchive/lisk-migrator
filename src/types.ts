@@ -366,3 +366,9 @@ export interface GenesisInteroperability {
 	terminatedOutboxSubstore: TerminatedOutboxSubstore;
 	registeredNamesSubstore: RegisteredNamesSubstore;
 }
+
+export interface NetworkConfigLocal {
+	name: string;
+	tokenID: string;
+	snapshotHeightPrevious: number;
+}
