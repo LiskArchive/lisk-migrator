@@ -45,7 +45,9 @@ export const getNodeInfo = async (
 	liskCorePath: string,
 ): Promise<{ height: number; finalizedHeight: number }> => {
 	const client = await getAPIClient(liskCorePath);
-	const { height, finalizedHeight } = await client.node.getNodeInfo();
+	const { height, finalizedHeight, networkIdentifier } = await client.node.getNodeInfo();
+	await setTokenIDLsk(networkIdentifier);
+	await setHeightPreviousSnapshotBlock(networkIdentifier);
 	return { height, finalizedHeight };
 };
 

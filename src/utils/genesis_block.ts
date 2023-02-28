@@ -65,9 +65,7 @@ export const writeGenesisBlock = async (
 	genesisBlock: BlockVersion4,
 	outputPath: string,
 ): Promise<void> => {
-	if (fs.existsSync(outputPath)) {
-		fs.unlinkSync(outputPath);
-	}
+	if (fs.existsSync(outputPath)) fs.rmdirSync(outputPath, { recursive: true });
 
 	fs.mkdirSync(outputPath, { recursive: true });
 	fs.writeFileSync(

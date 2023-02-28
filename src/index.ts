@@ -122,7 +122,7 @@ class LiskMigrator extends Command {
 		// TODO: Remove once createSnapshot command is available
 		'use-existing-snapshot': flagsParser.boolean({
 			required: false,
-			env: 'AUTO_DOWNLOADUSE_EXISTING_SNAPSHOT_LISK_CORE',
+			env: 'USE_EXISTING_SNAPSHOT',
 			description: 'Use existing database snapshot.',
 			default: false,
 		}),
@@ -145,7 +145,6 @@ class LiskMigrator extends Command {
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 			let config: ConfigV3;
-			let networkConstant;
 
 			if (useExistingSnapshot && !snapshotPath) {
 				this.error(" Snapshot path is required when 'use-existing-snapshot' set to true");
@@ -163,8 +162,10 @@ class LiskMigrator extends Command {
 			const nodeInfo = await client.node.getNodeInfo();
 			const { version: appVersion } = nodeInfo;
 
+			const networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
+			const networkDir = `${outputPath}/${networkConstant?.name}`;
+
 			if (autoStartLiskCoreV4) {
-				networkConstant = NETWORK_CONSTANT[nodeInfo.networkIdentifier];
 				if (!networkConstant) {
 					this.error(
 						`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${nodeInfo.networkIdentifier}.`,
@@ -256,8 +257,8 @@ class LiskMigrator extends Command {
 			const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
 			cli.action.stop();
 
-			cli.action.start(`Exporting genesis block to the path ${outputPath}`);
-			await writeGenesisBlock(genesisBlock, outputPath);
+			cli.action.start(`Exporting genesis block to the path ${networkDir}`);
+			await writeGenesisBlock(genesisBlock, networkDir);
 			cli.action.stop();
 
 			if (autoMigrateUserConfig) {
@@ -279,8 +280,8 @@ class LiskMigrator extends Command {
 
 				if (!isValidConfig) throw new Error('Migrated user configuration is invalid.');
 
-				cli.action.start(`Exporting user configuration to the path: ${outputPath}`);
-				await writeConfig(configV4, outputPath);
+				cli.action.start(`Exporting user configuration to the path: ${networkDir}`);
+				await writeConfig(configV4, networkDir);
 				cli.action.stop();
 			}
 
@@ -295,7 +296,7 @@ class LiskMigrator extends Command {
 				try {
 					const network = networkConstant?.name as string;
 					// TODO: Verify and update the implementation
-					await startLiskCore(configCoreV4, appVersion, client, { network });
+					await startLiskCore(configCoreV4, appVersion, liskCorePath, { network });
 				} catch (err) {
 					this.error(`Failed to start lisk core v4. ${(err as { stack: string }).stack}`);
 				}
