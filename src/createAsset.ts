@@ -188,7 +188,7 @@ export class CreateAsset {
 			tokenID,
 		);
 
-		const interoperabilityModuleAssets = await addInteropModuleEntry(tokenID);
+		const interoperabilityModuleAssets = await addInteropModuleEntry();
 
 		const assets: GenesisAssetEntry[] = [
 			legacyModuleAssets,
