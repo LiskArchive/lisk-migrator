@@ -27,6 +27,6 @@ describe('Build assets/interoperability', () => {
 			'terminatedOutboxAccounts',
 		]);
 		expect(response.data.ownChainName).toBe(CHAIN_NAME_MAINCHAIN);
-		expect(response.data.ownChainNonce).toBe(0);
+		expect(response.data.ownChainNonce).toBe(BigInt('0'));
 	});
 });
