@@ -302,7 +302,8 @@ class LiskMigrator extends Command {
 						finalConfigCorev4 = configCoreV4;
 					}
 					const network = networkConstant.name as string;
-					await startLiskCore(finalConfigCorev4, appVersion, liskCorePath, network);
+					await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
+					this.log('Started Lisk Core v4 at default data directory.');
 				} catch (err) {
 					this.error(`Failed to start Lisk Core v4. ${(err as { stack: string }).stack}`);
 				}
@@ -311,6 +312,9 @@ class LiskMigrator extends Command {
 		} catch (error) {
 			this.error(error as string);
 		}
+
+		this.log('Successfully finished migration. Exiting!!!');
+		process.exit(0);
 	}
 }
 
