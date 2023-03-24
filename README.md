@@ -1,4 +1,4 @@
-![Logo](./banner.png)
+![Logo](./docs/assets/banner_migrator.png)
 
 # Lisk Migrator
 
