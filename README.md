@@ -1,3 +1,5 @@
+![Logo](./banner.png)
+
 # Lisk Migrator
 
 Lisk Migrator is a command line tool to migrate the blockchain data to the latest protocol when hard fork.
