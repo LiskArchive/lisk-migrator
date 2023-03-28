@@ -65,4 +65,3 @@ package-lock.json
 # Project specific files
 output/
 blockchain.db/
-blockchain.db.tar.gz*
