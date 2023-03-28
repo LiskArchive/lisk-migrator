@@ -1,0 +1,63 @@
+pipeline {
+	agent { node { label 'lisk-migrator' } }
+	options { skipDefaultCheckout() }
+	stages {
+		stage('Checkout SCM') {
+			steps {
+				cleanWs()
+				dir('lisk-migrator') {
+					checkout scm
+				}
+			}
+		}
+		stage('Build Migrator') {
+			steps {
+				dir('lisk-migrator') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm install --global yarn
+						yarn --frozen-lockfile
+						yarn build
+						'''
+					}
+				}
+			}
+		}
+		stage('Lint Migrator') {
+			steps {
+				dir('lisk-migrator') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh 'npm run lint'
+					}
+				}
+			}
+		}
+		stage('Format Migrator') {
+			steps {
+				dir('lisk-migrator') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh '''
+						npm run format
+						if [ -z "$(git status --untracked-files=no --porcelain)" ]; then
+							echo "All files formatted"
+						else
+							echo "Running format is required"
+							exit 1
+						fi
+						'''
+					}
+				}
+			}
+		}
+		stage('Test Migrator') {
+			steps {
+				dir('lisk-migrator') {
+					nvm(readFile(".nvmrc").trim()) {
+						sh 'npm test'
+					}
+				}
+			}
+		}
+	}
+}
+// vim: filetype=groovy
