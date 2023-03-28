@@ -43,6 +43,7 @@ import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ConfigV3, NetworkConfigLocal } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
+import { extractTarBall } from './utils/fs';
 
 let finalConfigCorev4: PartialApplicationConfig;
 
@@ -125,7 +126,8 @@ class LiskMigrator extends Command {
 		'use-existing-snapshot': flagsParser.boolean({
 			required: false,
 			env: 'USE_EXISTING_SNAPSHOT',
-			description: 'Use existing database snapshot.',
+			description:
+				'Use existing database snapshot (Temporary). Will be removed once createSnapshot command is available on Lisk Core.',
 			default: false,
 		}),
 	};
@@ -146,9 +148,20 @@ class LiskMigrator extends Command {
 			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
-			if (useExistingSnapshot && !snapshotPath) {
-				this.error(" Snapshot path is required when 'use-existing-snapshot' set to true");
+			if (useExistingSnapshot) {
+				if (snapshotPath) {
+					if (!snapshotPath.endsWith('.tar.gz')) {
+						this.error('Snapshot should always end with ".tar.gz"');
+					}
+				} else {
+					this.error("Snapshot path is required when 'use-existing-snapshot' set to true");
+				}
 			}
+
+			cli.action.start('Extracting database snapshot.');
+			const dbDirPath = join(__dirname, '..', 'db');
+			await extractTarBall(snapshotPath, dbDirPath);
+			cli.action.stop();
 
 			cli.action.start(
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -233,7 +246,8 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const db = new KVStore(snapshotPath);
+			const SnapshotFilePathExtracted = join(dbDirPath, 'blockchain.db');
+			const db = new KVStore(SnapshotFilePathExtracted);
 			cli.action.stop();
 
 			// Create genesis assets
