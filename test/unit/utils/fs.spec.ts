@@ -12,9 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import fs from 'fs';
-
-import { extractTarBall } from '../../../src/utils/fs';
+import { extractTarBall, exists, rm } from '../../../src/utils/fs';
 
 const wait = async (ms = 10000) => new Promise<void>(resolve => setTimeout(resolve, ms));
 
@@ -23,19 +21,17 @@ describe('Tests filesystem utilities', () => {
 	const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
 
 	// Remove test directory
-	afterAll(async () => fs.rmdirSync(testDir, { recursive: true }));
+	afterAll(async () => rm(testDir, { recursive: true }));
 
 	describe('Test extractTarBall method', () => {
 		it('should extract tar file', async () => {
 			const outputPath = `${testDir}/blockchain.db`;
-			let isExists = !!(await fs.promises.stat(outputPath).catch(() => null));
-			expect(isExists).toBe(false);
+			await expect(exists(outputPath)).resolves.toBe(false);
 
 			// Extract tar file
 			await extractTarBall(tarFilePath, testDir);
 			await wait(1000);
-			isExists = !!(await fs.promises.stat(outputPath).catch(() => null));
-			expect(isExists).toBe(true);
+			await expect(exists(outputPath)).resolves.toBe(true);
 		});
 
 		it('should throw error -> invalid filepath', async () => {

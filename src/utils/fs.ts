@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import fs from 'fs-extra';
+import fs from 'fs';
 import * as tar from 'tar';
 
 export const extractTarBall = async (
@@ -29,3 +29,19 @@ export const extractTarBall = async (
 			resolve(true);
 		});
 	});
+
+export const exists = async (path: string): Promise<boolean | Error> => {
+	try {
+		await fs.promises.access(path);
+		return true;
+	} catch (_) {
+		return false;
+	}
+};
+
+export const rm = async (directoryPath: string, options = {}): Promise<void> => {
+	await fs.rmdir(directoryPath, options, err => {
+		if (err) throw err;
+		return !err;
+	});
+};
