@@ -14,10 +14,8 @@
  */
 import { extractTarBall, exists, rm } from '../../../src/utils/fs';
 
-const wait = async (ms = 10000) => new Promise<void>(resolve => setTimeout(resolve, ms));
-
 describe('Tests filesystem utilities', () => {
-	const testDir = `${process.cwd()}/test/testDir`;
+	const testDir = `${process.cwd()}/test/data`;
 	const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
 
 	// Remove test directory
@@ -29,8 +27,7 @@ describe('Tests filesystem utilities', () => {
 			await expect(exists(outputPath)).resolves.toBe(false);
 
 			// Extract tar file
-			await extractTarBall(tarFilePath, testDir);
-			await wait(1000);
+			await expect(extractTarBall(tarFilePath, testDir)).resolves.toBe(true);
 			await expect(exists(outputPath)).resolves.toBe(true);
 		});
 

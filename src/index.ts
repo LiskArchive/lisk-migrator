@@ -158,9 +158,9 @@ class LiskMigrator extends Command {
 				}
 			}
 
-			cli.action.start('Extracting database snapshot.');
-			const dbDirPath = join(__dirname, '..', 'db');
-			await extractTarBall(snapshotPath, dbDirPath);
+			const dataDir = join(__dirname, '..', 'data');
+			cli.action.start(`Extracting snapshot at ${dataDir}`);
+			await extractTarBall(snapshotPath, dataDir);
 			cli.action.stop();
 
 			cli.action.start(
@@ -246,8 +246,8 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const SnapshotFilePathExtracted = join(dbDirPath, 'blockchain.db');
-			const db = new KVStore(SnapshotFilePathExtracted);
+			const snapshotFilePathExtracted = join(dataDir, 'blockchain.db');
+			const db = new KVStore(snapshotFilePathExtracted);
 			cli.action.stop();
 
 			// Create genesis assets

@@ -24,10 +24,8 @@ export const extractTarBall = async (
 
 		const fileStream = fs.createReadStream(filePath);
 		fileStream.pipe(tar.extract({ cwd: directoryPath }));
-		fileStream.on('error', async err => reject(new Error(err)));
-		fileStream.on('end', async () => {
-			resolve(true);
-		});
+		fileStream.on('error', err => reject(new Error(err)));
+		fileStream.on('end', () => setTimeout(resolve.bind(null, true), 100));
 	});
 
 export const exists = async (path: string): Promise<boolean | Error> => {
