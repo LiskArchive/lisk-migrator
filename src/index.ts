@@ -19,7 +19,12 @@ import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { Block } from '@liskhq/lisk-chain';
-import { NETWORK_CONSTANT, ROUND_LENGTH } from './constants';
+import {
+	NETWORK_CONSTANT,
+	ROUND_LENGTH,
+	DEFAULT_DATA_DIR,
+	EXTRACTED_SNAPSHOT_DIR,
+} from './constants';
 import { getAPIClient } from './client';
 import {
 	getConfig,
@@ -127,7 +132,7 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'USE_EXISTING_SNAPSHOT',
 			description:
-				'Use existing database snapshot (Temporary). Will be removed once createSnapshot command is available on Lisk Core.',
+				'Use existing database snapshot (Temporary flag, will be removed once createSnapshot command is available on Lisk Core).',
 			default: false,
 		}),
 	};
@@ -158,7 +163,7 @@ class LiskMigrator extends Command {
 				}
 			}
 
-			const dataDir = join(__dirname, '..', 'data');
+			const dataDir = join(__dirname, '..', DEFAULT_DATA_DIR);
 			cli.action.start(`Extracting snapshot at ${dataDir}`);
 			await extractTarBall(snapshotPath, dataDir);
 			cli.action.stop();
@@ -246,7 +251,7 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const snapshotFilePathExtracted = join(dataDir, 'blockchain.db');
+			const snapshotFilePathExtracted = join(dataDir, EXTRACTED_SNAPSHOT_DIR);
 			const db = new KVStore(snapshotFilePathExtracted);
 			cli.action.stop();
 

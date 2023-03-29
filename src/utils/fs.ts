@@ -25,6 +25,7 @@ export const extractTarBall = async (
 		const fileStream = fs.createReadStream(filePath);
 		fileStream.pipe(tar.extract({ cwd: directoryPath }));
 		fileStream.on('error', err => reject(new Error(err)));
+		// Adding delay of 100ms since the promise resolves earlier than expected
 		fileStream.on('end', () => setTimeout(resolve.bind(null, true), 100));
 	});
 

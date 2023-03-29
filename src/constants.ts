@@ -84,3 +84,6 @@ export const BLS_PUBLIC_KEY_LENGTH = 48;
 export const SHA_256_HASH_LENGTH = 32;
 export const BINARY_ADDRESS_LENGTH = 20;
 export const TRANSACTION_ID_LENGTH = SHA_256_HASH_LENGTH;
+
+export const DEFAULT_DATA_DIR = 'data';
+export const EXTRACTED_SNAPSHOT_DIR = 'blockchain.db';
