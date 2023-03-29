@@ -12,36 +12,44 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { extractTarBall, exists, rm } from '../../../src/utils/fs';
+import { extractTarBall, exists, rmdir } from '../../../src/utils/fs';
 
-describe('Tests filesystem utilities', () => {
-	const testDir = `${process.cwd()}/test/data`;
-	const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
+const testDir = `${process.cwd()}/test/data`;
+const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
 
-	// Remove test directory
-	afterAll(async () => rm(testDir, { recursive: true }));
+describe('Test extractTarBall method', () => {
+	it('should extract tar file', async () => {
+		const outputPath = `${testDir}/blockchain.db`;
+		await expect(exists(outputPath)).resolves.toBe(false);
 
-	describe('Test extractTarBall method', () => {
-		it('should extract tar file', async () => {
-			const outputPath = `${testDir}/blockchain.db`;
-			await expect(exists(outputPath)).resolves.toBe(false);
+		// Extract tar file
+		await expect(extractTarBall(tarFilePath, testDir)).resolves.toBe(true);
+		await expect(exists(outputPath)).resolves.toBe(true);
+	});
 
-			// Extract tar file
-			await expect(extractTarBall(tarFilePath, testDir)).resolves.toBe(true);
-			await expect(exists(outputPath)).resolves.toBe(true);
-		});
+	it('should throw error -> invalid filepath', async () => {
+		const filePath = 'invalid';
+		await expect(extractTarBall(filePath, testDir)).rejects.toThrow();
+	});
 
-		it('should throw error -> invalid filepath', async () => {
-			const filePath = 'invalid';
-			await expect(extractTarBall(filePath, testDir)).rejects.toThrow();
-		});
+	it('should throw error -> empty string tar filepath', async () => {
+		await expect(extractTarBall('', testDir)).rejects.toThrow();
+	});
 
-		it('should throw error -> empty string tar filepath', async () => {
-			await expect(extractTarBall('', testDir)).rejects.toThrow();
-		});
+	it('should throw error -> empty string directoryPath', async () => {
+		await expect(extractTarBall(tarFilePath, '')).rejects.toThrow();
+	});
+});
 
-		it('should throw error -> empty string directoryPath', async () => {
-			await expect(extractTarBall(tarFilePath, '')).rejects.toThrow();
-		});
+describe('Test rmdir method', () => {
+	it('should return false when called with a directory path', async () => {
+		expect(await exists(testDir)).toBe(true);
+		const response = await rmdir(testDir);
+		expect(response).toBe(true);
+		expect(await exists(testDir)).toBe(false);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(rmdir('')).rejects.toThrow();
 	});
 });

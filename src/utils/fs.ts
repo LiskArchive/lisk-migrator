@@ -11,19 +11,19 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import fs from 'fs';
 import * as tar from 'tar';
+import fs from 'fs';
 
 export const extractTarBall = async (
-	filePath: string,
-	directoryPath: string,
+	srcFilePath: string,
+	destDirPath: string,
 ): Promise<boolean | Error> =>
 	new Promise((resolve, reject) => {
-		if (fs.existsSync(directoryPath)) fs.rmdirSync(directoryPath, { recursive: true });
-		fs.mkdirSync(directoryPath, { recursive: true });
+		if (fs.existsSync(destDirPath)) fs.rmdirSync(destDirPath, { recursive: true });
+		fs.mkdirSync(destDirPath, { recursive: true });
 
-		const fileStream = fs.createReadStream(filePath);
-		fileStream.pipe(tar.extract({ cwd: directoryPath }));
+		const fileStream = fs.createReadStream(srcFilePath);
+		fileStream.pipe(tar.extract({ cwd: destDirPath }));
 		fileStream.on('error', err => reject(new Error(err)));
 		// Adding delay of 100ms since the promise resolves earlier than expected
 		fileStream.on('end', () => setTimeout(resolve.bind(null, true), 100));
@@ -38,9 +38,10 @@ export const exists = async (path: string): Promise<boolean | Error> => {
 	}
 };
 
-export const rm = async (directoryPath: string, options = {}): Promise<void> => {
-	await fs.rmdir(directoryPath, options, err => {
-		if (err) throw err;
-		return !err;
+export const rmdir = async (directoryPath: string, options = {}): Promise<boolean | Error> =>
+	new Promise((resolve, reject) => {
+		fs.rmdir(directoryPath, options, err => {
+			if (err) return reject(err);
+			return resolve(true);
+		});
 	});
-};

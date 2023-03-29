@@ -154,12 +154,10 @@ class LiskMigrator extends Command {
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 			if (useExistingSnapshot) {
-				if (snapshotPath) {
-					if (!snapshotPath.endsWith('.tar.gz')) {
-						this.error('Snapshot should always end with ".tar.gz"');
-					}
-				} else {
+				if (!snapshotPath) {
 					this.error("Snapshot path is required when 'use-existing-snapshot' set to true");
+				} else if (!snapshotPath.endsWith('.tar.gz')) {
+					this.error('Snapshot should always end with ".tar.gz"');
 				}
 			}
 
