@@ -19,7 +19,12 @@ import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { Block } from '@liskhq/lisk-chain';
-import { NETWORK_CONSTANT, ROUND_LENGTH } from './constants';
+import {
+	NETWORK_CONSTANT,
+	ROUND_LENGTH,
+	DEFAULT_DATA_DIR,
+	EXTRACTED_SNAPSHOT_DIR,
+} from './constants';
 import { getAPIClient } from './client';
 import {
 	getConfig,
@@ -43,6 +48,7 @@ import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ConfigV3, NetworkConfigLocal } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
+import { extractTarBall } from './utils/fs';
 
 let finalConfigCorev4: PartialApplicationConfig;
 
@@ -125,7 +131,8 @@ class LiskMigrator extends Command {
 		'use-existing-snapshot': flagsParser.boolean({
 			required: false,
 			env: 'USE_EXISTING_SNAPSHOT',
-			description: 'Use existing database snapshot.',
+			description:
+				'Use existing database snapshot (Temporary flag, will be removed once createSnapshot command is available on Lisk Core).',
 			default: false,
 		}),
 	};
@@ -146,9 +153,18 @@ class LiskMigrator extends Command {
 			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
-			if (useExistingSnapshot && !snapshotPath) {
-				this.error(" Snapshot path is required when 'use-existing-snapshot' set to true");
+			if (useExistingSnapshot) {
+				if (!snapshotPath) {
+					this.error("Snapshot path is required when 'use-existing-snapshot' set to true");
+				} else if (!snapshotPath.endsWith('.tar.gz')) {
+					this.error('Snapshot should always end with ".tar.gz"');
+				}
 			}
+
+			const dataDir = join(__dirname, '..', DEFAULT_DATA_DIR);
+			cli.action.start(`Extracting snapshot at ${dataDir}`);
+			await extractTarBall(snapshotPath, dataDir);
+			cli.action.stop();
 
 			cli.action.start(
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -233,7 +249,8 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const db = new KVStore(snapshotPath);
+			const snapshotFilePathExtracted = join(dataDir, EXTRACTED_SNAPSHOT_DIR);
+			const db = new KVStore(snapshotFilePathExtracted);
 			cli.action.stop();
 
 			// Create genesis assets

@@ -1229,6 +1229,14 @@
   "resolved" "https://npm.lisk.com/@types%2fstack-utils/-/stack-utils-2.0.1.tgz"
   "version" "2.0.1"
 
+"@types/tar@6.1.4":
+  "integrity" "sha512-Cp4oxpfIzWt7mr2pbhHT2OTXGMAL0szYCzuf8lRWyIMCgsx6/Hfc3ubztuhvzXHXgraTQxyOCmmg7TDGIMIJJQ=="
+  "resolved" "https://registry.npmjs.org/@types/tar/-/tar-6.1.4.tgz"
+  "version" "6.1.4"
+  dependencies:
+    "@types/node" "*"
+    "minipass" "^4.0.0"
+
 "@types/yargs-parser@*":
   "integrity" "sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA=="
   "resolved" "https://npm.lisk.com/@types%2fyargs-parser/-/yargs-parser-21.0.0.tgz"
@@ -6556,9 +6564,9 @@
     "inherits" "^2.0.3"
     "readable-stream" "^3.1.1"
 
-"tar@^6.0.2", "tar@^6.1.11", "tar@^6.1.2":
+"tar@^6.0.2", "tar@^6.1.11", "tar@^6.1.2", "tar@6.1.13":
   "integrity" "sha512-jdIBIN6LTIe2jqzay/2vtYLlBHa3JF42ot3h1dW8Q0PaAG4v8rm0cvpVePtau5C6OKXGGcgO9q2AMNSWxiLqKw=="
-  "resolved" "https://npm.lisk.com/tar/-/tar-6.1.13.tgz"
+  "resolved" "https://registry.npmjs.org/tar/-/tar-6.1.13.tgz"
   "version" "6.1.13"
   dependencies:
     "chownr" "^2.0.0"
