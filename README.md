@@ -5,6 +5,7 @@
 Lisk Migrator is a command line tool to migrate the blockchain data to the latest protocol when hard fork.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+[![Code coverage](https://codecov.io/gh/LiskHQ/lisk-migrator/branch/main/graph/badge.svg?token=ICP600XKH1)](https://codecov.io/gh/LiskHQ/lisk-core)
 
 ## Setup
 
