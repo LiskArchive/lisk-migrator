@@ -30,7 +30,7 @@
 		"lint": "eslint --ext .ts .",
 		"lint:fix": "eslint --fix --ext .ts .",
 		"test": "jest",
-		"test:coverage": "jest --coverage=true --coverage-reporters=text",
+		"test:coverage": "jest --coverage=true --verbose --forceExit",
 		"test:ci": "jest --coverage=true --coverage-reporters=json --verbose",
 		"test:watch": "npm test -- --watch",
 		"copy-static-files": "copyfiles -u 1 src/**/*.sql ./dist",
