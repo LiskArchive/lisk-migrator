@@ -11,8 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { genesisInteroperabilitySchema } from 'lisk-framework';
 import { MODULE_NAME_INTEROPERABILITY, CHAIN_NAME_MAINCHAIN } from '../constants';
-import { genesisInteroperabilitySchema } from '../schemas';
 import { GenesisAssetEntry, GenesisInteroperability } from '../types';
 
 export const addInteropModuleEntry = async (): Promise<GenesisAssetEntry> => {
