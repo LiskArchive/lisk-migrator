@@ -327,3 +327,9 @@ export interface GenesisInteroperability {
 	terminatedStateAccounts: TerminatedStateAccounts[];
 	terminatedOutboxAccounts: TerminatedOutboxAccounts[];
 }
+
+export interface NetworkConfigLocal {
+	name: string;
+	tokenID: string;
+	snapshotHeightPrevious: number;
+}

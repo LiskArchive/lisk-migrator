@@ -1,4 +1,5 @@
 # Files
+Jenkinsfile*
 LICENSE
 .gitkeep
 mocha.opts
@@ -38,3 +39,12 @@ tmp/
 browsertest.build/
 .coverage
 .coverage-unit
+
+# DB snapshots, binary files and checksum
+*.sst
+*.db.tar.gz
+*.SHA256
+blockchain.db/*
+
+# Output directory
+output/

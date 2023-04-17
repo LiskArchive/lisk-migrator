@@ -1,7 +1,7 @@
 {
 	"name": "lisk-migrator",
 	"version": "2.0.0-alpha.0",
-	"description": "A command line tool to migrate the blockchain data to the latest protocol when hard fork",
+	"description": "A command-line tool for migrating the blockchain state to the latest protocol after a hard fork",
 	"author": "Lisk Foundation <admin@lisk.io>, lightcurve GmbH <admin@lightcurve.io>",
 	"license": "Apache-2.0",
 	"keywords": [
@@ -30,7 +30,7 @@
 		"lint": "eslint --ext .ts .",
 		"lint:fix": "eslint --fix --ext .ts .",
 		"test": "jest",
-		"test:coverage": "jest --coverage=true --coverage-reporters=text",
+		"test:coverage": "jest --config=jest.config.js --coverage=true --verbose --forceExit",
 		"test:ci": "jest --coverage=true --coverage-reporters=json --verbose",
 		"test:watch": "npm test -- --watch",
 		"copy-static-files": "copyfiles -u 1 src/**/*.sql ./dist",
@@ -61,11 +61,11 @@
 	"dependencies": {
 		"@liskhq/lisk-api-client": "5.1.6",
 		"@liskhq/lisk-chain": "0.3.4",
-		"@liskhq/lisk-codec": "0.3.0-alpha.7",
+		"@liskhq/lisk-codec": "0.3.0-alpha.10",
 		"@liskhq/lisk-cryptography": "3.2.1",
 		"@liskhq/lisk-db": "0.2.1",
 		"@liskhq/lisk-utils": "0.2.1",
-		"@liskhq/lisk-validator": "0.7.0-alpha.6",
+		"@liskhq/lisk-validator": "0.7.0-alpha.8",
 		"@oclif/command": "1.8.21",
 		"@oclif/config": "1.14.0",
 		"@oclif/errors": "1.2.2",
@@ -73,8 +73,10 @@
 		"cli-ux": "5.5.1",
 		"debug": "4.1.1",
 		"fs-extra": "11.1.0",
-		"lisk-framework": "0.10.0-alpha.13",
-		"semver": "7.3.2"
+		"lisk-framework": "6.0.0-alpha.18",
+		"semver": "7.3.2",
+		"shelljs": "^0.8.5",
+		"tar": "6.1.13"
 	},
 	"devDependencies": {
 		"@oclif/dev-cli": "1.22.2",
@@ -86,6 +88,7 @@
 		"@types/lodash.clonedeep": "4.5.6",
 		"@types/node": "12.12.11",
 		"@types/semver": "7.3.3",
+		"@types/tar": "6.1.4",
 		"@typescript-eslint/eslint-plugin": "5.44.0",
 		"@typescript-eslint/parser": "5.44.0",
 		"copyfiles": "2.2.0",
