@@ -264,7 +264,7 @@ class LiskMigrator extends Command {
 			// Create an app instance for creating genesis block
 			const configFilePath = await resolveConfigPathByNetworkID(networkIdentifier);
 			const configCoreV4 = await fs.readJSON(configFilePath);
-			const { app } = await Application.defaultApplication(configCoreV4);
+			const { app } = await Application.defaultApplication(configCoreV4, true);
 
 			cli.action.start('Creating genesis block');
 			const blockAtSnapshotHeight = ((await client.block.getByHeight(

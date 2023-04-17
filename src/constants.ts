@@ -47,7 +47,6 @@ export const DUMMY_PROOF_OF_POSSESSION = Buffer.alloc(96, 0).toString('hex');
 
 export const CHAIN_ID_LENGTH = 4;
 export const CHAIN_NAME_MAINCHAIN = 'lisk_mainchain';
-export const MAX_CHAIN_NAME_LENGTH = 32;
 
 export const Q96_ZERO = Buffer.alloc(0);
 export const MAX_NUMBER_BYTES_Q96 = 24;
