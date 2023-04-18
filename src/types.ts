@@ -303,19 +303,19 @@ export interface TerminatedOutboxAccount {
 	partnerChainInboxSize: number;
 }
 
-export interface ChainInfos {
+export interface ChainInfo {
 	chainID: Buffer;
 	chainData: ChainData;
 	channelData: ChannelData;
 	chainValidators: ChainValidators;
 }
 
-export interface TerminatedStateAccounts {
+export interface TerminatedStateAccountWithChainID {
 	chainID: Buffer;
 	terminatedStateAccount: TerminatedStateAccount;
 }
 
-export interface TerminatedOutboxAccounts {
+export interface TerminatedOutboxAccountWithChainID {
 	chainID: Buffer;
 	terminatedOutboxAccount: TerminatedOutboxAccount;
 }
@@ -323,9 +323,9 @@ export interface TerminatedOutboxAccounts {
 export interface GenesisInteroperability {
 	ownChainName: string;
 	ownChainNonce: bigint;
-	chainInfos: ChainInfos[];
-	terminatedStateAccounts: TerminatedStateAccounts[];
-	terminatedOutboxAccounts: TerminatedOutboxAccounts[];
+	chainInfos: ChainInfo[];
+	terminatedStateAccounts: TerminatedStateAccountWithChainID[];
+	terminatedOutboxAccounts: TerminatedOutboxAccountWithChainID[];
 }
 
 export interface NetworkConfigLocal {

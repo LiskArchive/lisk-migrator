@@ -34,22 +34,18 @@ export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
 export const POS_INIT_ROUNDS = 60480;
 export const ROUND_LENGTH = 103;
 export const MAX_COMMISSION = 10000;
-export const MAX_NUM_VALIDATORS = 199;
 
 export const SNAPSHOT_BLOCK_VERSION = 0;
 export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided
-export const TOKEN_ID_LENGTH = 8;
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
 export const INVALID_ED25519_KEY = Buffer.alloc(32, 255).toString('hex');
 export const DUMMY_PROOF_OF_POSSESSION = Buffer.alloc(96, 0).toString('hex');
 
-export const CHAIN_ID_LENGTH = 4;
 export const CHAIN_NAME_MAINCHAIN = 'lisk_mainchain';
 
 export const Q96_ZERO = Buffer.alloc(0);
-export const MAX_NUMBER_BYTES_Q96 = 24;
 
 const TOKEN_ID_LSK = Object.freeze({
 	MAINNET: '0000000000000000',
@@ -80,7 +76,6 @@ export const DEFAULT_PORT_RPC = 7887;
 
 export const KEEP_EVENTS_FOR_HEIGHTS = 300;
 export const EMPTY_BYTES = Buffer.alloc(0);
-export const BLS_PUBLIC_KEY_LENGTH = 48;
 export const SHA_256_HASH_LENGTH = 32;
 export const BINARY_ADDRESS_LENGTH = 20;
 export const TRANSACTION_ID_LENGTH = SHA_256_HASH_LENGTH;
