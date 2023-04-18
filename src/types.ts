@@ -252,10 +252,6 @@ export interface VoteWeightsWrapper {
 
 export type Port = number;
 
-export interface OutboxRoot {
-	root: Buffer;
-}
-
 export interface LastCertificate {
 	height: number;
 	timestamp: number;
@@ -263,7 +259,7 @@ export interface LastCertificate {
 	validatorsHash: Buffer;
 }
 
-export interface ChainAccount {
+export interface ChainData {
 	name: string;
 	lastCertificate: LastCertificate;
 	status: number;
@@ -282,6 +278,7 @@ export interface ChannelData {
 	outbox: Outbox;
 	partnerChainOutboxRoot: Buffer;
 	messageFeeTokenID: Buffer;
+	minReturnFeePerByte: bigint;
 }
 
 export interface ActiveValidator {
@@ -289,15 +286,9 @@ export interface ActiveValidator {
 	bftWeight: bigint;
 }
 
-export interface ValidatorsHashInput {
+export interface ChainValidators {
 	activeValidators: ActiveValidator[];
 	certificateThreshold: bigint;
-}
-
-export interface OwnChainAccount {
-	name: string;
-	chainID: Buffer;
-	nonce: bigint;
 }
 
 export interface TerminatedStateAccount {
@@ -312,59 +303,29 @@ export interface TerminatedOutboxAccount {
 	partnerChainInboxSize: number;
 }
 
-export interface ChainID {
+export interface ChainInfo {
 	chainID: Buffer;
+	chainData: ChainData;
+	channelData: ChannelData;
+	chainValidators: ChainValidators;
 }
 
-export type OutboxRootSubstore = {
-	storeKey: Buffer;
-	storeValue: OutboxRoot;
-}[];
+export interface TerminatedStateAccountWithChainID {
+	chainID: Buffer;
+	terminatedStateAccount: TerminatedStateAccount;
+}
 
-export type ChainDataSubstore = {
-	storeKey: Buffer;
-	storeValue: ChainAccount;
-}[];
-
-export type ChannelDataSubstore = {
-	storeKey: Buffer;
-	storeValue: ChannelData;
-}[];
-
-export type ChainValidatorsSubstore = {
-	storeKey: Buffer;
-	storeValue: ValidatorsHashInput;
-}[];
-
-export type OwnChainDataSubstore = {
-	storeKey: Buffer;
-	storeValue: OwnChainAccount;
-}[];
-
-export type TerminatedStateSubstore = {
-	storeKey: Buffer;
-	storeValue: TerminatedStateAccount;
-}[];
-
-export type TerminatedOutboxSubstore = {
-	storeKey: Buffer;
-	storeValue: TerminatedOutboxAccount;
-}[];
-
-export type RegisteredNamesSubstore = {
-	storeKey: Buffer;
-	storeValue: ChainID;
-}[];
+export interface TerminatedOutboxAccountWithChainID {
+	chainID: Buffer;
+	terminatedOutboxAccount: TerminatedOutboxAccount;
+}
 
 export interface GenesisInteroperability {
-	outboxRootSubstore: OutboxRootSubstore;
-	chainDataSubstore: ChainDataSubstore;
-	channelDataSubstore: ChannelDataSubstore;
-	chainValidatorsSubstore: ChainValidatorsSubstore;
-	ownChainDataSubstore: OwnChainDataSubstore;
-	terminatedStateSubstore: TerminatedStateSubstore;
-	terminatedOutboxSubstore: TerminatedOutboxSubstore;
-	registeredNamesSubstore: RegisteredNamesSubstore;
+	ownChainName: string;
+	ownChainNonce: bigint;
+	chainInfos: ChainInfo[];
+	terminatedStateAccounts: TerminatedStateAccountWithChainID[];
+	terminatedOutboxAccounts: TerminatedOutboxAccountWithChainID[];
 }
 
 export interface NetworkConfigLocal {
