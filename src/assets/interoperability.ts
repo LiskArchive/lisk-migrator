@@ -11,48 +11,18 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import {
-	MODULE_NAME_INTEROPERABILITY,
-	CHAIN_ID_LENGTH,
-	CHAIN_NAME_MAINCHAIN,
-	EMPTY_BYTES,
-} from '../constants';
-import { genesisInteroperabilitySchema } from '../schemas';
+import { genesisInteroperabilitySchema } from 'lisk-framework';
+import { MODULE_NAME_INTEROPERABILITY, CHAIN_NAME_MAINCHAIN } from '../constants';
 import { GenesisAssetEntry, GenesisInteroperability } from '../types';
 
-export const addInteropModuleEntry = async (tokenID: string): Promise<GenesisAssetEntry> => {
-	// CHAIN_ID_LENGTH * 2 because of hex representation of bytes
-	const chainID = tokenID.slice(0, CHAIN_ID_LENGTH * 2);
-	const chainIDBuffer = Buffer.from(chainID, 'hex');
-
-	const interopObj: GenesisInteroperability = {
-		outboxRootSubstore: [],
-		chainDataSubstore: [],
-		channelDataSubstore: [],
-		chainValidatorsSubstore: [],
-		ownChainDataSubstore: [],
-		terminatedStateSubstore: [],
-		terminatedOutboxSubstore: [],
-		registeredNamesSubstore: [],
-	};
-
-	const ownChainAccount = {
-		name: CHAIN_NAME_MAINCHAIN,
-		chainID: chainIDBuffer,
-		nonce: BigInt('0'),
-	};
-
-	interopObj.ownChainDataSubstore.push({
-		storeKey: EMPTY_BYTES,
-		storeValue: ownChainAccount,
-	});
-
-	const registeredNamesStore = { chainID: chainIDBuffer };
-
-	interopObj.registeredNamesSubstore.push({
-		storeKey: Buffer.from(CHAIN_NAME_MAINCHAIN, 'utf-8'),
-		storeValue: registeredNamesStore,
-	});
+export const addInteropModuleEntry = async (): Promise<GenesisAssetEntry> => {
+	const interopObj = ({
+		ownChainName: CHAIN_NAME_MAINCHAIN,
+		ownChainNonce: BigInt('0'),
+		chainInfos: [],
+		terminatedStateAccounts: [],
+		terminatedOutboxAccounts: [],
+	} as unknown) as GenesisInteroperability;
 
 	return {
 		module: MODULE_NAME_INTEROPERABILITY,

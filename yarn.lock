@@ -2,18 +2,18 @@
 # yarn lockfile v1
 
 
-"@ampproject/remapping@^2.1.0":
-  "integrity" "sha512-qRmjj8nj9qmLTQXXmaR1cck3UXSRMPrbsLJAasZpF+t3riI71BXed5ebIOYwQntykeZuhjsdweEc9BxH5Jc26w=="
-  "resolved" "https://npm.lisk.com/@ampproject%2fremapping/-/remapping-2.2.0.tgz"
-  "version" "2.2.0"
+"@ampproject/remapping@^2.2.0":
+  "integrity" "sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg=="
+  "resolved" "https://npm.lisk.com/@ampproject%2fremapping/-/remapping-2.2.1.tgz"
+  "version" "2.2.1"
   dependencies:
-    "@jridgewell/gen-mapping" "^0.1.0"
+    "@jridgewell/gen-mapping" "^0.3.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6":
-  "integrity" "sha512-TDCmlK5eOvH+eH7cdAFlNXeVJqWIQ7gW9tY1GJIpUtFb6CmjVyq2VM3u71bOyR8CRihcCgMUYoDNyLXao3+70Q=="
-  "resolved" "https://npm.lisk.com/@babel%2fcode-frame/-/code-frame-7.18.6.tgz"
-  "version" "7.18.6"
+"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6", "@babel/code-frame@^7.21.4":
+  "integrity" "sha512-LYvhNKfwWSPpocw8GI7gpK2nq3HSDuEPC/uSYaALSJu9xjsalaaYFOq0Pwt5KmVqwEbZlDu81aLXwBOmD/Fv9g=="
+  "resolved" "https://npm.lisk.com/@babel%2fcode-frame/-/code-frame-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
     "@babel/highlight" "^7.18.6"
 
@@ -24,48 +24,49 @@
   dependencies:
     "@babel/highlight" "^7.10.4"
 
-"@babel/compat-data@^7.20.5":
-  "integrity" "sha512-sEnuDPpOJR/fcafHMjpcpGN5M2jbUGUHwmuWKM/YdPzeEDJg8bgmbcWQFUfE32MQjti1koACvoPVsDe8Uq+idg=="
-  "resolved" "https://npm.lisk.com/@babel%2fcompat-data/-/compat-data-7.20.10.tgz"
-  "version" "7.20.10"
+"@babel/compat-data@^7.21.4":
+  "integrity" "sha512-/DYyDpeCfaVinT40FPGdkkb+lYSKvsVuMjDAG7jPOWWiM1ibOaB9CXJAlc4d1QpP/U2q2P9jbrSlClKSErd55g=="
+  "resolved" "https://npm.lisk.com/@babel%2fcompat-data/-/compat-data-7.21.4.tgz"
+  "version" "7.21.4"
 
 "@babel/core@^7.0.0", "@babel/core@^7.0.0-0", "@babel/core@^7.1.0", "@babel/core@^7.12.3", "@babel/core@^7.7.2", "@babel/core@^7.8.0", "@babel/core@>=7.0.0-beta.0 <8":
-  "integrity" "sha512-XsMfHovsUYHFMdrIHkZphTN/2Hzzi78R08NuHfDBehym2VsPDL6Zn/JAD/JQdnRvbSsbQc4mVaU1m6JgtTEElg=="
-  "resolved" "https://npm.lisk.com/@babel%2fcore/-/core-7.20.12.tgz"
-  "version" "7.20.12"
+  "integrity" "sha512-qt/YV149Jman/6AfmlxJ04LMIu8bMoyl3RB91yTFrxQmgbrSvQMy7cI8Q62FHx1t8wJ8B5fu0UDoLwHAhUo1QA=="
+  "resolved" "https://npm.lisk.com/@babel%2fcore/-/core-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
-    "@ampproject/remapping" "^2.1.0"
-    "@babel/code-frame" "^7.18.6"
-    "@babel/generator" "^7.20.7"
-    "@babel/helper-compilation-targets" "^7.20.7"
-    "@babel/helper-module-transforms" "^7.20.11"
-    "@babel/helpers" "^7.20.7"
-    "@babel/parser" "^7.20.7"
+    "@ampproject/remapping" "^2.2.0"
+    "@babel/code-frame" "^7.21.4"
+    "@babel/generator" "^7.21.4"
+    "@babel/helper-compilation-targets" "^7.21.4"
+    "@babel/helper-module-transforms" "^7.21.2"
+    "@babel/helpers" "^7.21.0"
+    "@babel/parser" "^7.21.4"
     "@babel/template" "^7.20.7"
-    "@babel/traverse" "^7.20.12"
-    "@babel/types" "^7.20.7"
+    "@babel/traverse" "^7.21.4"
+    "@babel/types" "^7.21.4"
     "convert-source-map" "^1.7.0"
     "debug" "^4.1.0"
     "gensync" "^1.0.0-beta.2"
     "json5" "^2.2.2"
     "semver" "^6.3.0"
 
-"@babel/generator@^7.20.7", "@babel/generator@^7.7.2":
-  "integrity" "sha512-7wqMOJq8doJMZmP4ApXTzLxSr7+oO2jroJURrVEp6XShrQUObV8Tq/D0NCcoYg2uHqUrjzO0zwBjoYzelxK+sw=="
-  "resolved" "https://npm.lisk.com/@babel%2fgenerator/-/generator-7.20.7.tgz"
-  "version" "7.20.7"
+"@babel/generator@^7.21.4", "@babel/generator@^7.7.2":
+  "integrity" "sha512-NieM3pVIYW2SwGzKoqfPrQsf4xGs9M9AIG3ThppsSRmO+m7eQhmI6amajKMUeIO37wFfsvnvcxQFx6x6iqxDnA=="
+  "resolved" "https://npm.lisk.com/@babel%2fgenerator/-/generator-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
-    "@babel/types" "^7.20.7"
+    "@babel/types" "^7.21.4"
     "@jridgewell/gen-mapping" "^0.3.2"
+    "@jridgewell/trace-mapping" "^0.3.17"
     "jsesc" "^2.5.1"
 
-"@babel/helper-compilation-targets@^7.20.7":
-  "integrity" "sha512-4tGORmfQcrc+bvrjb5y3dG9Mx1IOZjsHqQVUz7XCNHO+iTmqxWnVg3KRygjGmpRLJGdQSKuvFinbIb0CnZwHAQ=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-compilation-targets/-/helper-compilation-targets-7.20.7.tgz"
-  "version" "7.20.7"
+"@babel/helper-compilation-targets@^7.21.4":
+  "integrity" "sha512-Fa0tTuOXZ1iL8IeDFUWCzjZcn+sJGd9RZdH9esYVjEejGmzf+FFYQpMi/kZUk2kPy/q1H3/GPw7np8qar/stfg=="
+  "resolved" "https://npm.lisk.com/@babel%2fhelper-compilation-targets/-/helper-compilation-targets-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
-    "@babel/compat-data" "^7.20.5"
-    "@babel/helper-validator-option" "^7.18.6"
+    "@babel/compat-data" "^7.21.4"
+    "@babel/helper-validator-option" "^7.21.0"
     "browserslist" "^4.21.3"
     "lru-cache" "^5.1.1"
     "semver" "^6.3.0"
@@ -75,13 +76,13 @@
   "resolved" "https://npm.lisk.com/@babel%2fhelper-environment-visitor/-/helper-environment-visitor-7.18.9.tgz"
   "version" "7.18.9"
 
-"@babel/helper-function-name@^7.19.0":
-  "integrity" "sha512-WAwHBINyrpqywkUH0nTnNgI5ina5TFn85HKS0pbPDfxFfhyR/aNQEn4hGi1P1JyT//I0t4OgXUlofzWILRvS5w=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-function-name/-/helper-function-name-7.19.0.tgz"
-  "version" "7.19.0"
+"@babel/helper-function-name@^7.21.0":
+  "integrity" "sha512-HfK1aMRanKHpxemaY2gqBmL04iAPOPRj7DxtNbiDOrJK+gdwkiNRVpCpUJYbUT+aZyemKN8brqTOxzCaG6ExRg=="
+  "resolved" "https://npm.lisk.com/@babel%2fhelper-function-name/-/helper-function-name-7.21.0.tgz"
+  "version" "7.21.0"
   dependencies:
-    "@babel/template" "^7.18.10"
-    "@babel/types" "^7.19.0"
+    "@babel/template" "^7.20.7"
+    "@babel/types" "^7.21.0"
 
 "@babel/helper-hoist-variables@^7.18.6":
   "integrity" "sha512-UlJQPkFqFULIcyW5sbzgbkxn2FKRgwWiRexcuaR8RNJRy8+LLveqPjwZV/bwrLZCN0eUHD/x8D0heK1ozuoo6Q=="
@@ -91,16 +92,16 @@
     "@babel/types" "^7.18.6"
 
 "@babel/helper-module-imports@^7.18.6":
-  "integrity" "sha512-0NFvs3VkuSYbFi1x2Vd6tKrywq+z/cLeYC/RJNFrIX/30Bf5aiGYbtvGXolEktzJH8o5E5KJ3tT+nkxuuZFVlA=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-module-imports/-/helper-module-imports-7.18.6.tgz"
-  "version" "7.18.6"
+  "integrity" "sha512-orajc5T2PsRYUN3ZryCEFeMDYwyw09c/pZeaQEZPH0MpKzSvn3e0uXsDBu3k03VI+9DBiRo+l22BfKTpKwa/Wg=="
+  "resolved" "https://npm.lisk.com/@babel%2fhelper-module-imports/-/helper-module-imports-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
-    "@babel/types" "^7.18.6"
+    "@babel/types" "^7.21.4"
 
-"@babel/helper-module-transforms@^7.20.11":
-  "integrity" "sha512-uRy78kN4psmji1s2QtbtcCSaj/LILFDp0f/ymhpQH5QY3nljUZCaNWz9X1dEj/8MBdBEFECs7yRhKn8i7NjZgg=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-module-transforms/-/helper-module-transforms-7.20.11.tgz"
-  "version" "7.20.11"
+"@babel/helper-module-transforms@^7.21.2":
+  "integrity" "sha512-79yj2AR4U/Oqq/WOV7Lx6hUjau1Zfo4cI+JLAVYeMV5XIlbOhmjEk5ulbTc9fMpmlojzZHkUUxAiK+UKn+hNQQ=="
+  "resolved" "https://npm.lisk.com/@babel%2fhelper-module-transforms/-/helper-module-transforms-7.21.2.tgz"
+  "version" "7.21.2"
   dependencies:
     "@babel/helper-environment-visitor" "^7.18.9"
     "@babel/helper-module-imports" "^7.18.6"
@@ -108,10 +109,10 @@
     "@babel/helper-split-export-declaration" "^7.18.6"
     "@babel/helper-validator-identifier" "^7.19.1"
     "@babel/template" "^7.20.7"
-    "@babel/traverse" "^7.20.10"
-    "@babel/types" "^7.20.7"
+    "@babel/traverse" "^7.21.2"
+    "@babel/types" "^7.21.2"
 
-"@babel/helper-plugin-utils@^7.0.0", "@babel/helper-plugin-utils@^7.10.4", "@babel/helper-plugin-utils@^7.12.13", "@babel/helper-plugin-utils@^7.14.5", "@babel/helper-plugin-utils@^7.19.0", "@babel/helper-plugin-utils@^7.8.0":
+"@babel/helper-plugin-utils@^7.0.0", "@babel/helper-plugin-utils@^7.10.4", "@babel/helper-plugin-utils@^7.12.13", "@babel/helper-plugin-utils@^7.14.5", "@babel/helper-plugin-utils@^7.20.2", "@babel/helper-plugin-utils@^7.8.0":
   "integrity" "sha512-8RvlJG2mj4huQ4pZ+rU9lqKi9ZKiRmuvGuM2HlWmkmgOhbs6zEAw6IEiJ5cQqGbDzGZOhwuOQNtZMi/ENLjZoQ=="
   "resolved" "https://npm.lisk.com/@babel%2fhelper-plugin-utils/-/helper-plugin-utils-7.20.2.tgz"
   "version" "7.20.2"
@@ -140,19 +141,19 @@
   "resolved" "https://npm.lisk.com/@babel%2fhelper-validator-identifier/-/helper-validator-identifier-7.19.1.tgz"
   "version" "7.19.1"
 
-"@babel/helper-validator-option@^7.18.6":
-  "integrity" "sha512-XO7gESt5ouv/LRJdrVjkShckw6STTaB7l9BrpBaAHDeF5YZT+01PCwmR0SJHnkW6i8OwW/EVWRShfi4j2x+KQw=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-validator-option/-/helper-validator-option-7.18.6.tgz"
-  "version" "7.18.6"
+"@babel/helper-validator-option@^7.21.0":
+  "integrity" "sha512-rmL/B8/f0mKS2baE9ZpyTcTavvEuWhTTW8amjzXNvYG4AwBsqTLikfXsEofsJEfKHf+HQVQbFOHy6o+4cnC/fQ=="
+  "resolved" "https://npm.lisk.com/@babel%2fhelper-validator-option/-/helper-validator-option-7.21.0.tgz"
+  "version" "7.21.0"
 
-"@babel/helpers@^7.20.7":
-  "integrity" "sha512-nzJ0DWCL3gB5RCXbUO3KIMMsBY2Eqbx8mBpKGE/02PgyRQFcPQLbkQ1vyy596mZLaP+dAfD+R4ckASzNVmW3jg=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelpers/-/helpers-7.20.13.tgz"
-  "version" "7.20.13"
+"@babel/helpers@^7.21.0":
+  "integrity" "sha512-XXve0CBtOW0pd7MRzzmoyuSj0e3SEzj8pgyFxnTT1NJZL38BD1MK7yYrm8yefRPIDvNNe14xR4FdbHwpInD4rA=="
+  "resolved" "https://npm.lisk.com/@babel%2fhelpers/-/helpers-7.21.0.tgz"
+  "version" "7.21.0"
   dependencies:
     "@babel/template" "^7.20.7"
-    "@babel/traverse" "^7.20.13"
-    "@babel/types" "^7.20.7"
+    "@babel/traverse" "^7.21.0"
+    "@babel/types" "^7.21.0"
 
 "@babel/highlight@^7.10.4", "@babel/highlight@^7.18.6":
   "integrity" "sha512-u7stbOuYjaPezCuLj29hNW1v64M2Md2qupEKP1fHc7WdOA3DgLh37suiSrZYY7haUB7iBeQZ9P1uiRF359do3g=="
@@ -163,10 +164,10 @@
     "chalk" "^2.0.0"
     "js-tokens" "^4.0.0"
 
-"@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.13", "@babel/parser@^7.20.7":
-  "integrity" "sha512-gFDLKMfpiXCsjt4za2JA9oTMn70CeseCehb11kRZgvd7+F67Hih3OHOK24cRrWECJ/ljfPGac6ygXAs/C8kIvw=="
-  "resolved" "https://npm.lisk.com/@babel%2fparser/-/parser-7.20.13.tgz"
-  "version" "7.20.13"
+"@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.7", "@babel/parser@^7.21.4":
+  "integrity" "sha512-alVJj7k7zIxqBZ7BTRhz0IqJFxW1VJbm6N8JbcYhQ186df9ZBPbZBmWSqAMXwHGsCJdYks7z/voa3ibiS5bCIw=="
+  "resolved" "https://npm.lisk.com/@babel%2fparser/-/parser-7.21.4.tgz"
+  "version" "7.21.4"
 
 "@babel/plugin-syntax-async-generators@^7.8.4":
   "integrity" "sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw=="
@@ -253,13 +254,13 @@
     "@babel/helper-plugin-utils" "^7.14.5"
 
 "@babel/plugin-syntax-typescript@^7.7.2":
-  "integrity" "sha512-rd9TkG+u1CExzS4SM1BlMEhMXwFLKVjOAFFCDx9PbX5ycJWDoWMcwdJH9RhkPu1dOgn5TrxLot/Gx6lWFuAUNQ=="
-  "resolved" "https://npm.lisk.com/@babel%2fplugin-syntax-typescript/-/plugin-syntax-typescript-7.20.0.tgz"
-  "version" "7.20.0"
+  "integrity" "sha512-xz0D39NvhQn4t4RNsHmDnnsaQizIlUkdtYvLs8La1BlfjQ6JEwxkJGeqJMW2tAXx+q6H+WFuUTXNdYVpEya0YA=="
+  "resolved" "https://npm.lisk.com/@babel%2fplugin-syntax-typescript/-/plugin-syntax-typescript-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
-    "@babel/helper-plugin-utils" "^7.19.0"
+    "@babel/helper-plugin-utils" "^7.20.2"
 
-"@babel/template@^7.18.10", "@babel/template@^7.20.7", "@babel/template@^7.3.3":
+"@babel/template@^7.20.7", "@babel/template@^7.3.3":
   "integrity" "sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw=="
   "resolved" "https://npm.lisk.com/@babel%2ftemplate/-/template-7.20.7.tgz"
   "version" "7.20.7"
@@ -268,26 +269,26 @@
     "@babel/parser" "^7.20.7"
     "@babel/types" "^7.20.7"
 
-"@babel/traverse@^7.20.10", "@babel/traverse@^7.20.12", "@babel/traverse@^7.20.13", "@babel/traverse@^7.7.2":
-  "integrity" "sha512-kMJXfF0T6DIS9E8cgdLCSAL+cuCK+YEZHWiLK0SXpTo8YRj5lpJu3CDNKiIBCne4m9hhTIqUg6SYTAI39tAiVQ=="
-  "resolved" "https://npm.lisk.com/@babel%2ftraverse/-/traverse-7.20.13.tgz"
-  "version" "7.20.13"
+"@babel/traverse@^7.21.0", "@babel/traverse@^7.21.2", "@babel/traverse@^7.21.4", "@babel/traverse@^7.7.2":
+  "integrity" "sha512-eyKrRHKdyZxqDm+fV1iqL9UAHMoIg0nDaGqfIOd8rKH17m5snv7Gn4qgjBoFfLz9APvjFU/ICT00NVCv1Epp8Q=="
+  "resolved" "https://npm.lisk.com/@babel%2ftraverse/-/traverse-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
-    "@babel/code-frame" "^7.18.6"
-    "@babel/generator" "^7.20.7"
+    "@babel/code-frame" "^7.21.4"
+    "@babel/generator" "^7.21.4"
     "@babel/helper-environment-visitor" "^7.18.9"
-    "@babel/helper-function-name" "^7.19.0"
+    "@babel/helper-function-name" "^7.21.0"
     "@babel/helper-hoist-variables" "^7.18.6"
     "@babel/helper-split-export-declaration" "^7.18.6"
-    "@babel/parser" "^7.20.13"
-    "@babel/types" "^7.20.7"
+    "@babel/parser" "^7.21.4"
+    "@babel/types" "^7.21.4"
     "debug" "^4.1.0"
     "globals" "^11.1.0"
 
-"@babel/types@^7.0.0", "@babel/types@^7.18.6", "@babel/types@^7.19.0", "@babel/types@^7.20.2", "@babel/types@^7.20.7", "@babel/types@^7.3.0", "@babel/types@^7.3.3":
-  "integrity" "sha512-69OnhBxSSgK0OzTJai4kyPDiKTIe3j+ctaHdIGVbRahTLAT7L3R9oeXHC2aVSuGYt3cVnoAMDmOCgJ2yaiLMvg=="
-  "resolved" "https://npm.lisk.com/@babel%2ftypes/-/types-7.20.7.tgz"
-  "version" "7.20.7"
+"@babel/types@^7.0.0", "@babel/types@^7.18.6", "@babel/types@^7.20.2", "@babel/types@^7.20.7", "@babel/types@^7.21.0", "@babel/types@^7.21.2", "@babel/types@^7.21.4", "@babel/types@^7.3.0", "@babel/types@^7.3.3":
+  "integrity" "sha512-rU2oY501qDxE8Pyo7i/Orqma4ziCOrby0/9mvbDUGEfvZjb279Nk9k19e2fiCxHbRRpY2ZyrgW1eq22mvmOIzA=="
+  "resolved" "https://npm.lisk.com/@babel%2ftypes/-/types-7.21.4.tgz"
+  "version" "7.21.4"
   dependencies:
     "@babel/helper-string-parser" "^7.19.4"
     "@babel/helper-validator-identifier" "^7.19.1"
@@ -563,18 +564,10 @@
     "@types/yargs" "^16.0.0"
     "chalk" "^4.0.0"
 
-"@jridgewell/gen-mapping@^0.1.0":
-  "integrity" "sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w=="
-  "resolved" "https://npm.lisk.com/@jridgewell%2fgen-mapping/-/gen-mapping-0.1.1.tgz"
-  "version" "0.1.1"
-  dependencies:
-    "@jridgewell/set-array" "^1.0.0"
-    "@jridgewell/sourcemap-codec" "^1.4.10"
-
-"@jridgewell/gen-mapping@^0.3.2":
-  "integrity" "sha512-mh65xKQAzI6iBcFzwv28KVWSmCkdRBWoOh+bYQGW3+6OZvbbN3TqMGo5hqYxQniRcH9F2VZIoJCm4pa3BPDK/A=="
-  "resolved" "https://npm.lisk.com/@jridgewell%2fgen-mapping/-/gen-mapping-0.3.2.tgz"
-  "version" "0.3.2"
+"@jridgewell/gen-mapping@^0.3.0", "@jridgewell/gen-mapping@^0.3.2":
+  "integrity" "sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ=="
+  "resolved" "https://npm.lisk.com/@jridgewell%2fgen-mapping/-/gen-mapping-0.3.3.tgz"
+  "version" "0.3.3"
   dependencies:
     "@jridgewell/set-array" "^1.0.1"
     "@jridgewell/sourcemap-codec" "^1.4.10"
@@ -585,20 +578,25 @@
   "resolved" "https://npm.lisk.com/@jridgewell%2fresolve-uri/-/resolve-uri-3.1.0.tgz"
   "version" "3.1.0"
 
-"@jridgewell/set-array@^1.0.0", "@jridgewell/set-array@^1.0.1":
+"@jridgewell/set-array@^1.0.1":
   "integrity" "sha512-xnkseuNADM0gt2bs+BvhO0p78Mk762YnZdsuzFV018NoG1Sj1SCQvpSqa7XUaTam5vAGasABV9qXASMKnFMwMw=="
   "resolved" "https://npm.lisk.com/@jridgewell%2fset-array/-/set-array-1.1.2.tgz"
   "version" "1.1.2"
 
-"@jridgewell/sourcemap-codec@^1.4.10", "@jridgewell/sourcemap-codec@1.4.14":
+"@jridgewell/sourcemap-codec@^1.4.10":
+  "integrity" "sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg=="
+  "resolved" "https://npm.lisk.com/@jridgewell%2fsourcemap-codec/-/sourcemap-codec-1.4.15.tgz"
+  "version" "1.4.15"
+
+"@jridgewell/sourcemap-codec@1.4.14":
   "integrity" "sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw=="
   "resolved" "https://npm.lisk.com/@jridgewell%2fsourcemap-codec/-/sourcemap-codec-1.4.14.tgz"
   "version" "1.4.14"
 
-"@jridgewell/trace-mapping@^0.3.9":
-  "integrity" "sha512-MCNzAp77qzKca9+W/+I0+sEpaUnZoeasnghNeVc41VZCEKaCH73Vq3BZZ/SzWIgrqE4H4ceI+p+b6C0mHf9T4g=="
-  "resolved" "https://npm.lisk.com/@jridgewell%2ftrace-mapping/-/trace-mapping-0.3.17.tgz"
-  "version" "0.3.17"
+"@jridgewell/trace-mapping@^0.3.17", "@jridgewell/trace-mapping@^0.3.9":
+  "integrity" "sha512-w+niJYzMHdd7USdiH2U6869nqhD2nbfZXND5Yp93qIbEmnDNk7PD48o+YchRVpzMU7M6jVCbenTR7PA1FLQ9pA=="
+  "resolved" "https://npm.lisk.com/@jridgewell%2ftrace-mapping/-/trace-mapping-0.3.18.tgz"
+  "version" "0.3.18"
   dependencies:
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
@@ -611,15 +609,15 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@liskhq/lisk-api-client@^6.0.0-alpha.17":
-  "integrity" "sha512-Qk2heW7VhbrXaPtcigsokSh04ydyU35+MkPRT5YIlwV4yYa9de2ppGLxVa4UQfClwPrny1ZOkaR8YyIrCbLVgA=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-api-client/-/lisk-api-client-6.0.0-alpha.17.tgz"
-  "version" "6.0.0-alpha.17"
+"@liskhq/lisk-api-client@^6.0.0-alpha.21":
+  "integrity" "sha512-C1097sCXx377xSjV03oXJcfOPnmOv8DiJn8nNd+FJEbjd17W8VhTyi6a5Y2pe2mUBOccvi3k8rAmuMVjBJBu8A=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-api-client/-/lisk-api-client-6.0.0-alpha.21.tgz"
+  "version" "6.0.0-alpha.21"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.10"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
-    "@liskhq/lisk-transactions" "^6.0.0-alpha.13"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.8"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-transactions" "^6.0.0-alpha.17"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
     "isomorphic-ws" "4.0.1"
     "ws" "8.11.0"
     "zeromq" "6.0.0-beta.6"
@@ -637,17 +635,17 @@
     "pm2-axon-rpc" "0.7.1"
     "ws" "7.5.7"
 
-"@liskhq/lisk-chain@^0.4.0-alpha.15":
-  "integrity" "sha512-O85NJzZvLrOnod3PXhJ7vChPATxhX3ZcYE2oaCiXD4QcvE62cPK4innIYrK5b8TJAySHiS5572cFEY/NNb3yWw=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-chain/-/lisk-chain-0.4.0-alpha.15.tgz"
-  "version" "0.4.0-alpha.15"
+"@liskhq/lisk-chain@^0.4.0-alpha.19":
+  "integrity" "sha512-nQBV5yIweIa3bNmJbUEKNgOuAf+jUpDZYryLRhH20+lHwLlY08gNQo3JmOzM6ls+/coVmk1bycgZPuQyEaBj+Q=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-chain/-/lisk-chain-0.4.0-alpha.19.tgz"
+  "version" "0.4.0-alpha.19"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.10"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
     "@liskhq/lisk-db" "0.3.5"
-    "@liskhq/lisk-tree" "^0.3.0-alpha.11"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.5"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.8"
+    "@liskhq/lisk-tree" "^0.3.0-alpha.15"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
     "debug" "4.3.4"
 
 "@liskhq/lisk-chain@0.3.4":
@@ -671,14 +669,14 @@
     "@liskhq/lisk-utils" "^0.2.1"
     "@liskhq/lisk-validator" "^0.6.2"
 
-"@liskhq/lisk-codec@^0.3.0-alpha.10", "@liskhq/lisk-codec@0.3.0-alpha.10":
-  "integrity" "sha512-pxRfcDRcSKlxz442iHd1wZ1DvmJk9aVTPbMZDy7PeHgVsE6rPyS0qJF3rgU0ECvjxJPrkStTFG20MtKUFrqv5w=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-codec/-/lisk-codec-0.3.0-alpha.10.tgz"
-  "version" "0.3.0-alpha.10"
+"@liskhq/lisk-codec@^0.3.0-alpha.14", "@liskhq/lisk-codec@0.3.0-alpha.14":
+  "integrity" "sha512-mTje+PXkgQ4xBxAuP1qtLG8sgZVzCZgyMWjSkZl0ktuvUgalOYUodMOc8FiK/BQ5xhd4hxrGA+h0zZiaTlD59w=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-codec/-/lisk-codec-0.3.0-alpha.14.tgz"
+  "version" "0.3.0-alpha.14"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.5"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
 
 "@liskhq/lisk-cryptography@^3.2.1", "@liskhq/lisk-cryptography@3.2.1":
   "integrity" "sha512-n1yoVXSzKj9ZeVMvOmVkpZwyRBcvInu0sXBB7Z7d1bsgAiTSGKJDz6TVGWTwpEkfn0kk79Sie2QBbulaON57YQ=="
@@ -692,12 +690,12 @@
   optionalDependencies:
     "sodium-native" "3.2.1"
 
-"@liskhq/lisk-cryptography@^4.0.0-alpha.8":
-  "integrity" "sha512-lGffYFIVgP/F+EA4hTf9U+g2SB9nNf8NDL/Oa9nTJfdHv3Ej4tqzYTv2fSAN1RRMPAla7ocgzcgnlC+pYdkXQQ=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-cryptography/-/lisk-cryptography-4.0.0-alpha.8.tgz"
-  "version" "4.0.0-alpha.8"
+"@liskhq/lisk-cryptography@^4.0.0-alpha.12":
+  "integrity" "sha512-mxL/yZLM2BdJpIz52cxpGEvtELn9C34/4GKT1zIGREcCjKWj9cTXailco0YuJ+fNveUb6Om6HFDQGcJRFHNYfg=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-cryptography/-/lisk-cryptography-4.0.0-alpha.12.tgz"
+  "version" "4.0.0-alpha.12"
   dependencies:
-    "@liskhq/lisk-passphrase" "^4.0.0-alpha.3"
+    "@liskhq/lisk-passphrase" "^4.0.0-alpha.6"
     "buffer-reverse" "1.0.1"
     "ed2curve" "0.3.0"
     "hash-wasm" "4.9.0"
@@ -723,33 +721,33 @@
     "cargo-cp-artifact" "^0.1"
     "shelljs" "^0.8.5"
 
-"@liskhq/lisk-p2p@^0.8.0-alpha.10":
-  "integrity" "sha512-ikDV+/wsSTsNk7QAAH1mOZwr2z7drbOqUs/myewugZKze+Do0rf6yjYDYYXeOxdXX64w99bJFbLt+snbO++fjA=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-p2p/-/lisk-p2p-0.8.0-alpha.10.tgz"
-  "version" "0.8.0-alpha.10"
+"@liskhq/lisk-p2p@^0.8.0-alpha.14":
+  "integrity" "sha512-JOTYJPwLpNLvSJbJi8GtxZ1P1kjJWV5n7juUHV8zLj0XIUfJaTbUyrNg08XEVkT7DPyc5+Y/+dcr+lV06Od0ZQ=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-p2p/-/lisk-p2p-0.8.0-alpha.14.tgz"
+  "version" "0.8.0-alpha.14"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.10"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.8"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
     "lodash.shuffle" "4.2.0"
     "semver" "7.3.8"
     "socketcluster-client" "14.3.1"
     "socketcluster-server" "14.6.0"
 
-"@liskhq/lisk-passphrase@^4.0.0-alpha.3":
-  "integrity" "sha512-SjYqWcmYuEOI3o+hIpfll7Y5RbH/zm3zj1WW4uJG/J0ZUarz1kF+Pl52ATvHgtL5DxGmI9a5cpolYMp2FYtZKA=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-passphrase/-/lisk-passphrase-4.0.0-alpha.3.tgz"
-  "version" "4.0.0-alpha.3"
+"@liskhq/lisk-passphrase@^4.0.0-alpha.6":
+  "integrity" "sha512-Nao+ijqDHoLXe1RkFxRVRFNmIYmZR0oblObMrijcfD+nSsQtMxg0LiywkW33dTfsslke6vFUYwpO1MYBtQMkKQ=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-passphrase/-/lisk-passphrase-4.0.0-alpha.6.tgz"
+  "version" "4.0.0-alpha.6"
   dependencies:
     "bip39" "3.0.3"
 
-"@liskhq/lisk-transaction-pool@^0.6.0-alpha.12":
-  "integrity" "sha512-3/i9Ic+tz201ZG6BLeUaU1+lv8aaJYfn6QjoEhm24S6Q7TAoDrFD1TbUtjN/Iza1gbwcKNehWis/YKCq1Nq8kA=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-transaction-pool/-/lisk-transaction-pool-0.6.0-alpha.12.tgz"
-  "version" "0.6.0-alpha.12"
+"@liskhq/lisk-transaction-pool@^0.6.0-alpha.16":
+  "integrity" "sha512-dcuWCz4JC+AhTpy1fZ18QfoS4woEta/pzyCuPc9pA3oUDsMNulzz+BqUDUCvne384HlpKrUalNcAcDlH64qWNQ=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-transaction-pool/-/lisk-transaction-pool-0.6.0-alpha.16.tgz"
+  "version" "0.6.0-alpha.16"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.5"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
     "debug" "4.3.4"
 
 "@liskhq/lisk-transactions@^5.2.2":
@@ -761,14 +759,14 @@
     "@liskhq/lisk-cryptography" "^3.2.1"
     "@liskhq/lisk-validator" "^0.6.2"
 
-"@liskhq/lisk-transactions@^6.0.0-alpha.13":
-  "integrity" "sha512-ARdZXJLzTnBnldMQn5vo27LPBD5g8f1EpUXVdoKYYKIu7PprobArIwDzwCOa3v9Rsyx+gnZtIXgaJIT8lZMfOw=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-transactions/-/lisk-transactions-6.0.0-alpha.13.tgz"
-  "version" "6.0.0-alpha.13"
+"@liskhq/lisk-transactions@^6.0.0-alpha.17":
+  "integrity" "sha512-GX4v6dDsPr3MTp8c1nqnCUHdSUu60k4uyedrDtEBRjGktozPZ526Nzrk6p1nyffvzRN8SrKNEYWB9etndHwVhw=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-transactions/-/lisk-transactions-6.0.0-alpha.17.tgz"
+  "version" "6.0.0-alpha.17"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.10"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.8"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
 
 "@liskhq/lisk-tree@^0.2.2":
   "integrity" "sha512-BSuKh/OpykVTQ5I6ocmtY6J8tieu3/4ikbAD1t1npkpCC5YzKu5ARtzPQw/Y70oYLwO6RsutefrTLLIsIt+Ifw=="
@@ -778,13 +776,13 @@
     "@liskhq/lisk-cryptography" "^3.2.1"
     "@liskhq/lisk-utils" "^0.2.1"
 
-"@liskhq/lisk-tree@^0.3.0-alpha.11":
-  "integrity" "sha512-z9U/FOUgayNAlLv+vnzPgLjWZPTQ7xq5N6V/o6Tu/uABzSuu1PXjKOF0ObXIZdpQI1EBDF9711pOrxMZb8Brig=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-tree/-/lisk-tree-0.3.0-alpha.11.tgz"
-  "version" "0.3.0-alpha.11"
+"@liskhq/lisk-tree@^0.3.0-alpha.15":
+  "integrity" "sha512-w5cDiVSH/RxTq90svL+eJt8GL+rti0nEtol+4+eAfwkA7fpkSClavqSIX2GMF8rqZi2elV6o6uLNlQxfo4KO4Q=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-tree/-/lisk-tree-0.3.0-alpha.15.tgz"
+  "version" "0.3.0-alpha.15"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.5"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
 
 "@liskhq/lisk-utils@^0.2.1", "@liskhq/lisk-utils@0.2.1":
   "integrity" "sha512-2vPLoCRVJVYEh8KUePBj/qBrD3i9aM5g3lhimn+RiEweKQSpBBe+BGcBIuNeKtCJtm2A0ChVjSXJV39t7nNh+A=="
@@ -793,10 +791,10 @@
   dependencies:
     "lodash.clonedeep" "4.5.0"
 
-"@liskhq/lisk-utils@^0.3.0-alpha.5":
-  "integrity" "sha512-siI5CqyaZMkwdLMl3SayA7s32hT04pVKGnupTVNhjorgZT/KlowzS9u077CiQRxe9QKrA96W4MwG/kB9gocmJA=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-utils/-/lisk-utils-0.3.0-alpha.5.tgz"
-  "version" "0.3.0-alpha.5"
+"@liskhq/lisk-utils@^0.3.0-alpha.8":
+  "integrity" "sha512-j6a2R7mZhxRIMvpy+E86bQXdCiF9aGSMRM8Bl0/KaQecRib+36xIUqyXJb3g2Eib/RKczYoHpp2kM8IeaRs11g=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-utils/-/lisk-utils-0.3.0-alpha.8.tgz"
+  "version" "0.3.0-alpha.8"
   dependencies:
     "lodash.clonedeep" "4.5.0"
 
@@ -812,12 +810,12 @@
     "semver" "7.3.5"
     "validator" "13.7.0"
 
-"@liskhq/lisk-validator@^0.7.0-alpha.8", "@liskhq/lisk-validator@0.7.0-alpha.8":
-  "integrity" "sha512-NdleTNxogRwDHzt/1IJ677VBZpRMPlW2R6ohDwG+MDJqhDCN71mrSJXm5+Qz0suHt3Hz7e1eWMR5VRk0Lqox9w=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-validator/-/lisk-validator-0.7.0-alpha.8.tgz"
-  "version" "0.7.0-alpha.8"
+"@liskhq/lisk-validator@^0.7.0-alpha.12", "@liskhq/lisk-validator@0.7.0-alpha.12":
+  "integrity" "sha512-M9h1eDA7zk0xydF75jCskFRM7htpwBjCtCHNsGkf0oA32ofjABJcmJhEfteQvZuOln2nGp77g5b3HXbySyefuw=="
+  "resolved" "https://npm.lisk.com/@liskhq%2flisk-validator/-/lisk-validator-0.7.0-alpha.12.tgz"
+  "version" "0.7.0-alpha.12"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
     "ajv" "8.1.0"
     "ajv-formats" "2.1.1"
     "debug" "4.3.4"
@@ -899,6 +897,18 @@
     "tslib" "^1.9.3"
 
 "@oclif/config@^1.18.2":
+  "integrity" "sha512-FetS52+emaZQui0roFSdbBP8ddBkIezEoH2NcjLJRjqkMGdE9Z1V+jsISVqTYXk2KJ1gAI0CHDXFjJlNBYbJBg=="
+  "resolved" "https://npm.lisk.com/@oclif%2fconfig/-/config-1.18.8.tgz"
+  "version" "1.18.8"
+  dependencies:
+    "@oclif/errors" "^1.3.6"
+    "@oclif/parser" "^3.8.10"
+    "debug" "^4.3.4"
+    "globby" "^11.1.0"
+    "is-wsl" "^2.1.1"
+    "tslib" "^2.5.0"
+
+"@oclif/config@1.18.6":
   "integrity" "sha512-OWhCpdu4QqggOPX1YPZ4XVmLLRX+lhGjXV6RNA7sogOwLqlEmSslnN/lhR5dkhcWZbKWBQH29YCrB3LDPRu/IA=="
   "resolved" "https://npm.lisk.com/@oclif%2fconfig/-/config-1.18.6.tgz"
   "version" "1.18.6"
@@ -909,18 +919,6 @@
     "globby" "^11.1.0"
     "is-wsl" "^2.1.1"
     "tslib" "^2.3.1"
-
-"@oclif/config@1.18.2":
-  "integrity" "sha512-cE3qfHWv8hGRCP31j7fIS7BfCflm/BNZ2HNqHexH+fDrdF2f1D5S8VmXWLC77ffv3oDvWyvE9AZeR0RfmHCCaA=="
-  "resolved" "https://npm.lisk.com/@oclif%2fconfig/-/config-1.18.2.tgz"
-  "version" "1.18.2"
-  dependencies:
-    "@oclif/errors" "^1.3.3"
-    "@oclif/parser" "^3.8.0"
-    "debug" "^4.1.1"
-    "globby" "^11.0.1"
-    "is-wsl" "^2.1.1"
-    "tslib" "^2.0.0"
 
 "@oclif/dev-cli@1.22.2":
   "integrity" "sha512-c7633R37RxrQIpwqPKxjNRm6/jb1yuG8fd16hmNz9Nw+/MUhEtQtKHSCe9ScH8n5M06l6LEo4ldk9LEGtpaWwA=="
@@ -951,18 +949,7 @@
     "strip-ansi" "^5.0.0"
     "wrap-ansi" "^4.0.0"
 
-"@oclif/errors@^1.3.3", "@oclif/errors@1.3.5":
-  "integrity" "sha512-OivucXPH/eLLlOT7FkCMoZXiaVYf8I/w1eTAM1+gKzfhALwWTusxEx7wBmW0uzvkSg/9ovWLycPaBgJbM3LOCQ=="
-  "resolved" "https://npm.lisk.com/@oclif%2ferrors/-/errors-1.3.5.tgz"
-  "version" "1.3.5"
-  dependencies:
-    "clean-stack" "^3.0.0"
-    "fs-extra" "^8.1"
-    "indent-string" "^4.0.0"
-    "strip-ansi" "^6.0.0"
-    "wrap-ansi" "^7.0.0"
-
-"@oclif/errors@^1.3.6":
+"@oclif/errors@^1.3.6", "@oclif/errors@1.3.6":
   "integrity" "sha512-fYaU4aDceETd89KXP+3cLyg9EHZsLD3RxF2IU9yxahhBpspWjkWi3Dy3bTgcwZ3V47BgxQaGapzJWDM33XIVDQ=="
   "resolved" "https://npm.lisk.com/@oclif%2ferrors/-/errors-1.3.6.tgz"
   "version" "1.3.6"
@@ -974,12 +961,12 @@
     "wrap-ansi" "^7.0.0"
 
 "@oclif/help@^1.0.1":
-  "integrity" "sha512-8rsl4RHL5+vBUAKBL6PFI3mj58hjPCp2VYyXD4TAa7IMStikFfOH2gtWmqLzIlxAED2EpD0dfYwo9JJxYsH7Aw=="
-  "resolved" "https://npm.lisk.com/@oclif%2fhelp/-/help-1.0.1.tgz"
-  "version" "1.0.1"
+  "integrity" "sha512-77ZXqVXcd+bQ6EafN56KbL4PbNtZM/Lq4GQElekNav+CPIgPNKT3AtMTQrc0fWke6bb/BTLB+1Fu1gWgx643jQ=="
+  "resolved" "https://npm.lisk.com/@oclif%2fhelp/-/help-1.0.5.tgz"
+  "version" "1.0.5"
   dependencies:
-    "@oclif/config" "1.18.2"
-    "@oclif/errors" "1.3.5"
+    "@oclif/config" "1.18.6"
+    "@oclif/errors" "1.3.6"
     "chalk" "^4.1.2"
     "indent-string" "^4.0.0"
     "lodash" "^4.17.21"
@@ -993,15 +980,15 @@
   "resolved" "https://npm.lisk.com/@oclif%2flinewrap/-/linewrap-1.0.0.tgz"
   "version" "1.0.0"
 
-"@oclif/parser@^3.8.0", "@oclif/parser@^3.8.9":
-  "integrity" "sha512-1j/kThdse7yHQz6+c3v8RA1I3gD6+SGt2O7IAb/MAMoxqyBrFQDabQHH2UU4eVFGMLN7U91AiYJp11zJ9LcQAg=="
-  "resolved" "https://npm.lisk.com/@oclif%2fparser/-/parser-3.8.9.tgz"
-  "version" "3.8.9"
+"@oclif/parser@^3.8.0", "@oclif/parser@^3.8.10", "@oclif/parser@^3.8.9":
+  "integrity" "sha512-J4l/NcnfbIU84+NNdy6bxq9yJt4joFWNvpk59hq+uaQPUNtjmNJDVGuRvf6GUOxHNgRsVK1JRmd/Ez+v7Z9GqQ=="
+  "resolved" "https://npm.lisk.com/@oclif%2fparser/-/parser-3.8.10.tgz"
+  "version" "3.8.10"
   dependencies:
     "@oclif/errors" "^1.3.6"
     "@oclif/linewrap" "^1.0.0"
     "chalk" "^4.1.0"
-    "tslib" "^2.4.1"
+    "tslib" "^2.5.0"
 
 "@oclif/plugin-help@^2.1.6", "@oclif/plugin-help@2.2.3":
   "integrity" "sha512-bGHUdo5e7DjPJ0vTeRBMIrfqTRDBfyR5w0MP41u0n3r7YG5p14lvMmiCXxi6WDaP2Hw5nqx3PnkAIntCKZZN7g=="
@@ -1180,9 +1167,9 @@
     "@types/lodash" "*"
 
 "@types/lodash@*":
-  "integrity" "sha512-BdZ5BCCvho3EIXw6wUCXHe7rS53AIDPLE+JzwgT+OsJk53oBfbSmZZ7CX4VaRoN78N+TJpFi9QPlfIVNmJYWxQ=="
-  "resolved" "https://npm.lisk.com/@types%2flodash/-/lodash-4.14.191.tgz"
-  "version" "4.14.191"
+  "integrity" "sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g=="
+  "resolved" "https://npm.lisk.com/@types%2flodash/-/lodash-4.14.194.tgz"
+  "version" "4.14.194"
 
 "@types/minimatch@*":
   "integrity" "sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA=="
@@ -1231,7 +1218,7 @@
 
 "@types/tar@6.1.4":
   "integrity" "sha512-Cp4oxpfIzWt7mr2pbhHT2OTXGMAL0szYCzuf8lRWyIMCgsx6/Hfc3ubztuhvzXHXgraTQxyOCmmg7TDGIMIJJQ=="
-  "resolved" "https://registry.npmjs.org/@types/tar/-/tar-6.1.4.tgz"
+  "resolved" "https://npm.lisk.com/@types%2ftar/-/tar-6.1.4.tgz"
   "version" "6.1.4"
   dependencies:
     "@types/node" "*"
@@ -1539,14 +1526,14 @@
     "uri-js" "^4.2.2"
 
 "amp-message@~0.1.1":
-  "integrity" "sha512-JqutcFwoU1+jhv7ArgW38bqrE+LQdcRv4NxNw0mp0JHQyB6tXesWRjtYKlDgHRY2o3JE5UTaBGUK8kSWUdxWUg== sha1-p48cmJlQh602GSpBKY5NtJ49/EU="
+  "integrity" "sha1-p48cmJlQh602GSpBKY5NtJ49/EU="
   "resolved" "https://npm.lisk.com/amp-message/-/amp-message-0.1.2.tgz"
   "version" "0.1.2"
   dependencies:
     "amp" "0.3.1"
 
 "amp@~0.3.1", "amp@0.3.1":
-  "integrity" "sha512-OwIuC4yZaRogHKiuU5WlMR5Xk/jAcpPtawWL05Gj8Lvm2F6mwoJt4O/bHI+DHwG79vWd+8OFYM4/BzYqyRd3qw== sha1-at+NWKdPNh6CwfqNOJwHnhOfxH0="
+  "integrity" "sha1-at+NWKdPNh6CwfqNOJwHnhOfxH0="
   "resolved" "https://npm.lisk.com/amp/-/amp-0.3.1.tgz"
   "version" "0.3.1"
 
@@ -1609,7 +1596,7 @@
   "version" "5.2.0"
 
 "ansicolors@~0.3.2":
-  "integrity" "sha512-QXu7BPrP29VllRxH8GwB7x5iX5qWKAAMLqKQGWTeLWVlNHNOpVMJ91dsxQAIWXpjuW5wqvxu3Jd/nRjrJ+0pqg== sha1-ZlWX3oap/+Oqm/vmyuXG6kJrSXk="
+  "integrity" "sha1-ZlWX3oap/+Oqm/vmyuXG6kJrSXk="
   "resolved" "https://npm.lisk.com/ansicolors/-/ansicolors-0.3.2.tgz"
   "version" "0.3.2"
 
@@ -1658,6 +1645,14 @@
   "integrity" "sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q=="
   "resolved" "https://npm.lisk.com/argparse/-/argparse-2.0.1.tgz"
   "version" "2.0.1"
+
+"array-buffer-byte-length@^1.0.0":
+  "integrity" "sha512-LPuwb2P+NrQw3XhxGc36+XSvuBPopovXYTR9Ew++Du9Yb/bx5AzBfrIsBoj0EZUifjQU+sHL21sseZ3jerWO/A=="
+  "resolved" "https://npm.lisk.com/array-buffer-byte-length/-/array-buffer-byte-length-1.0.0.tgz"
+  "version" "1.0.0"
+  dependencies:
+    "call-bind" "^1.0.2"
+    "is-array-buffer" "^3.0.1"
 
 "array-includes@^3.1.1", "array-includes@^3.1.4":
   "integrity" "sha512-sgTbLvL6cNnw24FnbaDyjmvddQ2ML8arZsgaJhoABMoplz/4QRhtrYS+alr1BUM1Bwp6dhx8vVCBSLG+StwOFw=="
@@ -1786,6 +1781,11 @@
   "resolved" "https://npm.lisk.com/base64id/-/base64id-1.0.0.tgz"
   "version" "1.0.0"
 
+"bintrees@1.0.2":
+  "integrity" "sha1-SfiW1uhYpKSZ34XDj7OZua/4QPg="
+  "resolved" "https://npm.lisk.com/bintrees/-/bintrees-1.0.2.tgz"
+  "version" "1.0.2"
+
 "bip39@3.0.3":
   "integrity" "sha512-P0dKrz4g0V0BjXfx7d9QNkJ/Txcz/k+hM9TnjqjUaXtuOfAvxXSw2rJw8DX0e3ZPwnK/IgDxoRqf0bvoVCqbMg=="
   "resolved" "https://npm.lisk.com/bip39/-/bip39-3.0.3.tgz"
@@ -1826,14 +1826,14 @@
   "version" "1.0.0"
 
 "browserslist@^4.21.3", "browserslist@>= 4.21.0":
-  "integrity" "sha512-CBHJJdDmgjl3daYjN5Cp5kbTf1mUhZoS+beLklHIvkOWscs83YAhLlF3Wsh/lciQYAcbBJgTOD44VtG31ZM4Hw=="
-  "resolved" "https://npm.lisk.com/browserslist/-/browserslist-4.21.4.tgz"
-  "version" "4.21.4"
+  "integrity" "sha512-tUkiguQGW7S3IhB7N+c2MV/HZPSCPAAiYBZXLsBhFB/PCy6ZKKsZrmBayHV9fdGV/ARIfJ14NkxKzRDjvp7L6w=="
+  "resolved" "https://npm.lisk.com/browserslist/-/browserslist-4.21.5.tgz"
+  "version" "4.21.5"
   dependencies:
-    "caniuse-lite" "^1.0.30001400"
-    "electron-to-chromium" "^1.4.251"
-    "node-releases" "^2.0.6"
-    "update-browserslist-db" "^1.0.9"
+    "caniuse-lite" "^1.0.30001449"
+    "electron-to-chromium" "^1.4.284"
+    "node-releases" "^2.0.8"
+    "update-browserslist-db" "^1.0.10"
 
 "bs-logger@0.x":
   "integrity" "sha512-pd8DCoxmbgc7hyPKOvxtqNcjYoOsABPQdcCUjGp3d42VR2CX1ORhk2A87oqqu5R1kk+76nsxZupkmyd+MVtCog=="
@@ -1860,7 +1860,7 @@
   "version" "1.1.2"
 
 "buffer-reverse@1.0.1":
-  "integrity" "sha512-M87YIUBsZ6N924W57vDwT/aOu8hw7ZgdByz6ijksLjmHJELBASmYTTlNHRgjE+pTsT9oJXGaDSgqqwfdHotDUg== sha1-SSg8jvpvkBvAH6MwTQYCeXGuL2A="
+  "integrity" "sha1-SSg8jvpvkBvAH6MwTQYCeXGuL2A="
   "resolved" "https://npm.lisk.com/buffer-reverse/-/buffer-reverse-1.0.1.tgz"
   "version" "1.0.1"
 
@@ -1937,13 +1937,13 @@
   "resolved" "https://npm.lisk.com/camelcase/-/camelcase-6.3.0.tgz"
   "version" "6.3.0"
 
-"caniuse-lite@^1.0.30001400":
-  "integrity" "sha512-bdKU1BQDPeEXe9A39xJnGtY0uRq/z5osrnXUw0TcK+EYno45Y+U7QU9HhHEyzvMDffpYadFXi3idnSNkcwLkTw=="
-  "resolved" "https://npm.lisk.com/caniuse-lite/-/caniuse-lite-1.0.30001447.tgz"
-  "version" "1.0.30001447"
+"caniuse-lite@^1.0.30001449":
+  "integrity" "sha512-q7cpoPPvZYgtyC4VaBSN0Bt+PJ4c4EYRf0DrduInOz2SkFpHD5p3LnvEpqBp7UnJn+8x1Ogl1s38saUxe+ihQQ=="
+  "resolved" "https://npm.lisk.com/caniuse-lite/-/caniuse-lite-1.0.30001480.tgz"
+  "version" "1.0.30001480"
 
 "cardinal@^2.1.1":
-  "integrity" "sha512-JSr5eOgoEymtYHBjNWyjrMqet9Am2miJhlfKNdqLp6zoeAh0KN5dRAcxlecj5mAJrmQomgiOBj35xHLrFjqBpw== sha1-fMEFXYItISlU0HsIXeolHMe8VQU="
+  "integrity" "sha1-fMEFXYItISlU0HsIXeolHMe8VQU="
   "resolved" "https://npm.lisk.com/cardinal/-/cardinal-2.1.1.tgz"
   "version" "2.1.1"
   dependencies:
@@ -2007,9 +2007,9 @@
   "version" "2.0.0"
 
 "ci-info@^3.2.0":
-  "integrity" "sha512-4jYS4MOAaCIStSRwiuxc4B8MYhIe676yO1sYGzARnjXkWpmzZMMYxY6zu8WYWDhSuth5zhrQ1rhNSibyyvv4/w=="
-  "resolved" "https://npm.lisk.com/ci-info/-/ci-info-3.7.1.tgz"
-  "version" "3.7.1"
+  "integrity" "sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw=="
+  "resolved" "https://npm.lisk.com/ci-info/-/ci-info-3.8.0.tgz"
+  "version" "3.8.0"
 
 "cipher-base@^1.0.1", "cipher-base@^1.0.3":
   "integrity" "sha512-Kkht5ye6ZGmwv40uUDZztayT2ThLQGfnj/T71N/XzeZeo3nf8foyW7zGTsPYkEya3m5f3cAypH+qe7YOrM1U2Q=="
@@ -2049,9 +2049,9 @@
     "restore-cursor" "^3.1.0"
 
 "cli-progress@^3.4.0":
-  "integrity" "sha512-lCPoS6ncgX4+rJu5bS3F/iCz17kZ9MPZ6dpuTtI0KXKABkhyXIdYB3Inby1OpaGti3YlI3EeEkM9AuWpelJrVA=="
-  "resolved" "https://npm.lisk.com/cli-progress/-/cli-progress-3.11.2.tgz"
-  "version" "3.11.2"
+  "integrity" "sha512-tRkV3HJ1ASwm19THiiLIXLO7Im7wlTuKnvkYaTkyoAPefqjNg7W7DHKUlGRxy9vxDvbyCYQkQozvptuMkGCg8A=="
+  "resolved" "https://npm.lisk.com/cli-progress/-/cli-progress-3.12.0.tgz"
+  "version" "3.12.0"
   dependencies:
     "string-width" "^4.2.3"
 
@@ -2148,7 +2148,7 @@
   "version" "1.1.4"
 
 "color-name@1.1.3":
-  "integrity" "sha512-72fSenhMw2HZMTVHeCA9KCmpEIbzWiQsjN+BHcBbS9vr1mtt+vJjPdksIBNUmKAW8TFUDPJK5SUU3QhE9NEXDw== sha1-p9BVi9icQveV3UIyj3QIMcpTvCU="
+  "integrity" "sha1-p9BVi9icQveV3UIyj3QIMcpTvCU="
   "resolved" "https://npm.lisk.com/color-name/-/color-name-1.1.3.tgz"
   "version" "1.1.3"
 
@@ -2180,7 +2180,7 @@
   "version" "1.2.1"
 
 "concat-map@0.0.1":
-  "integrity" "sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg== sha1-2Klr13/Wjfd5OnMDajug1UBdR3s="
+  "integrity" "sha1-2Klr13/Wjfd5OnMDajug1UBdR3s="
   "resolved" "https://npm.lisk.com/concat-map/-/concat-map-0.0.1.tgz"
   "version" "0.0.1"
 
@@ -2200,9 +2200,9 @@
   "version" "0.1.0"
 
 "content-type@^1.0.4":
-  "integrity" "sha512-hIP3EEPs8tB9AT1L+NUqtwOAps4mk2Zob89MWXMHjHWg9milF/j4osnnQLXBCBFBk/tvIG/tUc9mOUJiPBhPXA=="
-  "resolved" "https://npm.lisk.com/content-type/-/content-type-1.0.4.tgz"
-  "version" "1.0.4"
+  "integrity" "sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA=="
+  "resolved" "https://npm.lisk.com/content-type/-/content-type-1.0.5.tgz"
+  "version" "1.0.5"
 
 "convert-source-map@^1.4.0", "convert-source-map@^1.6.0", "convert-source-map@^1.7.0":
   "integrity" "sha512-ASFBup0Mz1uyiIjANan1jzLQami9z1PoYSZCiiYW2FczPbenXc45FZdBZLzOT+r6+iciuEModtmCti+hjaAk0A=="
@@ -2390,7 +2390,7 @@
     "ms" "2.1.2"
 
 "decamelize@^1.2.0":
-  "integrity" "sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA== sha1-9lNNFRSCabIDUue+4m9QH5oZEpA="
+  "integrity" "sha1-9lNNFRSCabIDUue+4m9QH5oZEpA="
   "resolved" "https://npm.lisk.com/decamelize/-/decamelize-1.2.0.tgz"
   "version" "1.2.0"
 
@@ -2410,9 +2410,9 @@
   "version" "0.1.4"
 
 "deepmerge@^4.2.2":
-  "integrity" "sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg=="
-  "resolved" "https://npm.lisk.com/deepmerge/-/deepmerge-4.2.2.tgz"
-  "version" "4.2.2"
+  "integrity" "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="
+  "resolved" "https://npm.lisk.com/deepmerge/-/deepmerge-4.3.1.tgz"
+  "version" "4.3.1"
 
 "deferred-leveldown@~5.3.0":
   "integrity" "sha512-a59VOT+oDy7vtAbLRCZwWgxu2BaCfd5Hk7wxJd48ei7I+nsg8Orlb9CLG0PMZienk9BSUKgeAqkO2+Lw+1+Ukw=="
@@ -2423,9 +2423,9 @@
     "inherits" "^2.0.3"
 
 "define-properties@^1.1.3", "define-properties@^1.1.4":
-  "integrity" "sha512-uckOqKcfaVvtBdsVkdPv3XjveQJsNQqmhXgRi8uhvWWuPYZCNlzT8qAyblUgNoXdHdjMTzAqeGjAoli8f+bzPA=="
-  "resolved" "https://npm.lisk.com/define-properties/-/define-properties-1.1.4.tgz"
-  "version" "1.1.4"
+  "integrity" "sha512-xvqAVKGfT1+UAvPwKTVw/njhdQ8ZhXK4lI0bCIuCMrp2up9nPnaDftrLtmpTazqd1o+UY4zgzU+avtMbDP+ldA=="
+  "resolved" "https://npm.lisk.com/define-properties/-/define-properties-1.2.0.tgz"
+  "version" "1.2.0"
   dependencies:
     "has-property-descriptors" "^1.0.0"
     "object-keys" "^1.1.1"
@@ -2532,10 +2532,10 @@
   dependencies:
     "tweetnacl" "1.x.x"
 
-"electron-to-chromium@^1.4.251":
-  "integrity" "sha512-M8WEXFuKXMYMVr45fo8mq0wUrrJHheiKZf6BArTKk9ZBYCKJEOU5H8cdWgDT+qCVZf7Na4lVUaZsA+h6uA9+PA=="
-  "resolved" "https://npm.lisk.com/electron-to-chromium/-/electron-to-chromium-1.4.284.tgz"
-  "version" "1.4.284"
+"electron-to-chromium@^1.4.284":
+  "integrity" "sha512-FRHZO+1tUNO4TOPXmlxetkoaIY8uwHzd1kKopK/Gx2SKn1L47wJXWD44wxP5CGRyyP98z/c8e1eBzJrgPeiBOg=="
+  "resolved" "https://npm.lisk.com/electron-to-chromium/-/electron-to-chromium-1.4.365.tgz"
+  "version" "1.4.365"
 
 "emittery@^0.8.1":
   "integrity" "sha512-uDfvUjVrfGJJhymx/kz6prltenw1u7WrCg1oa94zYY8xxVpLLUu045LAT0dhDZdXG58/EpPL/5kA180fQ/qudg=="
@@ -2598,17 +2598,17 @@
     "is-arrayish" "^0.2.1"
 
 "es-abstract@^1.19.0", "es-abstract@^1.20.4":
-  "integrity" "sha512-QudMsPOz86xYz/1dG1OuGBKOELjCh99IIWHLzy5znUB6j8xG2yMA7bfTV86VSqKF+Y/H08vQPR+9jyXpuC6hfg=="
-  "resolved" "https://npm.lisk.com/es-abstract/-/es-abstract-1.21.1.tgz"
-  "version" "1.21.1"
+  "integrity" "sha512-y/B5POM2iBnIxCiernH1G7rC9qQoM77lLIMQLuob0zhp8C56Po81+2Nj0WFKnd0pNReDTnkYryc+zhOzpEIROg=="
+  "resolved" "https://npm.lisk.com/es-abstract/-/es-abstract-1.21.2.tgz"
+  "version" "1.21.2"
   dependencies:
+    "array-buffer-byte-length" "^1.0.0"
     "available-typed-arrays" "^1.0.5"
     "call-bind" "^1.0.2"
     "es-set-tostringtag" "^2.0.1"
     "es-to-primitive" "^1.2.1"
-    "function-bind" "^1.1.1"
     "function.prototype.name" "^1.1.5"
-    "get-intrinsic" "^1.1.3"
+    "get-intrinsic" "^1.2.0"
     "get-symbol-description" "^1.0.0"
     "globalthis" "^1.0.3"
     "gopd" "^1.0.1"
@@ -2616,8 +2616,8 @@
     "has-property-descriptors" "^1.0.0"
     "has-proto" "^1.0.1"
     "has-symbols" "^1.0.3"
-    "internal-slot" "^1.0.4"
-    "is-array-buffer" "^3.0.1"
+    "internal-slot" "^1.0.5"
+    "is-array-buffer" "^3.0.2"
     "is-callable" "^1.2.7"
     "is-negative-zero" "^2.0.2"
     "is-regex" "^1.1.4"
@@ -2625,11 +2625,12 @@
     "is-string" "^1.0.7"
     "is-typed-array" "^1.1.10"
     "is-weakref" "^1.0.2"
-    "object-inspect" "^1.12.2"
+    "object-inspect" "^1.12.3"
     "object-keys" "^1.1.1"
     "object.assign" "^4.1.4"
     "regexp.prototype.flags" "^1.4.3"
     "safe-regex-test" "^1.0.0"
+    "string.prototype.trim" "^1.2.7"
     "string.prototype.trimend" "^1.0.6"
     "string.prototype.trimstart" "^1.0.6"
     "typed-array-length" "^1.0.4"
@@ -2667,7 +2668,7 @@
   "version" "3.1.1"
 
 "escape-string-regexp@^1.0.5":
-  "integrity" "sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg== sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ="
+  "integrity" "sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ="
   "resolved" "https://npm.lisk.com/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz"
   "version" "1.0.5"
 
@@ -2737,9 +2738,9 @@
     "resolve" "^1.22.1"
 
 "eslint-module-utils@^2.6.0", "eslint-module-utils@^2.7.3":
-  "integrity" "sha512-j4GT+rqzCoRKHwURX7pddtIPGySnX9Si/cgMI5ztrcqOPtk5dDEeZ34CQVPphnqkJytlc97Vuk05Um2mJ3gEQA=="
-  "resolved" "https://npm.lisk.com/eslint-module-utils/-/eslint-module-utils-2.7.4.tgz"
-  "version" "2.7.4"
+  "integrity" "sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw=="
+  "resolved" "https://npm.lisk.com/eslint-module-utils/-/eslint-module-utils-2.8.0.tgz"
+  "version" "2.8.0"
   dependencies:
     "debug" "^3.2.7"
 
@@ -2804,9 +2805,9 @@
     "estraverse" "^4.1.1"
 
 "eslint-scope@^7.1.1":
-  "integrity" "sha512-QKQM/UXpIiHcLqJ5AOyIW7XZmzjkzQXYE54n1++wb0u9V/abW3l9uQnxX8Z5Xd18xyKIMTUAyQ0k1e8pz6LUrw=="
-  "resolved" "https://npm.lisk.com/eslint-scope/-/eslint-scope-7.1.1.tgz"
-  "version" "7.1.1"
+  "integrity" "sha512-DYj5deGlHBfMt15J7rdtyKNq/Nqlv5KfU4iodrQ019XESsRnwXH9KAE0y3cwtUHDo2ob7CypAnCqefh6vioWRw=="
+  "resolved" "https://npm.lisk.com/eslint-scope/-/eslint-scope-7.2.0.tgz"
+  "version" "7.2.0"
   dependencies:
     "esrecurse" "^4.3.0"
     "estraverse" "^5.2.0"
@@ -2847,10 +2848,10 @@
   "resolved" "https://npm.lisk.com/eslint-visitor-keys/-/eslint-visitor-keys-2.1.0.tgz"
   "version" "2.1.0"
 
-"eslint-visitor-keys@^3.3.0":
-  "integrity" "sha512-mQ+suqKJVyeuwGYHAdjMFqjCyfl8+Ldnxuyp3ldiMBFKkvytrXUZWaiPCEav8qDHKty44bD+qV1IP4T+w+xXRA=="
-  "resolved" "https://npm.lisk.com/eslint-visitor-keys/-/eslint-visitor-keys-3.3.0.tgz"
-  "version" "3.3.0"
+"eslint-visitor-keys@^3.3.0", "eslint-visitor-keys@^3.4.0":
+  "integrity" "sha512-HPpKPUBQcAsZOsHAFwTtIKcYlCje62XB7SEAcxjtmW6TD1WVpkS6i6/hOVtTZIl4zGj/mBqpFVGvaDneik+VoQ=="
+  "resolved" "https://npm.lisk.com/eslint-visitor-keys/-/eslint-visitor-keys-3.4.0.tgz"
+  "version" "3.4.0"
 
 "eslint@*", "eslint@^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8", "eslint@^6.0.0 || ^7.0.0 || ^8.0.0", "eslint@^7.0.0 || ^8.0.0", "eslint@>=3.14.1", "eslint@>=5", "eslint@8.28.0":
   "integrity" "sha512-S27Di+EVyMxcHiwDrFzk8dJYAaD+/5SoWKxL1ri/71CRHsnJnRDPNt2Kzj24+MT9FDupf4aqqyqPrvI8MvQ4VQ=="
@@ -2950,13 +2951,13 @@
     "eslint-visitor-keys" "^1.3.0"
 
 "espree@^9.4.0":
-  "integrity" "sha512-XwctdmTO6SIvCzd9810yyNzIrOrqNYV9Koizx4C/mRhf9uq0o4yHoCEU/670pOxOL/MSraektvSAji79kX90Vg=="
-  "resolved" "https://npm.lisk.com/espree/-/espree-9.4.1.tgz"
-  "version" "9.4.1"
+  "integrity" "sha512-5yxtHSZXRSW5pvv3hAlXM5+/Oswi1AUFqBmbibKb5s6bp3rGIDkyXU6xCoyuuLhijr4SFwPrXRoZjz0AZDN9tg=="
+  "resolved" "https://npm.lisk.com/espree/-/espree-9.5.1.tgz"
+  "version" "9.5.1"
   dependencies:
     "acorn" "^8.8.0"
     "acorn-jsx" "^5.3.2"
-    "eslint-visitor-keys" "^3.3.0"
+    "eslint-visitor-keys" "^3.4.0"
 
 "esprima@^4.0.0", "esprima@^4.0.1", "esprima@~4.0.0":
   "integrity" "sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A=="
@@ -2964,9 +2965,9 @@
   "version" "4.0.1"
 
 "esquery@^1.4.0":
-  "integrity" "sha512-cCDispWt5vHHtwMY2YrAQ4ibFkAL8RbH5YGBnZBc90MolvvfkkQcJro/aZiAQUlQ3qgrYS6D6v8Gc5G5CQsc9w=="
-  "resolved" "https://npm.lisk.com/esquery/-/esquery-1.4.0.tgz"
-  "version" "1.4.0"
+  "integrity" "sha512-YQLXUplAwJgCydQ78IMJywZCceoqk1oH01OERdSAJc/7U2AylwjhSCLDEtqwg811idIS/9fIU5GjG73IgjKMVg=="
+  "resolved" "https://npm.lisk.com/esquery/-/esquery-1.5.0.tgz"
+  "version" "1.5.0"
   dependencies:
     "estraverse" "^5.1.0"
 
@@ -3083,9 +3084,9 @@
   "version" "3.1.3"
 
 "fast-glob@^3.0.3", "fast-glob@^3.2.9":
-  "integrity" "sha512-xrO3+1bxSo3ZVHAnqzyuewYT6aMFHRAd4Kcs92MAonjwQZLsK9d0SF1IyQ3k5PoirxTW0Oe/RqFgMQ6TcNE5Ew=="
-  "resolved" "https://npm.lisk.com/fast-glob/-/fast-glob-3.2.11.tgz"
-  "version" "3.2.11"
+  "integrity" "sha512-DVj4CQIYYow0BlaelwK1pHl5n5cRSJfM60UA0zK891sVInoPri2Ekj7+e1CT3/3qxXenpI+nBBmQAcJPJgaj4w=="
+  "resolved" "https://npm.lisk.com/fast-glob/-/fast-glob-3.2.12.tgz"
+  "version" "3.2.12"
   dependencies:
     "@nodelib/fs.stat" "^2.0.2"
     "@nodelib/fs.walk" "^1.2.3"
@@ -3099,14 +3100,14 @@
   "version" "2.1.0"
 
 "fast-levenshtein@^2.0.6", "fast-levenshtein@~2.0.6":
-  "integrity" "sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw== sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc="
+  "integrity" "sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc="
   "resolved" "https://npm.lisk.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz"
   "version" "2.0.6"
 
 "fastq@^1.6.0":
-  "integrity" "sha512-YpkpUnK8od0o1hmeSc7UUs/eB/vIPWJYjKck2QKIzAf71Vm1AAQ3EbuZB3g2JIy+pg+ERD0vqI79KyZiB2e2Nw=="
-  "resolved" "https://npm.lisk.com/fastq/-/fastq-1.13.0.tgz"
-  "version" "1.13.0"
+  "integrity" "sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw=="
+  "resolved" "https://npm.lisk.com/fastq/-/fastq-1.15.0.tgz"
+  "version" "1.15.0"
   dependencies:
     "reusify" "^1.0.4"
 
@@ -3270,7 +3271,7 @@
     "minipass" "^3.0.0"
 
 "fs.realpath@^1.0.0":
-  "integrity" "sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw== sha1-FQStJSMVjKpA20onh8sBQRmU6k8="
+  "integrity" "sha1-FQStJSMVjKpA20onh8sBQRmU6k8="
   "resolved" "https://npm.lisk.com/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -3343,7 +3344,7 @@
   "resolved" "https://npm.lisk.com/get-caller-file/-/get-caller-file-2.0.5.tgz"
   "version" "2.0.5"
 
-"get-intrinsic@^1.0.2", "get-intrinsic@^1.1.1", "get-intrinsic@^1.1.3":
+"get-intrinsic@^1.0.2", "get-intrinsic@^1.1.1", "get-intrinsic@^1.1.3", "get-intrinsic@^1.2.0":
   "integrity" "sha512-L049y6nFOuom5wGyRc3/gdTLO94dySVKRACj1RmJZBQXlbTMhtNIgkWkUHq+jYmZvKf14EW1EoJnnjbmoHij0Q=="
   "resolved" "https://npm.lisk.com/get-intrinsic/-/get-intrinsic-1.2.0.tgz"
   "version" "1.2.0"
@@ -3368,7 +3369,7 @@
   "version" "6.0.0"
 
 "get-stream@^3.0.0":
-  "integrity" "sha512-GlhdIUuVakc8SJ6kK0zAFbiGzRFzNnY4jUuEbV9UROo4Y+0Ny4fjvcZFVTeDA4odpFyOQzaw6hXukJSq/f28sQ== sha1-jpQ9E1jcN1VQVOy+LtsFqhdO3hQ="
+  "integrity" "sha1-jpQ9E1jcN1VQVOy+LtsFqhdO3hQ="
   "resolved" "https://npm.lisk.com/get-stream/-/get-stream-3.0.0.tgz"
   "version" "3.0.0"
 
@@ -3400,9 +3401,9 @@
     "get-intrinsic" "^1.1.1"
 
 "github-slugger@^1.2.1":
-  "integrity" "sha512-w0dzqw/nt51xMVmlaV1+JRzN+oCa1KfcgGEWhxUG16wbdA+Xnt/yoFO8Z8x/V82ZcZ0wy6ln9QDup5avbhiDhQ=="
-  "resolved" "https://npm.lisk.com/github-slugger/-/github-slugger-1.4.0.tgz"
-  "version" "1.4.0"
+  "integrity" "sha512-wIh+gKBI9Nshz2o46B0B3f5k/W+WI9ZAv6y5Dn5WJ5SK1t0TnDimB4WE5rmTD05ZAIn8HALCZVmCsvj0w0v0lw=="
+  "resolved" "https://npm.lisk.com/github-slugger/-/github-slugger-1.5.0.tgz"
+  "version" "1.5.0"
 
 "glob-parent@^5.0.0":
   "integrity" "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="
@@ -3426,7 +3427,7 @@
     "is-glob" "^4.0.3"
 
 "glob@^6.0.1":
-  "integrity" "sha512-MKZeRNyYZAVVVG1oZeLaWie1uweH40m9AZwIwxyPbTSX4hHrVYSzLg0Ro5Z5R7XKkIX+Cc6oD1rqeDJnwsB8/A== sha1-DwiGD2oVUSey+t1PnOJLGqtuTSI="
+  "integrity" "sha1-DwiGD2oVUSey+t1PnOJLGqtuTSI="
   "resolved" "https://npm.lisk.com/glob/-/glob-6.0.4.tgz"
   "version" "6.0.4"
   dependencies:
@@ -3454,9 +3455,9 @@
   "version" "11.12.0"
 
 "globals@^13.15.0", "globals@^13.19.0", "globals@^13.6.0", "globals@^13.9.0":
-  "integrity" "sha512-dkQ957uSRWHw7CFXLUtUHQI3g3aWApYhfNR2O6jn/907riyTYKVBmxYVROkBcY614FSSeSJh7Xm7SrUWCxvJMQ=="
-  "resolved" "https://npm.lisk.com/globals/-/globals-13.19.0.tgz"
-  "version" "13.19.0"
+  "integrity" "sha512-Qg5QtVkCy/kv3FUSlu4ukeZDVf9ee0iXLAUYX13gbR17bnejFTzr4iS9bY7kwCf1NztRNm1t91fjOiyx4CSwPQ=="
+  "resolved" "https://npm.lisk.com/globals/-/globals-13.20.0.tgz"
+  "version" "13.20.0"
   dependencies:
     "type-fest" "^0.20.2"
 
@@ -3501,9 +3502,9 @@
     "get-intrinsic" "^1.1.3"
 
 "graceful-fs@^4.1.15", "graceful-fs@^4.1.2", "graceful-fs@^4.1.6", "graceful-fs@^4.2.0", "graceful-fs@^4.2.4", "graceful-fs@^4.2.6", "graceful-fs@^4.2.9":
-  "integrity" "sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA=="
-  "resolved" "https://npm.lisk.com/graceful-fs/-/graceful-fs-4.2.10.tgz"
-  "version" "4.2.10"
+  "integrity" "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="
+  "resolved" "https://npm.lisk.com/graceful-fs/-/graceful-fs-4.2.11.tgz"
+  "version" "4.2.11"
 
 "grapheme-splitter@^1.0.4":
   "integrity" "sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ=="
@@ -3516,7 +3517,7 @@
   "version" "1.0.2"
 
 "has-flag@^3.0.0":
-  "integrity" "sha512-sKJf1+ceQBr4SMkvQnBDNDtf4TXpVhVGateu0t918bl30FnbE2m4vNLX+VWe/dpjlb+HugGYzW7uQXH98HPEYw== sha1-tdRU3CGZriJWmfNGfloH87lVuv0="
+  "integrity" "sha1-tdRU3CGZriJWmfNGfloH87lVuv0="
   "resolved" "https://npm.lisk.com/has-flag/-/has-flag-3.0.0.tgz"
   "version" "3.0.0"
 
@@ -3689,9 +3690,9 @@
   "version" "4.0.6"
 
 "ignore@^5.1.1", "ignore@^5.2.0":
-  "integrity" "sha512-CmxgYGiEPCLhfLnpPp1MoRmifwEIOgjcHXxOBjv7mY96c+eWScsOP9c112ZyLdWHi0FxHjI+4uVhKYp/gcdRmQ=="
-  "resolved" "https://npm.lisk.com/ignore/-/ignore-5.2.0.tgz"
-  "version" "5.2.0"
+  "integrity" "sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ=="
+  "resolved" "https://npm.lisk.com/ignore/-/ignore-5.2.4.tgz"
+  "version" "5.2.4"
 
 "immediate@^3.2.3":
   "integrity" "sha512-HR7EVodfFUdQCTIeySw+WDRFJlPcLOJbXfwwZ7Oom6tjsvZ3bOkCDJHehQC3nxJrv7+f9XecwazynjU8e4Vw3Q=="
@@ -3715,7 +3716,7 @@
     "resolve-cwd" "^3.0.0"
 
 "imurmurhash@^0.1.4":
-  "integrity" "sha512-JmXMZ6wuvDmLiHEml9ykzqO6lwFbof0GG4IkcGaENdCRDDmMVnny7s5HsIgHCbaq0w2MyPhDqkhTUgS2LU2PHA== sha1-khi5srkoojixPcT7a21XbyMUU+o="
+  "integrity" "sha1-khi5srkoojixPcT7a21XbyMUU+o="
   "resolved" "https://npm.lisk.com/imurmurhash/-/imurmurhash-0.1.4.tgz"
   "version" "0.1.4"
 
@@ -3735,7 +3736,7 @@
   "version" "1.0.4"
 
 "inflight@^1.0.4":
-  "integrity" "sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA== sha1-Sb1jMdfQLQwJvJEKEHW6gWW1bfk="
+  "integrity" "sha1-Sb1jMdfQLQwJvJEKEHW6gWW1bfk="
   "resolved" "https://npm.lisk.com/inflight/-/inflight-1.0.6.tgz"
   "version" "1.0.6"
   dependencies:
@@ -3752,12 +3753,12 @@
   "resolved" "https://npm.lisk.com/ini/-/ini-1.3.8.tgz"
   "version" "1.3.8"
 
-"internal-slot@^1.0.4":
-  "integrity" "sha512-tA8URYccNzMo94s5MQZgH8NB/XTa6HsOo0MLfXTKKEnHVVdegzaQoFZ7Jp44bdvLvY2waT5dc+j5ICEswhi7UQ=="
-  "resolved" "https://npm.lisk.com/internal-slot/-/internal-slot-1.0.4.tgz"
-  "version" "1.0.4"
+"internal-slot@^1.0.5":
+  "integrity" "sha512-Y+R5hJrzs52QCG2laLn4udYVnxsfny9CpOhNhUvk/SSSVyF6T27FzRbF0sroPidSu3X8oEAkOn2K804mjpt6UQ=="
+  "resolved" "https://npm.lisk.com/internal-slot/-/internal-slot-1.0.5.tgz"
+  "version" "1.0.5"
   dependencies:
-    "get-intrinsic" "^1.1.3"
+    "get-intrinsic" "^1.2.0"
     "has" "^1.0.3"
     "side-channel" "^1.0.4"
 
@@ -3771,17 +3772,17 @@
   "resolved" "https://npm.lisk.com/ip/-/ip-2.0.0.tgz"
   "version" "2.0.0"
 
-"is-array-buffer@^3.0.1":
-  "integrity" "sha512-ASfLknmY8Xa2XtB4wmbz13Wu202baeA18cJBCeCy0wXUHZF0IPyVEXqKEcd+t2fNSLLL1vC6k7lxZEojNbISXQ=="
-  "resolved" "https://npm.lisk.com/is-array-buffer/-/is-array-buffer-3.0.1.tgz"
-  "version" "3.0.1"
+"is-array-buffer@^3.0.1", "is-array-buffer@^3.0.2":
+  "integrity" "sha512-y+FyyR/w8vfIRq4eQcM1EYgSTnmHXPqaF+IgzgraytCFq5Xh8lllDVmAZolPJiZttZLeFSINPYMaEJ7/vWUa1w=="
+  "resolved" "https://npm.lisk.com/is-array-buffer/-/is-array-buffer-3.0.2.tgz"
+  "version" "3.0.2"
   dependencies:
     "call-bind" "^1.0.2"
-    "get-intrinsic" "^1.1.3"
+    "get-intrinsic" "^1.2.0"
     "is-typed-array" "^1.1.10"
 
 "is-arrayish@^0.2.1":
-  "integrity" "sha512-zz06S8t0ozoDXMG+ube26zeCTNXcKIPJZJi8hBrF4idCLms4CG9QtK7qBl1boi5ODzFpjswb5JPmHCbMpjaYzg== sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0="
+  "integrity" "sha1-d8mYQFJ6qOyxqLppe4BkWnqSap0="
   "resolved" "https://npm.lisk.com/is-arrayish/-/is-arrayish-0.2.1.tgz"
   "version" "0.2.1"
 
@@ -3810,10 +3811,10 @@
   "resolved" "https://npm.lisk.com/is-callable/-/is-callable-1.2.7.tgz"
   "version" "1.2.7"
 
-"is-core-module@^2.11.0", "is-core-module@^2.8.1", "is-core-module@^2.9.0":
-  "integrity" "sha512-RRjxlvLDkD1YJwDbroBHMb+cukurkDWNyHx7D3oNB5x9rb5ogcksMC5wHCadcXoo67gVr/+3GFySh3134zi6rw=="
-  "resolved" "https://npm.lisk.com/is-core-module/-/is-core-module-2.11.0.tgz"
-  "version" "2.11.0"
+"is-core-module@^2.11.0", "is-core-module@^2.12.0", "is-core-module@^2.8.1":
+  "integrity" "sha512-RECHCBCd/viahWmwj6enj19sKbHfJrddi/6cBDsNTKbNq0f7VeaUkBo60BqzvPqo/W54ChS62Z5qyun7cfOMqQ=="
+  "resolved" "https://npm.lisk.com/is-core-module/-/is-core-module-2.12.0.tgz"
+  "version" "2.12.0"
   dependencies:
     "has" "^1.0.3"
 
@@ -3830,12 +3831,12 @@
   "version" "2.2.1"
 
 "is-extglob@^2.1.1":
-  "integrity" "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ== sha1-qIwCU1eR8C7TfHahueqXc8gz+MI="
+  "integrity" "sha1-qIwCU1eR8C7TfHahueqXc8gz+MI="
   "resolved" "https://npm.lisk.com/is-extglob/-/is-extglob-2.1.1.tgz"
   "version" "2.1.1"
 
 "is-fullwidth-code-point@^2.0.0":
-  "integrity" "sha512-VHskAKYM8RfSFXwee5t5cbN5PZeq1Wrh6qd5bkyiXIf6UQcN6w/A0eXM9r6t8d+GYOh+o6ZhiEnb88LN/Y8m2w== sha1-o7MKXE8ZkYMWeqq5O+764937ZU8="
+  "integrity" "sha1-o7MKXE8ZkYMWeqq5O+764937ZU8="
   "resolved" "https://npm.lisk.com/is-fullwidth-code-point/-/is-fullwidth-code-point-2.0.0.tgz"
   "version" "2.0.0"
 
@@ -3924,7 +3925,7 @@
     "call-bind" "^1.0.2"
 
 "is-stream@^1.1.0":
-  "integrity" "sha512-uQPm8kcs47jx38atAcWTVxyltQYoPT68y9aWYdV6yWXSyW8mzSat0TL6CiWdZeCdF3KrAvpVtnHbTv4RN+rqdQ== sha1-EtSj3U5o4Lec6428hBc66A2RykQ="
+  "integrity" "sha1-EtSj3U5o4Lec6428hBc66A2RykQ="
   "resolved" "https://npm.lisk.com/is-stream/-/is-stream-1.1.0.tgz"
   "version" "1.1.0"
 
@@ -3959,7 +3960,7 @@
     "has-tostringtag" "^1.0.0"
 
 "is-typedarray@^1.0.0":
-  "integrity" "sha512-cyA56iCMHAh5CdzjJIa4aohJyeO1YbwLi3Jc35MmRU6poroFjIGZzUzupGiRPOjgHg9TLu43xbpwXk523fMxKA== sha1-5HnICFjfDBsR3dppQPlgEfzaSpo="
+  "integrity" "sha1-5HnICFjfDBsR3dppQPlgEfzaSpo="
   "resolved" "https://npm.lisk.com/is-typedarray/-/is-typedarray-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -3988,17 +3989,17 @@
   "version" "1.0.0"
 
 "isarray@~1.0.0":
-  "integrity" "sha512-VLghIWNM6ELQzo7zwmcg0NmTVyWKYjvIeM83yjp0wRDTmUnrM678fQbcKBo6n2CJEF0szoG//ytg+TKla89ALQ== sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE="
+  "integrity" "sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE="
   "resolved" "https://npm.lisk.com/isarray/-/isarray-1.0.0.tgz"
   "version" "1.0.0"
 
 "isarray@0.0.1":
-  "integrity" "sha512-D2S+3GLxWH+uhrNEcoh/fnmYeP8E8/zHl644d/jdA0g2uyXvy3sb0qxotE+ne0LtccHknQzWwZEzhak7oJ0COQ== sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
+  "integrity" "sha1-ihis/Kmo9Bd+Cav8YDiTmwXR7t8="
   "resolved" "https://npm.lisk.com/isarray/-/isarray-0.0.1.tgz"
   "version" "0.0.1"
 
 "isexe@^2.0.0":
-  "integrity" "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw== sha1-6PvzdNxVb/iUehDcsFctYz8s+hA="
+  "integrity" "sha1-6PvzdNxVb/iUehDcsFctYz8s+hA="
   "resolved" "https://npm.lisk.com/isexe/-/isexe-2.0.0.tgz"
   "version" "2.0.0"
 
@@ -4515,9 +4516,9 @@
     "jest-cli" "^27.3.1"
 
 "js-sdsl@^4.1.4":
-  "integrity" "sha512-mifzlm2+5nZ+lEcLJMoBK0/IH/bDg8XnJfd/Wq6IP+xoCjLZsTOnV2QpxlVbX9bMnkl5PdEjNtBJ9Cj1NjifhQ=="
-  "resolved" "https://npm.lisk.com/js-sdsl/-/js-sdsl-4.3.0.tgz"
-  "version" "4.3.0"
+  "integrity" "sha512-FfVSdx6pJ41Oa+CF7RDaFmTnCaFhua+SNYQX74riGOpl96x+2jQCqEfQ2bnXu/5DPCqlRuiqyvTJM0Qjz26IVg=="
+  "resolved" "https://npm.lisk.com/js-sdsl/-/js-sdsl-4.4.0.tgz"
+  "version" "4.4.0"
 
 "js-tokens@^4.0.0":
   "integrity" "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
@@ -4598,11 +4599,18 @@
   "version" "1.0.0"
 
 "json-stable-stringify-without-jsonify@^1.0.1":
-  "integrity" "sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw== sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE="
+  "integrity" "sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE="
   "resolved" "https://npm.lisk.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz"
   "version" "1.0.1"
 
 "json5@^1.0.1":
+  "integrity" "sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA=="
+  "resolved" "https://npm.lisk.com/json5/-/json5-1.0.2.tgz"
+  "version" "1.0.2"
+  dependencies:
+    "minimist" "^1.2.0"
+
+"json5@^1.0.2":
   "integrity" "sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA=="
   "resolved" "https://npm.lisk.com/json5/-/json5-1.0.2.tgz"
   "version" "1.0.2"
@@ -4615,7 +4623,7 @@
   "version" "2.2.3"
 
 "jsonfile@^4.0.0":
-  "integrity" "sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg== sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss="
+  "integrity" "sha1-h3Gq4HmbZAdrdmQPygWPnBDjPss="
   "resolved" "https://npm.lisk.com/jsonfile/-/jsonfile-4.0.0.tgz"
   "version" "4.0.0"
   optionalDependencies:
@@ -4771,27 +4779,28 @@
     "string-argv" "0.3.1"
     "stringify-object" "^3.3.0"
 
-"lisk-framework@6.0.0-alpha.18":
-  "integrity" "sha512-wlMM1O2KMb8J/UNkKhMXocNDc3lIR2FDbRERdPApT7uV6/hrkwg8VehxuFoTwIDIg18sATYct7MdA4oGlXLoqQ=="
-  "resolved" "https://npm.lisk.com/lisk-framework/-/lisk-framework-6.0.0-alpha.18.tgz"
-  "version" "6.0.0-alpha.18"
+"lisk-framework@0.10.0-alpha.22":
+  "integrity" "sha512-YzySLg3+SOe1lYgRA8zlCiL5xgV9bWlxUEq7V5nztKelE8Rld4gP7Mt2tERJqFLoGHpZaYgglOUoWVON9Or+KQ=="
+  "resolved" "https://npm.lisk.com/lisk-framework/-/lisk-framework-0.10.0-alpha.22.tgz"
+  "version" "0.10.0-alpha.22"
   dependencies:
     "@chainsafe/blst" "0.2.6"
-    "@liskhq/lisk-api-client" "^6.0.0-alpha.17"
-    "@liskhq/lisk-chain" "^0.4.0-alpha.15"
-    "@liskhq/lisk-codec" "^0.3.0-alpha.10"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.8"
+    "@liskhq/lisk-api-client" "^6.0.0-alpha.21"
+    "@liskhq/lisk-chain" "^0.4.0-alpha.19"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
     "@liskhq/lisk-db" "0.3.5"
-    "@liskhq/lisk-p2p" "^0.8.0-alpha.10"
-    "@liskhq/lisk-transaction-pool" "^0.6.0-alpha.12"
-    "@liskhq/lisk-transactions" "^6.0.0-alpha.13"
-    "@liskhq/lisk-tree" "^0.3.0-alpha.11"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.5"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.8"
+    "@liskhq/lisk-p2p" "^0.8.0-alpha.14"
+    "@liskhq/lisk-transaction-pool" "^0.6.0-alpha.16"
+    "@liskhq/lisk-transactions" "^6.0.0-alpha.17"
+    "@liskhq/lisk-tree" "^0.3.0-alpha.15"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
     "bunyan" "1.8.15"
     "debug" "4.3.4"
     "eventemitter2" "6.4.9"
     "fs-extra" "11.1.0"
+    "prom-client" "14.2.0"
     "ps-list" "7.2.0"
     "sodium-native" "3.2.1"
     "ws" "8.11.0"
@@ -4867,7 +4876,7 @@
   "version" "3.0.0"
 
 "lodash.clonedeep@4.5.0":
-  "integrity" "sha512-H5ZhCF25riFd9uB5UCkVKo61m3S/xZk1x4wA6yp/L3RFP6Z/eHH1ymQcGLo7J3GMPfm0V/7m1tryHuGVxpqEBQ== sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8="
+  "integrity" "sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8="
   "resolved" "https://npm.lisk.com/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz"
   "version" "4.5.0"
 
@@ -4902,7 +4911,7 @@
   "version" "4.0.1"
 
 "lodash.memoize@4.x":
-  "integrity" "sha512-t7j+NzmgnQzTAYXcsHYLgimltOV1MXHtlOWf6GjL9Kj8GK5FInw5JotxvbOs+IvV1/Dzo04/fCGfLVs7aXb4Ag== sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4="
+  "integrity" "sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4="
   "resolved" "https://npm.lisk.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz"
   "version" "4.1.2"
 
@@ -5071,9 +5080,9 @@
     "brace-expansion" "^1.1.7"
 
 "minimist@^1.2.0", "minimist@^1.2.6":
-  "integrity" "sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q=="
-  "resolved" "https://npm.lisk.com/minimist/-/minimist-1.2.6.tgz"
-  "version" "1.2.6"
+  "integrity" "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="
+  "resolved" "https://npm.lisk.com/minimist/-/minimist-1.2.8.tgz"
+  "version" "1.2.8"
 
 "minipass-collect@^1.0.2":
   "integrity" "sha512-6T6lH0H8OG9kITm/Jm6tdooIbogG9e0tLgpY6mphXSm/A9u8Nq1ryBG+Qspiub9LjWlBPsPS3tWQ/Botq4FdxA=="
@@ -5114,7 +5123,28 @@
   dependencies:
     "minipass" "^3.0.0"
 
-"minipass@^3.0.0", "minipass@^3.1.0", "minipass@^3.1.1", "minipass@^3.1.3":
+"minipass@^3.0.0":
+  "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
+  "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
+  "version" "3.3.6"
+  dependencies:
+    "yallist" "^4.0.0"
+
+"minipass@^3.1.0":
+  "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
+  "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
+  "version" "3.3.6"
+  dependencies:
+    "yallist" "^4.0.0"
+
+"minipass@^3.1.1":
+  "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
+  "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
+  "version" "3.3.6"
+  dependencies:
+    "yallist" "^4.0.0"
+
+"minipass@^3.1.3":
   "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
   "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
   "version" "3.3.6"
@@ -5122,9 +5152,9 @@
     "yallist" "^4.0.0"
 
 "minipass@^4.0.0":
-  "integrity" "sha512-+yQl7SX3bIT83Lhb4BVorMAHVuqsskxRdlmO9kTpyukp8vsm2Sn/fUOV9xlnG8/a5JsypJzap21lz/y3FBMJ8Q=="
-  "resolved" "https://npm.lisk.com/minipass/-/minipass-4.2.5.tgz"
-  "version" "4.2.5"
+  "integrity" "sha512-fNzuVyifolSLFL4NzpF+wEF4qrgqaaKX0haXPQEdQ7NKAN+WecoKMHV09YcuL/DHxrUsYQOK3MiuDf7Ip2OXfQ=="
+  "resolved" "https://npm.lisk.com/minipass/-/minipass-4.2.8.tgz"
+  "version" "4.2.8"
 
 "minizlib@^2.0.0", "minizlib@^2.1.1":
   "integrity" "sha512-bAxsR8BVfj60DWXHE3u30oHzfl4G7khkSuPW+qvpd7jFRHm7dLxOjUk1EHACJ/hxLY8phGJ0YhYHZo7jil7Qdg=="
@@ -5177,7 +5207,7 @@
   "version" "2.1.2"
 
 "mv@~2":
-  "integrity" "sha512-at/ZndSy3xEGJ8i0ygALh8ru9qy7gWW1cmkaqBN29JmMlIvM//MEO9y1sk/avxuwnPcfhkejkLsuPxH81BrkSg== sha1-rmzg1vbV4KT32JN5jQPB6pVZtqI="
+  "integrity" "sha1-rmzg1vbV4KT32JN5jQPB6pVZtqI="
   "resolved" "https://npm.lisk.com/mv/-/mv-2.1.1.tgz"
   "version" "2.1.1"
   dependencies:
@@ -5186,14 +5216,14 @@
     "rimraf" "~2.4.0"
 
 "nan@^2.14.0":
-  "integrity" "sha512-UdAqHyFngu7TfQKsCBgAA6pWDkT8MAO7d0jyOecVhN5354xbLqdn8mV9Tat9gepAupm0bt2DbeaSC8vS52MuFA=="
-  "resolved" "https://npm.lisk.com/nan/-/nan-2.16.0.tgz"
-  "version" "2.16.0"
+  "integrity" "sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ=="
+  "resolved" "https://npm.lisk.com/nan/-/nan-2.17.0.tgz"
+  "version" "2.17.0"
 
 "napi-macros@^2.0.0":
-  "integrity" "sha512-A0xLykHtARfueITVDernsAWdtIMbOJgKgcluwENp3AlsKN/PloyO10HtmoqnFAQAcxPkgZN7wdfPfEd0zNGxbg=="
-  "resolved" "https://npm.lisk.com/napi-macros/-/napi-macros-2.0.0.tgz"
-  "version" "2.0.0"
+  "integrity" "sha512-hmEVtAGYzVQpCKdbQea4skABsdXW4RUh5t5mJ2zzqowJS2OyXZTU1KhDVFhx+NlWZ4ap9mqR9TcDO3LTTttd+g=="
+  "resolved" "https://npm.lisk.com/napi-macros/-/napi-macros-2.2.2.tgz"
+  "version" "2.2.2"
 
 "natural-compare-lite@^1.4.0":
   "integrity" "sha512-Tj+HTDSJJKaZnfiuw+iaF9skdPpTo2GtEly5JHnWV/hfv2Qj/9RKsGISQtLh2ox3l5EAGw487hnBee0sIJ6v2g=="
@@ -5201,7 +5231,7 @@
   "version" "1.4.0"
 
 "natural-compare@^1.4.0":
-  "integrity" "sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw== sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc="
+  "integrity" "sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc="
   "resolved" "https://npm.lisk.com/natural-compare/-/natural-compare-1.4.0.tgz"
   "version" "1.4.0"
 
@@ -5211,7 +5241,7 @@
   "version" "2.0.3"
 
 "ncp@~2.0.0":
-  "integrity" "sha512-zIdGUrPRFTUELUvr3Gmc7KZ2Sw/h1PiVM0Af/oHB6zgnV1ikqSfRk+TOufi79aHYCW3NiOXmr1BP5nWbzojLaA== sha1-GVoh1sRuNh0vsSgbo4uR6d9727M="
+  "integrity" "sha1-GVoh1sRuNh0vsSgbo4uR6d9727M="
   "resolved" "https://npm.lisk.com/ncp/-/ncp-2.0.0.tgz"
   "version" "2.0.0"
 
@@ -5233,9 +5263,9 @@
     "whatwg-url" "^5.0.0"
 
 "node-gyp-build@^4.1.0", "node-gyp-build@^4.2.0", "node-gyp-build@^4.3.0":
-  "integrity" "sha512-2iGbaQBV+ITgCz76ZEjmhUKAKVf7xfY1sRl4UiKQspfZMH2h06SyhNsnSVy50cwkFQDGLyif6m/6uFXHkOZ6rg=="
-  "resolved" "https://npm.lisk.com/node-gyp-build/-/node-gyp-build-4.5.0.tgz"
-  "version" "4.5.0"
+  "integrity" "sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ=="
+  "resolved" "https://npm.lisk.com/node-gyp-build/-/node-gyp-build-4.6.0.tgz"
+  "version" "4.6.0"
 
 "node-gyp@^8.4.0":
   "integrity" "sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w=="
@@ -5258,13 +5288,13 @@
   "resolved" "https://npm.lisk.com/node-int64/-/node-int64-0.4.0.tgz"
   "version" "0.4.0"
 
-"node-releases@^2.0.6":
-  "integrity" "sha512-dFSmB8fFHEH/s81Xi+Y/15DQY6VHW81nXRj86EMSL3lmuTmK1e+aT4wrFCkTbm+gSwkw4KpX+rT/pMM2c1mF+A=="
-  "resolved" "https://npm.lisk.com/node-releases/-/node-releases-2.0.8.tgz"
-  "version" "2.0.8"
+"node-releases@^2.0.8":
+  "integrity" "sha512-5GFldHPXVG/YZmFzJvKK2zDSzPKhEp0+ZR5SVaoSag9fsL5YgHbUHDfnG5494ISANDcK4KwPXAx2xqVEydmd7w=="
+  "resolved" "https://npm.lisk.com/node-releases/-/node-releases-2.0.10.tgz"
+  "version" "2.0.10"
 
 "noms@0.0.0":
-  "integrity" "sha512-lNDU9VJaOPxUmXcLb+HQFeUgQQPtMI24Gt6hgfuMHRJgMRHMF/qZ4HJD3GDru4sSw9IQl2jPjAYnQrdIeLbwow== sha1-2o69nzr51nYJGbJ9nNyAkqczKFk="
+  "integrity" "sha1-2o69nzr51nYJGbJ9nNyAkqczKFk="
   "resolved" "https://npm.lisk.com/noms/-/noms-0.0.0.tgz"
   "version" "0.0.0"
   dependencies:
@@ -5294,7 +5324,7 @@
   "version" "3.0.0"
 
 "npm-run-path@^2.0.0":
-  "integrity" "sha512-lJxZYlT4DW/bRUtFh1MQIWqmLwQfAxnqWG4HhEdjMlkrJYnJn0Jrr2u3mgxqaWsdiBc76TYkTG/mhrnYTuzfHw== sha1-NakjLfo11wZ7TLLd8jV7GHFTbF8="
+  "integrity" "sha1-NakjLfo11wZ7TLLd8jV7GHFTbF8="
   "resolved" "https://npm.lisk.com/npm-run-path/-/npm-run-path-2.0.2.tgz"
   "version" "2.0.2"
   dependencies:
@@ -5328,16 +5358,16 @@
     "set-blocking" "^2.0.0"
 
 "nwsapi@^2.2.0":
-  "integrity" "sha512-90yv+6538zuvUMnN+zCr8LuV6bPFdq50304114vJYJ8RDyK8D5O9Phpbd6SZWgI7PwzmmfN1upeOJlvybDSgCw=="
-  "resolved" "https://npm.lisk.com/nwsapi/-/nwsapi-2.2.2.tgz"
-  "version" "2.2.2"
+  "integrity" "sha512-NHj4rzRo0tQdijE9ZqAx6kYDcoRwYwSYzCA8MY3JzfxlrvEU0jhnhJT9BhqhJs7I/dKcrDm6TyulaRqZPIhN5g=="
+  "resolved" "https://npm.lisk.com/nwsapi/-/nwsapi-2.2.4.tgz"
+  "version" "2.2.4"
 
 "object-assign@^4.1.1":
   "integrity" "sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM="
   "resolved" "https://npm.lisk.com/object-assign/-/object-assign-4.1.1.tgz"
   "version" "4.1.1"
 
-"object-inspect@^1.12.2", "object-inspect@^1.9.0":
+"object-inspect@^1.12.3", "object-inspect@^1.9.0":
   "integrity" "sha512-geUvdk7c+eizMNUDkRpW1wJwgfOiOeHbxBR/hLXK1aT6zmVSO0jsQcs7fj6MGw89jC/cjGfLcNOrtMYtGqm81g=="
   "resolved" "https://npm.lisk.com/object-inspect/-/object-inspect-1.12.3.tgz"
   "version" "1.12.3"
@@ -5381,7 +5411,7 @@
     "es-abstract" "^1.20.4"
 
 "once@^1.3.0", "once@^1.3.1", "once@^1.4.0":
-  "integrity" "sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w== sha1-WDsap3WWHUsROsF9nFC6753Xa9E="
+  "integrity" "sha1-WDsap3WWHUsROsF9nFC6753Xa9E="
   "resolved" "https://npm.lisk.com/once/-/once-1.4.0.tgz"
   "version" "1.4.0"
   dependencies:
@@ -5424,7 +5454,7 @@
     "word-wrap" "^1.2.3"
 
 "p-finally@^1.0.0":
-  "integrity" "sha512-LICb2p9CB7FS+0eR1oqWnHhp0FljGLZCWBE9aix0Uye9W8LTQPwMTYVGWQWIw9RdQiDg4+epXQODwIYJtSJaow== sha1-P7z7FbiZpEEjs0ttzBi3JDNqLK4="
+  "integrity" "sha1-P7z7FbiZpEEjs0ttzBi3JDNqLK4="
   "resolved" "https://npm.lisk.com/p-finally/-/p-finally-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -5516,7 +5546,7 @@
     "error-ex" "^1.2.0"
 
 "parse-json@^4.0.0":
-  "integrity" "sha512-aOIos8bujGN93/8Ox/jPLh7RwVnPEysynVFE+fQZyg6jKELEHwzgKdLRFHUgXJL6kylijVSBC4BvN9OmsB48Rw== sha1-vjX1Qlvh9/bHRxhPmKeIy5lHfuA="
+  "integrity" "sha1-vjX1Qlvh9/bHRxhPmKeIy5lHfuA="
   "resolved" "https://npm.lisk.com/parse-json/-/parse-json-4.0.0.tgz"
   "version" "4.0.0"
   dependencies:
@@ -5557,12 +5587,12 @@
   "version" "4.0.0"
 
 "path-is-absolute@^1.0.0":
-  "integrity" "sha512-AVbw3UJ2e9bq64vSaS9Am0fje1Pa8pbGqTTsmXfaIiMpnr5DlDhfJOuLj9Sf95ZPVDAUerDfEk88MPmPe7UCQg== sha1-F0uSaHNVNP+8es5r9TpanhtcX18="
+  "integrity" "sha1-F0uSaHNVNP+8es5r9TpanhtcX18="
   "resolved" "https://npm.lisk.com/path-is-absolute/-/path-is-absolute-1.0.1.tgz"
   "version" "1.0.1"
 
 "path-key@^2.0.0", "path-key@^2.0.1":
-  "integrity" "sha512-fEHGKCSmUSDPv4uoj8AlD+joPlq3peND+HRYyxFz4KPw4z926S/b8rIuFs2FYJg3BwsxJf6A9/3eIdLaYC+9Dw== sha1-QRyttXTFoUDTpLGRDUDYDMn0C0A="
+  "integrity" "sha1-QRyttXTFoUDTpLGRDUDYDMn0C0A="
   "resolved" "https://npm.lisk.com/path-key/-/path-key-2.0.1.tgz"
   "version" "2.0.1"
 
@@ -5701,6 +5731,13 @@
   "resolved" "https://npm.lisk.com/progress/-/progress-2.0.3.tgz"
   "version" "2.0.3"
 
+"prom-client@14.2.0":
+  "integrity" "sha512-sF308EhTenb/pDRPakm+WgiN+VdM/T1RaHj1x+MvAuT8UiQP8JmOEbxVqtkbfR4LrvOg5n7ic01kRBDGXjYikA=="
+  "resolved" "https://npm.lisk.com/prom-client/-/prom-client-14.2.0.tgz"
+  "version" "14.2.0"
+  dependencies:
+    "tdigest" "^0.1.1"
+
 "promise-inflight@^1.0.1":
   "integrity" "sha1-mEcocL8igTL8vdhoEputEsPAKeM="
   "resolved" "https://npm.lisk.com/promise-inflight/-/promise-inflight-1.0.1.tgz"
@@ -5746,9 +5783,9 @@
     "once" "^1.3.1"
 
 "punycode@^2.1.0", "punycode@^2.1.1":
-  "integrity" "sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A=="
-  "resolved" "https://npm.lisk.com/punycode/-/punycode-2.1.1.tgz"
-  "version" "2.1.1"
+  "integrity" "sha512-rRV+zQD8tVFys26lAGR9WUuS4iUAngJScM+ZRSKtvl5tKeZ2t5bvdNFdNHBW9FWR4guGHlgmsZ1G7BSm2wTbuA=="
+  "resolved" "https://npm.lisk.com/punycode/-/punycode-2.3.0.tgz"
+  "version" "2.3.0"
 
 "qqjs@^0.3.10":
   "integrity" "sha512-pB2X5AduTl78J+xRSxQiEmga1jQV0j43jOPs/MTgTLApGFEOn6NgdE2dEjp7nvDtjkIOZbvFIojAiYUx6ep3zg=="
@@ -5814,16 +5851,16 @@
     "path-type" "^2.0.0"
 
 "readable-stream@^3.1.1", "readable-stream@^3.4.0", "readable-stream@^3.6.0":
-  "integrity" "sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA=="
-  "resolved" "https://npm.lisk.com/readable-stream/-/readable-stream-3.6.0.tgz"
-  "version" "3.6.0"
+  "integrity" "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA=="
+  "resolved" "https://npm.lisk.com/readable-stream/-/readable-stream-3.6.2.tgz"
+  "version" "3.6.2"
   dependencies:
     "inherits" "^2.0.3"
     "string_decoder" "^1.1.1"
     "util-deprecate" "^1.0.1"
 
 "readable-stream@~1.0.31":
-  "integrity" "sha512-ok1qVCJuRkNmvebYikljxJA/UEsKwLl2nI1OmaqAu4/UE+h0wKCHok4XkL/gvi39OacXvw59RJUOFUkDib2rHg== sha1-Elgg40vIQtLyqq+v5MKRbuMsFXw="
+  "integrity" "sha1-Elgg40vIQtLyqq+v5MKRbuMsFXw="
   "resolved" "https://npm.lisk.com/readable-stream/-/readable-stream-1.0.34.tgz"
   "version" "1.0.34"
   dependencies:
@@ -5833,9 +5870,9 @@
     "string_decoder" "~0.10.x"
 
 "readable-stream@~2.3.6":
-  "integrity" "sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw=="
-  "resolved" "https://npm.lisk.com/readable-stream/-/readable-stream-2.3.7.tgz"
-  "version" "2.3.7"
+  "integrity" "sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA=="
+  "resolved" "https://npm.lisk.com/readable-stream/-/readable-stream-2.3.8.tgz"
+  "version" "2.3.8"
   dependencies:
     "core-util-is" "~1.0.0"
     "inherits" "~2.0.3"
@@ -5853,7 +5890,7 @@
     "resolve" "^1.1.6"
 
 "redeyed@~2.1.0":
-  "integrity" "sha512-FNpGGo1DycYAdnrKFxCMmKYgo/mILAqtRYbkdQD8Ep/Hk2PQ5+aEAEx+IU713RTDmuBaH0c8P5ZozurNu5ObRQ== sha1-iYS1gV2ZyyIEacme7v/jiRPmzAs="
+  "integrity" "sha1-iYS1gV2ZyyIEacme7v/jiRPmzAs="
   "resolved" "https://npm.lisk.com/redeyed/-/redeyed-2.1.1.tgz"
   "version" "2.1.1"
   dependencies:
@@ -5874,7 +5911,7 @@
   "version" "3.2.0"
 
 "require-directory@^2.1.1":
-  "integrity" "sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q== sha1-jGStX9MNqxyXbiNE/+f3kqam30I="
+  "integrity" "sha1-jGStX9MNqxyXbiNE/+f3kqam30I="
   "resolved" "https://npm.lisk.com/require-directory/-/require-directory-2.1.1.tgz"
   "version" "2.1.1"
 
@@ -5916,11 +5953,11 @@
   "version" "1.1.1"
 
 "resolve@^1.1.6", "resolve@^1.10.0", "resolve@^1.17.0", "resolve@^1.20.0", "resolve@^1.22.0", "resolve@^1.22.1":
-  "integrity" "sha512-nBpuuYuY5jFsli/JIs1oldw6fOQCBioohqWZg/2hiaOybXOft4lonv85uDOKXdf8rhyK159cxU5cDcK/NKk8zw=="
-  "resolved" "https://npm.lisk.com/resolve/-/resolve-1.22.1.tgz"
-  "version" "1.22.1"
+  "integrity" "sha512-P8ur/gp/AmbEzjr729bZnLjXK5Z+4P0zhIJgBgzqRih7hL7BOukHGtSTA3ACMY467GRFz3duQsi0bDZdR7DKdw=="
+  "resolved" "https://npm.lisk.com/resolve/-/resolve-1.22.3.tgz"
+  "version" "1.22.3"
   dependencies:
-    "is-core-module" "^2.9.0"
+    "is-core-module" "^2.12.0"
     "path-parse" "^1.0.7"
     "supports-preserve-symlinks-flag" "^1.0.0"
 
@@ -5957,7 +5994,7 @@
     "glob" "^7.1.3"
 
 "rimraf@~2.4.0":
-  "integrity" "sha512-J5xnxTyqaiw06JjMftq7L9ouA448dw/E7dKghkP9WpKNuwmARNNg+Gk8/u5ryb9N/Yo2+z3MCwuqFK/+qPOPfQ== sha1-7nEM5dk6j9uFb7Xqj/Di11k0sto="
+  "integrity" "sha1-7nEM5dk6j9uFb7Xqj/Di11k0sto="
   "resolved" "https://npm.lisk.com/rimraf/-/rimraf-2.4.5.tgz"
   "version" "2.4.5"
   dependencies:
@@ -6068,7 +6105,7 @@
     "sc-channel" "^1.2.0"
 
 "semver-compare@^1.0.0":
-  "integrity" "sha512-YM3/ITh2MJ5MtzaM429anh+x2jiLVjqILF4m4oyQB18W7Ggea7BfqdH/wGMK7dDiMghv/6WG7znWMwUDzJiXow== sha1-De4hahyUGrN+nvsXiPavxf9VN/w="
+  "integrity" "sha1-De4hahyUGrN+nvsXiPavxf9VN/w="
   "resolved" "https://npm.lisk.com/semver-compare/-/semver-compare-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -6103,23 +6140,23 @@
   "version" "7.3.2"
 
 "semver@^7.3.5":
-  "integrity" "sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.3.8.tgz"
-  "version" "7.3.8"
+  "integrity" "sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw=="
+  "resolved" "https://npm.lisk.com/semver/-/semver-7.4.0.tgz"
+  "version" "7.4.0"
   dependencies:
     "lru-cache" "^6.0.0"
 
 "semver@^7.3.7":
-  "integrity" "sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.3.8.tgz"
-  "version" "7.3.8"
+  "integrity" "sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw=="
+  "resolved" "https://npm.lisk.com/semver/-/semver-7.4.0.tgz"
+  "version" "7.4.0"
   dependencies:
     "lru-cache" "^6.0.0"
 
 "semver@^7.3.8":
-  "integrity" "sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.3.8.tgz"
-  "version" "7.3.8"
+  "integrity" "sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw=="
+  "resolved" "https://npm.lisk.com/semver/-/semver-7.4.0.tgz"
+  "version" "7.4.0"
   dependencies:
     "lru-cache" "^6.0.0"
 
@@ -6143,7 +6180,7 @@
     "lru-cache" "^6.0.0"
 
 "set-blocking@^2.0.0":
-  "integrity" "sha512-KiKBS8AnWGEyLzofFfmvKwpdPzqiy16LvQfK3yv/fVH7Bj13/wl3JSR1J+rfgRE9q7xUJK4qvgS8raSOeLUehw== sha1-BF+XgtARrppoA93TgrJDkrPYkPc="
+  "integrity" "sha1-BF+XgtARrppoA93TgrJDkrPYkPc="
   "resolved" "https://npm.lisk.com/set-blocking/-/set-blocking-2.0.0.tgz"
   "version" "2.0.0"
 
@@ -6156,7 +6193,7 @@
     "safe-buffer" "^5.0.1"
 
 "shebang-command@^1.2.0":
-  "integrity" "sha512-EV3L1+UQWGor21OmnvojK36mhg+TyIKDh3iFBKBohr5xeXIhNBcx8oWdgkTEEQ+BEFFYdLRuqMfd5L84N1V5Vg== sha1-RKrGW2lbAzmJaMOfNj/uXer98eo="
+  "integrity" "sha1-RKrGW2lbAzmJaMOfNj/uXer98eo="
   "resolved" "https://npm.lisk.com/shebang-command/-/shebang-command-1.2.0.tgz"
   "version" "1.2.0"
   dependencies:
@@ -6170,7 +6207,7 @@
     "shebang-regex" "^3.0.0"
 
 "shebang-regex@^1.0.0":
-  "integrity" "sha512-wpoSFAxys6b2a2wHZ1XpDSgD7N9iVjg29Ph9uV/uaP9Ex/KXlkTZTeddxDPSYQpgvzKLGJke2UU0AzoGCjNIvQ== sha1-2kL0l0DAtC2yypcoVxyxkMmO/qM="
+  "integrity" "sha1-2kL0l0DAtC2yypcoVxyxkMmO/qM="
   "resolved" "https://npm.lisk.com/shebang-regex/-/shebang-regex-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -6318,9 +6355,9 @@
   "version" "0.7.4"
 
 "spdx-correct@^3.0.0":
-  "integrity" "sha512-cOYcUWwhCuHCXi49RhFRCyJEK3iPj1Ziz9DpViV3tbZOwXD49QzIN3MpOLJNxh2qwq2lJJZaKMVw9qNi4jTC0w=="
-  "resolved" "https://npm.lisk.com/spdx-correct/-/spdx-correct-3.1.1.tgz"
-  "version" "3.1.1"
+  "integrity" "sha512-kN9dJbvnySHULIluDHy32WHRUu3Og7B9sbY7tsFLctQkIqnMh3hErYgdMjTYuqmcXX+lK5T1lnUt3G7zNswmZA=="
+  "resolved" "https://npm.lisk.com/spdx-correct/-/spdx-correct-3.2.0.tgz"
+  "version" "3.2.0"
   dependencies:
     "spdx-expression-parse" "^3.0.0"
     "spdx-license-ids" "^3.0.0"
@@ -6339,12 +6376,12 @@
     "spdx-license-ids" "^3.0.0"
 
 "spdx-license-ids@^3.0.0":
-  "integrity" "sha512-rr+VVSXtRhO4OHbXUiAF7xW3Bo9DuuF6C5jH+q/x15j2jniycgKbxU09Hr0WqlSLUs4i4ltHGXqTe7VHclYWyA=="
-  "resolved" "https://npm.lisk.com/spdx-license-ids/-/spdx-license-ids-3.0.12.tgz"
-  "version" "3.0.12"
+  "integrity" "sha512-XkD+zwiqXHikFZm4AX/7JSCXA98U5Db4AFd5XUg/+9UNtnH75+Z9KxtpYiJZx36mUDVOwH83pl7yvCer6ewM3w=="
+  "resolved" "https://npm.lisk.com/spdx-license-ids/-/spdx-license-ids-3.0.13.tgz"
+  "version" "3.0.13"
 
 "sprintf-js@~1.0.2":
-  "integrity" "sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g== sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw="
+  "integrity" "sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw="
   "resolved" "https://npm.lisk.com/sprintf-js/-/sprintf-js-1.0.3.tgz"
   "version" "1.0.3"
 
@@ -6370,7 +6407,7 @@
     "safe-buffer" "~5.2.0"
 
 "string_decoder@~0.10.x":
-  "integrity" "sha512-ev2QzSzWPYmy9GuqfIVildA4OdcGLeFZQrq5ys6RtiuF+RQQiZWr8TZNyAcuVXyQRYfEO+MsoB/1BuQVhOJuoQ== sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
+  "integrity" "sha1-YuIDvEF2bGwoyfyEMB2rHFMQ+pQ="
   "resolved" "https://npm.lisk.com/string_decoder/-/string_decoder-0.10.31.tgz"
   "version" "0.10.31"
 
@@ -6420,6 +6457,15 @@
     "is-fullwidth-code-point" "^2.0.0"
     "strip-ansi" "^5.1.0"
 
+"string.prototype.trim@^1.2.7":
+  "integrity" "sha512-p6TmeT1T3411M8Cgg9wBTMRtY2q9+PNy9EV1i2lIXUN/btt763oIfxwN3RR8VU6wHX8j/1CFy0L+YuThm6bgOg=="
+  "resolved" "https://npm.lisk.com/string.prototype.trim/-/string.prototype.trim-1.2.7.tgz"
+  "version" "1.2.7"
+  dependencies:
+    "call-bind" "^1.0.2"
+    "define-properties" "^1.1.4"
+    "es-abstract" "^1.20.4"
+
 "string.prototype.trimend@^1.0.6":
   "integrity" "sha512-JySq+4mrPf9EsDBEDYMOb/lM7XQLulwg5R/m1r0PXEFqrV0qHvl58sdTilSXtKOflCsK2E8jxf+GKC0T07RWwQ=="
   "resolved" "https://npm.lisk.com/string.prototype.trimend/-/string.prototype.trimend-1.0.6.tgz"
@@ -6448,7 +6494,7 @@
     "is-regexp" "^1.0.0"
 
 "strip-ansi@^4.0.0":
-  "integrity" "sha512-4XaJ2zQdCzROZDivEVIDPkcQn8LMFSa8kj8Gxb/Lnwzv9A8VctNZ+lfivC/sV3ivW8ElJTERXZoPBRrZKkNKow== sha1-qEeQIusaw2iocTibY1JixQXuNo8="
+  "integrity" "sha1-qEeQIusaw2iocTibY1JixQXuNo8="
   "resolved" "https://npm.lisk.com/strip-ansi/-/strip-ansi-4.0.0.tgz"
   "version" "4.0.0"
   dependencies:
@@ -6479,7 +6525,7 @@
   "version" "4.0.0"
 
 "strip-eof@^1.0.0":
-  "integrity" "sha512-7FCwGGmx8mD5xQd3RPUvnSpUXHM3BWuzjtpD4TXsfcZ9EL4azvVVUscFYwD9nx8Kh+uCBC00XBtAykoMHwTh8Q== sha1-u0P/VZim6wXYm1n80SnJgzE2Br8="
+  "integrity" "sha1-u0P/VZim6wXYm1n80SnJgzE2Br8="
   "resolved" "https://npm.lisk.com/strip-eof/-/strip-eof-1.0.0.tgz"
   "version" "1.0.0"
 
@@ -6566,7 +6612,7 @@
 
 "tar@^6.0.2", "tar@^6.1.11", "tar@^6.1.2", "tar@6.1.13":
   "integrity" "sha512-jdIBIN6LTIe2jqzay/2vtYLlBHa3JF42ot3h1dW8Q0PaAG4v8rm0cvpVePtau5C6OKXGGcgO9q2AMNSWxiLqKw=="
-  "resolved" "https://registry.npmjs.org/tar/-/tar-6.1.13.tgz"
+  "resolved" "https://npm.lisk.com/tar/-/tar-6.1.13.tgz"
   "version" "6.1.13"
   dependencies:
     "chownr" "^2.0.0"
@@ -6575,6 +6621,13 @@
     "minizlib" "^2.1.1"
     "mkdirp" "^1.0.3"
     "yallist" "^4.0.0"
+
+"tdigest@^0.1.1":
+  "integrity" "sha512-+G0LLgjjo9BZX2MfdvPfH+MKLCrxlXSYec5DaPYP1fe6Iyhf0/fSmJ0bFiZ1F8BT6cGXl2LpltQptzjXKWEkKA=="
+  "resolved" "https://npm.lisk.com/tdigest/-/tdigest-0.1.2.tgz"
+  "version" "0.1.2"
+  dependencies:
+    "bintrees" "1.0.2"
 
 "terminal-link@^2.0.0":
   "integrity" "sha512-un0FmiRUQNr5PJqy9kP7c40F5BOfpGlYTrxonDChEZB7pzZxRNp/bt+ymiy9/npwXya9KH99nJ/GXFIiUkYGFQ=="
@@ -6594,7 +6647,7 @@
     "minimatch" "^3.0.4"
 
 "text-table@^0.2.0":
-  "integrity" "sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw== sha1-f17oI66AUgfACvLfSoTsP8+lcLQ="
+  "integrity" "sha1-f17oI66AUgfACvLfSoTsP8+lcLQ="
   "resolved" "https://npm.lisk.com/text-table/-/text-table-0.2.0.tgz"
   "version" "0.2.0"
 
@@ -6696,12 +6749,12 @@
     "yn" "3.1.1"
 
 "tsconfig-paths@^3.14.1":
-  "integrity" "sha512-fxDhWnFSLt3VuTwtvJt5fpwxBHg5AdKWMsgcPOOIilyjymcYVZoCQF8fvFRezCNfblEXmi+PcM1eYHeOAgXCOQ=="
-  "resolved" "https://npm.lisk.com/tsconfig-paths/-/tsconfig-paths-3.14.1.tgz"
-  "version" "3.14.1"
+  "integrity" "sha512-o/9iXgCYc5L/JxCHPe3Hvh8Q/2xm5Z+p18PESBU6Ff33695QnCHBEjcytY2q19ua7Mbl/DavtBOLq+oG0RCL+g=="
+  "resolved" "https://npm.lisk.com/tsconfig-paths/-/tsconfig-paths-3.14.2.tgz"
+  "version" "3.14.2"
   dependencies:
     "@types/json5" "^0.0.29"
-    "json5" "^1.0.1"
+    "json5" "^1.0.2"
     "minimist" "^1.2.6"
     "strip-bom" "^3.0.0"
 
@@ -6721,19 +6774,19 @@
   "version" "1.14.1"
 
 "tslib@^2.0.0":
-  "integrity" "sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA=="
-  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.4.1.tgz"
-  "version" "2.4.1"
+  "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
+  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.5.0.tgz"
+  "version" "2.5.0"
 
 "tslib@^2.3.1":
-  "integrity" "sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA=="
-  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.4.1.tgz"
-  "version" "2.4.1"
+  "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
+  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.5.0.tgz"
+  "version" "2.5.0"
 
-"tslib@^2.4.1":
-  "integrity" "sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA=="
-  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.4.1.tgz"
-  "version" "2.4.1"
+"tslib@^2.5.0":
+  "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
+  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.5.0.tgz"
+  "version" "2.5.0"
 
 "tsutils@^3.17.1", "tsutils@^3.21.0":
   "integrity" "sha512-mHKK3iUXL+3UF6xL5k0PEhKRUBKPBCv/+RkEOpjRWxxx27KKRBmmA60A9pgOUvMi8GKhRMPEmjBRPzs2W7O1OA=="
@@ -6743,7 +6796,7 @@
     "tslib" "^1.8.1"
 
 "tunnel-agent@^0.6.0":
-  "integrity" "sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w== sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0="
+  "integrity" "sha1-J6XeoGs2sEoKmWZ3SykIaPD8QP0="
   "resolved" "https://npm.lisk.com/tunnel-agent/-/tunnel-agent-0.6.0.tgz"
   "version" "0.6.0"
   dependencies:
@@ -6848,10 +6901,10 @@
   "resolved" "https://npm.lisk.com/universalify/-/universalify-2.0.0.tgz"
   "version" "2.0.0"
 
-"update-browserslist-db@^1.0.9":
-  "integrity" "sha512-OztqDenkfFkbSG+tRxBeAnCVPckDBcvibKd35yDONx6OU8N7sqgwc7rCbkJ/WcYtVRZ4ba68d6byhC21GFh7sQ=="
-  "resolved" "https://npm.lisk.com/update-browserslist-db/-/update-browserslist-db-1.0.10.tgz"
-  "version" "1.0.10"
+"update-browserslist-db@^1.0.10":
+  "integrity" "sha512-dCwEFf0/oT85M1fHBg4F0jtLwJrutGoHSQXCh7u4o2t1drG+c0a9Flnqww6XUKSfQMPpJBRjU8d4RXB09qtvaA=="
+  "resolved" "https://npm.lisk.com/update-browserslist-db/-/update-browserslist-db-1.0.11.tgz"
+  "version" "1.0.11"
   dependencies:
     "escalade" "^3.1.1"
     "picocolors" "^1.0.0"
@@ -6872,7 +6925,7 @@
     "requires-port" "^1.0.0"
 
 "util-deprecate@^1.0.1", "util-deprecate@~1.0.1":
-  "integrity" "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw== sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8="
+  "integrity" "sha1-RQ1Nyfpw3nMnYvvS1KKJgUGaDM8="
   "resolved" "https://npm.lisk.com/util-deprecate/-/util-deprecate-1.0.2.tgz"
   "version" "1.0.2"
 
@@ -6997,7 +7050,7 @@
     "is-symbol" "^1.0.3"
 
 "which-module@^2.0.0":
-  "integrity" "sha512-B+enWhmw6cjfVC7kS8Pj9pCrKSc5txArRyaYGe088shv/FGWH+0Rjx/xPgtsWfsUtS27FkP697E4DDhgrgoc0Q== sha1-2e8H3Od7mQK4o6j6SzHD4/fm6Ho="
+  "integrity" "sha1-2e8H3Od7mQK4o6j6SzHD4/fm6Ho="
   "resolved" "https://npm.lisk.com/which-module/-/which-module-2.0.0.tgz"
   "version" "2.0.0"
 
@@ -7095,7 +7148,7 @@
     "strip-ansi" "^6.0.0"
 
 "wrappy@1":
-  "integrity" "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ== sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8="
+  "integrity" "sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8="
   "resolved" "https://npm.lisk.com/wrappy/-/wrappy-1.0.2.tgz"
   "version" "1.0.2"
 
