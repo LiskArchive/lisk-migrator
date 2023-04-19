@@ -37,7 +37,7 @@ $ npm test
 
 ## Lisk V4.x Migration guide
 
-This [section](./docs/migration.md) explains how to migrate a Lisk Core v3.0.0 node to Lisk Core v4.x using the Lisk migrator.
+This [section](./docs/migration.md) explains how to migrate a Lisk Core v3.x node to Lisk Core v4.x using the Lisk migrator.
 
 ## Get Involved
 

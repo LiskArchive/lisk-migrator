@@ -79,11 +79,11 @@ class LiskMigrator extends Command {
 			description:
 				'File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.',
 		}),
-		'lisk-core-path': flagsParser.string({
+		'lisk-core-v3-data-path': flagsParser.string({
 			char: 'd',
 			required: false,
 			description:
-				'Path where the lisk-core instance is running. Current directory will be considered the default if not provided.',
+				'Path where the lisk-core v3.x instance is running. Current home directory will be considered the default if not provided.',
 		}),
 		config: flagsParser.string({
 			char: 'c',
@@ -132,7 +132,7 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'USE_EXISTING_SNAPSHOT',
 			description:
-				'Use existing database snapshot (Temporary flag, will be removed once createSnapshot command is available on Lisk Core).',
+				'Use existing database snapshot (Temporary flag, will be removed once createSnapshot command is available on Lisk Core v3.x).',
 			default: false,
 		}),
 	};
@@ -140,7 +140,7 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		try {
 			const { flags } = this.parse(LiskMigrator);
-			const liskCorePath = flags['lisk-core-path'] ?? process.cwd();
+			const liskCorePath = flags['lisk-core-v3-data-path'] ?? process.cwd();
 			const outputPath = flags.output ?? join(__dirname, '..', 'output');
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
