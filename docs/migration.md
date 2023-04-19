@@ -1,29 +1,43 @@
-# Lisk V4.x Migration guide
+# Migration Guide
 
-This section explains how to migrate a Lisk Core v3.x node to Lisk Core v4.x using the Lisk migrator.
+This section explains how to migrate a Lisk Core v3.0.5 (or later) node to Lisk Core v4.x using the Lisk Migrator.
 
-The Lisk migrator CLI tool will generate a new genesis block for Lisk Core v4.
-The new genesis block is created based on a snapshot of the old blockchain (running on Lisk Core v3.x) at a given height.
+The Lisk Migrator CLI tool will generate a new genesis block for Lisk Core v4.
+The new genesis block is created based on a snapshot of the existing blockchain (running on Lisk Core v3.0.5+) at a given height.
 
 > Note: All actively forging validators on the Lisk Mainnet and the Lisk Testnet need to follow this guide to correctly migrate their nodes to the new network, in order to not miss any blocks after the network hard fork.
 
 Please ensure you are running version 3.x of Lisk Core to be able to seamlessly migrate to Lisk Core 4.x.
 
-## Setting up the Lisk migrator
+## Setting up the Lisk Migrator
 
 ### Download checksum and verify
 
 Download the checksum and verify the successful download of lisk-migrator.
 
 ```
-curl -o lisk-migrator-v2.0.0.SHA256 https://downloads.lisk.com/lisk-migrator/lisk-migrator-v2.0.0.SHA256
+curl -O https://downloads.lisk.com/lisk-migrator/lisk-migrator-v2.0.0.tar.gz.SHA256
 ```
 
-### Extract and add to PATH
+### Verify checksum
+
+**Linux**
 
 ```
-tar -xf ./lisk-migrator-v2.0.0.SHA256
+sha256sum -c lisk-migrator-v2.0.0.tar.gz.SHA256
+lisk-migrator-v2.0.0.tar.gz: OK
 ```
+
+**MacOS**
+
+```
+shasum -a 256 -c lisk-migrator-v2.0.0.tar.gz.SHA256
+lisk-migrator-v2.0.0.tar.gz: OK
+```
+
+> Note: Please ensure that the file name and the checksum filename should be same, where the checksum file has an additional extension (lisk-migrator-v2.0.0.tar.gz will have a checksum file by the name of lisk-migrator-v2.0.0.tar.gz.SHA256) and are present in the same directory.
+
+### Add to PATH
 
 Make the `lisk-migrator` command available in the PATH, e.g. by executing the following command:
 
@@ -44,7 +58,7 @@ export PATH="$PATH:$HOME/lisk-migrator/bin"
 
 ### Run Lisk Migrator
 
-The Lisk migrator v2.0.0 also allow users to download and start Lisk Core v4.x automatically after the migration. It can be done by passing the relavant flags.
+The Lisk Migrator v2 also allow users to download and start the Lisk Core v4.x automatically post migration. It can be done by passing the relevant flags.
 
 ```
 USAGE
@@ -76,13 +90,13 @@ If you have added `lisk-migrator` to the PATH as described in the section [setti
 **Mainnet**
 
 ```
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ```
 
 **Testnet**
 
 ```
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
 ```
 
 - `--snapshot-height`:
@@ -104,13 +118,13 @@ Alternatively genesis block and configuration for Lisk Core v4.x migration can b
 **Mainnet**
 
 ```
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-migrate-config
+lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-migrate-config
 ```
 
 **Testnet**
 
 ```
-lisk-migrator --snapshot-height ${snapshotHeight} --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-migrate-config
+lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-migrate-config
 ```
 
 In case `--auto-start-lisk-core-v4` is disable, please install & start Lisk Core v4.x manually.
