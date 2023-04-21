@@ -83,7 +83,7 @@ class LiskMigrator extends Command {
 			char: 'd',
 			required: false,
 			description:
-				'Path where the lisk-core v3.x instance is running. Current home directory will be considered the default if not provided.',
+				'Path where the lisk-core v3.x instance is running. The current home directory will be considered the default directory if not otherwise provided.',
 		}),
 		config: flagsParser.string({
 			char: 'c',
@@ -132,7 +132,7 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'USE_EXISTING_SNAPSHOT',
 			description:
-				'Use existing database snapshot (Temporary flag, will be removed once createSnapshot command is available on Lisk Core v3.x).',
+				'Use existing database snapshot (Temporary flag, will be removed once the `createSnapshot` command is available on Lisk Core v3.x).',
 			default: false,
 		}),
 	};
