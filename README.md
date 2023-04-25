@@ -7,11 +7,42 @@ Lisk Migrator is a command line tool to migrate the blockchain data to the lates
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Code coverage](https://codecov.io/gh/LiskHQ/lisk-migrator/branch/main/graph/badge.svg?token=ICP600XKH1)](https://codecov.io/gh/LiskHQ/lisk-migrator)
 
+## Installation
+
+### Dependencies
+
+The following dependencies need to be installed in order to run applications created with the Lisk SDK:
+
+| Dependencies | Version        |
+| ------------ | -------------- |
+| NodeJS       | 16.20          |
+| Lisk Core    | 3.0.4 or later |
+
 ## Setup
 
-Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator)
+Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator).
 
-## Build Distributions (Linux, Darwin)
+### From NPM
+
+<!-- usage -->
+
+```sh-session
+$ npm install -g lisk-migrator
+$ lisk-migrator COMMAND
+running command...
+$ lisk-migrator (-v|--version|version)
+lisk-migrator/2.0.0-beta.0 darwin-arm64 node-v16.20.0
+$ lisk-migrator --help [COMMAND]
+USAGE
+  $ lisk-migrator COMMAND
+...
+```
+
+<!-- usagestop -->
+
+### Build Distributions (Linux, Darwin) from source
+
+Clone the Lisk Core repository using Git and initialize the modules.
 
 <!-- build -->
 
@@ -27,6 +58,14 @@ $ npx oclif-dev pack --targets=linux-x64,darwin-x64
 
 <!-- buildstop -->
 
+<!-- commands -->
+
+# Command Topics
+
+- [`lisk-migrator help`](docs/commands/help.md) - display help for lisk-migrator
+
+<!-- commandsstop -->
+
 ### Running Tests
 
 Lisk Migrator has an extensive set of unit tests. To run the tests, please install Lisk Migrator from source, and then run the command:
@@ -37,7 +76,7 @@ $ npm test
 
 ## Migrating from Lisk Core v3.x to v4.x
 
-The [migration guide](./docs/migration.md) explains the transition process from Lisk Core v3.x to Lisk Core v4.x using Lisk Migrator v2.
+The [migration guide](./docs/migration.md) explains the transition process from Lisk Core v3.0.4 (or later) to Lisk Core v4.x using Lisk Migrator v2.
 
 ## Get Involved
 

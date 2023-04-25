@@ -3,17 +3,13 @@
 
 
 "@ampproject/remapping@^2.2.0":
-  "integrity" "sha512-lFMjJTrFL3j7L9yBxwYfCq2k6qqwHyzuUl/XBnif78PWTJYyL/dfowQHWE3sp6U6ZzqWiiIZnpTMO96zhkjwtg=="
-  "resolved" "https://npm.lisk.com/@ampproject%2fremapping/-/remapping-2.2.1.tgz"
-  "version" "2.2.1"
+  "version" "2.2.0"
   dependencies:
-    "@jridgewell/gen-mapping" "^0.3.0"
+    "@jridgewell/gen-mapping" "^0.1.0"
     "@jridgewell/trace-mapping" "^0.3.9"
 
-"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6", "@babel/code-frame@^7.21.4":
-  "integrity" "sha512-LYvhNKfwWSPpocw8GI7gpK2nq3HSDuEPC/uSYaALSJu9xjsalaaYFOq0Pwt5KmVqwEbZlDu81aLXwBOmD/Fv9g=="
-  "resolved" "https://npm.lisk.com/@babel%2fcode-frame/-/code-frame-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/code-frame@^7.0.0", "@babel/code-frame@^7.12.13", "@babel/code-frame@^7.18.6":
+  "version" "7.18.6"
   dependencies:
     "@babel/highlight" "^7.18.6"
 
@@ -24,49 +20,41 @@
   dependencies:
     "@babel/highlight" "^7.10.4"
 
-"@babel/compat-data@^7.21.4":
-  "integrity" "sha512-/DYyDpeCfaVinT40FPGdkkb+lYSKvsVuMjDAG7jPOWWiM1ibOaB9CXJAlc4d1QpP/U2q2P9jbrSlClKSErd55g=="
-  "resolved" "https://npm.lisk.com/@babel%2fcompat-data/-/compat-data-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/compat-data@^7.20.5":
+  "version" "7.21.0"
 
 "@babel/core@^7.0.0", "@babel/core@^7.0.0-0", "@babel/core@^7.1.0", "@babel/core@^7.12.3", "@babel/core@^7.7.2", "@babel/core@^7.8.0", "@babel/core@>=7.0.0-beta.0 <8":
-  "integrity" "sha512-qt/YV149Jman/6AfmlxJ04LMIu8bMoyl3RB91yTFrxQmgbrSvQMy7cI8Q62FHx1t8wJ8B5fu0UDoLwHAhUo1QA=="
-  "resolved" "https://npm.lisk.com/@babel%2fcore/-/core-7.21.4.tgz"
-  "version" "7.21.4"
+  "version" "7.21.0"
   dependencies:
     "@ampproject/remapping" "^2.2.0"
-    "@babel/code-frame" "^7.21.4"
-    "@babel/generator" "^7.21.4"
-    "@babel/helper-compilation-targets" "^7.21.4"
-    "@babel/helper-module-transforms" "^7.21.2"
+    "@babel/code-frame" "^7.18.6"
+    "@babel/generator" "^7.21.0"
+    "@babel/helper-compilation-targets" "^7.20.7"
+    "@babel/helper-module-transforms" "^7.21.0"
     "@babel/helpers" "^7.21.0"
-    "@babel/parser" "^7.21.4"
+    "@babel/parser" "^7.21.0"
     "@babel/template" "^7.20.7"
-    "@babel/traverse" "^7.21.4"
-    "@babel/types" "^7.21.4"
+    "@babel/traverse" "^7.21.0"
+    "@babel/types" "^7.21.0"
     "convert-source-map" "^1.7.0"
     "debug" "^4.1.0"
     "gensync" "^1.0.0-beta.2"
     "json5" "^2.2.2"
     "semver" "^6.3.0"
 
-"@babel/generator@^7.21.4", "@babel/generator@^7.7.2":
-  "integrity" "sha512-NieM3pVIYW2SwGzKoqfPrQsf4xGs9M9AIG3ThppsSRmO+m7eQhmI6amajKMUeIO37wFfsvnvcxQFx6x6iqxDnA=="
-  "resolved" "https://npm.lisk.com/@babel%2fgenerator/-/generator-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/generator@^7.21.0", "@babel/generator@^7.21.1", "@babel/generator@^7.7.2":
+  "version" "7.21.1"
   dependencies:
-    "@babel/types" "^7.21.4"
+    "@babel/types" "^7.21.0"
     "@jridgewell/gen-mapping" "^0.3.2"
     "@jridgewell/trace-mapping" "^0.3.17"
     "jsesc" "^2.5.1"
 
-"@babel/helper-compilation-targets@^7.21.4":
-  "integrity" "sha512-Fa0tTuOXZ1iL8IeDFUWCzjZcn+sJGd9RZdH9esYVjEejGmzf+FFYQpMi/kZUk2kPy/q1H3/GPw7np8qar/stfg=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-compilation-targets/-/helper-compilation-targets-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/helper-compilation-targets@^7.20.7":
+  "version" "7.20.7"
   dependencies:
-    "@babel/compat-data" "^7.21.4"
-    "@babel/helper-validator-option" "^7.21.0"
+    "@babel/compat-data" "^7.20.5"
+    "@babel/helper-validator-option" "^7.18.6"
     "browserslist" "^4.21.3"
     "lru-cache" "^5.1.1"
     "semver" "^6.3.0"
@@ -92,15 +80,11 @@
     "@babel/types" "^7.18.6"
 
 "@babel/helper-module-imports@^7.18.6":
-  "integrity" "sha512-orajc5T2PsRYUN3ZryCEFeMDYwyw09c/pZeaQEZPH0MpKzSvn3e0uXsDBu3k03VI+9DBiRo+l22BfKTpKwa/Wg=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-module-imports/-/helper-module-imports-7.21.4.tgz"
-  "version" "7.21.4"
+  "version" "7.18.6"
   dependencies:
-    "@babel/types" "^7.21.4"
+    "@babel/types" "^7.18.6"
 
-"@babel/helper-module-transforms@^7.21.2":
-  "integrity" "sha512-79yj2AR4U/Oqq/WOV7Lx6hUjau1Zfo4cI+JLAVYeMV5XIlbOhmjEk5ulbTc9fMpmlojzZHkUUxAiK+UKn+hNQQ=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-module-transforms/-/helper-module-transforms-7.21.2.tgz"
+"@babel/helper-module-transforms@^7.21.0":
   "version" "7.21.2"
   dependencies:
     "@babel/helper-environment-visitor" "^7.18.9"
@@ -112,7 +96,7 @@
     "@babel/traverse" "^7.21.2"
     "@babel/types" "^7.21.2"
 
-"@babel/helper-plugin-utils@^7.0.0", "@babel/helper-plugin-utils@^7.10.4", "@babel/helper-plugin-utils@^7.12.13", "@babel/helper-plugin-utils@^7.14.5", "@babel/helper-plugin-utils@^7.20.2", "@babel/helper-plugin-utils@^7.8.0":
+"@babel/helper-plugin-utils@^7.0.0", "@babel/helper-plugin-utils@^7.10.4", "@babel/helper-plugin-utils@^7.12.13", "@babel/helper-plugin-utils@^7.14.5", "@babel/helper-plugin-utils@^7.19.0", "@babel/helper-plugin-utils@^7.8.0":
   "integrity" "sha512-8RvlJG2mj4huQ4pZ+rU9lqKi9ZKiRmuvGuM2HlWmkmgOhbs6zEAw6IEiJ5cQqGbDzGZOhwuOQNtZMi/ENLjZoQ=="
   "resolved" "https://npm.lisk.com/@babel%2fhelper-plugin-utils/-/helper-plugin-utils-7.20.2.tgz"
   "version" "7.20.2"
@@ -141,9 +125,7 @@
   "resolved" "https://npm.lisk.com/@babel%2fhelper-validator-identifier/-/helper-validator-identifier-7.19.1.tgz"
   "version" "7.19.1"
 
-"@babel/helper-validator-option@^7.21.0":
-  "integrity" "sha512-rmL/B8/f0mKS2baE9ZpyTcTavvEuWhTTW8amjzXNvYG4AwBsqTLikfXsEofsJEfKHf+HQVQbFOHy6o+4cnC/fQ=="
-  "resolved" "https://npm.lisk.com/@babel%2fhelper-validator-option/-/helper-validator-option-7.21.0.tgz"
+"@babel/helper-validator-option@^7.18.6":
   "version" "7.21.0"
 
 "@babel/helpers@^7.21.0":
@@ -164,10 +146,8 @@
     "chalk" "^2.0.0"
     "js-tokens" "^4.0.0"
 
-"@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.7", "@babel/parser@^7.21.4":
-  "integrity" "sha512-alVJj7k7zIxqBZ7BTRhz0IqJFxW1VJbm6N8JbcYhQ186df9ZBPbZBmWSqAMXwHGsCJdYks7z/voa3ibiS5bCIw=="
-  "resolved" "https://npm.lisk.com/@babel%2fparser/-/parser-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/parser@^7.1.0", "@babel/parser@^7.14.7", "@babel/parser@^7.20.7", "@babel/parser@^7.21.0", "@babel/parser@^7.21.2":
+  "version" "7.21.2"
 
 "@babel/plugin-syntax-async-generators@^7.8.4":
   "integrity" "sha512-tycmZxkGfZaxhMRbXlPXuVFpdWlXpir2W4AMhSJgRKzk/eDlIXOhb2LHWoLpDF7TEHylV5zNhykX6KAgHJmTNw=="
@@ -254,11 +234,9 @@
     "@babel/helper-plugin-utils" "^7.14.5"
 
 "@babel/plugin-syntax-typescript@^7.7.2":
-  "integrity" "sha512-xz0D39NvhQn4t4RNsHmDnnsaQizIlUkdtYvLs8La1BlfjQ6JEwxkJGeqJMW2tAXx+q6H+WFuUTXNdYVpEya0YA=="
-  "resolved" "https://npm.lisk.com/@babel%2fplugin-syntax-typescript/-/plugin-syntax-typescript-7.21.4.tgz"
-  "version" "7.21.4"
+  "version" "7.20.0"
   dependencies:
-    "@babel/helper-plugin-utils" "^7.20.2"
+    "@babel/helper-plugin-utils" "^7.19.0"
 
 "@babel/template@^7.20.7", "@babel/template@^7.3.3":
   "integrity" "sha512-8SegXApWe6VoNw0r9JHpSteLKTpTiLZ4rMlGIm9JQ18KiCtyQiAMEazujAHrUS5flrcqYZa75ukev3P6QmUwUw=="
@@ -269,26 +247,22 @@
     "@babel/parser" "^7.20.7"
     "@babel/types" "^7.20.7"
 
-"@babel/traverse@^7.21.0", "@babel/traverse@^7.21.2", "@babel/traverse@^7.21.4", "@babel/traverse@^7.7.2":
-  "integrity" "sha512-eyKrRHKdyZxqDm+fV1iqL9UAHMoIg0nDaGqfIOd8rKH17m5snv7Gn4qgjBoFfLz9APvjFU/ICT00NVCv1Epp8Q=="
-  "resolved" "https://npm.lisk.com/@babel%2ftraverse/-/traverse-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/traverse@^7.21.0", "@babel/traverse@^7.21.2", "@babel/traverse@^7.7.2":
+  "version" "7.21.2"
   dependencies:
-    "@babel/code-frame" "^7.21.4"
-    "@babel/generator" "^7.21.4"
+    "@babel/code-frame" "^7.18.6"
+    "@babel/generator" "^7.21.1"
     "@babel/helper-environment-visitor" "^7.18.9"
     "@babel/helper-function-name" "^7.21.0"
     "@babel/helper-hoist-variables" "^7.18.6"
     "@babel/helper-split-export-declaration" "^7.18.6"
-    "@babel/parser" "^7.21.4"
-    "@babel/types" "^7.21.4"
+    "@babel/parser" "^7.21.2"
+    "@babel/types" "^7.21.2"
     "debug" "^4.1.0"
     "globals" "^11.1.0"
 
-"@babel/types@^7.0.0", "@babel/types@^7.18.6", "@babel/types@^7.20.2", "@babel/types@^7.20.7", "@babel/types@^7.21.0", "@babel/types@^7.21.2", "@babel/types@^7.21.4", "@babel/types@^7.3.0", "@babel/types@^7.3.3":
-  "integrity" "sha512-rU2oY501qDxE8Pyo7i/Orqma4ziCOrby0/9mvbDUGEfvZjb279Nk9k19e2fiCxHbRRpY2ZyrgW1eq22mvmOIzA=="
-  "resolved" "https://npm.lisk.com/@babel%2ftypes/-/types-7.21.4.tgz"
-  "version" "7.21.4"
+"@babel/types@^7.0.0", "@babel/types@^7.18.6", "@babel/types@^7.20.2", "@babel/types@^7.20.7", "@babel/types@^7.21.0", "@babel/types@^7.21.2", "@babel/types@^7.3.0", "@babel/types@^7.3.3":
+  "version" "7.21.2"
   dependencies:
     "@babel/helper-string-parser" "^7.19.4"
     "@babel/helper-validator-identifier" "^7.19.1"
@@ -440,6 +414,11 @@
     "@types/node" "*"
     "jest-mock" "^27.5.1"
 
+"@jest/expect-utils@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "jest-get-type" "^29.4.3"
+
 "@jest/fake-timers@^27.5.1":
   "integrity" "sha512-/aPowoolwa07k7/oM3aASneNeBGCmGQsc3ugN4u6s4C/+s5M64MFo/+djTdiwcbQlRfFElGuDXWzaWj6QgKObQ=="
   "resolved" "https://npm.lisk.com/@jest%2ffake-timers/-/fake-timers-27.5.1.tgz"
@@ -491,6 +470,11 @@
     "string-length" "^4.0.1"
     "terminal-link" "^2.0.0"
     "v8-to-istanbul" "^8.1.0"
+
+"@jest/schemas@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "@sinclair/typebox" "^0.25.16"
 
 "@jest/source-map@^27.5.1":
   "integrity" "sha512-y9NIHUYF3PJRlHk98NdC/N1gl88BL08aQQgu4k4ZopQkCw9t9cV8mtl3TV8b/YCB8XaVTFrmUTAJvjsntDireg=="
@@ -564,10 +548,24 @@
     "@types/yargs" "^16.0.0"
     "chalk" "^4.0.0"
 
-"@jridgewell/gen-mapping@^0.3.0", "@jridgewell/gen-mapping@^0.3.2":
-  "integrity" "sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ=="
-  "resolved" "https://npm.lisk.com/@jridgewell%2fgen-mapping/-/gen-mapping-0.3.3.tgz"
-  "version" "0.3.3"
+"@jest/types@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "@jest/schemas" "^29.4.3"
+    "@types/istanbul-lib-coverage" "^2.0.0"
+    "@types/istanbul-reports" "^3.0.0"
+    "@types/node" "*"
+    "@types/yargs" "^17.0.8"
+    "chalk" "^4.0.0"
+
+"@jridgewell/gen-mapping@^0.1.0":
+  "version" "0.1.1"
+  dependencies:
+    "@jridgewell/set-array" "^1.0.0"
+    "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@jridgewell/gen-mapping@^0.3.2":
+  "version" "0.3.2"
   dependencies:
     "@jridgewell/set-array" "^1.0.1"
     "@jridgewell/sourcemap-codec" "^1.4.10"
@@ -578,25 +576,18 @@
   "resolved" "https://npm.lisk.com/@jridgewell%2fresolve-uri/-/resolve-uri-3.1.0.tgz"
   "version" "3.1.0"
 
-"@jridgewell/set-array@^1.0.1":
+"@jridgewell/set-array@^1.0.0", "@jridgewell/set-array@^1.0.1":
   "integrity" "sha512-xnkseuNADM0gt2bs+BvhO0p78Mk762YnZdsuzFV018NoG1Sj1SCQvpSqa7XUaTam5vAGasABV9qXASMKnFMwMw=="
   "resolved" "https://npm.lisk.com/@jridgewell%2fset-array/-/set-array-1.1.2.tgz"
   "version" "1.1.2"
 
-"@jridgewell/sourcemap-codec@^1.4.10":
-  "integrity" "sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg=="
-  "resolved" "https://npm.lisk.com/@jridgewell%2fsourcemap-codec/-/sourcemap-codec-1.4.15.tgz"
-  "version" "1.4.15"
-
-"@jridgewell/sourcemap-codec@1.4.14":
+"@jridgewell/sourcemap-codec@^1.4.10", "@jridgewell/sourcemap-codec@1.4.14":
   "integrity" "sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw=="
   "resolved" "https://npm.lisk.com/@jridgewell%2fsourcemap-codec/-/sourcemap-codec-1.4.14.tgz"
   "version" "1.4.14"
 
 "@jridgewell/trace-mapping@^0.3.17", "@jridgewell/trace-mapping@^0.3.9":
-  "integrity" "sha512-w+niJYzMHdd7USdiH2U6869nqhD2nbfZXND5Yp93qIbEmnDNk7PD48o+YchRVpzMU7M6jVCbenTR7PA1FLQ9pA=="
-  "resolved" "https://npm.lisk.com/@jridgewell%2ftrace-mapping/-/trace-mapping-0.3.18.tgz"
-  "version" "0.3.18"
+  "version" "0.3.17"
   dependencies:
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
@@ -609,15 +600,13 @@
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
 
-"@liskhq/lisk-api-client@^6.0.0-alpha.21":
-  "integrity" "sha512-C1097sCXx377xSjV03oXJcfOPnmOv8DiJn8nNd+FJEbjd17W8VhTyi6a5Y2pe2mUBOccvi3k8rAmuMVjBJBu8A=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-api-client/-/lisk-api-client-6.0.0-alpha.21.tgz"
-  "version" "6.0.0-alpha.21"
+"@liskhq/lisk-api-client@^6.0.0-alpha.15":
+  "version" "6.0.0-alpha.15"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-transactions" "^6.0.0-alpha.17"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-transactions" "^6.0.0-alpha.11"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.6"
     "isomorphic-ws" "4.0.1"
     "ws" "8.11.0"
     "zeromq" "6.0.0-beta.6"
@@ -635,17 +624,15 @@
     "pm2-axon-rpc" "0.7.1"
     "ws" "7.5.7"
 
-"@liskhq/lisk-chain@^0.4.0-alpha.19":
-  "integrity" "sha512-nQBV5yIweIa3bNmJbUEKNgOuAf+jUpDZYryLRhH20+lHwLlY08gNQo3JmOzM6ls+/coVmk1bycgZPuQyEaBj+Q=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-chain/-/lisk-chain-0.4.0-alpha.19.tgz"
-  "version" "0.4.0-alpha.19"
+"@liskhq/lisk-chain@^0.4.0-alpha.13":
+  "version" "0.4.0-alpha.13"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-db" "0.3.5"
-    "@liskhq/lisk-tree" "^0.3.0-alpha.15"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-db" "0.3.4"
+    "@liskhq/lisk-tree" "^0.3.0-alpha.9"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.4"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.6"
     "debug" "4.3.4"
 
 "@liskhq/lisk-chain@0.3.4":
@@ -669,14 +656,12 @@
     "@liskhq/lisk-utils" "^0.2.1"
     "@liskhq/lisk-validator" "^0.6.2"
 
-"@liskhq/lisk-codec@^0.3.0-alpha.14", "@liskhq/lisk-codec@0.3.0-alpha.14":
-  "integrity" "sha512-mTje+PXkgQ4xBxAuP1qtLG8sgZVzCZgyMWjSkZl0ktuvUgalOYUodMOc8FiK/BQ5xhd4hxrGA+h0zZiaTlD59w=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-codec/-/lisk-codec-0.3.0-alpha.14.tgz"
-  "version" "0.3.0-alpha.14"
+"@liskhq/lisk-codec@^0.3.0-alpha.8", "@liskhq/lisk-codec@0.3.0-alpha.14":
+  "version" "0.3.0-alpha.8"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.4"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.6"
 
 "@liskhq/lisk-cryptography@^3.2.1", "@liskhq/lisk-cryptography@3.2.1":
   "integrity" "sha512-n1yoVXSzKj9ZeVMvOmVkpZwyRBcvInu0sXBB7Z7d1bsgAiTSGKJDz6TVGWTwpEkfn0kk79Sie2QBbulaON57YQ=="
@@ -690,12 +675,10 @@
   optionalDependencies:
     "sodium-native" "3.2.1"
 
-"@liskhq/lisk-cryptography@^4.0.0-alpha.12":
-  "integrity" "sha512-mxL/yZLM2BdJpIz52cxpGEvtELn9C34/4GKT1zIGREcCjKWj9cTXailco0YuJ+fNveUb6Om6HFDQGcJRFHNYfg=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-cryptography/-/lisk-cryptography-4.0.0-alpha.12.tgz"
-  "version" "4.0.0-alpha.12"
+"@liskhq/lisk-cryptography@^4.0.0-alpha.6":
+  "version" "4.0.0-alpha.6"
   dependencies:
-    "@liskhq/lisk-passphrase" "^4.0.0-alpha.6"
+    "@liskhq/lisk-passphrase" "^4.0.0-alpha.2"
     "buffer-reverse" "1.0.1"
     "ed2curve" "0.3.0"
     "hash-wasm" "4.9.0"
@@ -711,43 +694,33 @@
     "levelup" "4.4.0"
     "rocksdb" "5.1.1"
 
-"@liskhq/lisk-db@0.3.5":
-  "integrity" "sha512-Ch+nx+VOMBwrJ5OdkUs56dLa5oRUys2umBsLvxe5K26HZ0BrVHvpSam+8KtE0qdQeu3+v9fvCoVeug8mkP8Jcg=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-db/-/lisk-db-0.3.5.tgz"
-  "version" "0.3.5"
+"@liskhq/lisk-db@0.3.4":
+  "version" "0.3.4"
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.9"
     "@types/node" "^16"
-    "cargo-cp-artifact" "^0.1"
-    "shelljs" "^0.8.5"
 
-"@liskhq/lisk-p2p@^0.8.0-alpha.14":
-  "integrity" "sha512-JOTYJPwLpNLvSJbJi8GtxZ1P1kjJWV5n7juUHV8zLj0XIUfJaTbUyrNg08XEVkT7DPyc5+Y/+dcr+lV06Od0ZQ=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-p2p/-/lisk-p2p-0.8.0-alpha.14.tgz"
-  "version" "0.8.0-alpha.14"
+"@liskhq/lisk-p2p@^0.8.0-alpha.8":
+  "version" "0.8.0-alpha.8"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.6"
     "lodash.shuffle" "4.2.0"
     "semver" "7.3.8"
     "socketcluster-client" "14.3.1"
     "socketcluster-server" "14.6.0"
 
-"@liskhq/lisk-passphrase@^4.0.0-alpha.6":
-  "integrity" "sha512-Nao+ijqDHoLXe1RkFxRVRFNmIYmZR0oblObMrijcfD+nSsQtMxg0LiywkW33dTfsslke6vFUYwpO1MYBtQMkKQ=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-passphrase/-/lisk-passphrase-4.0.0-alpha.6.tgz"
-  "version" "4.0.0-alpha.6"
+"@liskhq/lisk-passphrase@^4.0.0-alpha.2":
+  "version" "4.0.0-alpha.2"
   dependencies:
     "bip39" "3.0.3"
 
-"@liskhq/lisk-transaction-pool@^0.6.0-alpha.16":
-  "integrity" "sha512-dcuWCz4JC+AhTpy1fZ18QfoS4woEta/pzyCuPc9pA3oUDsMNulzz+BqUDUCvne384HlpKrUalNcAcDlH64qWNQ=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-transaction-pool/-/lisk-transaction-pool-0.6.0-alpha.16.tgz"
-  "version" "0.6.0-alpha.16"
+"@liskhq/lisk-transaction-pool@^0.6.0-alpha.10":
+  "version" "0.6.0-alpha.10"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.4"
     "debug" "4.3.4"
 
 "@liskhq/lisk-transactions@^5.2.2":
@@ -759,14 +732,12 @@
     "@liskhq/lisk-cryptography" "^3.2.1"
     "@liskhq/lisk-validator" "^0.6.2"
 
-"@liskhq/lisk-transactions@^6.0.0-alpha.17":
-  "integrity" "sha512-GX4v6dDsPr3MTp8c1nqnCUHdSUu60k4uyedrDtEBRjGktozPZ526Nzrk6p1nyffvzRN8SrKNEYWB9etndHwVhw=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-transactions/-/lisk-transactions-6.0.0-alpha.17.tgz"
-  "version" "6.0.0-alpha.17"
+"@liskhq/lisk-transactions@^6.0.0-alpha.11":
+  "version" "6.0.0-alpha.11"
   dependencies:
-    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.6"
 
 "@liskhq/lisk-tree@^0.2.2":
   "integrity" "sha512-BSuKh/OpykVTQ5I6ocmtY6J8tieu3/4ikbAD1t1npkpCC5YzKu5ARtzPQw/Y70oYLwO6RsutefrTLLIsIt+Ifw=="
@@ -776,13 +747,11 @@
     "@liskhq/lisk-cryptography" "^3.2.1"
     "@liskhq/lisk-utils" "^0.2.1"
 
-"@liskhq/lisk-tree@^0.3.0-alpha.15":
-  "integrity" "sha512-w5cDiVSH/RxTq90svL+eJt8GL+rti0nEtol+4+eAfwkA7fpkSClavqSIX2GMF8rqZi2elV6o6uLNlQxfo4KO4Q=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-tree/-/lisk-tree-0.3.0-alpha.15.tgz"
-  "version" "0.3.0-alpha.15"
+"@liskhq/lisk-tree@^0.3.0-alpha.9":
+  "version" "0.3.0-alpha.9"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.4"
 
 "@liskhq/lisk-utils@^0.2.1", "@liskhq/lisk-utils@0.2.1":
   "integrity" "sha512-2vPLoCRVJVYEh8KUePBj/qBrD3i9aM5g3lhimn+RiEweKQSpBBe+BGcBIuNeKtCJtm2A0ChVjSXJV39t7nNh+A=="
@@ -791,10 +760,8 @@
   dependencies:
     "lodash.clonedeep" "4.5.0"
 
-"@liskhq/lisk-utils@^0.3.0-alpha.8":
-  "integrity" "sha512-j6a2R7mZhxRIMvpy+E86bQXdCiF9aGSMRM8Bl0/KaQecRib+36xIUqyXJb3g2Eib/RKczYoHpp2kM8IeaRs11g=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-utils/-/lisk-utils-0.3.0-alpha.8.tgz"
-  "version" "0.3.0-alpha.8"
+"@liskhq/lisk-utils@^0.3.0-alpha.4":
+  "version" "0.3.0-alpha.4"
   dependencies:
     "lodash.clonedeep" "4.5.0"
 
@@ -810,12 +777,10 @@
     "semver" "7.3.5"
     "validator" "13.7.0"
 
-"@liskhq/lisk-validator@^0.7.0-alpha.12", "@liskhq/lisk-validator@0.7.0-alpha.12":
-  "integrity" "sha512-M9h1eDA7zk0xydF75jCskFRM7htpwBjCtCHNsGkf0oA32ofjABJcmJhEfteQvZuOln2nGp77g5b3HXbySyefuw=="
-  "resolved" "https://npm.lisk.com/@liskhq%2flisk-validator/-/lisk-validator-0.7.0-alpha.12.tgz"
-  "version" "0.7.0-alpha.12"
+"@liskhq/lisk-validator@^0.7.0-alpha.6", "@liskhq/lisk-validator@0.7.0-alpha.12":
+  "version" "0.7.0-alpha.6"
   dependencies:
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
     "ajv" "8.1.0"
     "ajv-formats" "2.1.1"
     "debug" "4.3.4"
@@ -874,7 +839,27 @@
     "mkdirp" "^1.0.4"
     "rimraf" "^3.0.2"
 
-"@oclif/command@^1.5.13", "@oclif/command@^1.6.0", "@oclif/command@1.8.21":
+"@oclif/command@^1.5.13", "@oclif/command@^1.8.15":
+  "version" "1.8.22"
+  dependencies:
+    "@oclif/config" "^1.18.2"
+    "@oclif/errors" "^1.3.6"
+    "@oclif/help" "^1.0.1"
+    "@oclif/parser" "^3.8.10"
+    "debug" "^4.1.1"
+    "semver" "^7.3.8"
+
+"@oclif/command@^1.6.0":
+  "version" "1.8.22"
+  dependencies:
+    "@oclif/config" "^1.18.2"
+    "@oclif/errors" "^1.3.6"
+    "@oclif/help" "^1.0.1"
+    "@oclif/parser" "^3.8.10"
+    "debug" "^4.1.1"
+    "semver" "^7.3.8"
+
+"@oclif/command@1.8.21":
   "integrity" "sha512-kIDrRIbAcicVl+CWMzXeZkg5dRNuF1VI7koyFTAQMNYwRNZpeya5x7XDPr+fh7rDiBL7psnxc3B1+zoOWj96lQ=="
   "resolved" "https://npm.lisk.com/@oclif%2fcommand/-/command-1.8.21.tgz"
   "version" "1.8.21"
@@ -886,17 +871,7 @@
     "debug" "^4.1.1"
     "semver" "^7.3.8"
 
-"@oclif/config@^1.12.12", "@oclif/config@1.14.0":
-  "integrity" "sha512-KsOP/mx9lzTah+EtGqLUXN3PDL0J3zb9/dTneFyiUK2K6T7vFEGhV6OasmqTh4uMZHGYTGrNPV8x/Yw6qZNL6A=="
-  "resolved" "https://npm.lisk.com/@oclif%2fconfig/-/config-1.14.0.tgz"
-  "version" "1.14.0"
-  dependencies:
-    "@oclif/errors" "^1.0.0"
-    "@oclif/parser" "^3.8.0"
-    "debug" "^4.1.1"
-    "tslib" "^1.9.3"
-
-"@oclif/config@^1.18.2":
+"@oclif/config@^1.12.12", "@oclif/config@^1.18.2":
   "integrity" "sha512-FetS52+emaZQui0roFSdbBP8ddBkIezEoH2NcjLJRjqkMGdE9Z1V+jsISVqTYXk2KJ1gAI0CHDXFjJlNBYbJBg=="
   "resolved" "https://npm.lisk.com/@oclif%2fconfig/-/config-1.18.8.tgz"
   "version" "1.18.8"
@@ -907,6 +882,16 @@
     "globby" "^11.1.0"
     "is-wsl" "^2.1.1"
     "tslib" "^2.5.0"
+
+"@oclif/config@1.14.0":
+  "integrity" "sha512-KsOP/mx9lzTah+EtGqLUXN3PDL0J3zb9/dTneFyiUK2K6T7vFEGhV6OasmqTh4uMZHGYTGrNPV8x/Yw6qZNL6A=="
+  "resolved" "https://npm.lisk.com/@oclif%2fconfig/-/config-1.14.0.tgz"
+  "version" "1.14.0"
+  dependencies:
+    "@oclif/errors" "^1.0.0"
+    "@oclif/parser" "^3.8.0"
+    "debug" "^4.1.1"
+    "tslib" "^1.9.3"
 
 "@oclif/config@1.18.6":
   "integrity" "sha512-OWhCpdu4QqggOPX1YPZ4XVmLLRX+lhGjXV6RNA7sogOwLqlEmSslnN/lhR5dkhcWZbKWBQH29YCrB3LDPRu/IA=="
@@ -938,18 +923,16 @@
     "qqjs" "^0.3.10"
     "tslib" "^1.9.3"
 
-"@oclif/errors@^1.0.0", "@oclif/errors@^1.2.1", "@oclif/errors@^1.2.2", "@oclif/errors@1.2.2":
-  "integrity" "sha512-Eq8BFuJUQcbAPVofDxwdE0bL14inIiwt5EaKRVY9ZDIG11jwdXZqiQEECJx0VfnLyUZdYfRd/znDI/MytdJoKg=="
-  "resolved" "https://npm.lisk.com/@oclif%2ferrors/-/errors-1.2.2.tgz"
-  "version" "1.2.2"
+"@oclif/errors@^1.0.0":
+  "version" "1.3.6"
   dependencies:
-    "clean-stack" "^1.3.0"
-    "fs-extra" "^7.0.0"
-    "indent-string" "^3.2.0"
-    "strip-ansi" "^5.0.0"
-    "wrap-ansi" "^4.0.0"
+    "clean-stack" "^3.0.0"
+    "fs-extra" "^8.1"
+    "indent-string" "^4.0.0"
+    "strip-ansi" "^6.0.1"
+    "wrap-ansi" "^7.0.0"
 
-"@oclif/errors@^1.3.6", "@oclif/errors@1.3.6":
+"@oclif/errors@^1.2.1", "@oclif/errors@^1.2.2", "@oclif/errors@^1.3.5", "@oclif/errors@^1.3.6", "@oclif/errors@1.3.6":
   "integrity" "sha512-fYaU4aDceETd89KXP+3cLyg9EHZsLD3RxF2IU9yxahhBpspWjkWi3Dy3bTgcwZ3V47BgxQaGapzJWDM33XIVDQ=="
   "resolved" "https://npm.lisk.com/@oclif%2ferrors/-/errors-1.3.6.tgz"
   "version" "1.3.6"
@@ -959,6 +942,17 @@
     "indent-string" "^4.0.0"
     "strip-ansi" "^6.0.1"
     "wrap-ansi" "^7.0.0"
+
+"@oclif/errors@1.2.2":
+  "integrity" "sha512-Eq8BFuJUQcbAPVofDxwdE0bL14inIiwt5EaKRVY9ZDIG11jwdXZqiQEECJx0VfnLyUZdYfRd/znDI/MytdJoKg=="
+  "resolved" "https://npm.lisk.com/@oclif%2ferrors/-/errors-1.2.2.tgz"
+  "version" "1.2.2"
+  dependencies:
+    "clean-stack" "^1.3.0"
+    "fs-extra" "^7.0.0"
+    "indent-string" "^3.2.0"
+    "strip-ansi" "^5.0.0"
+    "wrap-ansi" "^4.0.0"
 
 "@oclif/help@^1.0.1":
   "integrity" "sha512-77ZXqVXcd+bQ6EafN56KbL4PbNtZM/Lq4GQElekNav+CPIgPNKT3AtMTQrc0fWke6bb/BTLB+1Fu1gWgx643jQ=="
@@ -1004,10 +998,13 @@
     "widest-line" "^2.0.1"
     "wrap-ansi" "^4.0.0"
 
-"@oclif/screen@^1.0.3":
+"@oclif/screen@^1.0.3", "@oclif/screen@^1.0.4":
   "integrity" "sha512-60CHpq+eqnTxLZQ4PGHYNwUX572hgpMHGPtTWMjdTMsAvlm69lZV/4ly6O3sAYkomo4NggGcomrDpBe34rxUqw=="
   "resolved" "https://npm.lisk.com/@oclif%2fscreen/-/screen-1.0.4.tgz"
   "version" "1.0.4"
+
+"@sinclair/typebox@^0.25.16":
+  "version" "0.25.24"
 
 "@sinonjs/commons@^1.7.0":
   "integrity" "sha512-Ky+XkAkqPZSm3NLBeUng77EBQl3cmeJhITaGHdYH8kjVB+aun3S4XBRti2zt17mtt0mIUDiNxYeoJm6drVvBJQ=="
@@ -1141,7 +1138,13 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/jest@*", "@types/jest@^27.0.0", "@types/jest@27.0.2":
+"@types/jest@*":
+  "version" "29.4.0"
+  dependencies:
+    "expect" "^29.0.0"
+    "pretty-format" "^29.0.0"
+
+"@types/jest@^27.0.0", "@types/jest@27.0.2":
   "integrity" "sha512-4dRxkS/AFX0c5XW6IPMNOydLn2tEhNhJV7DnYK+0bjoJZ+QTmfucBlihX7aoEsh/ocYtkLC73UbnBXBXIxsULA=="
   "resolved" "https://npm.lisk.com/@types%2fjest/-/jest-27.0.2.tgz"
   "version" "27.0.2"
@@ -1149,7 +1152,7 @@
     "jest-diff" "^27.0.0"
     "pretty-format" "^27.0.0"
 
-"@types/json-schema@^7.0.3", "@types/json-schema@^7.0.9":
+"@types/json-schema@^7.0.3", "@types/json-schema@^7.0.7", "@types/json-schema@^7.0.9":
   "integrity" "sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ=="
   "resolved" "https://npm.lisk.com/@types%2fjson-schema/-/json-schema-7.0.11.tgz"
   "version" "7.0.11"
@@ -1167,9 +1170,7 @@
     "@types/lodash" "*"
 
 "@types/lodash@*":
-  "integrity" "sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g=="
-  "resolved" "https://npm.lisk.com/@types%2flodash/-/lodash-4.14.194.tgz"
-  "version" "4.14.194"
+  "version" "4.14.191"
 
 "@types/minimatch@*":
   "integrity" "sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA=="
@@ -1182,9 +1183,7 @@
   "version" "12.12.11"
 
 "@types/node@^16":
-  "integrity" "sha512-XAMpaw1s1+6zM+jn2tmw8MyaRDIJfXxqmIQIS0HfoGYPuf7dUWeiUKopwq13KFX9lEp1+THGtlaaYx39Nxr58g=="
-  "resolved" "https://npm.lisk.com/@types%2fnode/-/node-16.18.23.tgz"
-  "version" "16.18.23"
+  "version" "16.18.13"
 
 "@types/node@11.11.6":
   "integrity" "sha512-Exw4yUWMBXM3X+8oqzJNRqZSwUAaS4+7NdvHqQuFi/d+synz++xmX3QIf+BFqneW8N31R8Ky+sikfZUXq07ggQ=="
@@ -1216,14 +1215,6 @@
   "resolved" "https://npm.lisk.com/@types%2fstack-utils/-/stack-utils-2.0.1.tgz"
   "version" "2.0.1"
 
-"@types/tar@6.1.4":
-  "integrity" "sha512-Cp4oxpfIzWt7mr2pbhHT2OTXGMAL0szYCzuf8lRWyIMCgsx6/Hfc3ubztuhvzXHXgraTQxyOCmmg7TDGIMIJJQ=="
-  "resolved" "https://npm.lisk.com/@types%2ftar/-/tar-6.1.4.tgz"
-  "version" "6.1.4"
-  dependencies:
-    "@types/node" "*"
-    "minipass" "^4.0.0"
-
 "@types/yargs-parser@*":
   "integrity" "sha512-iO9ZQHkZxHn4mSakYV0vFHAVDyEOIJQrV2uZ06HxEPcx+mt8swXoZHIbaaJ2crJYFfErySgktuTZ3BeLz+XmFA=="
   "resolved" "https://npm.lisk.com/@types%2fyargs-parser/-/yargs-parser-21.0.0.tgz"
@@ -1240,6 +1231,11 @@
   "integrity" "sha512-AxO/ADJOBFJScHbWhq2xAhlWP24rY4aCEG/NFaMvbT3X2MgRsLjhjQwsn0Zi5zn0LG9jUhCCZMeX9Dkuw6k+vQ=="
   "resolved" "https://npm.lisk.com/@types%2fyargs/-/yargs-16.0.5.tgz"
   "version" "16.0.5"
+  dependencies:
+    "@types/yargs-parser" "*"
+
+"@types/yargs@^17.0.8":
+  "version" "17.0.22"
   dependencies:
     "@types/yargs-parser" "*"
 
@@ -1272,7 +1268,17 @@
     "semver" "^7.3.2"
     "tsutils" "^3.17.1"
 
-"@typescript-eslint/experimental-utils@^4.0.1", "@typescript-eslint/experimental-utils@4.19.0":
+"@typescript-eslint/experimental-utils@^4.0.1":
+  "version" "4.33.0"
+  dependencies:
+    "@types/json-schema" "^7.0.7"
+    "@typescript-eslint/scope-manager" "4.33.0"
+    "@typescript-eslint/types" "4.33.0"
+    "@typescript-eslint/typescript-estree" "4.33.0"
+    "eslint-scope" "^5.1.1"
+    "eslint-utils" "^3.0.0"
+
+"@typescript-eslint/experimental-utils@4.19.0":
   "integrity" "sha512-9/23F1nnyzbHKuoTqFN1iXwN3bvOm/PRIXSBR3qFAYotK/0LveEOHr5JT1WZSzcD6BESl8kPOG3OoDRKO84bHA=="
   "resolved" "https://npm.lisk.com/@typescript-eslint%2fexperimental-utils/-/experimental-utils-4.19.0.tgz"
   "version" "4.19.0"
@@ -1312,6 +1318,12 @@
     "@typescript-eslint/types" "4.19.0"
     "@typescript-eslint/visitor-keys" "4.19.0"
 
+"@typescript-eslint/scope-manager@4.33.0":
+  "version" "4.33.0"
+  dependencies:
+    "@typescript-eslint/types" "4.33.0"
+    "@typescript-eslint/visitor-keys" "4.33.0"
+
 "@typescript-eslint/scope-manager@5.44.0":
   "integrity" "sha512-2pKml57KusI0LAhgLKae9kwWeITZ7IsZs77YxyNyIVOwQ1kToyXRaJLl+uDEXzMN5hnobKUOo2gKntK9H1YL8g=="
   "resolved" "https://npm.lisk.com/@typescript-eslint%2fscope-manager/-/scope-manager-5.44.0.tgz"
@@ -1319,6 +1331,12 @@
   dependencies:
     "@typescript-eslint/types" "5.44.0"
     "@typescript-eslint/visitor-keys" "5.44.0"
+
+"@typescript-eslint/scope-manager@5.54.0":
+  "version" "5.54.0"
+  dependencies:
+    "@typescript-eslint/types" "5.54.0"
+    "@typescript-eslint/visitor-keys" "5.54.0"
 
 "@typescript-eslint/type-utils@5.44.0":
   "integrity" "sha512-A1u0Yo5wZxkXPQ7/noGkRhV4J9opcymcr31XQtOzcc5nO/IHN2E2TPMECKWYpM3e6olWEM63fq/BaL1wEYnt/w=="
@@ -1335,10 +1353,16 @@
   "resolved" "https://npm.lisk.com/@typescript-eslint%2ftypes/-/types-4.19.0.tgz"
   "version" "4.19.0"
 
+"@typescript-eslint/types@4.33.0":
+  "version" "4.33.0"
+
 "@typescript-eslint/types@5.44.0":
   "integrity" "sha512-Tp+zDnHmGk4qKR1l+Y1rBvpjpm5tGXX339eAlRBDg+kgZkz9Bw+pqi4dyseOZMsGuSH69fYfPJCBKBrbPCxYFQ=="
   "resolved" "https://npm.lisk.com/@typescript-eslint%2ftypes/-/types-5.44.0.tgz"
   "version" "5.44.0"
+
+"@typescript-eslint/types@5.54.0":
+  "version" "5.54.0"
 
 "@typescript-eslint/typescript-estree@4.19.0":
   "integrity" "sha512-3xqArJ/A62smaQYRv2ZFyTA+XxGGWmlDYrsfZG68zJeNbeqRScnhf81rUVa6QG4UgzHnXw5VnMT5cg75dQGDkA=="
@@ -1353,6 +1377,17 @@
     "semver" "^7.3.2"
     "tsutils" "^3.17.1"
 
+"@typescript-eslint/typescript-estree@4.33.0":
+  "version" "4.33.0"
+  dependencies:
+    "@typescript-eslint/types" "4.33.0"
+    "@typescript-eslint/visitor-keys" "4.33.0"
+    "debug" "^4.3.1"
+    "globby" "^11.0.3"
+    "is-glob" "^4.0.1"
+    "semver" "^7.3.5"
+    "tsutils" "^3.21.0"
+
 "@typescript-eslint/typescript-estree@5.44.0":
   "integrity" "sha512-M6Jr+RM7M5zeRj2maSfsZK2660HKAJawv4Ud0xT+yauyvgrsHu276VtXlKDFnEmhG+nVEd0fYZNXGoAgxwDWJw=="
   "resolved" "https://npm.lisk.com/@typescript-eslint%2ftypescript-estree/-/typescript-estree-5.44.0.tgz"
@@ -1366,7 +1401,30 @@
     "semver" "^7.3.7"
     "tsutils" "^3.21.0"
 
-"@typescript-eslint/utils@^5.10.0", "@typescript-eslint/utils@5.44.0":
+"@typescript-eslint/typescript-estree@5.54.0":
+  "version" "5.54.0"
+  dependencies:
+    "@typescript-eslint/types" "5.54.0"
+    "@typescript-eslint/visitor-keys" "5.54.0"
+    "debug" "^4.3.4"
+    "globby" "^11.1.0"
+    "is-glob" "^4.0.3"
+    "semver" "^7.3.7"
+    "tsutils" "^3.21.0"
+
+"@typescript-eslint/utils@^5.10.0":
+  "version" "5.54.0"
+  dependencies:
+    "@types/json-schema" "^7.0.9"
+    "@types/semver" "^7.3.12"
+    "@typescript-eslint/scope-manager" "5.54.0"
+    "@typescript-eslint/types" "5.54.0"
+    "@typescript-eslint/typescript-estree" "5.54.0"
+    "eslint-scope" "^5.1.1"
+    "eslint-utils" "^3.0.0"
+    "semver" "^7.3.7"
+
+"@typescript-eslint/utils@5.44.0":
   "integrity" "sha512-fMzA8LLQ189gaBjS0MZszw5HBdZgVwxVFShCO3QN+ws3GlPkcy9YuS3U4wkT6su0w+Byjq3mS3uamy9HE4Yfjw=="
   "resolved" "https://npm.lisk.com/@typescript-eslint%2futils/-/utils-5.44.0.tgz"
   "version" "5.44.0"
@@ -1388,12 +1446,24 @@
     "@typescript-eslint/types" "4.19.0"
     "eslint-visitor-keys" "^2.0.0"
 
+"@typescript-eslint/visitor-keys@4.33.0":
+  "version" "4.33.0"
+  dependencies:
+    "@typescript-eslint/types" "4.33.0"
+    "eslint-visitor-keys" "^2.0.0"
+
 "@typescript-eslint/visitor-keys@5.44.0":
   "integrity" "sha512-a48tLG8/4m62gPFbJ27FxwCOqPKxsb8KC3HkmYoq2As/4YyjQl1jDbRr1s63+g4FS/iIehjmN3L5UjmKva1HzQ=="
   "resolved" "https://npm.lisk.com/@typescript-eslint%2fvisitor-keys/-/visitor-keys-5.44.0.tgz"
   "version" "5.44.0"
   dependencies:
     "@typescript-eslint/types" "5.44.0"
+    "eslint-visitor-keys" "^3.3.0"
+
+"@typescript-eslint/visitor-keys@5.54.0":
+  "version" "5.54.0"
+  dependencies:
+    "@typescript-eslint/types" "5.54.0"
     "eslint-visitor-keys" "^3.3.0"
 
 "abab@^2.0.3", "abab@^2.0.5":
@@ -1437,7 +1507,12 @@
     "acorn" "^7.1.1"
     "acorn-walk" "^7.1.1"
 
-"acorn-jsx@^5.3.1", "acorn-jsx@^5.3.2":
+"acorn-jsx@^5.3.1":
+  "integrity" "sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ=="
+  "resolved" "https://npm.lisk.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz"
+  "version" "5.3.2"
+
+"acorn-jsx@^5.3.2":
   "integrity" "sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ=="
   "resolved" "https://npm.lisk.com/acorn-jsx/-/acorn-jsx-5.3.2.tgz"
   "version" "5.3.2"
@@ -1475,12 +1550,10 @@
     "debug" "4"
 
 "agentkeepalive@^4.1.3":
-  "integrity" "sha512-7Epl1Blf4Sy37j4v9f9FjICCh4+KAQOyXgHEwlyBiAQLbhKdq/i2QQU3amQalS/wPhdPzDXPL5DMR5bkn+YeWg=="
-  "resolved" "https://npm.lisk.com/agentkeepalive/-/agentkeepalive-4.3.0.tgz"
-  "version" "4.3.0"
+  "version" "4.2.1"
   dependencies:
     "debug" "^4.1.0"
-    "depd" "^2.0.0"
+    "depd" "^1.1.2"
     "humanize-ms" "^1.2.1"
 
 "aggregate-error@^3.0.0":
@@ -1515,7 +1588,23 @@
     "json-schema-traverse" "^0.4.1"
     "uri-js" "^4.2.2"
 
-"ajv@^8.0.0", "ajv@^8.0.1", "ajv@8.1.0":
+"ajv@^8.0.0":
+  "version" "8.12.0"
+  dependencies:
+    "fast-deep-equal" "^3.1.1"
+    "json-schema-traverse" "^1.0.0"
+    "require-from-string" "^2.0.2"
+    "uri-js" "^4.2.2"
+
+"ajv@^8.0.1":
+  "version" "8.12.0"
+  dependencies:
+    "fast-deep-equal" "^3.1.1"
+    "json-schema-traverse" "^1.0.0"
+    "require-from-string" "^2.0.2"
+    "uri-js" "^4.2.2"
+
+"ajv@8.1.0":
   "integrity" "sha512-B/Sk2Ix7A36fs/ZkuGLIR86EdjbgR6fsAcbx9lOP/QBSXujDNbVmIS/U4Itz5k8fPFDeVZl/zQ/gJW4Jrq6XjQ=="
   "resolved" "https://npm.lisk.com/ajv/-/ajv-8.1.0.tgz"
   "version" "8.1.0"
@@ -1646,14 +1735,6 @@
   "resolved" "https://npm.lisk.com/argparse/-/argparse-2.0.1.tgz"
   "version" "2.0.1"
 
-"array-buffer-byte-length@^1.0.0":
-  "integrity" "sha512-LPuwb2P+NrQw3XhxGc36+XSvuBPopovXYTR9Ew++Du9Yb/bx5AzBfrIsBoj0EZUifjQU+sHL21sseZ3jerWO/A=="
-  "resolved" "https://npm.lisk.com/array-buffer-byte-length/-/array-buffer-byte-length-1.0.0.tgz"
-  "version" "1.0.0"
-  dependencies:
-    "call-bind" "^1.0.2"
-    "is-array-buffer" "^3.0.1"
-
 "array-includes@^3.1.1", "array-includes@^3.1.4":
   "integrity" "sha512-sgTbLvL6cNnw24FnbaDyjmvddQ2ML8arZsgaJhoABMoplz/4QRhtrYS+alr1BUM1Bwp6dhx8vVCBSLG+StwOFw=="
   "resolved" "https://npm.lisk.com/array-includes/-/array-includes-3.1.6.tgz"
@@ -1780,11 +1861,6 @@
   "integrity" "sha1-R2iMuZu2gE8OBtPnY7HDLlfY5rY="
   "resolved" "https://npm.lisk.com/base64id/-/base64id-1.0.0.tgz"
   "version" "1.0.0"
-
-"bintrees@1.0.2":
-  "integrity" "sha1-SfiW1uhYpKSZ34XDj7OZua/4QPg="
-  "resolved" "https://npm.lisk.com/bintrees/-/bintrees-1.0.2.tgz"
-  "version" "1.0.2"
 
 "bip39@3.0.3":
   "integrity" "sha512-P0dKrz4g0V0BjXfx7d9QNkJ/Txcz/k+hM9TnjqjUaXtuOfAvxXSw2rJw8DX0e3ZPwnK/IgDxoRqf0bvoVCqbMg=="
@@ -1938,9 +2014,7 @@
   "version" "6.3.0"
 
 "caniuse-lite@^1.0.30001449":
-  "integrity" "sha512-q7cpoPPvZYgtyC4VaBSN0Bt+PJ4c4EYRf0DrduInOz2SkFpHD5p3LnvEpqBp7UnJn+8x1Ogl1s38saUxe+ihQQ=="
-  "resolved" "https://npm.lisk.com/caniuse-lite/-/caniuse-lite-1.0.30001480.tgz"
-  "version" "1.0.30001480"
+  "version" "1.0.30001458"
 
 "cardinal@^2.1.1":
   "integrity" "sha1-fMEFXYItISlU0HsIXeolHMe8VQU="
@@ -1949,11 +2023,6 @@
   dependencies:
     "ansicolors" "~0.3.2"
     "redeyed" "~2.1.0"
-
-"cargo-cp-artifact@^0.1":
-  "integrity" "sha512-3j4DaoTrsCD1MRkTF2Soacii0Nx7UHCce0EwUf4fHnggwiE4fbmF2AbnfzayR36DF8KGadfh7M/Yfy625kgPlA=="
-  "resolved" "https://npm.lisk.com/cargo-cp-artifact/-/cargo-cp-artifact-0.1.8.tgz"
-  "version" "0.1.8"
 
 "catering@^2.0.0", "catering@^2.1.0":
   "integrity" "sha512-K7Qy8O9p76sL3/3m7/zLKbRkyOlSZAgzEaLhyj2mXS8PsCud2Eo4hAb8aLtZqHh0QGqLcb9dlJSu6lHRVENm1w=="
@@ -2063,7 +2132,37 @@
     "slice-ansi" "^3.0.0"
     "string-width" "^4.2.0"
 
-"cli-ux@^5.2.1", "cli-ux@5.5.1":
+"cli-ux@^5.2.1":
+  "version" "5.6.7"
+  dependencies:
+    "@oclif/command" "^1.8.15"
+    "@oclif/errors" "^1.3.5"
+    "@oclif/linewrap" "^1.0.0"
+    "@oclif/screen" "^1.0.4"
+    "ansi-escapes" "^4.3.0"
+    "ansi-styles" "^4.2.0"
+    "cardinal" "^2.1.1"
+    "chalk" "^4.1.0"
+    "clean-stack" "^3.0.0"
+    "cli-progress" "^3.4.0"
+    "extract-stack" "^2.0.0"
+    "fs-extra" "^8.1"
+    "hyperlinker" "^1.0.0"
+    "indent-string" "^4.0.0"
+    "is-wsl" "^2.2.0"
+    "js-yaml" "^3.13.1"
+    "lodash" "^4.17.21"
+    "natural-orderby" "^2.0.1"
+    "object-treeify" "^1.1.4"
+    "password-prompt" "^1.1.2"
+    "semver" "^7.3.2"
+    "string-width" "^4.2.0"
+    "strip-ansi" "^6.0.0"
+    "supports-color" "^8.1.0"
+    "supports-hyperlinks" "^2.1.0"
+    "tslib" "^2.0.0"
+
+"cli-ux@5.5.1":
   "integrity" "sha512-t3DT1U1C3rArLGYLpKa3m9dr/8uKZRI8HRm/rXKL7UTjm4c+Yd9zHNWg1tP8uaJkUbhmvx5SQHwb3VWpPUVdHQ=="
   "resolved" "https://npm.lisk.com/cli-ux/-/cli-ux-5.5.1.tgz"
   "version" "5.5.1"
@@ -2347,21 +2446,19 @@
   dependencies:
     "ms" "^2.1.1"
 
-"debug@^4.0.1", "debug@^4.1.0", "debug@^4.1.1", "debug@4", "debug@4.1.1":
-  "integrity" "sha512-pYAIzeRo8J6KPEaJ0VWOh5Pzkbw/RetuzehGM7QRRX5he4fPHx2rdKMB256ehJCkX+XRQm16eZLqLNS8RSZXZw=="
-  "resolved" "https://npm.lisk.com/debug/-/debug-4.1.1.tgz"
-  "version" "4.1.1"
-  dependencies:
-    "ms" "^2.1.1"
-
-"debug@^4.3.1":
+"debug@^4.0.1", "debug@^4.1.1", "debug@^4.3.1", "debug@^4.3.2", "debug@^4.3.4":
   "integrity" "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="
   "resolved" "https://npm.lisk.com/debug/-/debug-4.3.4.tgz"
   "version" "4.3.4"
   dependencies:
     "ms" "2.1.2"
 
-"debug@^4.3.2":
+"debug@^4.1.0":
+  "version" "4.3.4"
+  dependencies:
+    "ms" "2.1.2"
+
+"debug@^4.3.1":
   "integrity" "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="
   "resolved" "https://npm.lisk.com/debug/-/debug-4.3.4.tgz"
   "version" "4.3.4"
@@ -2375,16 +2472,21 @@
   dependencies:
     "ms" "2.1.2"
 
-"debug@^4.3.4":
+"debug@4.1.1":
+  "integrity" "sha512-pYAIzeRo8J6KPEaJ0VWOh5Pzkbw/RetuzehGM7QRRX5he4fPHx2rdKMB256ehJCkX+XRQm16eZLqLNS8RSZXZw=="
+  "resolved" "https://npm.lisk.com/debug/-/debug-4.1.1.tgz"
+  "version" "4.1.1"
+  dependencies:
+    "ms" "^2.1.1"
+
+"debug@4.3.4":
   "integrity" "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="
   "resolved" "https://npm.lisk.com/debug/-/debug-4.3.4.tgz"
   "version" "4.3.4"
   dependencies:
     "ms" "2.1.2"
 
-"debug@4.3.4":
-  "integrity" "sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ=="
-  "resolved" "https://npm.lisk.com/debug/-/debug-4.3.4.tgz"
+"debug@4":
   "version" "4.3.4"
   dependencies:
     "ms" "2.1.2"
@@ -2410,9 +2512,7 @@
   "version" "0.1.4"
 
 "deepmerge@^4.2.2":
-  "integrity" "sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A=="
-  "resolved" "https://npm.lisk.com/deepmerge/-/deepmerge-4.3.1.tgz"
-  "version" "4.3.1"
+  "version" "4.3.0"
 
 "deferred-leveldown@~5.3.0":
   "integrity" "sha512-a59VOT+oDy7vtAbLRCZwWgxu2BaCfd5Hk7wxJd48ei7I+nsg8Orlb9CLG0PMZienk9BSUKgeAqkO2+Lw+1+Ukw=="
@@ -2440,10 +2540,8 @@
   "resolved" "https://npm.lisk.com/delegates/-/delegates-1.0.0.tgz"
   "version" "1.0.0"
 
-"depd@^2.0.0":
-  "integrity" "sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw=="
-  "resolved" "https://npm.lisk.com/depd/-/depd-2.0.0.tgz"
-  "version" "2.0.0"
+"depd@^1.1.2":
+  "version" "1.1.2"
 
 "detect-indent@^6.0.0":
   "integrity" "sha512-reYkTUJAZb9gUuZ2RvVCNhVHdg62RHnJ7WJl8ftMi4diZ6NWlciOzQN88pUhSELEwflJht4oQDv0F0BMlwaYtA=="
@@ -2469,6 +2567,9 @@
   "integrity" "sha512-k1gCAXAsNgLwEL+Y8Wvl+M6oEFj5bgazfZULpS5CneoPPXRaCCW7dm+q21Ky2VEE5X+VeRDBVg1Pcvvsr4TtNQ=="
   "resolved" "https://npm.lisk.com/diff-sequences/-/diff-sequences-27.5.1.tgz"
   "version" "27.5.1"
+
+"diff-sequences@^29.4.3":
+  "version" "29.4.3"
 
 "diff@^4.0.1":
   "integrity" "sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A=="
@@ -2533,9 +2634,7 @@
     "tweetnacl" "1.x.x"
 
 "electron-to-chromium@^1.4.284":
-  "integrity" "sha512-FRHZO+1tUNO4TOPXmlxetkoaIY8uwHzd1kKopK/Gx2SKn1L47wJXWD44wxP5CGRyyP98z/c8e1eBzJrgPeiBOg=="
-  "resolved" "https://npm.lisk.com/electron-to-chromium/-/electron-to-chromium-1.4.365.tgz"
-  "version" "1.4.365"
+  "version" "1.4.313"
 
 "emittery@^0.8.1":
   "integrity" "sha512-uDfvUjVrfGJJhymx/kz6prltenw1u7WrCg1oa94zYY8xxVpLLUu045LAT0dhDZdXG58/EpPL/5kA180fQ/qudg=="
@@ -2598,17 +2697,15 @@
     "is-arrayish" "^0.2.1"
 
 "es-abstract@^1.19.0", "es-abstract@^1.20.4":
-  "integrity" "sha512-y/B5POM2iBnIxCiernH1G7rC9qQoM77lLIMQLuob0zhp8C56Po81+2Nj0WFKnd0pNReDTnkYryc+zhOzpEIROg=="
-  "resolved" "https://npm.lisk.com/es-abstract/-/es-abstract-1.21.2.tgz"
-  "version" "1.21.2"
+  "version" "1.21.1"
   dependencies:
-    "array-buffer-byte-length" "^1.0.0"
     "available-typed-arrays" "^1.0.5"
     "call-bind" "^1.0.2"
     "es-set-tostringtag" "^2.0.1"
     "es-to-primitive" "^1.2.1"
+    "function-bind" "^1.1.1"
     "function.prototype.name" "^1.1.5"
-    "get-intrinsic" "^1.2.0"
+    "get-intrinsic" "^1.1.3"
     "get-symbol-description" "^1.0.0"
     "globalthis" "^1.0.3"
     "gopd" "^1.0.1"
@@ -2616,8 +2713,8 @@
     "has-property-descriptors" "^1.0.0"
     "has-proto" "^1.0.1"
     "has-symbols" "^1.0.3"
-    "internal-slot" "^1.0.5"
-    "is-array-buffer" "^3.0.2"
+    "internal-slot" "^1.0.4"
+    "is-array-buffer" "^3.0.1"
     "is-callable" "^1.2.7"
     "is-negative-zero" "^2.0.2"
     "is-regex" "^1.1.4"
@@ -2625,12 +2722,11 @@
     "is-string" "^1.0.7"
     "is-typed-array" "^1.1.10"
     "is-weakref" "^1.0.2"
-    "object-inspect" "^1.12.3"
+    "object-inspect" "^1.12.2"
     "object-keys" "^1.1.1"
     "object.assign" "^4.1.4"
     "regexp.prototype.flags" "^1.4.3"
     "safe-regex-test" "^1.0.0"
-    "string.prototype.trim" "^1.2.7"
     "string.prototype.trimend" "^1.0.6"
     "string.prototype.trimstart" "^1.0.6"
     "typed-array-length" "^1.0.4"
@@ -2738,9 +2834,7 @@
     "resolve" "^1.22.1"
 
 "eslint-module-utils@^2.6.0", "eslint-module-utils@^2.7.3":
-  "integrity" "sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw=="
-  "resolved" "https://npm.lisk.com/eslint-module-utils/-/eslint-module-utils-2.8.0.tgz"
-  "version" "2.8.0"
+  "version" "2.7.4"
   dependencies:
     "debug" "^3.2.7"
 
@@ -2805,21 +2899,12 @@
     "estraverse" "^4.1.1"
 
 "eslint-scope@^7.1.1":
-  "integrity" "sha512-DYj5deGlHBfMt15J7rdtyKNq/Nqlv5KfU4iodrQ019XESsRnwXH9KAE0y3cwtUHDo2ob7CypAnCqefh6vioWRw=="
-  "resolved" "https://npm.lisk.com/eslint-scope/-/eslint-scope-7.2.0.tgz"
-  "version" "7.2.0"
+  "version" "7.1.1"
   dependencies:
     "esrecurse" "^4.3.0"
     "estraverse" "^5.2.0"
 
-"eslint-utils@^2.0.0":
-  "integrity" "sha512-w94dQYoauyvlDc43XnGB8lU3Zt713vNChgt4EWwhXAP2XkBvndfxF0AgIqKOOasjPIPzj9JqgwkwbCYD0/V3Zg=="
-  "resolved" "https://npm.lisk.com/eslint-utils/-/eslint-utils-2.1.0.tgz"
-  "version" "2.1.0"
-  dependencies:
-    "eslint-visitor-keys" "^1.1.0"
-
-"eslint-utils@^2.1.0":
+"eslint-utils@^2.0.0", "eslint-utils@^2.1.0":
   "integrity" "sha512-w94dQYoauyvlDc43XnGB8lU3Zt713vNChgt4EWwhXAP2XkBvndfxF0AgIqKOOasjPIPzj9JqgwkwbCYD0/V3Zg=="
   "resolved" "https://npm.lisk.com/eslint-utils/-/eslint-utils-2.1.0.tgz"
   "version" "2.1.0"
@@ -2848,10 +2933,8 @@
   "resolved" "https://npm.lisk.com/eslint-visitor-keys/-/eslint-visitor-keys-2.1.0.tgz"
   "version" "2.1.0"
 
-"eslint-visitor-keys@^3.3.0", "eslint-visitor-keys@^3.4.0":
-  "integrity" "sha512-HPpKPUBQcAsZOsHAFwTtIKcYlCje62XB7SEAcxjtmW6TD1WVpkS6i6/hOVtTZIl4zGj/mBqpFVGvaDneik+VoQ=="
-  "resolved" "https://npm.lisk.com/eslint-visitor-keys/-/eslint-visitor-keys-3.4.0.tgz"
-  "version" "3.4.0"
+"eslint-visitor-keys@^3.3.0":
+  "version" "3.3.0"
 
 "eslint@*", "eslint@^2 || ^3 || ^4 || ^5 || ^6 || ^7.2.0 || ^8", "eslint@^6.0.0 || ^7.0.0 || ^8.0.0", "eslint@^7.0.0 || ^8.0.0", "eslint@>=3.14.1", "eslint@>=5", "eslint@8.28.0":
   "integrity" "sha512-S27Di+EVyMxcHiwDrFzk8dJYAaD+/5SoWKxL1ri/71CRHsnJnRDPNt2Kzj24+MT9FDupf4aqqyqPrvI8MvQ4VQ=="
@@ -2951,13 +3034,11 @@
     "eslint-visitor-keys" "^1.3.0"
 
 "espree@^9.4.0":
-  "integrity" "sha512-5yxtHSZXRSW5pvv3hAlXM5+/Oswi1AUFqBmbibKb5s6bp3rGIDkyXU6xCoyuuLhijr4SFwPrXRoZjz0AZDN9tg=="
-  "resolved" "https://npm.lisk.com/espree/-/espree-9.5.1.tgz"
-  "version" "9.5.1"
+  "version" "9.4.1"
   dependencies:
     "acorn" "^8.8.0"
     "acorn-jsx" "^5.3.2"
-    "eslint-visitor-keys" "^3.4.0"
+    "eslint-visitor-keys" "^3.3.0"
 
 "esprima@^4.0.0", "esprima@^4.0.1", "esprima@~4.0.0":
   "integrity" "sha512-eGuFFw7Upda+g4p+QHvnW0RyTX/SVeJBDM/gCtMARO0cLuT2HcEKnTPvhjV6aGeqrCB/sbNop0Kszm0jsaWU4A=="
@@ -2965,9 +3046,7 @@
   "version" "4.0.1"
 
 "esquery@^1.4.0":
-  "integrity" "sha512-YQLXUplAwJgCydQ78IMJywZCceoqk1oH01OERdSAJc/7U2AylwjhSCLDEtqwg811idIS/9fIU5GjG73IgjKMVg=="
-  "resolved" "https://npm.lisk.com/esquery/-/esquery-1.5.0.tgz"
-  "version" "1.5.0"
+  "version" "1.4.2"
   dependencies:
     "estraverse" "^5.1.0"
 
@@ -2983,12 +3062,7 @@
   "resolved" "https://npm.lisk.com/estraverse/-/estraverse-4.3.0.tgz"
   "version" "4.3.0"
 
-"estraverse@^5.1.0":
-  "integrity" "sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA=="
-  "resolved" "https://npm.lisk.com/estraverse/-/estraverse-5.3.0.tgz"
-  "version" "5.3.0"
-
-"estraverse@^5.2.0":
+"estraverse@^5.1.0", "estraverse@^5.2.0":
   "integrity" "sha512-MMdARuVEQziNTeJD8DgMqmhwR11BRQ/cBP+pLtYdSTnf3MIO8fFeiINEbX36ZdNlfU/7A9f3gUw49B3oQsvwBA=="
   "resolved" "https://npm.lisk.com/estraverse/-/estraverse-5.3.0.tgz"
   "version" "5.3.0"
@@ -3073,6 +3147,15 @@
     "jest-matcher-utils" "^27.5.1"
     "jest-message-util" "^27.5.1"
 
+"expect@^29.0.0":
+  "version" "29.4.3"
+  dependencies:
+    "@jest/expect-utils" "^29.4.3"
+    "jest-get-type" "^29.4.3"
+    "jest-matcher-utils" "^29.4.3"
+    "jest-message-util" "^29.4.3"
+    "jest-util" "^29.4.3"
+
 "extract-stack@^2.0.0":
   "integrity" "sha512-AEo4zm+TenK7zQorGK1f9mJ8L14hnTDi2ZQPR+Mub1NX8zimka1mXpV5LpH8x9HoUmFSHZCfLHqWvp0Y4FxxzQ=="
   "resolved" "https://npm.lisk.com/extract-stack/-/extract-stack-2.0.0.tgz"
@@ -3153,15 +3236,7 @@
   dependencies:
     "locate-path" "^3.0.0"
 
-"find-up@^4.0.0":
-  "integrity" "sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw=="
-  "resolved" "https://npm.lisk.com/find-up/-/find-up-4.1.0.tgz"
-  "version" "4.1.0"
-  dependencies:
-    "locate-path" "^5.0.0"
-    "path-exists" "^4.0.0"
-
-"find-up@^4.1.0":
+"find-up@^4.0.0", "find-up@^4.1.0":
   "integrity" "sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw=="
   "resolved" "https://npm.lisk.com/find-up/-/find-up-4.1.0.tgz"
   "version" "4.1.0"
@@ -3373,14 +3448,7 @@
   "resolved" "https://npm.lisk.com/get-stream/-/get-stream-3.0.0.tgz"
   "version" "3.0.0"
 
-"get-stream@^5.0.0":
-  "integrity" "sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA=="
-  "resolved" "https://npm.lisk.com/get-stream/-/get-stream-5.2.0.tgz"
-  "version" "5.2.0"
-  dependencies:
-    "pump" "^3.0.0"
-
-"get-stream@^5.1.0":
+"get-stream@^5.0.0", "get-stream@^5.1.0":
   "integrity" "sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA=="
   "resolved" "https://npm.lisk.com/get-stream/-/get-stream-5.2.0.tgz"
   "version" "5.2.0"
@@ -3405,14 +3473,7 @@
   "resolved" "https://npm.lisk.com/github-slugger/-/github-slugger-1.5.0.tgz"
   "version" "1.5.0"
 
-"glob-parent@^5.0.0":
-  "integrity" "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="
-  "resolved" "https://npm.lisk.com/glob-parent/-/glob-parent-5.1.2.tgz"
-  "version" "5.1.2"
-  dependencies:
-    "is-glob" "^4.0.1"
-
-"glob-parent@^5.1.2":
+"glob-parent@^5.0.0", "glob-parent@^5.1.2":
   "integrity" "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="
   "resolved" "https://npm.lisk.com/glob-parent/-/glob-parent-5.1.2.tgz"
   "version" "5.1.2"
@@ -3482,7 +3543,7 @@
     "merge2" "^1.2.3"
     "slash" "^3.0.0"
 
-"globby@^11.0.1", "globby@^11.1.0":
+"globby@^11.0.1", "globby@^11.0.3", "globby@^11.1.0":
   "integrity" "sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g=="
   "resolved" "https://npm.lisk.com/globby/-/globby-11.1.0.tgz"
   "version" "11.1.0"
@@ -3502,9 +3563,7 @@
     "get-intrinsic" "^1.1.3"
 
 "graceful-fs@^4.1.15", "graceful-fs@^4.1.2", "graceful-fs@^4.1.6", "graceful-fs@^4.2.0", "graceful-fs@^4.2.4", "graceful-fs@^4.2.6", "graceful-fs@^4.2.9":
-  "integrity" "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="
-  "resolved" "https://npm.lisk.com/graceful-fs/-/graceful-fs-4.2.11.tgz"
-  "version" "4.2.11"
+  "version" "4.2.10"
 
 "grapheme-splitter@^1.0.4":
   "integrity" "sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ=="
@@ -3753,9 +3812,7 @@
   "resolved" "https://npm.lisk.com/ini/-/ini-1.3.8.tgz"
   "version" "1.3.8"
 
-"internal-slot@^1.0.5":
-  "integrity" "sha512-Y+R5hJrzs52QCG2laLn4udYVnxsfny9CpOhNhUvk/SSSVyF6T27FzRbF0sroPidSu3X8oEAkOn2K804mjpt6UQ=="
-  "resolved" "https://npm.lisk.com/internal-slot/-/internal-slot-1.0.5.tgz"
+"internal-slot@^1.0.4":
   "version" "1.0.5"
   dependencies:
     "get-intrinsic" "^1.2.0"
@@ -3772,13 +3829,11 @@
   "resolved" "https://npm.lisk.com/ip/-/ip-2.0.0.tgz"
   "version" "2.0.0"
 
-"is-array-buffer@^3.0.1", "is-array-buffer@^3.0.2":
-  "integrity" "sha512-y+FyyR/w8vfIRq4eQcM1EYgSTnmHXPqaF+IgzgraytCFq5Xh8lllDVmAZolPJiZttZLeFSINPYMaEJ7/vWUa1w=="
-  "resolved" "https://npm.lisk.com/is-array-buffer/-/is-array-buffer-3.0.2.tgz"
-  "version" "3.0.2"
+"is-array-buffer@^3.0.1":
+  "version" "3.0.1"
   dependencies:
     "call-bind" "^1.0.2"
-    "get-intrinsic" "^1.2.0"
+    "get-intrinsic" "^1.1.3"
     "is-typed-array" "^1.1.10"
 
 "is-arrayish@^0.2.1":
@@ -3811,10 +3866,8 @@
   "resolved" "https://npm.lisk.com/is-callable/-/is-callable-1.2.7.tgz"
   "version" "1.2.7"
 
-"is-core-module@^2.11.0", "is-core-module@^2.12.0", "is-core-module@^2.8.1":
-  "integrity" "sha512-RECHCBCd/viahWmwj6enj19sKbHfJrddi/6cBDsNTKbNq0f7VeaUkBo60BqzvPqo/W54ChS62Z5qyun7cfOMqQ=="
-  "resolved" "https://npm.lisk.com/is-core-module/-/is-core-module-2.12.0.tgz"
-  "version" "2.12.0"
+"is-core-module@^2.11.0", "is-core-module@^2.8.1", "is-core-module@^2.9.0":
+  "version" "2.11.0"
   dependencies:
     "has" "^1.0.3"
 
@@ -3983,12 +4036,7 @@
   dependencies:
     "is-docker" "^2.0.0"
 
-"isarray@^1.0.0":
-  "integrity" "sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE="
-  "resolved" "https://npm.lisk.com/isarray/-/isarray-1.0.0.tgz"
-  "version" "1.0.0"
-
-"isarray@~1.0.0":
+"isarray@^1.0.0", "isarray@~1.0.0":
   "integrity" "sha1-u5NdSFgsuhaMBoNJV6VKPgcSTxE="
   "resolved" "https://npm.lisk.com/isarray/-/isarray-1.0.0.tgz"
   "version" "1.0.0"
@@ -4152,6 +4200,14 @@
     "jest-get-type" "^27.5.1"
     "pretty-format" "^27.5.1"
 
+"jest-diff@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "chalk" "^4.0.0"
+    "diff-sequences" "^29.4.3"
+    "jest-get-type" "^29.4.3"
+    "pretty-format" "^29.4.3"
+
 "jest-docblock@^27.5.1":
   "integrity" "sha512-rl7hlABeTsRYxKiUfpHrQrG4e2obOiTQWfMEH3PxPjOtdsfLQO4ReWSZaQ7DETm4xu07rl4q/h4zcKXyU0/OzQ=="
   "resolved" "https://npm.lisk.com/jest-docblock/-/jest-docblock-27.5.1.tgz"
@@ -4214,6 +4270,9 @@
   "integrity" "sha512-2KY95ksYSaK7DMBWQn6dQz3kqAf3BB64y2udeG+hv4KfSOb9qwcYQstTJc1KCbsix+wLZWZYN8t7nwX3GOBLRw=="
   "resolved" "https://npm.lisk.com/jest-get-type/-/jest-get-type-27.5.1.tgz"
   "version" "27.5.1"
+
+"jest-get-type@^29.4.3":
+  "version" "29.4.3"
 
 "jest-haste-map@^27.5.1":
   "integrity" "sha512-7GgkZ4Fw4NFbMSDSpZwXeBiIbx+t/46nJ2QitkOjvwPYyZmqttu2TDSimMHP1EkPOi4xUZAN1doE5Vd25H4Jng=="
@@ -4286,6 +4345,14 @@
     "jest-get-type" "^27.5.1"
     "pretty-format" "^27.5.1"
 
+"jest-matcher-utils@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "chalk" "^4.0.0"
+    "jest-diff" "^29.4.3"
+    "jest-get-type" "^29.4.3"
+    "pretty-format" "^29.4.3"
+
 "jest-message-util@^26.6.2":
   "integrity" "sha512-rGiLePzQ3AzwUshu2+Rn+UMFk0pHN58sOG+IaJbk5Jxuqo3NYO1U2/MIR4S1sKgsoYSXSzdtSa0TgrmtUwEbmA=="
   "resolved" "https://npm.lisk.com/jest-message-util/-/jest-message-util-26.6.2.tgz"
@@ -4313,6 +4380,19 @@
     "graceful-fs" "^4.2.9"
     "micromatch" "^4.0.4"
     "pretty-format" "^27.5.1"
+    "slash" "^3.0.0"
+    "stack-utils" "^2.0.3"
+
+"jest-message-util@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "@babel/code-frame" "^7.12.13"
+    "@jest/types" "^29.4.3"
+    "@types/stack-utils" "^2.0.0"
+    "chalk" "^4.0.0"
+    "graceful-fs" "^4.2.9"
+    "micromatch" "^4.0.4"
+    "pretty-format" "^29.4.3"
     "slash" "^3.0.0"
     "stack-utils" "^2.0.3"
 
@@ -4467,6 +4547,16 @@
     "graceful-fs" "^4.2.9"
     "picomatch" "^2.2.3"
 
+"jest-util@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "@jest/types" "^29.4.3"
+    "@types/node" "*"
+    "chalk" "^4.0.0"
+    "ci-info" "^3.2.0"
+    "graceful-fs" "^4.2.9"
+    "picomatch" "^2.2.3"
+
 "jest-validate@^27.5.1":
   "integrity" "sha512-thkNli0LYTmOI1tDB3FI1S1RTp/Bqyd9pTarJwL87OIBFuqEb5Apv5EaApEudYg4g86e3CT6kM0RowkhtEnCBQ=="
   "resolved" "https://npm.lisk.com/jest-validate/-/jest-validate-27.5.1.tgz"
@@ -4516,9 +4606,7 @@
     "jest-cli" "^27.3.1"
 
 "js-sdsl@^4.1.4":
-  "integrity" "sha512-FfVSdx6pJ41Oa+CF7RDaFmTnCaFhua+SNYQX74riGOpl96x+2jQCqEfQ2bnXu/5DPCqlRuiqyvTJM0Qjz26IVg=="
-  "resolved" "https://npm.lisk.com/js-sdsl/-/js-sdsl-4.4.0.tgz"
-  "version" "4.4.0"
+  "version" "4.3.0"
 
 "js-tokens@^4.0.0":
   "integrity" "sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ=="
@@ -4603,21 +4691,19 @@
   "resolved" "https://npm.lisk.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz"
   "version" "1.0.1"
 
-"json5@^1.0.1":
+"json5@^1.0.1", "json5@^1.0.2":
   "integrity" "sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA=="
   "resolved" "https://npm.lisk.com/json5/-/json5-1.0.2.tgz"
   "version" "1.0.2"
   dependencies:
     "minimist" "^1.2.0"
 
-"json5@^1.0.2":
-  "integrity" "sha512-g1MWMLBiz8FKi1e4w0UyVL3w+iJceWAFBAaBnnGKOpNa5f8TLktkbre1+s6oICydWAm+HRUGTmI+//xv2hvXYA=="
-  "resolved" "https://npm.lisk.com/json5/-/json5-1.0.2.tgz"
-  "version" "1.0.2"
-  dependencies:
-    "minimist" "^1.2.0"
+"json5@^2.2.2":
+  "integrity" "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg=="
+  "resolved" "https://npm.lisk.com/json5/-/json5-2.2.3.tgz"
+  "version" "2.2.3"
 
-"json5@^2.2.2", "json5@2.x":
+"json5@2.x":
   "integrity" "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg=="
   "resolved" "https://npm.lisk.com/json5/-/json5-2.2.3.tgz"
   "version" "2.2.3"
@@ -4780,27 +4866,24 @@
     "stringify-object" "^3.3.0"
 
 "lisk-framework@0.10.0-alpha.22":
-  "integrity" "sha512-YzySLg3+SOe1lYgRA8zlCiL5xgV9bWlxUEq7V5nztKelE8Rld4gP7Mt2tERJqFLoGHpZaYgglOUoWVON9Or+KQ=="
-  "resolved" "https://npm.lisk.com/lisk-framework/-/lisk-framework-0.10.0-alpha.22.tgz"
-  "version" "0.10.0-alpha.22"
+  "version" "0.10.0-alpha.15"
   dependencies:
     "@chainsafe/blst" "0.2.6"
-    "@liskhq/lisk-api-client" "^6.0.0-alpha.21"
-    "@liskhq/lisk-chain" "^0.4.0-alpha.19"
-    "@liskhq/lisk-codec" "^0.3.0-alpha.14"
-    "@liskhq/lisk-cryptography" "^4.0.0-alpha.12"
-    "@liskhq/lisk-db" "0.3.5"
-    "@liskhq/lisk-p2p" "^0.8.0-alpha.14"
-    "@liskhq/lisk-transaction-pool" "^0.6.0-alpha.16"
-    "@liskhq/lisk-transactions" "^6.0.0-alpha.17"
-    "@liskhq/lisk-tree" "^0.3.0-alpha.15"
-    "@liskhq/lisk-utils" "^0.3.0-alpha.8"
-    "@liskhq/lisk-validator" "^0.7.0-alpha.12"
+    "@liskhq/lisk-api-client" "^6.0.0-alpha.15"
+    "@liskhq/lisk-chain" "^0.4.0-alpha.13"
+    "@liskhq/lisk-codec" "^0.3.0-alpha.8"
+    "@liskhq/lisk-cryptography" "^4.0.0-alpha.6"
+    "@liskhq/lisk-db" "0.3.4"
+    "@liskhq/lisk-p2p" "^0.8.0-alpha.8"
+    "@liskhq/lisk-transaction-pool" "^0.6.0-alpha.10"
+    "@liskhq/lisk-transactions" "^6.0.0-alpha.11"
+    "@liskhq/lisk-tree" "^0.3.0-alpha.9"
+    "@liskhq/lisk-utils" "^0.3.0-alpha.4"
+    "@liskhq/lisk-validator" "^0.7.0-alpha.6"
     "bunyan" "1.8.15"
     "debug" "4.3.4"
     "eventemitter2" "6.4.9"
     "fs-extra" "11.1.0"
-    "prom-client" "14.2.0"
     "ps-list" "7.2.0"
     "sodium-native" "3.2.1"
     "ws" "8.11.0"
@@ -5123,28 +5206,7 @@
   dependencies:
     "minipass" "^3.0.0"
 
-"minipass@^3.0.0":
-  "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
-  "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
-  "version" "3.3.6"
-  dependencies:
-    "yallist" "^4.0.0"
-
-"minipass@^3.1.0":
-  "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
-  "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
-  "version" "3.3.6"
-  dependencies:
-    "yallist" "^4.0.0"
-
-"minipass@^3.1.1":
-  "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
-  "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
-  "version" "3.3.6"
-  dependencies:
-    "yallist" "^4.0.0"
-
-"minipass@^3.1.3":
+"minipass@^3.0.0", "minipass@^3.1.0", "minipass@^3.1.1", "minipass@^3.1.3":
   "integrity" "sha512-DxiNidxSEK+tHG6zOIklvNOwm3hvCrbUrdtzY74U6HKTJxvIDfOUL5W5P2Ghd3DTkhhKPYGqeNUIh5qcM4YBfw=="
   "resolved" "https://npm.lisk.com/minipass/-/minipass-3.3.6.tgz"
   "version" "3.3.6"
@@ -5152,9 +5214,7 @@
     "yallist" "^4.0.0"
 
 "minipass@^4.0.0":
-  "integrity" "sha512-fNzuVyifolSLFL4NzpF+wEF4qrgqaaKX0haXPQEdQ7NKAN+WecoKMHV09YcuL/DHxrUsYQOK3MiuDf7Ip2OXfQ=="
-  "resolved" "https://npm.lisk.com/minipass/-/minipass-4.2.8.tgz"
-  "version" "4.2.8"
+  "version" "4.2.4"
 
 "minizlib@^2.0.0", "minizlib@^2.1.1":
   "integrity" "sha512-bAxsR8BVfj60DWXHE3u30oHzfl4G7khkSuPW+qvpd7jFRHm7dLxOjUk1EHACJ/hxLY8phGJ0YhYHZo7jil7Qdg=="
@@ -5169,22 +5229,24 @@
   "resolved" "https://npm.lisk.com/mkdirp-classic/-/mkdirp-classic-0.5.3.tgz"
   "version" "0.5.3"
 
-"mkdirp@^0.5.1", "mkdirp@~0.5.1":
+"mkdirp@^0.5.1":
   "integrity" "sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw=="
   "resolved" "https://npm.lisk.com/mkdirp/-/mkdirp-0.5.6.tgz"
   "version" "0.5.6"
   dependencies:
     "minimist" "^1.2.6"
 
-"mkdirp@^1.0.3":
+"mkdirp@^1.0.3", "mkdirp@^1.0.4":
   "integrity" "sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw=="
   "resolved" "https://npm.lisk.com/mkdirp/-/mkdirp-1.0.4.tgz"
   "version" "1.0.4"
 
-"mkdirp@^1.0.4":
-  "integrity" "sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw=="
-  "resolved" "https://npm.lisk.com/mkdirp/-/mkdirp-1.0.4.tgz"
-  "version" "1.0.4"
+"mkdirp@~0.5.1":
+  "integrity" "sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw=="
+  "resolved" "https://npm.lisk.com/mkdirp/-/mkdirp-0.5.6.tgz"
+  "version" "0.5.6"
+  dependencies:
+    "minimist" "^1.2.6"
 
 "moment@^2.19.3":
   "integrity" "sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w=="
@@ -5358,16 +5420,14 @@
     "set-blocking" "^2.0.0"
 
 "nwsapi@^2.2.0":
-  "integrity" "sha512-NHj4rzRo0tQdijE9ZqAx6kYDcoRwYwSYzCA8MY3JzfxlrvEU0jhnhJT9BhqhJs7I/dKcrDm6TyulaRqZPIhN5g=="
-  "resolved" "https://npm.lisk.com/nwsapi/-/nwsapi-2.2.4.tgz"
-  "version" "2.2.4"
+  "version" "2.2.2"
 
 "object-assign@^4.1.1":
   "integrity" "sha1-IQmtx5ZYh8/AXLvUQsrIv7s2CGM="
   "resolved" "https://npm.lisk.com/object-assign/-/object-assign-4.1.1.tgz"
   "version" "4.1.1"
 
-"object-inspect@^1.12.3", "object-inspect@^1.9.0":
+"object-inspect@^1.12.2", "object-inspect@^1.9.0":
   "integrity" "sha512-geUvdk7c+eizMNUDkRpW1wJwgfOiOeHbxBR/hLXK1aT6zmVSO0jsQcs7fj6MGw89jC/cjGfLcNOrtMYtGqm81g=="
   "resolved" "https://npm.lisk.com/object-inspect/-/object-inspect-1.12.3.tgz"
   "version" "1.12.3"
@@ -5465,14 +5525,7 @@
   dependencies:
     "p-try" "^1.0.0"
 
-"p-limit@^2.0.0":
-  "integrity" "sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w=="
-  "resolved" "https://npm.lisk.com/p-limit/-/p-limit-2.3.0.tgz"
-  "version" "2.3.0"
-  dependencies:
-    "p-try" "^2.0.0"
-
-"p-limit@^2.2.0":
+"p-limit@^2.0.0", "p-limit@^2.2.0":
   "integrity" "sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w=="
   "resolved" "https://npm.lisk.com/p-limit/-/p-limit-2.3.0.tgz"
   "version" "2.3.0"
@@ -5596,7 +5649,12 @@
   "resolved" "https://npm.lisk.com/path-key/-/path-key-2.0.1.tgz"
   "version" "2.0.1"
 
-"path-key@^3.0.0", "path-key@^3.1.0":
+"path-key@^3.0.0":
+  "integrity" "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q=="
+  "resolved" "https://npm.lisk.com/path-key/-/path-key-3.1.1.tgz"
+  "version" "3.1.1"
+
+"path-key@^3.1.0":
   "integrity" "sha512-ojmeN0qd+y0jszEtoY48r0Peq5dwMEkIlCOu6Q5f41lfkswXuKtYrhgoTpLnyIcHm24Uhqx+5Tqm2InSwLhE6Q=="
   "resolved" "https://npm.lisk.com/path-key/-/path-key-3.1.1.tgz"
   "version" "3.1.1"
@@ -5721,6 +5779,13 @@
     "ansi-styles" "^5.0.0"
     "react-is" "^17.0.1"
 
+"pretty-format@^29.0.0", "pretty-format@^29.4.3":
+  "version" "29.4.3"
+  dependencies:
+    "@jest/schemas" "^29.4.3"
+    "ansi-styles" "^5.0.0"
+    "react-is" "^18.0.0"
+
 "process-nextick-args@~2.0.0":
   "integrity" "sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag=="
   "resolved" "https://npm.lisk.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz"
@@ -5730,13 +5795,6 @@
   "integrity" "sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA=="
   "resolved" "https://npm.lisk.com/progress/-/progress-2.0.3.tgz"
   "version" "2.0.3"
-
-"prom-client@14.2.0":
-  "integrity" "sha512-sF308EhTenb/pDRPakm+WgiN+VdM/T1RaHj1x+MvAuT8UiQP8JmOEbxVqtkbfR4LrvOg5n7ic01kRBDGXjYikA=="
-  "resolved" "https://npm.lisk.com/prom-client/-/prom-client-14.2.0.tgz"
-  "version" "14.2.0"
-  dependencies:
-    "tdigest" "^0.1.1"
 
 "promise-inflight@^1.0.1":
   "integrity" "sha1-mEcocL8igTL8vdhoEputEsPAKeM="
@@ -5833,6 +5891,9 @@
   "resolved" "https://npm.lisk.com/react-is/-/react-is-17.0.2.tgz"
   "version" "17.0.2"
 
+"react-is@^18.0.0":
+  "version" "18.2.0"
+
 "read-pkg-up@^2.0.0":
   "integrity" "sha1-a3KoBImE4MQeeVEP1en6mbO1Sb4="
   "resolved" "https://npm.lisk.com/read-pkg-up/-/read-pkg-up-2.0.0.tgz"
@@ -5851,9 +5912,7 @@
     "path-type" "^2.0.0"
 
 "readable-stream@^3.1.1", "readable-stream@^3.4.0", "readable-stream@^3.6.0":
-  "integrity" "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA=="
-  "resolved" "https://npm.lisk.com/readable-stream/-/readable-stream-3.6.2.tgz"
-  "version" "3.6.2"
+  "version" "3.6.1"
   dependencies:
     "inherits" "^2.0.3"
     "string_decoder" "^1.1.1"
@@ -5953,11 +6012,9 @@
   "version" "1.1.1"
 
 "resolve@^1.1.6", "resolve@^1.10.0", "resolve@^1.17.0", "resolve@^1.20.0", "resolve@^1.22.0", "resolve@^1.22.1":
-  "integrity" "sha512-P8ur/gp/AmbEzjr729bZnLjXK5Z+4P0zhIJgBgzqRih7hL7BOukHGtSTA3ACMY467GRFz3duQsi0bDZdR7DKdw=="
-  "resolved" "https://npm.lisk.com/resolve/-/resolve-1.22.3.tgz"
-  "version" "1.22.3"
+  "version" "1.22.1"
   dependencies:
-    "is-core-module" "^2.12.0"
+    "is-core-module" "^2.9.0"
     "path-parse" "^1.0.7"
     "supports-preserve-symlinks-flag" "^1.0.0"
 
@@ -6134,29 +6191,13 @@
   "resolved" "https://npm.lisk.com/semver/-/semver-6.3.0.tgz"
   "version" "6.3.0"
 
-"semver@^7.2.1", "semver@^7.3.2", "semver@7.3.2", "semver@7.x":
-  "integrity" "sha512-OrOb32TeeambH6UrhtShmF7CRDqhL6/5XpPNp2DuRH6+9QLw/orhp72j87v8Qa1ScDkvrrBNpZcDejAirJmfXQ=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.3.2.tgz"
-  "version" "7.3.2"
-
-"semver@^7.3.5":
-  "integrity" "sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.4.0.tgz"
-  "version" "7.4.0"
+"semver@^7.2.1", "semver@^7.3.2", "semver@^7.3.5", "semver@^7.3.8":
+  "version" "7.3.8"
   dependencies:
     "lru-cache" "^6.0.0"
 
 "semver@^7.3.7":
-  "integrity" "sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.4.0.tgz"
-  "version" "7.4.0"
-  dependencies:
-    "lru-cache" "^6.0.0"
-
-"semver@^7.3.8":
-  "integrity" "sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw=="
-  "resolved" "https://npm.lisk.com/semver/-/semver-7.4.0.tgz"
-  "version" "7.4.0"
+  "version" "7.3.8"
   dependencies:
     "lru-cache" "^6.0.0"
 
@@ -6164,6 +6205,11 @@
   "integrity" "sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ=="
   "resolved" "https://npm.lisk.com/semver/-/semver-5.7.1.tgz"
   "version" "5.7.1"
+
+"semver@7.3.2":
+  "integrity" "sha512-OrOb32TeeambH6UrhtShmF7CRDqhL6/5XpPNp2DuRH6+9QLw/orhp72j87v8Qa1ScDkvrrBNpZcDejAirJmfXQ=="
+  "resolved" "https://npm.lisk.com/semver/-/semver-7.3.2.tgz"
+  "version" "7.3.2"
 
 "semver@7.3.5":
   "integrity" "sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ=="
@@ -6175,6 +6221,11 @@
 "semver@7.3.8":
   "integrity" "sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A=="
   "resolved" "https://npm.lisk.com/semver/-/semver-7.3.8.tgz"
+  "version" "7.3.8"
+  dependencies:
+    "lru-cache" "^6.0.0"
+
+"semver@7.x":
   "version" "7.3.8"
   dependencies:
     "lru-cache" "^6.0.0"
@@ -6336,7 +6387,13 @@
   dependencies:
     "is-plain-obj" "^2.0.0"
 
-"source-map-support@^0.5.6", "source-map-support@0.5.19":
+"source-map-support@^0.5.6":
+  "version" "0.5.21"
+  dependencies:
+    "buffer-from" "^1.0.0"
+    "source-map" "^0.6.0"
+
+"source-map-support@0.5.19":
   "integrity" "sha512-Wonm7zOCIJzBGQdB+thsPar0kYuCIzYvxZwlBa87yi/Mdjv7Tip2cyVbLj5o0cFPN4EVkuTwb3GDDyUx2DGnGw=="
   "resolved" "https://npm.lisk.com/source-map-support/-/source-map-support-0.5.19.tgz"
   "version" "0.5.19"
@@ -6355,9 +6412,7 @@
   "version" "0.7.4"
 
 "spdx-correct@^3.0.0":
-  "integrity" "sha512-kN9dJbvnySHULIluDHy32WHRUu3Og7B9sbY7tsFLctQkIqnMh3hErYgdMjTYuqmcXX+lK5T1lnUt3G7zNswmZA=="
-  "resolved" "https://npm.lisk.com/spdx-correct/-/spdx-correct-3.2.0.tgz"
-  "version" "3.2.0"
+  "version" "3.1.1"
   dependencies:
     "spdx-expression-parse" "^3.0.0"
     "spdx-license-ids" "^3.0.0"
@@ -6376,9 +6431,7 @@
     "spdx-license-ids" "^3.0.0"
 
 "spdx-license-ids@^3.0.0":
-  "integrity" "sha512-XkD+zwiqXHikFZm4AX/7JSCXA98U5Db4AFd5XUg/+9UNtnH75+Z9KxtpYiJZx36mUDVOwH83pl7yvCer6ewM3w=="
-  "resolved" "https://npm.lisk.com/spdx-license-ids/-/spdx-license-ids-3.0.13.tgz"
-  "version" "3.0.13"
+  "version" "3.0.12"
 
 "sprintf-js@~1.0.2":
   "integrity" "sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw="
@@ -6457,15 +6510,6 @@
     "is-fullwidth-code-point" "^2.0.0"
     "strip-ansi" "^5.1.0"
 
-"string.prototype.trim@^1.2.7":
-  "integrity" "sha512-p6TmeT1T3411M8Cgg9wBTMRtY2q9+PNy9EV1i2lIXUN/btt763oIfxwN3RR8VU6wHX8j/1CFy0L+YuThm6bgOg=="
-  "resolved" "https://npm.lisk.com/string.prototype.trim/-/string.prototype.trim-1.2.7.tgz"
-  "version" "1.2.7"
-  dependencies:
-    "call-bind" "^1.0.2"
-    "define-properties" "^1.1.4"
-    "es-abstract" "^1.20.4"
-
 "string.prototype.trimend@^1.0.6":
   "integrity" "sha512-JySq+4mrPf9EsDBEDYMOb/lM7XQLulwg5R/m1r0PXEFqrV0qHvl58sdTilSXtKOflCsK2E8jxf+GKC0T07RWwQ=="
   "resolved" "https://npm.lisk.com/string.prototype.trimend/-/string.prototype.trimend-1.0.6.tgz"
@@ -6501,6 +6545,13 @@
     "ansi-regex" "^3.0.0"
 
 "strip-ansi@^5.0.0", "strip-ansi@^5.1.0", "strip-ansi@^5.2.0":
+  "integrity" "sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA=="
+  "resolved" "https://npm.lisk.com/strip-ansi/-/strip-ansi-5.2.0.tgz"
+  "version" "5.2.0"
+  dependencies:
+    "ansi-regex" "^4.1.0"
+
+"strip-ansi@^5.1.0":
   "integrity" "sha512-DuRs1gKbBqsMKIZlrffwlug8MHkcnpjs5VPmL1PAh+mA30U0DTotfDZ0d2UUsXpPmPmMMJ6W773MaA3J+lbiWA=="
   "resolved" "https://npm.lisk.com/strip-ansi/-/strip-ansi-5.2.0.tgz"
   "version" "5.2.0"
@@ -6556,6 +6607,11 @@
 "supports-color@^8.0.0":
   "integrity" "sha512-MpUEN2OodtUzxvKQl72cUF7RQ5EiHsGvSsVG0ia9c5RbWGL2CI4C7EpPS8UTBIplnlzZiNuV56w+FuNxy3ty2Q=="
   "resolved" "https://npm.lisk.com/supports-color/-/supports-color-8.1.1.tgz"
+  "version" "8.1.1"
+  dependencies:
+    "has-flag" "^4.0.0"
+
+"supports-color@^8.1.0":
   "version" "8.1.1"
   dependencies:
     "has-flag" "^4.0.0"
@@ -6621,13 +6677,6 @@
     "minizlib" "^2.1.1"
     "mkdirp" "^1.0.3"
     "yallist" "^4.0.0"
-
-"tdigest@^0.1.1":
-  "integrity" "sha512-+G0LLgjjo9BZX2MfdvPfH+MKLCrxlXSYec5DaPYP1fe6Iyhf0/fSmJ0bFiZ1F8BT6cGXl2LpltQptzjXKWEkKA=="
-  "resolved" "https://npm.lisk.com/tdigest/-/tdigest-0.1.2.tgz"
-  "version" "0.1.2"
-  dependencies:
-    "bintrees" "1.0.2"
 
 "terminal-link@^2.0.0":
   "integrity" "sha512-un0FmiRUQNr5PJqy9kP7c40F5BOfpGlYTrxonDChEZB7pzZxRNp/bt+ymiy9/npwXya9KH99nJ/GXFIiUkYGFQ=="
@@ -6758,7 +6807,15 @@
     "minimist" "^1.2.6"
     "strip-bom" "^3.0.0"
 
-"tsconfig-paths@^3.9.0", "tsconfig-paths@3.9.0":
+"tsconfig-paths@^3.9.0":
+  "version" "3.14.2"
+  dependencies:
+    "@types/json5" "^0.0.29"
+    "json5" "^1.0.2"
+    "minimist" "^1.2.6"
+    "strip-bom" "^3.0.0"
+
+"tsconfig-paths@3.9.0":
   "integrity" "sha512-dRcuzokWhajtZWkQsDVKbWyY+jgcLC5sqJhg2PSgf4ZkH2aHPvaOY8YWGhmjb68b5qqTfasSsDO9k7RUiEmZAw=="
   "resolved" "https://npm.lisk.com/tsconfig-paths/-/tsconfig-paths-3.9.0.tgz"
   "version" "3.9.0"
@@ -6768,22 +6825,22 @@
     "minimist" "^1.2.0"
     "strip-bom" "^3.0.0"
 
-"tslib@^1.8.1", "tslib@^1.9.0", "tslib@^1.9.3":
+"tslib@^1.8.1":
   "integrity" "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
   "resolved" "https://npm.lisk.com/tslib/-/tslib-1.14.1.tgz"
   "version" "1.14.1"
 
-"tslib@^2.0.0":
-  "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
-  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.5.0.tgz"
-  "version" "2.5.0"
+"tslib@^1.9.0":
+  "integrity" "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
+  "resolved" "https://npm.lisk.com/tslib/-/tslib-1.14.1.tgz"
+  "version" "1.14.1"
 
-"tslib@^2.3.1":
-  "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
-  "resolved" "https://npm.lisk.com/tslib/-/tslib-2.5.0.tgz"
-  "version" "2.5.0"
+"tslib@^1.9.3":
+  "integrity" "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
+  "resolved" "https://npm.lisk.com/tslib/-/tslib-1.14.1.tgz"
+  "version" "1.14.1"
 
-"tslib@^2.5.0":
+"tslib@^2.0.0", "tslib@^2.3.1", "tslib@^2.5.0":
   "integrity" "sha512-336iVw3rtn2BUK7ORdIAHTyxHGRIHVReokCR3XjbckJMK7ms8FysBfhLR8IXnAgy7T0PTPNBWKiH514FOW/WSg=="
   "resolved" "https://npm.lisk.com/tslib/-/tslib-2.5.0.tgz"
   "version" "2.5.0"
@@ -6807,7 +6864,7 @@
   "resolved" "https://npm.lisk.com/tweetnacl/-/tweetnacl-1.0.3.tgz"
   "version" "1.0.3"
 
-"type-check@^0.4.0", "type-check@~0.4.0":
+"type-check@^0.4.0":
   "integrity" "sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew=="
   "resolved" "https://npm.lisk.com/type-check/-/type-check-0.4.0.tgz"
   "version" "0.4.0"
@@ -6820,6 +6877,13 @@
   "version" "0.3.2"
   dependencies:
     "prelude-ls" "~1.1.2"
+
+"type-check@~0.4.0":
+  "integrity" "sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew=="
+  "resolved" "https://npm.lisk.com/type-check/-/type-check-0.4.0.tgz"
+  "version" "0.4.0"
+  dependencies:
+    "prelude-ls" "^1.2.1"
 
 "type-detect@4.0.8":
   "integrity" "sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g=="
@@ -6902,9 +6966,7 @@
   "version" "2.0.0"
 
 "update-browserslist-db@^1.0.10":
-  "integrity" "sha512-dCwEFf0/oT85M1fHBg4F0jtLwJrutGoHSQXCh7u4o2t1drG+c0a9Flnqww6XUKSfQMPpJBRjU8d4RXB09qtvaA=="
-  "resolved" "https://npm.lisk.com/update-browserslist-db/-/update-browserslist-db-1.0.11.tgz"
-  "version" "1.0.11"
+  "version" "1.0.10"
   dependencies:
     "escalade" "^3.1.1"
     "picocolors" "^1.0.0"
@@ -7174,10 +7236,11 @@
     "sort-keys" "^4.0.0"
     "write-file-atomic" "^3.0.0"
 
-"ws@*", "ws@^7.4.6", "ws@7.5.7":
-  "integrity" "sha512-KMvVuFzpKBuiIXW3E4u3mySRO2/mCHSyZDJQM5NQ9Q9KHWHWh0NHgfbRMLLrceUK5qAL4ytALJbpRMjixFZh8A=="
-  "resolved" "https://npm.lisk.com/ws/-/ws-7.5.7.tgz"
+"ws@*":
   "version" "7.5.7"
+
+"ws@^7.4.6":
+  "version" "7.5.9"
 
 "ws@7.1.0":
   "integrity" "sha512-Swie2C4fs7CkwlHu1glMePLYJJsWjzhl1vm3ZaLplD0h7OMkZyZ6kLTB/OagiU923bZrPFXuDTeEqaEN4NWG4g=="
@@ -7185,6 +7248,11 @@
   "version" "7.1.0"
   dependencies:
     "async-limiter" "^1.0.0"
+
+"ws@7.5.7":
+  "integrity" "sha512-KMvVuFzpKBuiIXW3E4u3mySRO2/mCHSyZDJQM5NQ9Q9KHWHWh0NHgfbRMLLrceUK5qAL4ytALJbpRMjixFZh8A=="
+  "resolved" "https://npm.lisk.com/ws/-/ws-7.5.7.tgz"
+  "version" "7.5.7"
 
 "ws@8.11.0":
   "integrity" "sha512-HPG3wQd9sNQoT9xHyNCXoDUa+Xw/VevmY9FoHyQ+g+rrMn4j6FB4np7Z0OhdTgjx6MgQLK7jwSy1YecU1+4Asg=="

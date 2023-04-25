@@ -5,11 +5,20 @@ This section explains how to migrate a Lisk Core v3.0.4 (or later) node to Lisk 
 The Lisk Migrator CLI tool will generate a new genesis (snapshot) block for Lisk Core v4.x.
 The new genesis block is created based on a snapshot of the existing blockchain (running on Lisk Core v3.0.4+) at a pre-determined height.
 
+<!--
+
 > Note: Please ensure that the file name and the checksum filename are the same, whereby the checksum file has an additional extension (lisk-migrator-v2.0.0.tar.gz, and will have a checksum file by the name of lisk-migrator-v2.0.0.tar.gz.SHA256) and are present in the same directory.
+
+-->
 
 Please ensure you are running version v3.0.4 (or later) of Lisk Core to be able to seamlessly migrate to Lisk Core 4.x.
 
 ## Setting up the Lisk Migrator
+
+The migrator setup can be performed by following the steps defined in the `SETUP` section [here](../README.md#setup).
+
+<!--
+
 
 ### Download checksum and verify
 
@@ -49,6 +58,8 @@ export PATH="$PATH:$HOME/lisk-migrator/bin"
 
 > Alternatively the migrator setup can be performed by following the steps defined in this section [here](../README.md).
 
+-->
+
 ## Migration Steps
 
 **Check the announced snapshot height**
@@ -85,7 +96,13 @@ EXAMPLES
   lisk-migrator --snapshot-path  /path/to/snapshot  --snapshot-height 20931763 --lisk-core-path /path/to/data-dir --auto-download-lisk-core-v4 --auto-start-lisk-core-v4 --auto-migrate-config
 ```
 
+<!--
+
 If you have added `lisk-migrator` to the PATH as described in the [setting-up-the-lisk-migrator](#setting-up-the-lisk-migrator) section, you can start the migration script by running the following command in the terminal:
+
+-->
+
+You can start the migration script by running the following command in the terminal:
 
 **Mainnet**
 
