@@ -60,7 +60,7 @@ $ npx oclif-dev pack --targets=linux-x64,darwin-x64
 
 <!-- commands -->
 
-# Command Topics
+# Commands
 
 - [`lisk-migrator help`](docs/commands/help.md) - display help for lisk-migrator
 
