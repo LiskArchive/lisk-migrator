@@ -7,7 +7,7 @@ The new genesis block is created based on a snapshot of the existing blockchain 
 
 <!--
 
-> Note: Please ensure that the file name and the checksum filename are the same, whereby the checksum file has an additional extension (lisk-migrator-v2.0.0.tar.gz, and will have a checksum file by the name of lisk-migrator-v2.0.0.tar.gz.SHA256) and are present in the same directory.
+> Note: Please ensure that the file name and the checksum filename are the same, whereby the checksum file has an additional extension (lisk-migrator-v2.0.0.tar.gz, and will have a checksum file by the name of lisk-migrator-v2.0.0.tar.gz.SHA256), and are present in the same directory.
 
 -->
 
