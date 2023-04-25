@@ -132,7 +132,7 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'USE_EXISTING_SNAPSHOT',
 			description:
-				'Use existing database snapshot (Temporary flag, will be removed once the `createSnapshot` command is available on Lisk Core v3.x).',
+				'Use the existing database snapshot (Temporary flag, will be removed once the `createSnapshot` command is available on Lisk Core v3.x).',
 			default: false,
 		}),
 	};
