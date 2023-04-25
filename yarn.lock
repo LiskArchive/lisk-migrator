@@ -784,14 +784,14 @@
     "@liskhq/lisk-cryptography" "^4.0.0-beta.0"
     "@liskhq/lisk-utils" "^0.3.0-beta.0"
 
-"@liskhq/lisk-utils@^0.2.1", "@liskhq/lisk-utils@0.2.1":
+"@liskhq/lisk-utils@^0.2.1":
   "integrity" "sha512-2vPLoCRVJVYEh8KUePBj/qBrD3i9aM5g3lhimn+RiEweKQSpBBe+BGcBIuNeKtCJtm2A0ChVjSXJV39t7nNh+A=="
   "resolved" "https://registry.npmjs.org/@liskhq/lisk-utils/-/lisk-utils-0.2.1.tgz"
   "version" "0.2.1"
   dependencies:
     "lodash.clonedeep" "4.5.0"
 
-"@liskhq/lisk-utils@^0.3.0-beta.0":
+"@liskhq/lisk-utils@^0.3.0-beta.0", "@liskhq/lisk-utils@0.3.0-beta.0":
   "integrity" "sha512-LaqlBYMG0nr7QbjvwPvP0Pp6JtF3xDk7Kw+cWnCyEMzPm690VYTUstdV3m3H/mKwuvYP/MNfnEz+8oP3I1/uqg=="
   "resolved" "https://registry.npmjs.org/@liskhq/lisk-utils/-/lisk-utils-0.3.0-beta.0.tgz"
   "version" "0.3.0-beta.0"
