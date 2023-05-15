@@ -12,9 +12,14 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { posGenesisStoreSchema } from 'lisk-framework';
-
-import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
-import { Block } from '@liskhq/lisk-chain';
+import { KVStore } from '@liskhq/lisk-db';
+import { codec } from '@liskhq/lisk-codec';
+import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
+import {
+	getLisk32AddressFromAddress,
+	getAddressFromPublicKey,
+	hash,
+} from '@liskhq/lisk-cryptography';
 
 import {
 	MODULE_NAME_POS,
@@ -42,22 +47,31 @@ import {
 	StakerBuffer,
 } from '../types';
 
+import { getTransactions } from '../utils/transaction';
+import { blockHeaderSchema } from '../schemas';
+
 const ceiling = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');
 	return Math.floor((a + b - 1) / b);
 };
 
 export const getValidatorKeys = async (
-	blocks: Block[],
+	blocksHeader: Buffer[],
 	accounts: Account[],
+	db: KVStore,
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
-	for (const block of blocks) {
-		const base32Address: string = getAddressFromPublicKey(block.header.generatorPublicKey).toString(
+
+	for (const header of blocksHeader) {
+		const blockID = hash(header);
+		const blockHeader: BlockHeader = codec.decode(blockHeaderSchema, header);
+		const payload = ((await getTransactions(blockID, db)) as unknown) as Transaction[];
+
+		const base32Address: string = getAddressFromPublicKey(blockHeader.generatorPublicKey).toString(
 			'hex',
 		);
-		keys[base32Address] = block.header.generatorPublicKey.toString('hex');
-		for (const trx of block.payload) {
+		keys[base32Address] = blockHeader.generatorPublicKey.toString('hex');
+		for (const trx of payload) {
 			const trxSenderAddress: string = getAddressFromPublicKey(trx.senderPublicKey).toString('hex');
 			const account: Account | undefined = accounts.find(
 				acc => acc.address.toString('hex') === trxSenderAddress,
@@ -67,17 +81,19 @@ export const getValidatorKeys = async (
 			}
 		}
 	}
+
 	return keys;
 };
 
 export const createValidatorsArray = async (
 	accounts: Account[],
-	blocks: Block[],
+	blocksHeader: Buffer[],
 	snapshotHeight: number,
 	tokenID: string,
+	db: KVStore,
 ): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntryBuffer[] = [];
-	const validatorKeys = await getValidatorKeys(blocks, accounts);
+	const validatorKeys = await getValidatorKeys(blocksHeader, accounts, db);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
@@ -210,13 +226,14 @@ export const createGenesisDataObj = async (
 
 export const addPoSModuleEntry = async (
 	accounts: Account[],
-	blocks: Block[],
+	blocksHeader: Buffer[],
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
 	tokenID: string,
+	db: KVStore,
 ): Promise<GenesisAssetEntry> => {
 	const posObj: PoSStoreEntry = {
-		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
+		validators: await createValidatorsArray(accounts, blocksHeader, snapshotHeight, tokenID, db),
 		stakers: await createStakersArray(accounts, tokenID),
 		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
 	};

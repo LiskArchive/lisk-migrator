@@ -11,6 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { KVStore } from '@liskhq/lisk-db';
+import { codec } from '@liskhq/lisk-codec';
 import { Block } from '@liskhq/lisk-chain';
 import { MODULE_NAME_POS } from '../../../src/constants';
 import { Account, VoteWeightsWrapper } from '../../../src/types';
@@ -25,19 +27,29 @@ import {
 	createStakersArray,
 	getStakes,
 } from '../../../src/assets/pos';
+import { blockHeaderSchema } from '../../../src/schemas';
+
+jest.mock('@liskhq/lisk-db');
 
 describe('Build assets/pos', () => {
+	let db: any;
 	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
+	let blocksBuffer: Buffer[];
 	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 10815;
 
 	beforeAll(async () => {
+		db = new KVStore('testDB');
 		blocks = generateBlocks({
 			startHeight: 1,
 			numberOfBlocks: 10,
 		});
+		blocksBuffer = blocks.map(block =>
+			codec.encode(blockHeaderSchema, { ...block.header, asset: Buffer.alloc(0) }),
+		);
+
 		delegates = {
 			voteWeights: [
 				{
@@ -124,7 +136,7 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create createValidatorsArray', async () => {
-		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight, tokenID);
+		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight, tokenID, db);
 
 		// Assert
 		expect(validatorsArray).toBeInstanceOf(Array);
@@ -177,10 +189,11 @@ describe('Build assets/pos', () => {
 	it('should create PoS module asset', async () => {
 		const posModuleAsset = await addPoSModuleEntry(
 			accounts,
-			blocks,
+			blocksBuffer,
 			delegates,
 			snapshotHeight,
 			tokenID,
+			db,
 		);
 
 		// Assert
