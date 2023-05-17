@@ -154,7 +154,6 @@ export const addTokenModuleEntry = async (
 ): Promise<GenesisAssetEntry> => {
 	const tokenObj: TokenStoreEntry = {
 		userSubstore: await createUserSubstoreArray(accounts, legacyAccounts, tokenID),
-		// TODO: Update implementation once LIP-0063 is updated
 		supplySubstore: await createSupplySubstoreArray(accounts, tokenID),
 		escrowSubstore: [],
 		supportedTokensSubstore: [],

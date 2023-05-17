@@ -60,7 +60,7 @@ export class CreateAsset {
 			accountStream,
 			accountSchema,
 		)) as unknown) as Account[];
-		// TODO: Verify and remove
+
 		const accounts: Account[] = allAccounts.filter(
 			(acc: Account) => acc.address.length === BINARY_ADDRESS_LENGTH,
 		);
