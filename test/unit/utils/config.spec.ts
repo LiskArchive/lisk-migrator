@@ -41,4 +41,16 @@ describe('Migrate user configuration', () => {
 		expect(fs.existsSync(migratedConfigFilePath)).toBe(true);
 		expect(fs.existsSync(`${migratedConfigFilePath}/config.json`)).toBe(true);
 	});
+
+	it('should return false when user configuration is invalid', async () => {
+		const config = ((await migrateUserConfig(
+			oldConfigParsed,
+			liskCorePath,
+			tokenID,
+		)) as unknown) as ApplicationConfig;
+
+		const { system, ...invalidConfig } = config;
+		const isValidConfig = await validateConfig((invalidConfig as unknown) as ApplicationConfig);
+		expect(isValidConfig).toBe(false);
+	});
 });

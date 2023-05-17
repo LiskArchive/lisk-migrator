@@ -227,11 +227,12 @@ describe('Create genesis block', () => {
 			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
 			const genesisBlock: BlockVersion4 = await createGenesisBlock(app.app, assets, block);
 
-			await writeGenesisBlock(genesisBlock, genesisBlockPath);
+			await writeGenesisBlock(genesisBlock, assets, genesisBlockPath);
 			expect(fs.existsSync(genesisBlockPath)).toBe(true);
 			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json`)).toBe(true);
 			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.blob`)).toBe(true);
 			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json.SHA256`)).toBe(true);
+			expect(fs.existsSync(`${genesisBlockPath}/genesis_assets.json`)).toBe(true);
 
 			expect(() => genesisBlock.validateGenesis()).not.toThrow();
 		});

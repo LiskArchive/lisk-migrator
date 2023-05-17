@@ -19,6 +19,7 @@ import { Block as BlockVersion4 } from 'lisk-framework';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { GenesisAssetEntry } from '../types';
 import { SNAPSHOT_BLOCK_VERSION, SNAPSHOT_TIME_GAP } from '../constants';
+import { parseToJSONCompatObj } from './parser';
 
 export const createChecksum = async (filePath: string): Promise<string> => {
 	const fileStream = fs.createReadStream(filePath);
@@ -63,6 +64,7 @@ export const createGenesisBlock = async (
 
 export const writeGenesisBlock = async (
 	genesisBlock: BlockVersion4,
+	genesisAssets: GenesisAssetEntry[],
 	outputPath: string,
 ): Promise<void> => {
 	if (fs.existsSync(outputPath)) fs.rmdirSync(outputPath, { recursive: true });
@@ -75,4 +77,10 @@ export const writeGenesisBlock = async (
 
 	const genesisBlockHash = await createChecksum(genesisBlockJsonFilepath);
 	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
+
+	const genesisAssetsJsonFilepath = path.resolve(outputPath, 'genesis_assets.json');
+	fs.writeFileSync(
+		genesisAssetsJsonFilepath,
+		JSON.stringify(parseToJSONCompatObj(genesisAssets), null, '\t'),
+	);
 };

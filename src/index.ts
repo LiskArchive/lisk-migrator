@@ -274,7 +274,7 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			cli.action.start(`Exporting genesis block to the path ${networkDir}`);
-			await writeGenesisBlock(genesisBlock, networkDir);
+			await writeGenesisBlock(genesisBlock, genesisAssets, networkDir);
 			cli.action.stop();
 
 			if (autoMigrateUserConfig) {
