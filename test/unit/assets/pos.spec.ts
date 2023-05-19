@@ -11,10 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { KVStore } from '@liskhq/lisk-db';
+import { Readable } from 'stream';
+import { when } from 'jest-when';
+
 import { codec } from '@liskhq/lisk-codec';
-import { Block } from '@liskhq/lisk-chain';
-import { MODULE_NAME_POS } from '../../../src/constants';
+import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Block, blockHeaderSchema, blockHeaderAssetSchema } from '@liskhq/lisk-chain';
+
+import { MODULE_NAME_POS, DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID } from '../../../src/constants';
 import { Account, VoteWeightsWrapper } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
@@ -27,7 +31,6 @@ import {
 	createStakersArray,
 	getStakes,
 } from '../../../src/assets/pos';
-import { blockHeaderSchema } from '../../../src/schemas';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -36,9 +39,10 @@ describe('Build assets/pos', () => {
 	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
-	let blocksBuffer: Buffer[];
+	let blockIDsStream: { value: Buffer }[];
 	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 10815;
+	const snapshotHeightPrevious = 5000;
 
 	beforeAll(async () => {
 		db = new KVStore('testDB');
@@ -46,9 +50,8 @@ describe('Build assets/pos', () => {
 			startHeight: 1,
 			numberOfBlocks: 10,
 		});
-		blocksBuffer = blocks.map(block =>
-			codec.encode(blockHeaderSchema, { ...block.header, asset: Buffer.alloc(0) }),
-		);
+
+		blockIDsStream = blocks.map(block => ({ value: block.header.id }));
 
 		delegates = {
 			voteWeights: [
@@ -136,7 +139,31 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create createValidatorsArray', async () => {
-		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight, tokenID, db);
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockReturnValue(Readable.from(blockIDsStream));
+
+		blocks.forEach(block => {
+			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
+			const blockHeader = codec.encode(blockHeaderSchema, {
+				...block.header,
+				asset: blockAssetBuffer,
+			});
+			when(db.get)
+				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
+				.mockResolvedValue(blockHeader as never);
+		});
+
+		const validatorsArray = await createValidatorsArray(
+			accounts,
+			snapshotHeight,
+			snapshotHeightPrevious,
+			tokenID,
+			db,
+		);
 
 		// Assert
 		expect(validatorsArray).toBeInstanceOf(Array);
@@ -187,11 +214,29 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create PoS module asset', async () => {
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockReturnValue(Readable.from(blockIDsStream));
+
+		blocks.forEach(block => {
+			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
+			const blockHeader = codec.encode(blockHeaderSchema, {
+				...block.header,
+				asset: blockAssetBuffer,
+			});
+			when(db.get)
+				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
+				.mockResolvedValue(blockHeader as never);
+		});
+
 		const posModuleAsset = await addPoSModuleEntry(
 			accounts,
-			blocksBuffer,
 			delegates,
 			snapshotHeight,
+			snapshotHeightPrevious,
 			tokenID,
 			db,
 		);
