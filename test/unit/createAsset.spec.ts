@@ -215,5 +215,31 @@ describe('Build assets/legacy', () => {
 
 			response.forEach((asset: GenesisAssetEntry) => expect(moduleList).toContain(asset.module));
 		});
+
+		it('should throw error when account stream is undefined', async () => {
+			when(db.createReadStream)
+				.calledWith({
+					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
+					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+				})
+				.mockReturnValue(undefined);
+
+			await expect(
+				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
+			).rejects.toThrow();
+		});
+
+		it('should throw error when block stream is undefined', async () => {
+			when(db.createReadStream)
+				.calledWith({
+					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+				})
+				.mockReturnValue(undefined);
+
+			await expect(
+				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
+			).rejects.toThrow();
+		});
 	});
 });
