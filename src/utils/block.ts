@@ -12,9 +12,6 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { codec, Schema } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
-
-import { DB_KEY_BLOCKS_ID } from '../constants';
 
 export const keyString = (key: Buffer): string => key.toString('binary');
 
@@ -34,18 +31,6 @@ export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema:
 			});
 	});
 	return data;
-};
-
-export const getBlockHeadersByIDs = async (
-	db: KVStore,
-	blockIDs: ReadonlyArray<Buffer>,
-): Promise<Buffer[]> => {
-	const blocks = [];
-	for (const id of blockIDs) {
-		const block = await db.get(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`);
-		blocks.push(block);
-	}
-	return blocks;
 };
 
 export const getBlocksIDsFromDBStream = async (stream: NodeJS.ReadableStream) => {

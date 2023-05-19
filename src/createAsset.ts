@@ -12,14 +12,13 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { KVStore } from '@liskhq/lisk-db';
 
 import {
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
 	CHAIN_STATE_DELEGATE_VOTE_WEIGHTS,
 	DB_KEY_CHAIN_STATE,
 	DB_KEY_ACCOUNTS_ADDRESS,
-	DB_KEY_BLOCKS_HEIGHT,
 	BINARY_ADDRESS_LENGTH,
 } from './constants';
 import { accountSchema, voteWeightsSchema } from './schemas';
@@ -31,7 +30,7 @@ import { addAuthModuleEntry } from './assets/auth';
 import { addTokenModuleEntry } from './assets/token';
 import { addPoSModuleEntry } from './assets/pos';
 
-import { getBlockHeadersByIDs, getBlocksIDsFromDBStream, getDataFromDBStream } from './utils/block';
+import { getDataFromDBStream } from './utils/block';
 
 export class CreateAsset {
 	private readonly _db: KVStore;
@@ -71,14 +70,6 @@ export class CreateAsset {
 			.accounts as LegacyStoreEntry[];
 		const tokenModuleAssets = await addTokenModuleEntry(accounts, legacyAccounts, tokenID);
 
-		const blocksStream = this._db.createReadStream({
-			gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-			lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
-		});
-
-		const blockIDs: Buffer[] = await getBlocksIDsFromDBStream(blocksStream);
-		const blocksHeader = await getBlockHeadersByIDs(this._db, blockIDs);
-
 		const encodedDelegatesVoteWeights = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
 		);
@@ -88,9 +79,9 @@ export class CreateAsset {
 		);
 		const posModuleAssets = await addPoSModuleEntry(
 			accounts,
-			blocksHeader,
 			decodedDelegatesVoteWeights,
 			snapshotHeight,
+			snapshotHeightPrevious,
 			tokenID,
 			this._db,
 		);
