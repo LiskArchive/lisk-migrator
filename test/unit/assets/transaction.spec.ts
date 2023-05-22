@@ -82,4 +82,16 @@ describe('Test Transaction utility', () => {
 			]);
 		});
 	});
+
+	it('should return empty array when block has no transactions', async () => {
+		when(db.get)
+			.calledWith(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${block.header.id.toString('binary')}`)
+			.mockResolvedValue([] as never);
+
+		const result = await getTransactions(block.header.id, db);
+
+		// Assert
+		expect(result).toBeInstanceOf(Array);
+		expect(result).toHaveLength(0);
+	});
 });

@@ -275,7 +275,7 @@ describe('Build assets/pos', () => {
 				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
 				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 			})
-			.mockResolvedValue(createReadStream('test.txt') as never);
+			.mockReturnValue(createReadStream('test.txt') as never);
 
 		await expect(
 			createValidatorsArray(accounts, snapshotHeight, snapshotHeightPrevious, tokenID, db),
