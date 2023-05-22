@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { when } from 'jest-when';
 
@@ -266,5 +267,18 @@ describe('Build assets/pos', () => {
 				expect(Object.getOwnPropertyNames(sharingCoefficient)).toEqual(['tokenID', 'coefficient']);
 			});
 		});
+	});
+
+	it('should throw error when creating stream with invalid file path', async () => {
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockResolvedValue(createReadStream('test.txt') as never);
+
+		await expect(
+			createValidatorsArray(accounts, snapshotHeight, snapshotHeightPrevious, tokenID, db),
+		).rejects.toThrow();
 	});
 });

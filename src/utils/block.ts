@@ -13,8 +13,6 @@
  */
 import { codec, Schema } from '@liskhq/lisk-codec';
 
-export const keyString = (key: Buffer): string => key.toString('binary');
-
 export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema: Schema) => {
 	const data = await new Promise<Record<string, unknown>[]>((resolve, reject) => {
 		const result: Record<string, unknown>[] = [];

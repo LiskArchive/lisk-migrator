@@ -45,9 +45,9 @@ import {
 	StakerBuffer,
 } from '../types';
 
-import { getTransactions } from '../utils/transaction';
-import { getBlocksIDsFromDBStream, keyString } from '../utils/block';
 import { blockHeaderSchema } from '../schemas';
+import { getBlocksIDsFromDBStream } from '../utils/block';
+import { getTransactions, keyString } from '../utils/transaction';
 
 const ceiling = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');

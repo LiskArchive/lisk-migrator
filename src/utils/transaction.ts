@@ -21,7 +21,8 @@ import {
 	DB_KEY_TRANSACTIONS_ID,
 	TRANSACTION_ID_LENGTH,
 } from '../constants';
-import { keyString } from './block';
+
+export const keyString = (key: Buffer): string => key.toString('binary');
 
 export const getTransactions = async (blockID: Buffer, db: KVStore) => {
 	try {

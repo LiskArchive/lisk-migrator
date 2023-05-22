@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { when } from 'jest-when';
 
@@ -236,6 +237,23 @@ describe('Build assets/legacy', () => {
 					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
 				})
 				.mockReturnValue(undefined);
+
+			await expect(
+				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
+			).rejects.toThrow();
+		});
+
+		it('should throw error when creating stream with invalid file path', async () => {
+			when(db.get)
+				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
+				.mockResolvedValue(encodedUnregisteredAddresses as never);
+
+			when(db.createReadStream)
+				.calledWith({
+					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
+					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+				})
+				.mockResolvedValue(createReadStream('test.txt') as never);
 
 			await expect(
 				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
