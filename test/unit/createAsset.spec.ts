@@ -248,12 +248,15 @@ describe('Build assets/legacy', () => {
 				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
 				.mockResolvedValue(encodedUnregisteredAddresses as never);
 
-			when(db.createReadStream)
-				.calledWith({
-					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
-					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
-				})
-				.mockResolvedValue(createReadStream('test.txt') as never);
+			try {
+				when(db.createReadStream)
+					.calledWith({
+						gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
+						lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					})
+					.mockResolvedValue(createReadStream('test.txt') as never);
+				// eslint-disable-next-line no-empty
+			} catch (_) {}
 
 			await expect(
 				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
