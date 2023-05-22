@@ -19,7 +19,13 @@ import { Block as BlockVersion4 } from 'lisk-framework';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { GenesisAssetEntry } from '../types';
 import { SNAPSHOT_BLOCK_VERSION, SNAPSHOT_TIME_GAP } from '../constants';
-import { parseToJSONCompatObj } from './parser';
+
+(BigInt.prototype as any).toJSON = function () {
+	return this.toString();
+};
+(Buffer.prototype as any).toJSON = function () {
+	return this.toString('hex');
+};
 
 export const createChecksum = async (filePath: string): Promise<string> => {
 	const fileStream = fs.createReadStream(filePath);
@@ -79,8 +85,5 @@ export const writeGenesisBlock = async (
 	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
 
 	const genesisAssetsJsonFilepath = path.resolve(outputPath, 'genesis_assets.json');
-	fs.writeFileSync(
-		genesisAssetsJsonFilepath,
-		JSON.stringify(parseToJSONCompatObj(genesisAssets), null, '\t'),
-	);
+	fs.writeFileSync(genesisAssetsJsonFilepath, JSON.stringify(genesisAssets, null, '\t'));
 };
