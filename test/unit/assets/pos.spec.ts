@@ -11,8 +11,15 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { Block } from '@liskhq/lisk-chain';
-import { MODULE_NAME_POS } from '../../../src/constants';
+import { createReadStream } from 'fs';
+import { Readable } from 'stream';
+import { when } from 'jest-when';
+
+import { codec } from '@liskhq/lisk-codec';
+import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Block, blockHeaderSchema, blockHeaderAssetSchema } from '@liskhq/lisk-chain';
+
+import { MODULE_NAME_POS, DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID } from '../../../src/constants';
 import { Account, VoteWeightsWrapper } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { generateBlocks } from '../utils/blocks';
@@ -26,18 +33,27 @@ import {
 	getStakes,
 } from '../../../src/assets/pos';
 
+jest.mock('@liskhq/lisk-db');
+
 describe('Build assets/pos', () => {
+	let db: any;
 	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
+	let blockIDsStream: { value: Buffer }[];
 	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 10815;
+	const snapshotHeightPrevious = 5000;
 
 	beforeAll(async () => {
+		db = new KVStore('testDB');
 		blocks = generateBlocks({
 			startHeight: 1,
 			numberOfBlocks: 10,
 		});
+
+		blockIDsStream = blocks.map(block => ({ value: block.header.id }));
+
 		delegates = {
 			voteWeights: [
 				{
@@ -124,7 +140,31 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create createValidatorsArray', async () => {
-		const validatorsArray = await createValidatorsArray(accounts, [], snapshotHeight, tokenID);
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockReturnValue(Readable.from(blockIDsStream));
+
+		blocks.forEach(block => {
+			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
+			const blockHeader = codec.encode(blockHeaderSchema, {
+				...block.header,
+				asset: blockAssetBuffer,
+			});
+			when(db.get)
+				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
+				.mockResolvedValue(blockHeader as never);
+		});
+
+		const validatorsArray = await createValidatorsArray(
+			accounts,
+			snapshotHeight,
+			snapshotHeightPrevious,
+			tokenID,
+			db,
+		);
 
 		// Assert
 		expect(validatorsArray).toBeInstanceOf(Array);
@@ -175,12 +215,31 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create PoS module asset', async () => {
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockReturnValue(Readable.from(blockIDsStream));
+
+		blocks.forEach(block => {
+			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
+			const blockHeader = codec.encode(blockHeaderSchema, {
+				...block.header,
+				asset: blockAssetBuffer,
+			});
+			when(db.get)
+				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
+				.mockResolvedValue(blockHeader as never);
+		});
+
 		const posModuleAsset = await addPoSModuleEntry(
 			accounts,
-			blocks,
 			delegates,
 			snapshotHeight,
+			snapshotHeightPrevious,
 			tokenID,
+			db,
 		);
 
 		// Assert
@@ -208,5 +267,18 @@ describe('Build assets/pos', () => {
 				expect(Object.getOwnPropertyNames(sharingCoefficient)).toEqual(['tokenID', 'coefficient']);
 			});
 		});
+	});
+
+	it('should throw error when creating stream with invalid file path', async () => {
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockReturnValue(createReadStream('test.txt') as never);
+
+		await expect(
+			createValidatorsArray(accounts, snapshotHeight, snapshotHeightPrevious, tokenID, db),
+		).rejects.toThrow();
 	});
 });

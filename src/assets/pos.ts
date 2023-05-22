@@ -12,9 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { posGenesisStoreSchema } from 'lisk-framework';
-
+import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { codec } from '@liskhq/lisk-codec';
+import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
 import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
-import { Block } from '@liskhq/lisk-chain';
 
 import {
 	MODULE_NAME_POS,
@@ -25,6 +26,8 @@ import {
 	ROUND_LENGTH,
 	Q96_ZERO,
 	MAX_COMMISSION,
+	DB_KEY_BLOCKS_HEIGHT,
+	DB_KEY_BLOCKS_ID,
 } from '../constants';
 
 import {
@@ -42,22 +45,40 @@ import {
 	StakerBuffer,
 } from '../types';
 
+import { blockHeaderSchema } from '../schemas';
+import { getBlocksIDsFromDBStream } from '../utils/block';
+import { getTransactions, keyString } from '../utils/transaction';
+
 const ceiling = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');
 	return Math.floor((a + b - 1) / b);
 };
 
 export const getValidatorKeys = async (
-	blocks: Block[],
 	accounts: Account[],
+	snapshotHeight: number,
+	snapshotHeightPrevious: number,
+	db: KVStore,
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
-	for (const block of blocks) {
-		const base32Address: string = getAddressFromPublicKey(block.header.generatorPublicKey).toString(
+
+	const blocksStream = db.createReadStream({
+		gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+		lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+	});
+
+	const blockIDs: Buffer[] = await getBlocksIDsFromDBStream(blocksStream);
+
+	for (const id of blockIDs) {
+		const blockHeaderBuffer = await db.get(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`);
+		const blockHeader: BlockHeader = codec.decode(blockHeaderSchema, blockHeaderBuffer);
+		const payload = ((await getTransactions(id, db)) as unknown) as Transaction[];
+
+		const base32Address: string = getAddressFromPublicKey(blockHeader.generatorPublicKey).toString(
 			'hex',
 		);
-		keys[base32Address] = block.header.generatorPublicKey.toString('hex');
-		for (const trx of block.payload) {
+		keys[base32Address] = blockHeader.generatorPublicKey.toString('hex');
+		for (const trx of payload) {
 			const trxSenderAddress: string = getAddressFromPublicKey(trx.senderPublicKey).toString('hex');
 			const account: Account | undefined = accounts.find(
 				acc => acc.address.toString('hex') === trxSenderAddress,
@@ -67,17 +88,24 @@ export const getValidatorKeys = async (
 			}
 		}
 	}
+
 	return keys;
 };
 
 export const createValidatorsArray = async (
 	accounts: Account[],
-	blocks: Block[],
 	snapshotHeight: number,
+	snapshotHeightPrevious: number,
 	tokenID: string,
+	db: KVStore,
 ): Promise<ValidatorEntry[]> => {
 	const validators: ValidatorEntryBuffer[] = [];
-	const validatorKeys = await getValidatorKeys(blocks, accounts);
+	const validatorKeys = await getValidatorKeys(
+		accounts,
+		snapshotHeight,
+		snapshotHeightPrevious,
+		db,
+	);
 
 	for (const account of accounts) {
 		if (account.dpos.delegate.username !== '') {
@@ -210,13 +238,20 @@ export const createGenesisDataObj = async (
 
 export const addPoSModuleEntry = async (
 	accounts: Account[],
-	blocks: Block[],
 	delegatesVoteWeights: VoteWeightsWrapper,
 	snapshotHeight: number,
+	snapshotHeightPrevious: number,
 	tokenID: string,
+	db: KVStore,
 ): Promise<GenesisAssetEntry> => {
 	const posObj: PoSStoreEntry = {
-		validators: await createValidatorsArray(accounts, blocks, snapshotHeight, tokenID),
+		validators: await createValidatorsArray(
+			accounts,
+			snapshotHeight,
+			snapshotHeightPrevious,
+			tokenID,
+			db,
+		),
 		stakers: await createStakersArray(accounts, tokenID),
 		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
 	};
