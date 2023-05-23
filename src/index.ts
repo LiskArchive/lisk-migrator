@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import util from 'util';
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-framework';
@@ -204,7 +205,7 @@ class LiskMigrator extends Command {
 			cli.action.stop(`${liskCoreVersion.version} detected`);
 
 			// User specified custom config file
-			const config: ConfigV3 = customConfigPath
+			const configV3: ConfigV3 = customConfigPath
 				? await getConfig(liskCorePath, customConfigPath)
 				: await getConfig(liskCorePath);
 
@@ -263,8 +264,8 @@ class LiskMigrator extends Command {
 
 			// Create an app instance for creating genesis block
 			const configFilePath = await resolveConfigPathByNetworkID(networkIdentifier);
-			const configCoreV4 = await fs.readJSON(configFilePath);
-			const { app } = await Application.defaultApplication(configCoreV4, true);
+			const configV4 = await fs.readJSON(configFilePath);
+			const { app } = await Application.defaultApplication(configV4, true);
 
 			cli.action.start('Creating genesis block');
 			const blockAtSnapshotHeight = ((await client.block.getByHeight(
@@ -279,15 +280,11 @@ class LiskMigrator extends Command {
 
 			if (autoMigrateUserConfig) {
 				cli.action.start('Creating backup for old config');
-				await createBackup(config);
+				await createBackup(configV3);
 				cli.action.stop();
 
 				cli.action.start('Migrate user configuration');
-				const migratedConfigV4 = (await migrateUserConfig(
-					config,
-					liskCorePath,
-					tokenID,
-				)) as ApplicationConfig;
+				const migratedConfigV4 = (await migrateUserConfig(configV3, configV4)) as ApplicationConfig;
 				cli.action.stop();
 
 				cli.action.start('Validating migrated user configuration');
@@ -316,11 +313,22 @@ class LiskMigrator extends Command {
 					// TODO: Verify and update the implementation
 					// If finalConfigCorev4 is not set to the migrated config use the default config
 					if (!autoMigrateUserConfig) {
-						finalConfigCorev4 = configCoreV4;
+						finalConfigCorev4 = configV4;
 					}
-					const network = networkConstant.name as string;
-					await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
-					this.log('Started Lisk Core v4 at default data directory.');
+					const userInput = await cli.confirm(
+						`Starting application using the configuration: ${util.inspect(
+							finalConfigCorev4,
+							false,
+							3,
+						)} [yes/no]`,
+					);
+					if (userInput) {
+						const network = networkConstant.name as string;
+						await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
+						this.log('Started Lisk Core v4 at default data directory.');
+					} else {
+						cli.action.stop();
+					}
 				} catch (err) {
 					this.error(`Failed to start Lisk Core v4. ${(err as { stack: string }).stack}`);
 				}

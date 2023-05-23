@@ -20,6 +20,11 @@ interface RPCConfig {
 }
 
 export interface NetworkConfig {
+	advertiseAddress: boolean;
+	wsMaxPayload: number;
+	maxInboundConnections: number;
+	maxOutboundConnections: number;
+	hostIp: string;
 	port: number;
 	seedPeers: { ip: string; port: number }[];
 }
@@ -48,6 +53,12 @@ export interface PluginOptions extends Record<string, unknown> {
 	readonly alias?: string;
 }
 
+export interface Logger {
+	logFileName: string;
+	fileLogLevel: string;
+	consoleLogLevel: string;
+}
+
 export interface ConfigV3 {
 	label: string;
 	version: string;
@@ -55,11 +66,7 @@ export interface ConfigV3 {
 	rootPath: string;
 	forging: Record<string, unknown>;
 	network: NetworkConfig;
-	logger: {
-		logFileName: string;
-		fileLogLevel: string;
-		consoleLogLevel: string;
-	};
+	logger: Logger;
 	genesisConfig: GenesisConfig;
 	plugins: {
 		[key: string]: PluginOptions;
