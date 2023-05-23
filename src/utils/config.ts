@@ -106,76 +106,76 @@ export const createBackup = async (config: ConfigV3): Promise<void> => {
 
 // TODO: Set up a default config file. Log properties and map migrated config values
 export const migrateUserConfig = async (
-	configv3: ConfigV3,
+	configV3: ConfigV3,
 	configV4: ApplicationConfig,
 ): Promise<ApplicationConfig> => {
-	if (configv3.rootPath) {
-		cli.action.start(`Migrating config property 'dataPath' to ${configv3.rootPath}.`);
-		configV4.system.dataPath = configv3.rootPath;
+	if (configV3.rootPath) {
+		cli.action.start(`Migrating config property 'dataPath' to ${configV3.rootPath}.`);
+		configV4.system.dataPath = configV3.rootPath;
 		cli.action.stop();
 	}
 
-	if (configv3.logger) {
-		const logLevel = getLogLevel(configv3.logger);
+	if (configV3.logger) {
+		const logLevel = getLogLevel(configV3.logger);
 		cli.action.start(`Migrating config property 'logLevel' to ${logLevel}.`);
 		configV4.system.logLevel = logLevel;
 		cli.action.stop();
 	}
 
-	if (configv3.transactionPool) {
+	if (configV3.transactionPool) {
 		cli.action.start("Migrating config property 'transactionPool'.");
-		configV4.transactionPool = configv3.transactionPool;
+		configV4.transactionPool = configV3.transactionPool;
 		cli.action.stop();
 	}
 
-	if (configv3.rpc) {
-		cli.action.start(`Migrating config property 'rpc' mode to ${configv3.rpc.mode}.`);
-		configV4.rpc.modes = [configv3.rpc.mode];
+	if (configV3.rpc) {
+		cli.action.start(`Migrating config property 'rpc' mode to ${configV3.rpc.mode}.`);
+		configV4.rpc.modes = [configV3.rpc.mode];
 		cli.action.stop();
 	}
 
-	if (configv3.network) {
-		if (configv3.network.port) {
-			cli.action.start(`Migrating config property 'network' port to ${configv3.network.port}.`);
-			configV4.network.port = configv3.network.port;
+	if (configV3.network) {
+		if (configV3.network.port) {
+			cli.action.start(`Migrating config property 'network' port to ${configV3.network.port}.`);
+			configV4.network.port = configV3.network.port;
 			cli.action.stop();
 		}
 
-		if (configv3.network.hostIp) {
-			cli.action.start(`Migrating config property 'network' host to ${configv3.network.hostIp}.`);
-			configV4.network.host = configv3.network.hostIp;
+		if (configV3.network.hostIp) {
+			cli.action.start(`Migrating config property 'network' host to ${configV3.network.hostIp}.`);
+			configV4.network.host = configV3.network.hostIp;
 			cli.action.stop();
 		}
 
-		if (configv3.network.maxOutboundConnections) {
+		if (configV3.network.maxOutboundConnections) {
 			cli.action.start(
-				`Migrating config property 'network' maxOutboundConnections to ${configv3.network.maxOutboundConnections}.`,
+				`Migrating config property 'network' maxOutboundConnections to ${configV3.network.maxOutboundConnections}.`,
 			);
-			configV4.network.maxOutboundConnections = configv3.network.maxOutboundConnections;
+			configV4.network.maxOutboundConnections = configV3.network.maxOutboundConnections;
 			cli.action.stop();
 		}
 
-		if (configv3.network.maxInboundConnections) {
+		if (configV3.network.maxInboundConnections) {
 			cli.action.start(
-				`Migrating config property 'network' maxInboundConnections to ${configv3.network.maxInboundConnections}.`,
+				`Migrating config property 'network' maxInboundConnections to ${configV3.network.maxInboundConnections}.`,
 			);
-			configV4.network.maxInboundConnections = configv3.network.maxInboundConnections;
+			configV4.network.maxInboundConnections = configV3.network.maxInboundConnections;
 			cli.action.stop();
 		}
 
-		if (configv3.network.wsMaxPayload) {
+		if (configV3.network.wsMaxPayload) {
 			cli.action.start(
-				`Migrating config property 'network' wsMaxPayload to ${configv3.network.wsMaxPayload}.`,
+				`Migrating config property 'network' wsMaxPayload to ${configV3.network.wsMaxPayload}.`,
 			);
-			configV4.network.wsMaxPayload = configv3.network.wsMaxPayload;
+			configV4.network.wsMaxPayload = configV3.network.wsMaxPayload;
 			cli.action.stop();
 		}
 
-		if (configv3.network.advertiseAddress) {
+		if (configV3.network.advertiseAddress) {
 			cli.action.start(
-				`Migrating config property 'network' advertiseAddress to ${configv3.network.advertiseAddress}.`,
+				`Migrating config property 'network' advertiseAddress to ${configV3.network.advertiseAddress}.`,
 			);
-			configV4.network.advertiseAddress = configv3.network.advertiseAddress;
+			configV4.network.advertiseAddress = configV3.network.advertiseAddress;
 			cli.action.stop();
 		}
 	}

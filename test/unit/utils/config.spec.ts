@@ -11,26 +11,27 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { resolve } from 'path';
 import * as fs from 'fs-extra';
 import { ApplicationConfig } from 'lisk-framework';
-import { migrateUserConfig, validateConfig, writeConfig } from '../../../src/utils/config';
+import { configV3, configV4 } from '../fixtures/config';
+import {
+	migrateUserConfig,
+	validateConfig,
+	writeConfig,
+	resolveConfigPathByNetworkID,
+} from '../../../src/utils/config';
+import { ConfigV3 } from '../../../src/types';
 
 describe('Migrate user configuration', () => {
-	const tokenID = '0400000000000000';
-	const liskCorePath = '~/.lisk';
 	const migratedConfigFilePath = `${process.cwd()}/test/config`;
-	const oldConfigFile = fs.readFileSync(`${process.cwd()}/test/unit/fixtures/config.json`, {
-		encoding: 'utf-8',
-	});
-	const oldConfigParsed = JSON.parse(oldConfigFile);
 
 	afterAll(() => fs.removeSync(migratedConfigFilePath));
 
 	it('should migrate user configuration', async () => {
 		const config = ((await migrateUserConfig(
-			oldConfigParsed,
-			liskCorePath,
-			tokenID,
+			(configV3 as unknown) as ConfigV3,
+			(configV4 as unknown) as ApplicationConfig,
 		)) as unknown) as ApplicationConfig;
 		expect(Object.getOwnPropertyNames(config).length).toBeGreaterThan(0);
 
@@ -43,14 +44,21 @@ describe('Migrate user configuration', () => {
 	});
 
 	it('should return false when user configuration is invalid', async () => {
-		const config = ((await migrateUserConfig(
-			oldConfigParsed,
-			liskCorePath,
-			tokenID,
-		)) as unknown) as ApplicationConfig;
-
-		const { system, ...invalidConfig } = config;
+		const { system, ...invalidConfig } = configV4;
 		const isValidConfig = await validateConfig((invalidConfig as unknown) as ApplicationConfig);
 		expect(isValidConfig).toBe(false);
+	});
+});
+
+describe('Test resolveConfigPathByNetworkID method', () => {
+	it('should resolve config filePath when called by valid networkID', async () => {
+		const expectedConfigPath = resolve(`${__dirname}../../../../config/testnet/config.json`);
+		const networkID = '15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c';
+		const configPath = await resolveConfigPathByNetworkID(networkID);
+		expect(configPath).toBe(expectedConfigPath);
+	});
+
+	it('should reject when called by invalid networkID', async () => {
+		await expect(resolveConfigPathByNetworkID('invalid')).rejects.toThrow();
 	});
 });
