@@ -59,6 +59,14 @@ export interface Logger {
 	consoleLogLevel: string;
 }
 
+export interface TransactionPool {
+	readonly maxTransactions?: number;
+	readonly maxTransactionsPerAccount?: number;
+	readonly transactionExpiryTime?: number;
+	readonly minEntranceFeePriority?: string;
+	readonly minReplacementFeeDifference?: string;
+}
+
 export interface ConfigV3 {
 	label: string;
 	version: string;
@@ -71,7 +79,7 @@ export interface ConfigV3 {
 	plugins: {
 		[key: string]: PluginOptions;
 	};
-	transactionPool: Record<string, unknown>;
+	transactionPool: TransactionPool;
 	rpc: RPCConfig;
 }
 

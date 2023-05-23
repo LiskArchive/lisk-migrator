@@ -18,4 +18,8 @@ describe('execAsync', () => {
 		const response = await execAsync('ls');
 		expect(response.length).toBeGreaterThan(0);
 	});
+
+	it('Should throw error when called with invalid command', async () => {
+		await expect(execAsync('invalid')).rejects.toThrow();
+	});
 });
