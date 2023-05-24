@@ -308,31 +308,31 @@ class LiskMigrator extends Command {
 			}
 
 			if (autoStartLiskCoreV4) {
-				cli.action.start('Starting lisk-core v4');
 				try {
 					// TODO: Verify and update the implementation
 					// If finalConfigCorev4 is not set to the migrated config use the default config
 					if (!autoMigrateUserConfig) {
 						finalConfigCorev4 = configV4;
 					}
-					const userInput = await cli.confirm(
+					const isUserConfirmed = await cli.confirm(
 						`Starting application using the configuration: ${util.inspect(
 							finalConfigCorev4,
 							false,
 							3,
 						)} [yes/no]`,
 					);
-					if (userInput) {
+					if (isUserConfirmed) {
+						cli.action.start('Starting lisk-core v4');
 						const network = networkConstant.name as string;
 						await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
 						this.log('Started Lisk Core v4 at default data directory.');
-					} else {
 						cli.action.stop();
+					} else {
+						this.log('Skipping auto start Lisk Core Process.');
 					}
 				} catch (err) {
 					this.error(`Failed to start Lisk Core v4. ${(err as { stack: string }).stack}`);
 				}
-				cli.action.stop();
 			}
 		} catch (error) {
 			this.error(error as string);

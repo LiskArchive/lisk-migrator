@@ -14,14 +14,14 @@
 /* eslint-disable no-param-reassign */
 import debugInit from 'debug';
 import cli from 'cli-ux';
-import { existsSync, readdirSync, mkdirSync, writeFileSync, unlinkSync } from 'fs';
+import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
 import { ConfigV3, Logger } from '../types';
-import { NETWORK_CONSTANT } from '../constants';
+import { DEFAULT_VERSION, NETWORK_CONSTANT } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
@@ -109,15 +109,22 @@ export const migrateUserConfig = async (
 	configV3: ConfigV3,
 	configV4: ApplicationConfig,
 ): Promise<ApplicationConfig> => {
+	// Assign default version if not available
+	if (!configV4.system.version) {
+		cli.action.start(`Migrating config property 'system' version to: ${DEFAULT_VERSION}.`);
+		configV4.system.version = DEFAULT_VERSION;
+		cli.action.stop();
+	}
+
 	if (configV3.rootPath) {
-		cli.action.start(`Migrating config property 'dataPath' to: ${configV3.rootPath}.`);
+		cli.action.start(`Migrating config property 'system' dataPath to: ${configV3.rootPath}.`);
 		configV4.system.dataPath = configV3.rootPath;
 		cli.action.stop();
 	}
 
 	if (configV3.logger) {
 		const logLevel = getLogLevel(configV3.logger);
-		cli.action.start(`Migrating config property 'logLevel' to: ${logLevel}.`);
+		cli.action.start(`Migrating config property 'system' logLevel to: ${logLevel}.`);
 		configV4.system.logLevel = logLevel;
 		cli.action.stop();
 	}
@@ -127,8 +134,8 @@ export const migrateUserConfig = async (
 			cli.action.start(
 				`Migrating config property 'transactionPool' maxTransactions to: ${configV3.transactionPool.maxTransactions}.`,
 			);
-			(configV4.transactionPool
-				.maxTransactions as unknown) = configV3.transactionPool.maxTransactions;
+			((configV4.transactionPool
+				.maxTransactions as unknown) as number) = configV3.transactionPool.maxTransactions;
 			cli.action.stop();
 		}
 
@@ -136,8 +143,8 @@ export const migrateUserConfig = async (
 			cli.action.start(
 				`Migrating config property 'transactionPool' maxTransactionsPerAccount to: ${configV3.transactionPool.maxTransactionsPerAccount}.`,
 			);
-			(configV4.transactionPool
-				.maxTransactionsPerAccount as unknown) = configV3.transactionPool.maxTransactionsPerAccount;
+			((configV4.transactionPool
+				.maxTransactionsPerAccount as unknown) as number) = configV3.transactionPool.maxTransactionsPerAccount;
 			cli.action.stop();
 		}
 
@@ -145,8 +152,8 @@ export const migrateUserConfig = async (
 			cli.action.start(
 				`Migrating config property 'transactionPool' transactionExpiryTime to: ${configV3.transactionPool.transactionExpiryTime}.`,
 			);
-			(configV4.transactionPool
-				.transactionExpiryTime as unknown) = configV3.transactionPool.transactionExpiryTime;
+			((configV4.transactionPool
+				.transactionExpiryTime as unknown) as number) = configV3.transactionPool.transactionExpiryTime;
 			cli.action.stop();
 		}
 
@@ -154,8 +161,8 @@ export const migrateUserConfig = async (
 			cli.action.start(
 				`Migrating config property 'transactionPool' minEntranceFeePriority to: ${configV3.transactionPool.minEntranceFeePriority}.`,
 			);
-			(configV4.transactionPool
-				.minEntranceFeePriority as unknown) = configV3.transactionPool.minEntranceFeePriority;
+			((configV4.transactionPool
+				.minEntranceFeePriority as unknown) as string) = configV3.transactionPool.minEntranceFeePriority;
 			cli.action.stop();
 		}
 
@@ -163,8 +170,8 @@ export const migrateUserConfig = async (
 			cli.action.start(
 				`Migrating config property 'transactionPool' minReplacementFeeDifference to: ${configV3.transactionPool.minReplacementFeeDifference}.`,
 			);
-			(configV4.transactionPool
-				.minReplacementFeeDifference as unknown) = configV3.transactionPool.minReplacementFeeDifference;
+			((configV4.transactionPool
+				.minReplacementFeeDifference as unknown) as string) = configV3.transactionPool.minReplacementFeeDifference;
 			cli.action.stop();
 		}
 	}
@@ -234,11 +241,9 @@ export const validateConfig = async (config: ApplicationConfig): Promise<boolean
 };
 
 export const writeConfig = async (config: ApplicationConfig, outputPath: string): Promise<void> => {
-	if (existsSync(outputPath)) {
-		unlinkSync(outputPath);
+	if (!existsSync(outputPath)) {
+		mkdirSync(outputPath, { recursive: true });
 	}
-
-	mkdirSync(outputPath, { recursive: true });
 
 	writeFileSync(resolve(outputPath, 'config.json'), JSON.stringify(config));
 };
