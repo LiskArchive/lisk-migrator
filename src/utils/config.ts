@@ -176,7 +176,7 @@ export const migrateUserConfig = async (
 		}
 	}
 
-	if (configV3.rpc) {
+	if (configV3.rpc?.mode) {
 		cli.action.start(`Migrating config property 'rpc' mode to: ${configV3.rpc.mode}.`);
 		configV4.rpc.modes = [configV3.rpc.mode];
 		cli.action.stop();

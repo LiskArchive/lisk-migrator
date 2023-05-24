@@ -58,7 +58,7 @@ describe('Test resolveConfigPathByNetworkID method', () => {
 		expect(configPath).toBe(expectedConfigPath);
 	});
 
-	it('should reject when called by invalid networkID', async () => {
+	it('should throw error when called by invalid networkID', async () => {
 		await expect(resolveConfigPathByNetworkID('invalid')).rejects.toThrow();
 	});
 });

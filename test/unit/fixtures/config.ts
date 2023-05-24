@@ -1,5 +1,3 @@
-import { DEFAULT_HOST, DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../../../src/constants';
-
 /*
  * Copyright © 2023 Lisk Foundation
  *
@@ -13,6 +11,8 @@ import { DEFAULT_HOST, DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../../../src/c
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { DEFAULT_HOST, DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../../../src/constants';
+
 export const configV3 = {
 	rootPath: '~/.lisk',
 	networkVersion: '3.1',
