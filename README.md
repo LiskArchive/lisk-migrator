@@ -6,6 +6,7 @@ Lisk Migrator is a command line tool to migrate the blockchain data to the lates
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Code coverage](https://codecov.io/gh/LiskHQ/lisk-migrator/branch/main/graph/badge.svg?token=ICP600XKH1)](https://codecov.io/gh/LiskHQ/lisk-migrator)
+[![DeepScan grade](https://deepscan.io/api/teams/6759/projects/24469/branches/755683/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=6759&pid=24469&bid=755683)
 ![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/liskHQ/lisk-migrator)
 ![GitHub repo size](https://img.shields.io/github/repo-size/liskhq/lisk-migrator)
 ![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lisk-migrator)
