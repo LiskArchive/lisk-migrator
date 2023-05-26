@@ -11,8 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { resolve } from 'path';
 import * as fs from 'fs-extra';
+import { resolve } from 'path';
 import { ApplicationConfig } from 'lisk-framework';
 import { configV3, configV4 } from '../fixtures/config';
 import {
@@ -21,7 +21,7 @@ import {
 	writeConfig,
 	resolveConfigPathByNetworkID,
 } from '../../../src/utils/config';
-import { ConfigV3 } from '../../../src/types';
+import { ApplicationConfigV3 } from '../../../src/types';
 
 describe('Migrate user configuration', () => {
 	const migratedConfigFilePath = `${process.cwd()}/test/config`;
@@ -30,7 +30,7 @@ describe('Migrate user configuration', () => {
 
 	it('should migrate user configuration', async () => {
 		const config = ((await migrateUserConfig(
-			(configV3 as unknown) as ConfigV3,
+			(configV3 as unknown) as ApplicationConfigV3,
 			(configV4 as unknown) as ApplicationConfig,
 		)) as unknown) as ApplicationConfig;
 		expect(Object.getOwnPropertyNames(config).length).toBeGreaterThan(0);

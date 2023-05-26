@@ -47,7 +47,7 @@ import {
 } from './utils/chain';
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
-import { ConfigV3, NetworkConfigLocal } from './types';
+import { ApplicationConfigV3, NetworkConfigLocal } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
 import { extractTarBall } from './utils/fs';
 
@@ -205,7 +205,7 @@ class LiskMigrator extends Command {
 			cli.action.stop(`${liskCoreVersion.version} detected`);
 
 			// User specified custom config file
-			const configV3: ConfigV3 = customConfigPath
+			const configV3: ApplicationConfigV3 = customConfigPath
 				? await getConfig(liskCorePath, customConfigPath)
 				: await getConfig(liskCorePath);
 
@@ -283,7 +283,7 @@ class LiskMigrator extends Command {
 				await createBackup(configV3);
 				cli.action.stop();
 
-				cli.action.start('Migrate user configuration');
+				cli.action.start('Migrating user configuration');
 				const migratedConfigV4 = (await migrateUserConfig(configV3, configV4)) as ApplicationConfig;
 				cli.action.stop();
 
@@ -314,13 +314,10 @@ class LiskMigrator extends Command {
 					if (!autoMigrateUserConfig) {
 						finalConfigCorev4 = configV4;
 					}
-					const isUserConfirmed = await cli.confirm(
-						`Starting application using the configuration: ${util.inspect(
-							finalConfigCorev4,
-							false,
-							3,
-						)} [yes/no]`,
-					);
+					const isUserConfirmed = await cli.confirm(`
+						Start Lisk Core with the following configuration? [yes/no] \n
+						${util.inspect(finalConfigCorev4, false, 3)}
+					`);
 					if (isUserConfirmed) {
 						cli.action.start('Starting lisk-core v4');
 						const network = networkConstant.name as string;

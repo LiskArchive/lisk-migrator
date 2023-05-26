@@ -20,43 +20,39 @@ import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
-import { ConfigV3, Logger } from '../types';
+import { ApplicationConfigV3, LoggerConfig } from '../types';
 import { DEFAULT_VERSION, NETWORK_CONSTANT } from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
 const LOG_LEVEL_PRIORITY = Object.freeze({
-	TRACE: 0,
-	DEBUG: 1,
-	INFO: 2,
-	WARN: 3,
-	ERROR: 4,
-	FATAL: 5,
-}) as Record<string, unknown>;
+	FATAL: 0,
+	ERROR: 1,
+	WARN: 2,
+	INFO: 3,
+	DEBUG: 4,
+	TRACE: 5,
+}) as Record<string, number>;
 
 export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
 
-export const getLogLevel = (logger: Logger): string => {
-	const filteredLogLevelOptions = Object.keys(LOG_LEVEL_PRIORITY).reduce(
-		(key: Record<string, unknown>, value: string) => {
-			if (Object.values(logger).includes(value.toLowerCase())) {
-				key[value] = LOG_LEVEL_PRIORITY[value];
-			}
-			return key;
-		},
-		{},
+export const getLogLevel = (loggerConfig: LoggerConfig): string => {
+	const highestLogPriority = Math.max(
+		LOG_LEVEL_PRIORITY[String(loggerConfig.fileLogLevel).toUpperCase()],
+		LOG_LEVEL_PRIORITY[String(loggerConfig.consoleLogLevel).toUpperCase()],
 	);
 
-	const logLevel = (Object.keys(filteredLogLevelOptions).find(
-		key =>
-			filteredLogLevelOptions[key] ===
-			Math.min(...(Object.values(filteredLogLevelOptions) as Array<number>)),
-	) as unknown) as string;
+	const [logLevel] = Object.entries(LOG_LEVEL_PRIORITY).find(
+		([, v]) => v === highestLogPriority,
+	) as [string, number];
 
-	return logLevel?.toLowerCase();
+	return logLevel.toLowerCase();
 };
 
-export const getConfig = async (corePath: string, customConfigPath?: string): Promise<ConfigV3> => {
+export const getConfig = async (
+	corePath: string,
+	customConfigPath?: string,
+): Promise<ApplicationConfigV3> => {
 	const command = [];
 
 	const [network] = readdirSync(`${corePath}/config`);
@@ -98,7 +94,7 @@ export const resolveConfigPathByNetworkID = async (networkIdentifier: string): P
 	return configFilePath;
 };
 
-export const createBackup = async (config: ConfigV3): Promise<void> => {
+export const createBackup = async (config: ApplicationConfigV3): Promise<void> => {
 	const backupPath = `${process.cwd()}/backup`;
 	mkdirSync(backupPath, { recursive: true });
 	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
@@ -106,7 +102,7 @@ export const createBackup = async (config: ConfigV3): Promise<void> => {
 
 // TODO: Set up a default config file. Log properties and map migrated config values
 export const migrateUserConfig = async (
-	configV3: ConfigV3,
+	configV3: ApplicationConfigV3,
 	configV4: ApplicationConfig,
 ): Promise<ApplicationConfig> => {
 	// Assign default version if not available

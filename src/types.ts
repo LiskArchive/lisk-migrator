@@ -53,7 +53,7 @@ export interface PluginOptions extends Record<string, unknown> {
 	readonly alias?: string;
 }
 
-export interface Logger {
+export interface LoggerConfig {
 	logFileName: string;
 	fileLogLevel: string;
 	consoleLogLevel: string;
@@ -67,14 +67,14 @@ export interface TransactionPool {
 	readonly minReplacementFeeDifference?: string;
 }
 
-export interface ConfigV3 {
+export interface ApplicationConfigV3 {
 	label: string;
 	version: string;
 	networkVersion: string;
 	rootPath: string;
 	forging: Record<string, unknown>;
 	network: NetworkConfig;
-	logger: Logger;
+	logger: LoggerConfig;
 	genesisConfig: GenesisConfig;
 	plugins: {
 		[key: string]: PluginOptions;
