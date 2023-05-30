@@ -20,6 +20,11 @@ interface RPCConfig {
 }
 
 export interface NetworkConfig {
+	advertiseAddress: boolean;
+	wsMaxPayload: number;
+	maxInboundConnections: number;
+	maxOutboundConnections: number;
+	hostIp: string;
 	port: number;
 	seedPeers: { ip: string; port: number }[];
 }
@@ -48,23 +53,33 @@ export interface PluginOptions extends Record<string, unknown> {
 	readonly alias?: string;
 }
 
-export interface ConfigV3 {
+export interface LoggerConfig {
+	logFileName: string;
+	fileLogLevel: string;
+	consoleLogLevel: string;
+}
+
+export interface TransactionPool {
+	readonly maxTransactions?: number;
+	readonly maxTransactionsPerAccount?: number;
+	readonly transactionExpiryTime?: number;
+	readonly minEntranceFeePriority?: string;
+	readonly minReplacementFeeDifference?: string;
+}
+
+export interface ApplicationConfigV3 {
 	label: string;
 	version: string;
 	networkVersion: string;
 	rootPath: string;
 	forging: Record<string, unknown>;
 	network: NetworkConfig;
-	logger: {
-		logFileName: string;
-		fileLogLevel: string;
-		consoleLogLevel: string;
-	};
+	logger: LoggerConfig;
 	genesisConfig: GenesisConfig;
 	plugins: {
 		[key: string]: PluginOptions;
 	};
-	transactionPool: Record<string, unknown>;
+	transactionPool: TransactionPool;
 	rpc: RPCConfig;
 }
 

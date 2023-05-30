@@ -74,7 +74,6 @@ export const DEFAULT_HOST = '127.0.0.1';
 export const DEFAULT_PORT_P2P = 7667;
 export const DEFAULT_PORT_RPC = 7887;
 
-export const KEEP_EVENTS_FOR_HEIGHTS = 300;
 export const EMPTY_BYTES = Buffer.alloc(0);
 export const SHA_256_HASH_LENGTH = 32;
 export const BINARY_ADDRESS_LENGTH = 20;
@@ -82,3 +81,5 @@ export const TRANSACTION_ID_LENGTH = SHA_256_HASH_LENGTH;
 
 export const DEFAULT_DATA_DIR = 'data';
 export const EXTRACTED_SNAPSHOT_DIR = 'blockchain.db';
+
+export const DEFAULT_VERSION = '0.1.0';

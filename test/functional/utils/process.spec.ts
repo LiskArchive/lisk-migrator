@@ -14,8 +14,12 @@
 import { execAsync } from '../../../src/utils/process';
 
 describe('execAsync', () => {
-	it('Should execute ls command succesfully', async () => {
+	it('should execute ls command succesfully', async () => {
 		const response = await execAsync('ls');
 		expect(response.length).toBeGreaterThan(0);
+	});
+
+	it('should throw error when called with invalid command', async () => {
+		await expect(execAsync('invalid')).rejects.toThrow();
 	});
 });
