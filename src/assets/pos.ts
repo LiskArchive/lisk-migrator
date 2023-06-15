@@ -11,14 +11,12 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { posGenesisStoreSchema } from 'lisk-framework';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
 import { codec } from '@liskhq/lisk-codec';
 import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
 import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
 
 import {
-	MODULE_NAME_POS,
 	INVALID_BLS_KEY,
 	DUMMY_PROOF_OF_POSSESSION,
 	INVALID_ED25519_KEY,
@@ -32,16 +30,12 @@ import {
 
 import {
 	Account,
-	GenesisAssetEntry,
 	GenesisDataEntry,
 	VoteWeightsWrapper,
 	VoteWeight,
 	DelegateWeight,
-	ValidatorEntry,
 	ValidatorEntryBuffer,
-	Staker,
 	Stake,
-	PoSStoreEntry,
 	StakerBuffer,
 } from '../types';
 
@@ -93,55 +87,37 @@ export const getValidatorKeys = async (
 };
 
 export const createValidatorsArray = async (
-	accounts: Account[],
+	account: Account,
+	validatorKeys: Record<string, string>,
 	snapshotHeight: number,
-	snapshotHeightPrevious: number,
 	tokenID: string,
-	db: KVStore,
-): Promise<ValidatorEntry[]> => {
-	const validators: ValidatorEntryBuffer[] = [];
-	const validatorKeys = await getValidatorKeys(
-		accounts,
-		snapshotHeight,
-		snapshotHeightPrevious,
-		db,
-	);
+): Promise<ValidatorEntryBuffer | null> => {
+	if (account.dpos.delegate.username !== '') {
+		const validatorAddress = account.address.toString('hex');
 
-	for (const account of accounts) {
-		if (account.dpos.delegate.username !== '') {
-			const validatorAddress = account.address.toString('hex');
+		const validator: ValidatorEntryBuffer = Object.freeze({
+			address: account.address,
+			name: account.dpos.delegate.username,
+			blsKey: INVALID_BLS_KEY,
+			proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
+			generatorKey: validatorKeys[validatorAddress] || INVALID_ED25519_KEY,
+			lastGeneratedHeight: account.dpos.delegate.lastForgedHeight,
+			isBanned: true,
+			reportMisbehaviorHeights: account.dpos.delegate.pomHeights,
+			consecutiveMissedBlocks: account.dpos.delegate.consecutiveMissedBlocks,
+			lastCommissionIncreaseHeight: snapshotHeight,
+			commission: MAX_COMMISSION,
+			sharingCoefficients: [
+				{
+					tokenID,
+					coefficient: Q96_ZERO,
+				},
+			],
+		});
 
-			const validator: ValidatorEntryBuffer = Object.freeze({
-				address: account.address,
-				name: account.dpos.delegate.username,
-				blsKey: INVALID_BLS_KEY,
-				proofOfPossession: DUMMY_PROOF_OF_POSSESSION,
-				generatorKey: validatorKeys[validatorAddress] || INVALID_ED25519_KEY,
-				lastGeneratedHeight: account.dpos.delegate.lastForgedHeight,
-				isBanned: true,
-				reportMisbehaviorHeights: account.dpos.delegate.pomHeights,
-				consecutiveMissedBlocks: account.dpos.delegate.consecutiveMissedBlocks,
-				lastCommissionIncreaseHeight: snapshotHeight,
-				commission: MAX_COMMISSION,
-				sharingCoefficients: [
-					{
-						tokenID,
-						coefficient: Q96_ZERO,
-					},
-				],
-			});
-			validators.push(validator);
-		}
+		return validator;
 	}
-
-	const sortedValidators = validators
-		.sort((a, b) => a.address.compare(b.address))
-		.map(entry => ({
-			...entry,
-			address: getLisk32AddressFromAddress(entry.address),
-		}));
-
-	return sortedValidators;
+	return null;
 };
 
 export const getStakes = async (account: Account, tokenID: string): Promise<Stake[]> => {
@@ -166,35 +142,24 @@ export const getStakes = async (account: Account, tokenID: string): Promise<Stak
 };
 
 export const createStakersArray = async (
-	accounts: Account[],
+	account: Account,
 	tokenID: string,
-): Promise<Staker[]> => {
-	const stakers: StakerBuffer[] = [];
-	for (const account of accounts) {
-		if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
-			const staker: StakerBuffer = {
-				address: account.address,
-				stakes: await getStakes(account, tokenID),
-				pendingUnlocks: account.dpos.unlocking.map(
-					({ delegateAddress, unvoteHeight, ...unlock }) => ({
-						validatorAddress: getLisk32AddressFromAddress(delegateAddress),
-						amount: unlock.amount,
-						unstakeHeight: unvoteHeight,
-					}),
-				),
-			};
-			stakers.push(staker);
-		}
+): Promise<StakerBuffer | null> => {
+	if (account.dpos.sentVotes.length || account.dpos.unlocking.length) {
+		const staker: StakerBuffer = {
+			address: account.address,
+			stakes: await getStakes(account, tokenID),
+			pendingUnlocks: account.dpos.unlocking.map(
+				({ delegateAddress, unvoteHeight, ...unlock }) => ({
+					validatorAddress: getLisk32AddressFromAddress(delegateAddress),
+					amount: unlock.amount,
+					unstakeHeight: unvoteHeight,
+				}),
+			),
+		};
+		return staker;
 	}
-
-	const sortedStakers = stakers
-		.sort((a, b) => a.address.compare(b.address))
-		.map(({ address, ...entry }) => ({
-			...entry,
-			address: getLisk32AddressFromAddress(address),
-		}));
-
-	return sortedStakers;
+	return null;
 };
 
 export const createGenesisDataObj = async (
@@ -234,31 +199,4 @@ export const createGenesisDataObj = async (
 	};
 
 	return genesisDataObj;
-};
-
-export const addPoSModuleEntry = async (
-	accounts: Account[],
-	delegatesVoteWeights: VoteWeightsWrapper,
-	snapshotHeight: number,
-	snapshotHeightPrevious: number,
-	tokenID: string,
-	db: KVStore,
-): Promise<GenesisAssetEntry> => {
-	const posObj: PoSStoreEntry = {
-		validators: await createValidatorsArray(
-			accounts,
-			snapshotHeight,
-			snapshotHeightPrevious,
-			tokenID,
-			db,
-		),
-		stakers: await createStakersArray(accounts, tokenID),
-		genesisData: await createGenesisDataObj(accounts, delegatesVoteWeights, snapshotHeight),
-	};
-
-	return {
-		module: MODULE_NAME_POS,
-		data: (posObj as unknown) as Record<string, unknown>,
-		schema: posGenesisStoreSchema,
-	};
 };

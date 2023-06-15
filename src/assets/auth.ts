@@ -11,48 +11,21 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
-
-import { MODULE_NAME_AUTH } from '../constants';
-import { genesisAuthStoreSchema } from '../schemas';
-import {
-	Account,
-	AuthAccountEntry,
-	AuthStoreEntry,
-	AuthStoreEntryBuffer,
-	GenesisAssetEntry,
-} from '../types';
+import { Account, AuthAccountEntry, AuthStoreEntryBuffer } from '../types';
 
 const keyMapper = (key: Buffer) => key.toString('hex');
 const keyComparator = (a: Buffer, b: Buffer) => a.compare(b);
 
-export const addAuthModuleEntry = async (accounts: Account[]): Promise<GenesisAssetEntry> => {
-	const authSubstoreEntries: AuthStoreEntryBuffer[] = await Promise.all(
-		accounts.map(async (account: Account) => {
-			const authObj: AuthAccountEntry = {
-				numberOfSignatures: account.keys.numberOfSignatures,
-				mandatoryKeys: account.keys.mandatoryKeys.sort(keyComparator).map(keyMapper),
-				optionalKeys: account.keys.optionalKeys.sort(keyComparator).map(keyMapper),
-				nonce: String(account.sequence.nonce),
-			};
-
-			return {
-				storeKey: account.address,
-				storeValue: authObj,
-			};
-		}),
-	);
-
-	const sortedAuthSubstoreEntries: AuthStoreEntry[] = authSubstoreEntries
-		.sort((a, b) => a.storeKey.compare(b.storeKey))
-		.map(entry => ({
-			...entry,
-			storeKey: getLisk32AddressFromAddress(entry.storeKey),
-		}));
+export const addAuthModuleEntry = async (account: Account): Promise<AuthStoreEntryBuffer> => {
+	const authObj: AuthAccountEntry = {
+		numberOfSignatures: account.keys.numberOfSignatures,
+		mandatoryKeys: account.keys.mandatoryKeys.sort(keyComparator).map(keyMapper),
+		optionalKeys: account.keys.optionalKeys.sort(keyComparator).map(keyMapper),
+		nonce: String(account.sequence.nonce),
+	};
 
 	return {
-		module: MODULE_NAME_AUTH,
-		data: ({ authDataSubstore: sortedAuthSubstoreEntries } as unknown) as Record<string, unknown>,
-		schema: genesisAuthStoreSchema,
+		storeKey: account.address,
+		storeValue: authObj,
 	};
 };

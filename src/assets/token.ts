@@ -11,29 +11,11 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { tokenGenesisStoreSchema } from 'lisk-framework';
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { MODULE_NAME_POS, MODULE_NAME_LEGACY, ADDRESS_LEGACY_RESERVE } from '../constants';
 
-import {
-	MODULE_NAME_TOKEN,
-	MODULE_NAME_POS,
-	MODULE_NAME_LEGACY,
-	ADDRESS_LEGACY_RESERVE,
-} from '../constants';
-
-import {
-	Account,
-	LockedBalance,
-	GenesisAssetEntry,
-	TokenStoreEntry,
-	LegacyStoreEntry,
-	SupplySubstoreEntry,
-	UserSubstoreEntry,
-	UserSubstoreEntryBuffer,
-} from '../types';
+import { Account, LockedBalance, UserSubstoreEntryBuffer } from '../types';
 
 const AMOUNT_ZERO = BigInt('0');
-let legacyReserveAmount: bigint = AMOUNT_ZERO;
 
 export const getLockedBalances = async (account: Account): Promise<LockedBalance[]> => {
 	let amount = AMOUNT_ZERO;
@@ -54,22 +36,14 @@ export const getLockedBalances = async (account: Account): Promise<LockedBalance
 };
 
 export const createLegacyReserveAccount = async (
-	accounts: Account[],
-	legacyAccounts: LegacyStoreEntry[],
+	legacyReserveAccount: Account | undefined,
+	legacyReserveAmount: bigint,
 	tokenID: string,
 ): Promise<UserSubstoreEntryBuffer> => {
 	const tokenIDBuffer = Buffer.from(tokenID, 'hex');
 
-	const legacyReserveAccount: Account | undefined = accounts.find(account =>
-		ADDRESS_LEGACY_RESERVE.equals(account.address),
-	);
-
-	legacyReserveAmount = legacyReserveAccount ? legacyReserveAccount.token.balance : AMOUNT_ZERO;
-
-	for (const account of legacyAccounts) {
-		legacyReserveAmount += BigInt(account.balance);
-	}
 	const lockedBalances = legacyReserveAccount ? await getLockedBalances(legacyReserveAccount) : [];
+
 	lockedBalances.push({
 		module: MODULE_NAME_LEGACY,
 		amount: String(legacyReserveAmount),
@@ -88,79 +62,21 @@ export const createLegacyReserveAccount = async (
 };
 
 export const createUserSubstoreArray = async (
-	accounts: Account[],
-	legacyAccounts: LegacyStoreEntry[],
+	account: Account,
 	tokenID: string,
-): Promise<UserSubstoreEntry[]> => {
-	const userSubstore: UserSubstoreEntryBuffer[] = [];
+): Promise<UserSubstoreEntryBuffer | null> => {
 	const tokenIDBuffer = Buffer.from(tokenID, 'hex');
 
-	for (const account of accounts) {
-		if (!ADDRESS_LEGACY_RESERVE.equals(account.address)) {
-			const lockedBalances = await getLockedBalances(account);
-			if (account.token.balance !== AMOUNT_ZERO || lockedBalances.length) {
-				const userObj = {
-					address: account.address,
-					tokenID: tokenIDBuffer,
-					availableBalance: String(account.token.balance),
-					lockedBalances,
-				};
-				userSubstore.push(userObj);
-			}
+	if (!ADDRESS_LEGACY_RESERVE.equals(account.address)) {
+		const lockedBalances = await getLockedBalances(account);
+		if (account.token.balance !== AMOUNT_ZERO || lockedBalances.length) {
+			return {
+				address: account.address,
+				tokenID: tokenIDBuffer,
+				availableBalance: String(account.token.balance),
+				lockedBalances,
+			};
 		}
 	}
-
-	const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccounts, tokenID);
-	userSubstore.push(legacyReserveAccount);
-
-	const sortedUserSubstore = userSubstore.sort(
-		(a: UserSubstoreEntryBuffer, b: UserSubstoreEntryBuffer) =>
-			a.address.equals(b.address) ? a.tokenID.compare(b.tokenID) : a.address.compare(b.address),
-	);
-
-	return sortedUserSubstore.map(entry => ({
-		...entry,
-		address: getLisk32AddressFromAddress(entry.address),
-		tokenID: entry.tokenID.toString('hex'),
-	}));
-};
-
-export const createSupplySubstoreArray = async (
-	accounts: Account[],
-	tokenID: string,
-): Promise<SupplySubstoreEntry[]> => {
-	let totalLSKSupply = AMOUNT_ZERO;
-	for (const account of accounts) {
-		totalLSKSupply += BigInt(account.token.balance);
-		const lockedBalances = await getLockedBalances(account);
-		totalLSKSupply = lockedBalances.reduce(
-			(accumulator, lockedBalance) => accumulator + BigInt(lockedBalance.amount),
-			totalLSKSupply,
-		);
-	}
-
-	const LSKSupply: SupplySubstoreEntry = {
-		tokenID,
-		totalSupply: String(totalLSKSupply + legacyReserveAmount),
-	};
-
-	return [LSKSupply];
-};
-
-export const addTokenModuleEntry = async (
-	accounts: Account[],
-	legacyAccounts: LegacyStoreEntry[],
-	tokenID: string,
-): Promise<GenesisAssetEntry> => {
-	const tokenObj: TokenStoreEntry = {
-		userSubstore: await createUserSubstoreArray(accounts, legacyAccounts, tokenID),
-		supplySubstore: await createSupplySubstoreArray(accounts, tokenID),
-		escrowSubstore: [],
-		supportedTokensSubstore: [],
-	};
-	return {
-		module: MODULE_NAME_TOKEN,
-		data: (tokenObj as unknown) as Record<string, unknown>,
-		schema: tokenGenesisStoreSchema,
-	};
+	return null;
 };
