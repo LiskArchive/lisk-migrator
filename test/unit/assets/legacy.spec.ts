@@ -62,7 +62,7 @@ describe('Build assets/legacy', () => {
 		});
 
 		it('should get legacy accounts', async () => {
-			const response = await addLegacyModuleEntry(encodedUnregisteredAddresses);
+			const response = await addLegacyModuleEntry(encodedUnregisteredAddresses, undefined);
 			const data = (response.data as unknown) as LegacyStoreData;
 
 			// Assert

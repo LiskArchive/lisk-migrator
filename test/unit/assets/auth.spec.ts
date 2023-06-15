@@ -12,10 +12,8 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { addAuthModuleEntry } from '../../../src/assets/auth';
-import { MODULE_NAME_AUTH } from '../../../src/constants';
-import { Account, AuthAccountEntry, AuthStoreEntry, GenesisAssetEntry } from '../../../src/types';
+import { Account, AuthStoreEntryBuffer } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
-import { ADDRESS_LISK32 } from '../utils/regex';
 
 describe('Build assets/auth', () => {
 	let accounts: Account[];
@@ -79,20 +77,15 @@ describe('Build assets/auth', () => {
 	});
 
 	it('should get auth accounts', async () => {
-		const response: GenesisAssetEntry = await addAuthModuleEntry(accounts);
-		const authDataSubstore = (response.data.authDataSubstore as unknown) as AuthStoreEntry[];
+		const response: AuthStoreEntryBuffer = await addAuthModuleEntry(accounts[0]);
 
-		expect(response.module).toEqual(MODULE_NAME_AUTH);
-		expect(authDataSubstore).toHaveLength(2);
-		expect(Object.getOwnPropertyNames(authDataSubstore[0])).toEqual(['storeKey', 'storeValue']);
-		authDataSubstore.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
-			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(asset.storeValue)).toEqual([
-				'numberOfSignatures',
-				'mandatoryKeys',
-				'optionalKeys',
-				'nonce',
-			]);
-		});
+		expect(Object.getOwnPropertyNames(response)).toEqual(['storeKey', 'storeValue']);
+		expect(response.storeKey).toBeInstanceOf(Buffer);
+		expect(Object.getOwnPropertyNames(response.storeValue)).toEqual([
+			'numberOfSignatures',
+			'mandatoryKeys',
+			'optionalKeys',
+			'nonce',
+		]);
 	});
 });
