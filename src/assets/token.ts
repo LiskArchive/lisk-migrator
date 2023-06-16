@@ -11,9 +11,24 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { MODULE_NAME_POS, MODULE_NAME_LEGACY, ADDRESS_LEGACY_RESERVE } from '../constants';
+import { tokenGenesisStoreSchema } from 'lisk-framework';
 
-import { Account, LockedBalance, UserSubstoreEntryBuffer } from '../types';
+import {
+	MODULE_NAME_POS,
+	MODULE_NAME_LEGACY,
+	ADDRESS_LEGACY_RESERVE,
+	MODULE_NAME_TOKEN,
+} from '../constants';
+
+import {
+	Account,
+	GenesisAssetEntry,
+	LockedBalance,
+	SupplySubstoreEntry,
+	TokenStoreEntry,
+	UserSubstoreEntry,
+	UserSubstoreEntryBuffer,
+} from '../types';
 
 const AMOUNT_ZERO = BigInt('0');
 
@@ -61,7 +76,7 @@ export const createLegacyReserveAccount = async (
 	return legacyReserve;
 };
 
-export const createUserSubstoreArray = async (
+export const createUserSubstoreArrayEntry = async (
 	account: Account,
 	tokenID: string,
 ): Promise<UserSubstoreEntryBuffer | null> => {
@@ -79,4 +94,23 @@ export const createUserSubstoreArray = async (
 		}
 	}
 	return null;
+};
+
+export const addTokenModuleEntry = async (
+	userSubstore: UserSubstoreEntry[],
+	supplySubstore: SupplySubstoreEntry[],
+	escrowSubstore: never[],
+	supportedTokensSubstore: never[],
+): Promise<GenesisAssetEntry> => {
+	const tokenObj: TokenStoreEntry = {
+		userSubstore,
+		supplySubstore,
+		escrowSubstore,
+		supportedTokensSubstore,
+	};
+	return {
+		module: MODULE_NAME_TOKEN,
+		data: (tokenObj as unknown) as Record<string, unknown>,
+		schema: tokenGenesisStoreSchema,
+	};
 };

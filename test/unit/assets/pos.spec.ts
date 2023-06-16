@@ -15,11 +15,12 @@ import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { when } from 'jest-when';
 
+import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
 import { Block, blockHeaderSchema, blockHeaderAssetSchema } from '@liskhq/lisk-chain';
 
-import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID } from '../../../src/constants';
+import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID, MODULE_NAME_POS } from '../../../src/constants';
 import {
 	Account,
 	StakerBuffer,
@@ -32,10 +33,11 @@ import { ADDRESS_LISK32 } from '../utils/regex';
 
 import {
 	createGenesisDataObj,
-	createValidatorsArray,
-	createStakersArray,
+	createValidatorsArrayEntry,
+	createStakersArrayEntry,
 	getStakes,
 	getValidatorKeys,
+	addPoSModuleEntry,
 } from '../../../src/assets/pos';
 
 jest.mock('@liskhq/lisk-db');
@@ -144,7 +146,7 @@ describe('Build assets/pos', () => {
 		];
 	});
 
-	it('should create createValidatorsArray', async () => {
+	it('should create createValidatorsArrayEntry', async () => {
 		when(db.createReadStream)
 			.calledWith({
 				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
@@ -170,7 +172,7 @@ describe('Build assets/pos', () => {
 			db,
 		);
 
-		const validator = (await createValidatorsArray(
+		const validator = (await createValidatorsArrayEntry(
 			accounts[0],
 			validatorKeys,
 			snapshotHeight,
@@ -195,8 +197,8 @@ describe('Build assets/pos', () => {
 		]);
 	});
 
-	it('should create createStakersArray', async () => {
-		const staker = (await createStakersArray(accounts[1], tokenID)) as StakerBuffer;
+	it('should create createStakersArrayEntry', async () => {
+		const staker = (await createStakersArrayEntry(accounts[1], tokenID)) as StakerBuffer;
 
 		// Assert
 		expect(staker.address).toBeInstanceOf(Buffer);
@@ -248,5 +250,56 @@ describe('Build assets/pos', () => {
 		await expect(
 			getValidatorKeys(accounts, snapshotHeight, snapshotHeightPrevious, db),
 		).rejects.toThrow();
+	});
+
+	it('should create PoS module asset', async () => {
+		when(db.createReadStream)
+			.calledWith({
+				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
+				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+			})
+			.mockReturnValue(Readable.from(blockIDsStream));
+
+		blocks.forEach(block => {
+			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
+			const blockHeader = codec.encode(blockHeaderSchema, {
+				...block.header,
+				asset: blockAssetBuffer,
+			});
+			when(db.get)
+				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
+				.mockResolvedValue(blockHeader as never);
+		});
+
+		const validatorKeys = await getValidatorKeys(
+			accounts,
+			snapshotHeight,
+			snapshotHeightPrevious,
+			db,
+		);
+
+		const validator = (await createValidatorsArrayEntry(
+			accounts[0],
+			validatorKeys,
+			snapshotHeight,
+			tokenID,
+		)) as ValidatorEntryBuffer;
+
+		const staker = (await createStakersArrayEntry(accounts[1], tokenID)) as StakerBuffer;
+		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
+
+		const posModuleAsset = await addPoSModuleEntry(
+			[validator].map(e => ({ ...e, address: getLisk32AddressFromAddress(e.address) })),
+			[staker].map(e => ({ ...e, address: getLisk32AddressFromAddress(e.address) })),
+			genesisDataObj,
+		);
+
+		// Assert
+		expect(posModuleAsset.module).toEqual(MODULE_NAME_POS);
+		expect(Object.getOwnPropertyNames(posModuleAsset.data)).toEqual([
+			'validators',
+			'stakers',
+			'genesisData',
+		]);
 	});
 });

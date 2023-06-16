@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { posGenesisStoreSchema, tokenGenesisStoreSchema } from 'lisk-framework';
 import { codec } from '@liskhq/lisk-codec';
 import { KVStore } from '@liskhq/lisk-db';
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
@@ -22,38 +21,35 @@ import {
 	DB_KEY_CHAIN_STATE,
 	DB_KEY_ACCOUNTS_ADDRESS,
 	BINARY_ADDRESS_LENGTH,
-	MODULE_NAME_AUTH,
-	MODULE_NAME_TOKEN,
 	ADDRESS_LEGACY_RESERVE,
-	MODULE_NAME_POS,
 } from './constants';
-import { accountSchema, genesisAuthStoreSchema, voteWeightsSchema } from './schemas';
+import { accountSchema, voteWeightsSchema } from './schemas';
 import {
 	Account,
 	VoteWeightsWrapper,
 	GenesisAssetEntry,
-	AuthStoreEntry,
 	UserSubstoreEntry,
 	UserSubstoreEntryBuffer,
 	SupplySubstoreEntry,
 	AuthStoreEntryBuffer,
-	TokenStoreEntry,
 	ValidatorEntryBuffer,
-	PoSStoreEntry,
 	StakerBuffer,
+	GenesisDataEntry,
 } from './types';
 
 import { addInteropModuleEntry } from './assets/interoperability';
-import { addAuthModuleEntry } from './assets/auth';
+import { addAuthModuleEntry, getAuthModuleEntry } from './assets/auth';
 import {
+	addTokenModuleEntry,
 	createLegacyReserveAccount,
-	createUserSubstoreArray,
+	createUserSubstoreArrayEntry,
 	getLockedBalances,
 } from './assets/token';
 import {
+	addPoSModuleEntry,
 	createGenesisDataObj,
-	createStakersArray,
-	createValidatorsArray,
+	createStakersArrayEntry,
+	createValidatorsArrayEntry,
 	getValidatorKeys,
 } from './assets/pos';
 import { addLegacyModuleEntry, getLegacyReserveAmount } from './assets/legacy';
@@ -62,6 +58,7 @@ import { getDataFromDBStream } from './utils/block';
 
 const AMOUNT_ZERO = BigInt('0');
 let totalLSKSupply = AMOUNT_ZERO;
+
 export class CreateAsset {
 	private readonly _db: KVStore;
 
@@ -75,8 +72,10 @@ export class CreateAsset {
 		tokenID: string,
 	): Promise<GenesisAssetEntry[]> => {
 		const authSubstoreEntries: AuthStoreEntryBuffer[] = [];
-		const userSubstore: UserSubstoreEntryBuffer[] = [];
-		const supplySubstore: SupplySubstoreEntry[] = [];
+		const userSubstoreEntries: UserSubstoreEntryBuffer[] = [];
+		const supplySubstoreEntries: SupplySubstoreEntry[] = [];
+		const escrowSubstore: never[] = [];
+		const supportedTokensSubstoreEntries: never[] = [];
 		const validators: ValidatorEntryBuffer[] = [];
 		const stakers: StakerBuffer[] = [];
 
@@ -129,13 +128,13 @@ export class CreateAsset {
 
 		for (const account of accounts) {
 			// genesis asset for auth module
-			const authModuleAsset = await addAuthModuleEntry(account);
+			const authModuleAsset = await getAuthModuleEntry(account);
 			authSubstoreEntries.push(authModuleAsset);
 
 			// genesis asset for token module
-			// Create user subtore entry
-			const userSubstoreEntry = await createUserSubstoreArray(account, tokenID);
-			if (userSubstoreEntry) userSubstore.push(userSubstoreEntry);
+			// Create user subtore entries
+			const userSubstoreEntry = await createUserSubstoreArrayEntry(account, tokenID);
+			if (userSubstoreEntry) userSubstoreEntries.push(userSubstoreEntry);
 
 			// Create total lisk supply for supply subtore
 			totalLSKSupply += BigInt(account.token.balance);
@@ -146,8 +145,8 @@ export class CreateAsset {
 			);
 
 			// genesis asset for PoS module
-			// Create validator entry
-			const validator = await createValidatorsArray(
+			// Create validator array entries
+			const validator = await createValidatorsArrayEntry(
 				account,
 				validatorKeys,
 				snapshotHeight,
@@ -155,63 +154,37 @@ export class CreateAsset {
 			);
 			if (validator) validators.push(validator);
 
-			// Create staker entry
-			const staker = await createStakersArray(account, tokenID);
+			// Create staker array entries
+			const staker = await createStakersArrayEntry(account, tokenID);
 			if (staker) stakers.push(staker);
 		}
 
-		// Sort auth store entries in lexicographical order
-		const sortedAuthSubstoreEntries: AuthStoreEntry[] = authSubstoreEntries
-			.sort((a, b) => a.storeKey.compare(b.storeKey))
-			.map(entry => ({
-				...entry,
-				storeKey: getLisk32AddressFromAddress(entry.storeKey),
-			}));
-
-		const authModuleAssets = {
-			module: MODULE_NAME_AUTH,
-			data: ({ authDataSubstore: sortedAuthSubstoreEntries } as unknown) as Record<string, unknown>,
-			schema: genesisAuthStoreSchema,
-		};
-
 		// Add legacy reserve to user substore array
-		userSubstore.push(legacyReserve);
+		userSubstoreEntries.push(legacyReserve);
+
 		// Sort user substore entries in lexicographical order
-		const sortedUserSubstore: UserSubstoreEntry[] = userSubstore
+		const sortedUserSubstore: UserSubstoreEntry[] = userSubstoreEntries
 			.sort((a: UserSubstoreEntryBuffer, b: UserSubstoreEntryBuffer) =>
 				a.address.equals(b.address) ? a.tokenID.compare(b.tokenID) : a.address.compare(b.address),
 			)
-			.map(entry => ({
+			.map(({ address, ...entry }) => ({
 				...entry,
-				address: getLisk32AddressFromAddress(entry.address),
+				address: getLisk32AddressFromAddress(address),
 				tokenID: entry.tokenID.toString('hex'),
 			}));
 
-		// Add legacy reserve amount to total lisk supply
-		supplySubstore.push({
+		// Add legacy reserve amount to the total lisk supply
+		supplySubstoreEntries.push({
 			tokenID,
 			totalSupply: String(totalLSKSupply + legacyReserveAmount),
 		});
 
-		const tokenObj: TokenStoreEntry = {
-			userSubstore: sortedUserSubstore,
-			supplySubstore,
-			escrowSubstore: [],
-			supportedTokensSubstore: [],
-		};
-
-		const tokenModuleAssets = {
-			module: MODULE_NAME_TOKEN,
-			data: (tokenObj as unknown) as Record<string, unknown>,
-			schema: tokenGenesisStoreSchema,
-		};
-
 		// Sort validators substore entries in lexicographical order
 		const sortedValidators = validators
 			.sort((a, b) => a.address.compare(b.address))
-			.map(entry => ({
+			.map(({ address, ...entry }) => ({
 				...entry,
-				address: getLisk32AddressFromAddress(entry.address),
+				address: getLisk32AddressFromAddress(address),
 			}));
 
 		// Sort stakers substore entries in lexicographical order
@@ -231,22 +204,27 @@ export class CreateAsset {
 			encodedDelegatesVoteWeights,
 		);
 
-		const posObj: PoSStoreEntry = {
-			validators: sortedValidators,
-			stakers: sortedStakers,
-			genesisData: await createGenesisDataObj(
-				accounts,
-				decodedDelegatesVoteWeights,
-				snapshotHeight,
-			),
-		};
+		const genesisData: GenesisDataEntry = await createGenesisDataObj(
+			accounts,
+			decodedDelegatesVoteWeights,
+			snapshotHeight,
+		);
 
-		const posModuleAssets = {
-			module: MODULE_NAME_POS,
-			data: (posObj as unknown) as Record<string, unknown>,
-			schema: posGenesisStoreSchema,
-		};
+		// Create auth module assets
+		const authModuleAssets = await addAuthModuleEntry(authSubstoreEntries);
 
+		// Create token module assets
+		const tokenModuleAssets = await addTokenModuleEntry(
+			sortedUserSubstore,
+			supplySubstoreEntries,
+			escrowSubstore,
+			supportedTokensSubstoreEntries,
+		);
+
+		// Create PoS module assets
+		const posModuleAssets = await addPoSModuleEntry(sortedValidators, sortedStakers, genesisData);
+
+		// Create interoperability module assets
 		const interoperabilityModuleAssets = await addInteropModuleEntry();
 
 		const assets: GenesisAssetEntry[] = [

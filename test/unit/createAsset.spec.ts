@@ -119,8 +119,23 @@ describe('Build assets/legacy', () => {
 							isBanned: false,
 							totalVotesReceived: BigInt('0'),
 						},
-						sentVotes: [],
-						unlocking: [],
+						sentVotes: [
+							{
+								delegateAddress: Buffer.from('03f6d90b7dbd0497dc3a52d1c27e23bb8c75897f', 'hex'),
+								amount: BigInt('1000000000000'),
+							},
+							{
+								delegateAddress: Buffer.from('0903f4c5cb599a7928aef27e314e98291d1e3888', 'hex'),
+								amount: BigInt('1000000000000'),
+							},
+						],
+						unlocking: [
+							{
+								delegateAddress: Buffer.from('03f6d90b7dbd0497dc3a52d1c27e23bb8c75897f', 'hex'),
+								amount: BigInt(140000000000),
+								unvoteHeight: 21187466,
+							},
+						],
 					},
 				}),
 				createFakeDefaultAccount({

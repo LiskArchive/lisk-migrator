@@ -11,6 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { posGenesisStoreSchema } from 'lisk-framework';
 import { KVStore, formatInt } from '@liskhq/lisk-db';
 import { codec } from '@liskhq/lisk-codec';
 import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
@@ -26,6 +27,7 @@ import {
 	MAX_COMMISSION,
 	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_BLOCKS_ID,
+	MODULE_NAME_POS,
 } from '../constants';
 
 import {
@@ -37,6 +39,10 @@ import {
 	ValidatorEntryBuffer,
 	Stake,
 	StakerBuffer,
+	ValidatorEntry,
+	Staker,
+	GenesisAssetEntry,
+	PoSStoreEntry,
 } from '../types';
 
 import { blockHeaderSchema } from '../schemas';
@@ -86,7 +92,7 @@ export const getValidatorKeys = async (
 	return keys;
 };
 
-export const createValidatorsArray = async (
+export const createValidatorsArrayEntry = async (
 	account: Account,
 	validatorKeys: Record<string, string>,
 	snapshotHeight: number,
@@ -141,7 +147,7 @@ export const getStakes = async (account: Account, tokenID: string): Promise<Stak
 	return sortedStakes;
 };
 
-export const createStakersArray = async (
+export const createStakersArrayEntry = async (
 	account: Account,
 	tokenID: string,
 ): Promise<StakerBuffer | null> => {
@@ -199,4 +205,22 @@ export const createGenesisDataObj = async (
 	};
 
 	return genesisDataObj;
+};
+
+export const addPoSModuleEntry = async (
+	validators: ValidatorEntry[],
+	stakers: Staker[],
+	genesisData: GenesisDataEntry,
+): Promise<GenesisAssetEntry> => {
+	const posObj: PoSStoreEntry = {
+		validators,
+		stakers,
+		genesisData,
+	};
+
+	return {
+		module: MODULE_NAME_POS,
+		data: (posObj as unknown) as Record<string, unknown>,
+		schema: posGenesisStoreSchema,
+	};
 };

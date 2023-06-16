@@ -178,8 +178,8 @@ export interface SupplySubstoreEntry {
 export interface TokenStoreEntry {
 	userSubstore: UserSubstoreEntry[];
 	supplySubstore: SupplySubstoreEntry[];
-	escrowSubstore: [];
-	supportedTokensSubstore: [];
+	escrowSubstore: never[];
+	supportedTokensSubstore: never[];
 }
 
 export interface SharingCoefficient {

@@ -11,12 +11,22 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
+import {
+	hash,
+	getKeys,
+	getFirstEightBytesReversed,
+	getLisk32AddressFromAddress,
+} from '@liskhq/lisk-cryptography';
 
 import { Account, LegacyStoreEntry, UserSubstoreEntryBuffer } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 
-import { createUserSubstoreArray, createLegacyReserveAccount } from '../../../src/assets/token';
+import {
+	createUserSubstoreArrayEntry,
+	createLegacyReserveAccount,
+	addTokenModuleEntry,
+} from '../../../src/assets/token';
+import { MODULE_NAME_TOKEN } from '../../../src/constants';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = getKeys(passphrase);
@@ -117,7 +127,7 @@ describe('Build assets/token', () => {
 	});
 
 	it('should create userSubstore', async () => {
-		const userSubstore = (await createUserSubstoreArray(
+		const userSubstore = (await createUserSubstoreArrayEntry(
 			accounts[0],
 			tokenID,
 		)) as UserSubstoreEntryBuffer;
@@ -146,6 +156,33 @@ describe('Build assets/token', () => {
 			'tokenID',
 			'availableBalance',
 			'lockedBalances',
+		]);
+	});
+
+	it('should create token module asset', async () => {
+		const userSubstore = (await createUserSubstoreArrayEntry(
+			accounts[0],
+			tokenID,
+		)) as UserSubstoreEntryBuffer;
+
+		const response = await addTokenModuleEntry(
+			[userSubstore].map(e => ({
+				...e,
+				address: getLisk32AddressFromAddress(e.address),
+				tokenID: e.tokenID.toString('hex'),
+			})),
+			[],
+			[],
+			[],
+		);
+
+		// Assert
+		expect(response.module).toEqual(MODULE_NAME_TOKEN);
+		expect(Object.getOwnPropertyNames(response.data)).toEqual([
+			'userSubstore',
+			'supplySubstore',
+			'escrowSubstore',
+			'supportedTokensSubstore',
 		]);
 	});
 });
