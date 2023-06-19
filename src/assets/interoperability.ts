@@ -15,7 +15,7 @@ import { genesisInteroperabilitySchema } from 'lisk-framework';
 import { MODULE_NAME_INTEROPERABILITY, CHAIN_NAME_MAINCHAIN } from '../constants';
 import { GenesisAssetEntry, GenesisInteroperability } from '../types';
 
-export const addInteropModuleEntry = async (): Promise<GenesisAssetEntry> => {
+export const getInteropModuleEntry = async (): Promise<GenesisAssetEntry> => {
 	const interopObj = ({
 		ownChainName: CHAIN_NAME_MAINCHAIN,
 		ownChainNonce: BigInt('0'),

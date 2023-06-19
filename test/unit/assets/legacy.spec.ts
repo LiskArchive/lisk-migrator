@@ -14,7 +14,7 @@
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 
-import { addLegacyModuleEntry } from '../../../src/assets/legacy';
+import { getLegacyModuleEntry } from '../../../src/assets/legacy';
 import { MODULE_NAME_LEGACY } from '../../../src/constants';
 import { unregisteredAddressesSchema } from '../../../src/schemas';
 import { UnregisteredAccount, LegacyStoreData, LegacyStoreEntry } from '../../../src/types';
@@ -46,7 +46,7 @@ describe('Build assets/legacy', () => {
 		},
 	};
 
-	describe('addLegacyModuleEntry', () => {
+	describe('getLegacyModuleEntry', () => {
 		beforeAll(async () => {
 			for (const account of Object.values(testAccounts)) {
 				unregisteredAddresses = [];
@@ -62,7 +62,7 @@ describe('Build assets/legacy', () => {
 		});
 
 		it('should get legacy accounts', async () => {
-			const response = await addLegacyModuleEntry(encodedUnregisteredAddresses, undefined);
+			const response = await getLegacyModuleEntry(encodedUnregisteredAddresses, undefined);
 			const data = (response.data as unknown) as LegacyStoreData;
 
 			// Assert

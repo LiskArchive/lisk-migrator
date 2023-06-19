@@ -35,30 +35,37 @@ import {
 	ValidatorEntryBuffer,
 	StakerBuffer,
 	GenesisDataEntry,
+	AuthStoreEntry,
+	EscrowSubstoreEntry,
+	SupportedTokensSubstoreEntry,
 } from './types';
 
-import { addInteropModuleEntry } from './assets/interoperability';
-import { addAuthModuleEntry, getAuthModuleEntry } from './assets/auth';
+import { getInteropModuleEntry } from './assets/interoperability';
+import { getAuthModuleEntry, getAuthModuleEntryBuffer } from './assets/auth';
 import {
-	addTokenModuleEntry,
+	getTokenModuleEntry,
 	createLegacyReserveAccount,
 	createUserSubstoreArrayEntry,
 	getLockedBalances,
 } from './assets/token';
 import {
-	addPoSModuleEntry,
+	getPoSModuleEntry,
 	createGenesisDataObj,
 	createStakersArrayEntry,
 	createValidatorsArrayEntry,
 	getValidatorKeys,
 } from './assets/pos';
-import { addLegacyModuleEntry, getLegacyReserveAmount } from './assets/legacy';
+import { getLegacyModuleEntry, getLegacyReserveAmount } from './assets/legacy';
 
 import { getDataFromDBStream } from './utils/block';
 
 const AMOUNT_ZERO = BigInt('0');
 let totalLSKSupply = AMOUNT_ZERO;
 
+const addressComparator = (
+	a: StakerBuffer | ValidatorEntryBuffer,
+	b: StakerBuffer | ValidatorEntryBuffer,
+) => a.address.compare(b.address);
 export class CreateAsset {
 	private readonly _db: KVStore;
 
@@ -74,8 +81,8 @@ export class CreateAsset {
 		const authSubstoreEntries: AuthStoreEntryBuffer[] = [];
 		const userSubstoreEntries: UserSubstoreEntryBuffer[] = [];
 		const supplySubstoreEntries: SupplySubstoreEntry[] = [];
-		const escrowSubstore: never[] = [];
-		const supportedTokensSubstoreEntries: never[] = [];
+		const escrowSubstore: EscrowSubstoreEntry[] = [];
+		const supportedTokensSubstoreEntries: SupportedTokensSubstoreEntry[] = [];
 		const validators: ValidatorEntryBuffer[] = [];
 		const stakers: StakerBuffer[] = [];
 
@@ -103,7 +110,7 @@ export class CreateAsset {
 		);
 
 		// Create legacy module assets
-		const legacyModuleAssets = await addLegacyModuleEntry(
+		const legacyModuleAssets = await getLegacyModuleEntry(
 			encodedUnregisteredAddresses,
 			legacyReserveAccount,
 		);
@@ -128,7 +135,7 @@ export class CreateAsset {
 
 		for (const account of accounts) {
 			// genesis asset for auth module
-			const authModuleAsset = await getAuthModuleEntry(account);
+			const authModuleAsset = await getAuthModuleEntryBuffer(account);
 			authSubstoreEntries.push(authModuleAsset);
 
 			// genesis asset for token module
@@ -180,20 +187,16 @@ export class CreateAsset {
 		});
 
 		// Sort validators substore entries in lexicographical order
-		const sortedValidators = validators
-			.sort((a, b) => a.address.compare(b.address))
-			.map(({ address, ...entry }) => ({
-				...entry,
-				address: getLisk32AddressFromAddress(address),
-			}));
+		const sortedValidators = validators.sort(addressComparator).map(({ address, ...entry }) => ({
+			...entry,
+			address: getLisk32AddressFromAddress(address),
+		}));
 
 		// Sort stakers substore entries in lexicographical order
-		const sortedStakers = stakers
-			.sort((a, b) => a.address.compare(b.address))
-			.map(({ address, ...entry }) => ({
-				...entry,
-				address: getLisk32AddressFromAddress(address),
-			}));
+		const sortedStakers = stakers.sort(addressComparator).map(({ address, ...entry }) => ({
+			...entry,
+			address: getLisk32AddressFromAddress(address),
+		}));
 
 		const encodedDelegatesVoteWeights = await this._db.get(
 			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
@@ -210,11 +213,18 @@ export class CreateAsset {
 			snapshotHeight,
 		);
 
+		const sortedAuthSubstoreEntries: AuthStoreEntry[] = authSubstoreEntries
+			.sort((a, b) => a.storeKey.compare(b.storeKey))
+			.map(entry => ({
+				...entry,
+				storeKey: getLisk32AddressFromAddress(entry.storeKey),
+			}));
+
 		// Create auth module assets
-		const authModuleAssets = await addAuthModuleEntry(authSubstoreEntries);
+		const authModuleAssets = await getAuthModuleEntry(sortedAuthSubstoreEntries);
 
 		// Create token module assets
-		const tokenModuleAssets = await addTokenModuleEntry(
+		const tokenModuleAssets = await getTokenModuleEntry(
 			sortedUserSubstore,
 			supplySubstoreEntries,
 			escrowSubstore,
@@ -222,10 +232,10 @@ export class CreateAsset {
 		);
 
 		// Create PoS module assets
-		const posModuleAssets = await addPoSModuleEntry(sortedValidators, sortedStakers, genesisData);
+		const posModuleAssets = await getPoSModuleEntry(sortedValidators, sortedStakers, genesisData);
 
 		// Create interoperability module assets
-		const interoperabilityModuleAssets = await addInteropModuleEntry();
+		const interoperabilityModuleAssets = await getInteropModuleEntry();
 
 		const assets: GenesisAssetEntry[] = [
 			legacyModuleAssets,

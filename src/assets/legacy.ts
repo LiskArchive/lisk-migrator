@@ -26,7 +26,7 @@ import {
 const AMOUNT_ZERO = BigInt('0');
 let legacyReserveAmount: bigint = AMOUNT_ZERO;
 
-export const addLegacyModuleEntry = async (
+export const getLegacyModuleEntry = async (
 	encodedUnregisteredAddresses: Buffer,
 	legacyReserveAccount: Account | undefined,
 ): Promise<GenesisAssetEntry> => {
@@ -37,16 +37,14 @@ export const addLegacyModuleEntry = async (
 		encodedUnregisteredAddresses,
 	);
 
-	const legacyAccounts: LegacyStoreEntryBuffer[] = await Promise.all(
-		unregisteredAddresses.map(async account => {
-			legacyReserveAmount += BigInt(account.balance);
+	const legacyAccounts: LegacyStoreEntryBuffer[] = unregisteredAddresses.map(account => {
+		legacyReserveAmount += BigInt(account.balance);
 
-			return {
-				address: account.address,
-				balance: String(account.balance),
-			};
-		}),
-	);
+		return {
+			address: account.address,
+			balance: String(account.balance),
+		};
+	});
 
 	const sortedLegacyAccounts: LegacyStoreEntry[] = legacyAccounts
 		.sort((a, b) => a.address.compare(b.address))

@@ -24,7 +24,7 @@ import { createFakeDefaultAccount } from '../utils/account';
 import {
 	createUserSubstoreArrayEntry,
 	createLegacyReserveAccount,
-	addTokenModuleEntry,
+	getTokenModuleEntry,
 } from '../../../src/assets/token';
 import { MODULE_NAME_TOKEN } from '../../../src/constants';
 
@@ -165,7 +165,7 @@ describe('Build assets/token', () => {
 			tokenID,
 		)) as UserSubstoreEntryBuffer;
 
-		const response = await addTokenModuleEntry(
+		const response = await getTokenModuleEntry(
 			[userSubstore].map(e => ({
 				...e,
 				address: getLisk32AddressFromAddress(e.address),

@@ -11,7 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { addAuthModuleEntry, getAuthModuleEntry } from '../../../src/assets/auth';
+import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { getAuthModuleEntry, getAuthModuleEntryBuffer } from '../../../src/assets/auth';
 import { MODULE_NAME_AUTH } from '../../../src/constants';
 import {
 	Account,
@@ -84,8 +85,8 @@ describe('Build assets/auth', () => {
 		];
 	});
 
-	it('should get auth store entry', async () => {
-		const response: AuthStoreEntryBuffer = await getAuthModuleEntry(accounts[0]);
+	it('should get auth module substore entries Buffer', async () => {
+		const response: AuthStoreEntryBuffer = await getAuthModuleEntryBuffer(accounts[0]);
 
 		expect(Object.getOwnPropertyNames(response)).toEqual(['storeKey', 'storeValue']);
 		expect(response.storeKey).toBeInstanceOf(Buffer);
@@ -97,9 +98,18 @@ describe('Build assets/auth', () => {
 		]);
 	});
 
-	it('should get auth accounts', async () => {
-		const authStoreEntryBuffer: AuthStoreEntryBuffer = await getAuthModuleEntry(accounts[0]);
-		const response: GenesisAssetEntry = await addAuthModuleEntry([authStoreEntryBuffer]);
+	it('should get auth module substore entries', async () => {
+		const authStoreEntries: AuthStoreEntryBuffer = await getAuthModuleEntryBuffer(accounts[0]);
+
+		const response: GenesisAssetEntry = await getAuthModuleEntry(
+			[authStoreEntries]
+				.sort((a, b) => a.storeKey.compare(b.storeKey))
+				.map(entry => ({
+					...entry,
+					storeKey: getLisk32AddressFromAddress(entry.storeKey),
+				})),
+		);
+
 		const authDataSubstore = (response.data.authDataSubstore as unknown) as AuthStoreEntry[];
 
 		expect(response.module).toEqual(MODULE_NAME_AUTH);

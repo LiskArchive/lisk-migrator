@@ -22,9 +22,11 @@ import {
 
 import {
 	Account,
+	EscrowSubstoreEntry,
 	GenesisAssetEntry,
 	LockedBalance,
 	SupplySubstoreEntry,
+	SupportedTokensSubstoreEntry,
 	TokenStoreEntry,
 	UserSubstoreEntry,
 	UserSubstoreEntryBuffer,
@@ -96,11 +98,11 @@ export const createUserSubstoreArrayEntry = async (
 	return null;
 };
 
-export const addTokenModuleEntry = async (
+export const getTokenModuleEntry = async (
 	userSubstore: UserSubstoreEntry[],
 	supplySubstore: SupplySubstoreEntry[],
-	escrowSubstore: never[],
-	supportedTokensSubstore: never[],
+	escrowSubstore: EscrowSubstoreEntry[],
+	supportedTokensSubstore: SupportedTokensSubstoreEntry[],
 ): Promise<GenesisAssetEntry> => {
 	const tokenObj: TokenStoreEntry = {
 		userSubstore,

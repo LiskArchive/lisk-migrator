@@ -28,6 +28,7 @@ import {
 	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_BLOCKS_ID,
 	MODULE_NAME_POS,
+	EMPTY_STRING,
 } from '../constants';
 
 import {
@@ -98,7 +99,7 @@ export const createValidatorsArrayEntry = async (
 	snapshotHeight: number,
 	tokenID: string,
 ): Promise<ValidatorEntryBuffer | null> => {
-	if (account.dpos.delegate.username !== '') {
+	if (account.dpos.delegate.username !== EMPTY_STRING) {
 		const validatorAddress = account.address.toString('hex');
 
 		const validator: ValidatorEntryBuffer = Object.freeze({
@@ -207,7 +208,7 @@ export const createGenesisDataObj = async (
 	return genesisDataObj;
 };
 
-export const addPoSModuleEntry = async (
+export const getPoSModuleEntry = async (
 	validators: ValidatorEntry[],
 	stakers: Staker[],
 	genesisData: GenesisDataEntry,

@@ -37,7 +37,7 @@ import {
 	createStakersArrayEntry,
 	getStakes,
 	getValidatorKeys,
-	addPoSModuleEntry,
+	getPoSModuleEntry,
 } from '../../../src/assets/pos';
 
 jest.mock('@liskhq/lisk-db');
@@ -288,7 +288,7 @@ describe('Build assets/pos', () => {
 		const staker = (await createStakersArrayEntry(accounts[1], tokenID)) as StakerBuffer;
 		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
 
-		const posModuleAsset = await addPoSModuleEntry(
+		const posModuleAsset = await getPoSModuleEntry(
 			[validator].map(e => ({ ...e, address: getLisk32AddressFromAddress(e.address) })),
 			[staker].map(e => ({ ...e, address: getLisk32AddressFromAddress(e.address) })),
 			genesisDataObj,
