@@ -20,22 +20,31 @@ import {
 	GenesisAssetEntry,
 	LegacyStoreEntry,
 	LegacyStoreEntryBuffer,
+	Account,
 } from '../types';
 
-export const addLegacyModuleEntry = async (
+const AMOUNT_ZERO = BigInt('0');
+let legacyReserveAmount: bigint = AMOUNT_ZERO;
+
+export const getLegacyModuleEntry = async (
 	encodedUnregisteredAddresses: Buffer,
+	legacyReserveAccount: Account | undefined,
 ): Promise<GenesisAssetEntry> => {
+	legacyReserveAmount = legacyReserveAccount ? legacyReserveAccount.token.balance : AMOUNT_ZERO;
+
 	const { unregisteredAddresses } = await codec.decode<UnregisteredAddresses>(
 		unregisteredAddressesSchema,
 		encodedUnregisteredAddresses,
 	);
 
-	const legacyAccounts: LegacyStoreEntryBuffer[] = await Promise.all(
-		unregisteredAddresses.map(async account => ({
+	const legacyAccounts: LegacyStoreEntryBuffer[] = unregisteredAddresses.map(account => {
+		legacyReserveAmount += BigInt(account.balance);
+
+		return {
 			address: account.address,
 			balance: String(account.balance),
-		})),
-	);
+		};
+	});
 
 	const sortedLegacyAccounts: LegacyStoreEntry[] = legacyAccounts
 		.sort((a, b) => a.address.compare(b.address))
@@ -50,3 +59,5 @@ export const addLegacyModuleEntry = async (
 		schema: genesisLegacyStoreSchema,
 	};
 };
+
+export const getLegacyReserveAmount = () => legacyReserveAmount;

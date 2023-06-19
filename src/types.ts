@@ -175,11 +175,22 @@ export interface SupplySubstoreEntry {
 	totalSupply: string;
 }
 
+export interface EscrowSubstoreEntry {
+	escrowChainID: Buffer;
+	tokenID: Buffer;
+	amount: bigint;
+}
+
+export interface SupportedTokensSubstoreEntry {
+	chainID: Buffer;
+	supportedTokenIDs: Buffer[];
+}
+
 export interface TokenStoreEntry {
 	userSubstore: UserSubstoreEntry[];
 	supplySubstore: SupplySubstoreEntry[];
-	escrowSubstore: [];
-	supportedTokensSubstore: [];
+	escrowSubstore: EscrowSubstoreEntry[];
+	supportedTokensSubstore: SupportedTokensSubstoreEntry[];
 }
 
 export interface SharingCoefficient {

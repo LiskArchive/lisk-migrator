@@ -11,19 +11,22 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
+import {
+	hash,
+	getKeys,
+	getFirstEightBytesReversed,
+	getLisk32AddressFromAddress,
+} from '@liskhq/lisk-cryptography';
 
-import { MODULE_NAME_TOKEN } from '../../../src/constants';
-import { Account, LegacyStoreEntry } from '../../../src/types';
+import { Account, LegacyStoreEntry, UserSubstoreEntryBuffer } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
-import { ADDRESS_LISK32 } from '../utils/regex';
 
 import {
-	addTokenModuleEntry,
-	createUserSubstoreArray,
-	createSupplySubstoreArray,
+	createUserSubstoreArrayEntry,
 	createLegacyReserveAccount,
+	getTokenModuleEntry,
 } from '../../../src/assets/token';
+import { MODULE_NAME_TOKEN } from '../../../src/constants';
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = getKeys(passphrase);
@@ -124,41 +127,28 @@ describe('Build assets/token', () => {
 	});
 
 	it('should create userSubstore', async () => {
-		const userSubstore = await createUserSubstoreArray(accounts, legacyAccount, tokenID);
+		const userSubstore = (await createUserSubstoreArrayEntry(
+			accounts[0],
+			tokenID,
+		)) as UserSubstoreEntryBuffer;
 
 		// Assert
-		expect(userSubstore).toBeInstanceOf(Array);
-		userSubstore.forEach(entry => {
-			expect(entry.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(entry)).toEqual([
-				'address',
-				'tokenID',
-				'availableBalance',
-				'lockedBalances',
-			]);
-		});
-	});
-
-	it('should create supplySubStore', async () => {
-		const supplySubStore = await createSupplySubstoreArray(accounts, tokenID);
-
-		// Assert
-		let totalSupply = AMOUNT_ZERO;
-		for (const account of accounts) {
-			totalSupply += BigInt(account.token.balance);
-		}
-
-		totalSupply += legacyAccountBalance;
-
-		expect(supplySubStore).toBeInstanceOf(Array);
-		supplySubStore.forEach(entry => {
-			expect(Object.getOwnPropertyNames(entry)).toEqual(['tokenID', 'totalSupply']);
-			expect(entry.totalSupply).toEqual(String(totalSupply));
-		});
+		expect(userSubstore.address).toBeInstanceOf(Buffer);
+		expect(Object.getOwnPropertyNames(userSubstore)).toEqual([
+			'address',
+			'tokenID',
+			'availableBalance',
+			'lockedBalances',
+		]);
 	});
 
 	it('should create legacyReserveAccount', async () => {
-		const legacyReserveAccount = await createLegacyReserveAccount(accounts, legacyAccount, tokenID);
+		const legacyReserveAmount = BigInt('0');
+		const legacyReserveAccount = await createLegacyReserveAccount(
+			accounts[0],
+			legacyReserveAmount,
+			tokenID,
+		);
 
 		// Assert
 		expect(Object.getOwnPropertyNames(legacyReserveAccount)).toEqual([
@@ -170,7 +160,21 @@ describe('Build assets/token', () => {
 	});
 
 	it('should create token module asset', async () => {
-		const response = await addTokenModuleEntry(accounts, legacyAccount, tokenID);
+		const userSubstore = (await createUserSubstoreArrayEntry(
+			accounts[0],
+			tokenID,
+		)) as UserSubstoreEntryBuffer;
+
+		const response = await getTokenModuleEntry(
+			[userSubstore].map(e => ({
+				...e,
+				address: getLisk32AddressFromAddress(e.address),
+				tokenID: e.tokenID.toString('hex'),
+			})),
+			[],
+			[],
+			[],
+		);
 
 		// Assert
 		expect(response.module).toEqual(MODULE_NAME_TOKEN);

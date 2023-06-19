@@ -11,13 +11,13 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { addInteropModuleEntry } from '../../../src/assets/interoperability';
+import { getInteropModuleEntry } from '../../../src/assets/interoperability';
 import { CHAIN_NAME_MAINCHAIN, MODULE_NAME_INTEROPERABILITY } from '../../../src/constants';
 import { GenesisAssetEntry } from '../../../src/types';
 
 describe('Build assets/interoperability', () => {
 	it('should create interoperability module asset', async () => {
-		const response: GenesisAssetEntry = await addInteropModuleEntry();
+		const response: GenesisAssetEntry = await getInteropModuleEntry();
 		expect(response.module).toEqual(MODULE_NAME_INTEROPERABILITY);
 		expect(Object.getOwnPropertyNames(response.data)).toEqual([
 			'ownChainName',

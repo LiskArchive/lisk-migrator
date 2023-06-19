@@ -11,9 +11,16 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { addAuthModuleEntry } from '../../../src/assets/auth';
+import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { getAuthModuleEntry, getAuthModuleEntryBuffer } from '../../../src/assets/auth';
 import { MODULE_NAME_AUTH } from '../../../src/constants';
-import { Account, AuthAccountEntry, AuthStoreEntry, GenesisAssetEntry } from '../../../src/types';
+import {
+	Account,
+	AuthAccountEntry,
+	AuthStoreEntry,
+	AuthStoreEntryBuffer,
+	GenesisAssetEntry,
+} from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { ADDRESS_LISK32 } from '../utils/regex';
 
@@ -78,12 +85,35 @@ describe('Build assets/auth', () => {
 		];
 	});
 
-	it('should get auth accounts', async () => {
-		const response: GenesisAssetEntry = await addAuthModuleEntry(accounts);
+	it('should get auth module substore entries Buffer', async () => {
+		const response: AuthStoreEntryBuffer = await getAuthModuleEntryBuffer(accounts[0]);
+
+		expect(Object.getOwnPropertyNames(response)).toEqual(['storeKey', 'storeValue']);
+		expect(response.storeKey).toBeInstanceOf(Buffer);
+		expect(Object.getOwnPropertyNames(response.storeValue)).toEqual([
+			'numberOfSignatures',
+			'mandatoryKeys',
+			'optionalKeys',
+			'nonce',
+		]);
+	});
+
+	it('should get auth module substore entries', async () => {
+		const authStoreEntries: AuthStoreEntryBuffer = await getAuthModuleEntryBuffer(accounts[0]);
+
+		const response: GenesisAssetEntry = await getAuthModuleEntry(
+			[authStoreEntries]
+				.sort((a, b) => a.storeKey.compare(b.storeKey))
+				.map(entry => ({
+					...entry,
+					storeKey: getLisk32AddressFromAddress(entry.storeKey),
+				})),
+		);
+
 		const authDataSubstore = (response.data.authDataSubstore as unknown) as AuthStoreEntry[];
 
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
-		expect(authDataSubstore).toHaveLength(2);
+		expect(authDataSubstore).toHaveLength(1);
 		expect(Object.getOwnPropertyNames(authDataSubstore[0])).toEqual(['storeKey', 'storeValue']);
 		authDataSubstore.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
 			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
