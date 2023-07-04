@@ -37,6 +37,7 @@ export const MAX_COMMISSION = 10000;
 
 export const SNAPSHOT_BLOCK_VERSION = 0;
 export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided
+export const ALL_SUPPORTED_TOKENS_KEY = Buffer.alloc(0);
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
