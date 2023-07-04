@@ -15,7 +15,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: Install dependencies
-        run: npm install --global yarn && yarn --frozen-lockfile && yarn build
+        run: npm install --global yarn && yarn --frozen-lockfile --ignore-engines && yarn build
       - name: Check test coverage
         run: npm run test:coverage
       - name: Upload coverage to Codecov
