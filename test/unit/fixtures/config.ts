@@ -60,7 +60,7 @@ export const configV3 = {
 		maxOutboundConnections: 10,
 		maxInboundConnections: 10,
 		wsMaxPayload: 10,
-		advertiseAddress: false,
+		advertiseAddress: true,
 	},
 	transactionPool: {
 		maxTransactions: 4096,
@@ -2348,7 +2348,6 @@ export const configV3 = {
 export const configV4 = {
 	system: {
 		dataPath: '~/.lisk',
-		version: '0.1.0',
 		keepEventsForHeights: 300,
 		logLevel: 'info',
 		enableMetrics: false,
@@ -2382,6 +2381,8 @@ export const configV4 = {
 	generator: {
 		keys: {},
 	},
-	modules: {},
+	modules: {
+		pos: {},
+	},
 	plugins: {},
 };

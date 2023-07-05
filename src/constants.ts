@@ -32,8 +32,11 @@ export const CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = 'dpos:delegateVoteWeights';
 export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
 
 export const POS_INIT_ROUNDS = 60480;
-export const ROUND_LENGTH = 103;
 export const MAX_COMMISSION = 10000;
+export const NUMBER_ACTIVE_VALIDATORS = 101;
+export const NUMBER_STANDBY_VALIDATORS = 2;
+export const ROUND_LENGTH = NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS;
+export const MAX_BFT_WEIGHT_CAP = 1000;
 
 export const SNAPSHOT_BLOCK_VERSION = 0;
 export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided
@@ -55,7 +58,7 @@ const TOKEN_ID_LSK = Object.freeze({
 
 const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = Object.freeze({
 	MAINNET: 16270293,
-	TESTNET: 14075260,
+	TESTNET: 19333300,
 });
 
 export const NETWORK_CONSTANT: { [key: string]: NetworkConfigLocal } = {

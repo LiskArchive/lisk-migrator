@@ -284,7 +284,11 @@ class LiskMigrator extends Command {
 				cli.action.stop();
 
 				cli.action.start('Migrating user configuration');
-				const migratedConfigV4 = (await migrateUserConfig(configV3, configV4)) as ApplicationConfig;
+				const migratedConfigV4 = (await migrateUserConfig(
+					configV3,
+					configV4,
+					snapshotHeight,
+				)) as ApplicationConfig;
 				cli.action.stop();
 
 				cli.action.start('Validating migrated user configuration');
@@ -314,21 +318,35 @@ class LiskMigrator extends Command {
 					if (!autoMigrateUserConfig) {
 						finalConfigCorev4 = configV4;
 					}
-					const isUserConfirmed = await cli.confirm(`
+
+					// Ask user to manually stop Lisk Core v3 and continue
+					const isLiskCoreV3Stopped = await cli.confirm(`
+					Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]`);
+
+					if (isLiskCoreV3Stopped) {
+						const isUserConfirmed = await cli.confirm(`
 						Start Lisk Core with the following configuration? [yes/no] \n
-						${util.inspect(finalConfigCorev4, false, 3)}
-					`);
-					if (isUserConfirmed) {
-						cli.action.start('Starting lisk-core v4');
-						const network = networkConstant.name as string;
-						await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
-						this.log('Started Lisk Core v4 at default data directory.');
-						cli.action.stop();
+						${util.inspect(finalConfigCorev4, false, 3)}`);
+
+						if (isUserConfirmed) {
+							cli.action.start('Starting lisk-core v4');
+							const network = networkConstant.name as string;
+							await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
+							this.log('Started Lisk Core v4 at default data directory.');
+							cli.action.stop();
+						} else {
+							this.log(
+								'User did not accept the migrated config. Skipping the Lisk Core v4 auto-start process.',
+							);
+						}
 					} else {
-						this.log('Skipping auto start Lisk Core Process.');
+						this.log(
+							'User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process.',
+						);
 					}
 				} catch (err) {
-					this.error(`Failed to start Lisk Core v4. ${(err as { stack: string }).stack}`);
+					/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+					this.error(`Failed to auto-start Lisk Core v4.\nError: ${err}`);
 				}
 			}
 		} catch (error) {

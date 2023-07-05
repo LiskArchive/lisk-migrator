@@ -29,9 +29,11 @@ describe('Migrate user configuration', () => {
 	afterAll(() => fs.removeSync(migratedConfigFilePath));
 
 	it('should migrate user configuration', async () => {
+		const snapshotHeight = 10815;
 		const config = ((await migrateUserConfig(
 			(configV3 as unknown) as ApplicationConfigV3,
 			(configV4 as unknown) as ApplicationConfig,
+			snapshotHeight as number,
 		)) as unknown) as ApplicationConfig;
 		expect(Object.getOwnPropertyNames(config).length).toBeGreaterThan(0);
 
