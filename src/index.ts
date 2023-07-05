@@ -321,7 +321,7 @@ class LiskMigrator extends Command {
 
 					// Ask user to manually stop Lisk Core v3 and continue
 					const isLiskCoreV3Stopped = await cli.confirm(`
-						Please stop Lisk Core v3 and continue? [yes/no]`);
+					Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]`);
 
 					if (isLiskCoreV3Stopped) {
 						const isUserConfirmed = await cli.confirm(`
@@ -334,12 +334,19 @@ class LiskMigrator extends Command {
 							await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
+						} else {
+							this.log(
+								'User did not accept the migrated config. Skipping the Lisk Core v4 auto-start process.',
+							);
 						}
 					} else {
-						this.log('Skipping auto start Lisk Core Process.');
+						this.log(
+							'User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process.',
+						);
 					}
 				} catch (err) {
-					this.error(`Failed to start Lisk Core v4. ${(err as { stack: string }).stack}`);
+					/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+					this.error(`Failed to auto-start Lisk Core v4.\nError: ${err}`);
 				}
 			}
 		} catch (error) {
