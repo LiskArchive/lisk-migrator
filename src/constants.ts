@@ -36,6 +36,7 @@ export const MAX_COMMISSION = 10000;
 export const NUMBER_ACTIVE_VALIDATORS = 101;
 export const NUMBER_STANDBY_VALIDATORS = 2;
 export const ROUND_LENGTH = NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS;
+export const MAX_BFT_WEIGHT_CAP = 1000;
 
 export const SNAPSHOT_BLOCK_VERSION = 0;
 export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided

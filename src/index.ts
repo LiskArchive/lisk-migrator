@@ -318,16 +318,23 @@ class LiskMigrator extends Command {
 					if (!autoMigrateUserConfig) {
 						finalConfigCorev4 = configV4;
 					}
-					const isUserConfirmed = await cli.confirm(`
+
+					// Ask user to manually stop Lisk Core v3 and continue
+					const isLiskCoreV3Stopped = await cli.confirm(`
+						Please stop Lisk Core v3 and continue? [yes/no]`);
+
+					if (isLiskCoreV3Stopped) {
+						const isUserConfirmed = await cli.confirm(`
 						Start Lisk Core with the following configuration? [yes/no] \n
-						${util.inspect(finalConfigCorev4, false, 3)}
-					`);
-					if (isUserConfirmed) {
-						cli.action.start('Starting lisk-core v4');
-						const network = networkConstant.name as string;
-						await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
-						this.log('Started Lisk Core v4 at default data directory.');
-						cli.action.stop();
+						${util.inspect(finalConfigCorev4, false, 3)}`);
+
+						if (isUserConfirmed) {
+							cli.action.start('Starting lisk-core v4');
+							const network = networkConstant.name as string;
+							await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
+							this.log('Started Lisk Core v4 at default data directory.');
+							cli.action.stop();
+						}
 					} else {
 						this.log('Skipping auto start Lisk Core Process.');
 					}
