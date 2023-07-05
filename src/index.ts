@@ -284,7 +284,11 @@ class LiskMigrator extends Command {
 				cli.action.stop();
 
 				cli.action.start('Migrating user configuration');
-				const migratedConfigV4 = (await migrateUserConfig(configV3, configV4)) as ApplicationConfig;
+				const migratedConfigV4 = (await migrateUserConfig(
+					configV3,
+					configV4,
+					snapshotHeight,
+				)) as ApplicationConfig;
 				cli.action.stop();
 
 				cli.action.start('Validating migrated user configuration');

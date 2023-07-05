@@ -21,7 +21,13 @@ import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
 import { ApplicationConfigV3, LoggerConfig } from '../types';
-import { DEFAULT_VERSION, NETWORK_CONSTANT } from '../constants';
+import {
+	DEFAULT_VERSION,
+	NETWORK_CONSTANT,
+	NUMBER_ACTIVE_VALIDATORS,
+	NUMBER_STANDBY_VALIDATORS,
+	POS_INIT_ROUNDS,
+} from '../constants';
 
 const debug = debugInit('lisk:migrator');
 
@@ -104,23 +110,24 @@ export const createBackup = async (config: ApplicationConfigV3): Promise<void> =
 export const migrateUserConfig = async (
 	configV3: ApplicationConfigV3,
 	configV4: ApplicationConfig,
+	snapshotHeight: number,
 ): Promise<ApplicationConfig> => {
 	// Assign default version if not available
 	if (!configV4.system.version) {
-		cli.action.start(`Migrating config property 'system' version to: ${DEFAULT_VERSION}.`);
+		cli.action.start(`Migrating config property 'system.version' to: ${DEFAULT_VERSION}.`);
 		configV4.system.version = DEFAULT_VERSION;
 		cli.action.stop();
 	}
 
 	if (configV3.rootPath) {
-		cli.action.start(`Migrating config property 'system' dataPath to: ${configV3.rootPath}.`);
+		cli.action.start(`Migrating config property 'system.dataPath' to: ${configV3.rootPath}.`);
 		configV4.system.dataPath = configV3.rootPath;
 		cli.action.stop();
 	}
 
 	if (configV3.logger) {
 		const logLevel = getLogLevel(configV3.logger);
-		cli.action.start(`Migrating config property 'system' logLevel to: ${logLevel}.`);
+		cli.action.start(`Migrating config property 'system.logLevel' to: ${logLevel}.`);
 		configV4.system.logLevel = logLevel;
 		cli.action.stop();
 	}
@@ -128,7 +135,7 @@ export const migrateUserConfig = async (
 	if (configV3.transactionPool) {
 		if (configV3.transactionPool.maxTransactions) {
 			cli.action.start(
-				`Migrating config property 'transactionPool' maxTransactions to: ${configV3.transactionPool.maxTransactions}.`,
+				`Migrating config property 'transactionPool.maxTransactions' to: ${configV3.transactionPool.maxTransactions}.`,
 			);
 			((configV4.transactionPool
 				.maxTransactions as unknown) as number) = configV3.transactionPool.maxTransactions;
@@ -137,7 +144,7 @@ export const migrateUserConfig = async (
 
 		if (configV3.transactionPool.maxTransactionsPerAccount) {
 			cli.action.start(
-				`Migrating config property 'transactionPool' maxTransactionsPerAccount to: ${configV3.transactionPool.maxTransactionsPerAccount}.`,
+				`Migrating config property 'transactionPool.maxTransactionsPerAccount' to: ${configV3.transactionPool.maxTransactionsPerAccount}.`,
 			);
 			((configV4.transactionPool
 				.maxTransactionsPerAccount as unknown) as number) = configV3.transactionPool.maxTransactionsPerAccount;
@@ -146,7 +153,7 @@ export const migrateUserConfig = async (
 
 		if (configV3.transactionPool.transactionExpiryTime) {
 			cli.action.start(
-				`Migrating config property 'transactionPool' transactionExpiryTime to: ${configV3.transactionPool.transactionExpiryTime}.`,
+				`Migrating config property 'transactionPool.transactionExpiryTime' to: ${configV3.transactionPool.transactionExpiryTime}.`,
 			);
 			((configV4.transactionPool
 				.transactionExpiryTime as unknown) as number) = configV3.transactionPool.transactionExpiryTime;
@@ -155,7 +162,7 @@ export const migrateUserConfig = async (
 
 		if (configV3.transactionPool.minEntranceFeePriority) {
 			cli.action.start(
-				`Migrating config property 'transactionPool' minEntranceFeePriority to: ${configV3.transactionPool.minEntranceFeePriority}.`,
+				`Migrating config property 'transactionPool.minEntranceFeePriority' to: ${configV3.transactionPool.minEntranceFeePriority}.`,
 			);
 			((configV4.transactionPool
 				.minEntranceFeePriority as unknown) as string) = configV3.transactionPool.minEntranceFeePriority;
@@ -164,7 +171,7 @@ export const migrateUserConfig = async (
 
 		if (configV3.transactionPool.minReplacementFeeDifference) {
 			cli.action.start(
-				`Migrating config property 'transactionPool' minReplacementFeeDifference to: ${configV3.transactionPool.minReplacementFeeDifference}.`,
+				`Migrating config property 'transactionPool.minReplacementFeeDifference' to: ${configV3.transactionPool.minReplacementFeeDifference}.`,
 			);
 			((configV4.transactionPool
 				.minReplacementFeeDifference as unknown) as string) = configV3.transactionPool.minReplacementFeeDifference;
@@ -173,27 +180,27 @@ export const migrateUserConfig = async (
 	}
 
 	if (configV3.rpc?.mode) {
-		cli.action.start(`Migrating config property 'rpc' mode to: ${configV3.rpc.mode}.`);
+		cli.action.start(`Migrating config property 'rpc.mode' to: ${configV3.rpc.mode}.`);
 		configV4.rpc.modes = [configV3.rpc.mode];
 		cli.action.stop();
 	}
 
 	if (configV3.network) {
 		if (configV3.network.port) {
-			cli.action.start(`Migrating config property 'network' port to: ${configV3.network.port}.`);
+			cli.action.start(`Migrating config property 'network.port' to: ${configV3.network.port}.`);
 			configV4.network.port = configV3.network.port;
 			cli.action.stop();
 		}
 
 		if (configV3.network.hostIp) {
-			cli.action.start(`Migrating config property 'network' host to: ${configV3.network.hostIp}.`);
+			cli.action.start(`Migrating config property 'network.host' to: ${configV3.network.hostIp}.`);
 			configV4.network.host = configV3.network.hostIp;
 			cli.action.stop();
 		}
 
 		if (configV3.network.maxOutboundConnections) {
 			cli.action.start(
-				`Migrating config property 'network' maxOutboundConnections to: ${configV3.network.maxOutboundConnections}.`,
+				`Migrating config property 'network.maxOutboundConnections' to: ${configV3.network.maxOutboundConnections}.`,
 			);
 			configV4.network.maxOutboundConnections = configV3.network.maxOutboundConnections;
 			cli.action.stop();
@@ -201,7 +208,7 @@ export const migrateUserConfig = async (
 
 		if (configV3.network.maxInboundConnections) {
 			cli.action.start(
-				`Migrating config property 'network' maxInboundConnections to: ${configV3.network.maxInboundConnections}.`,
+				`Migrating config property 'network.maxInboundConnections' to: ${configV3.network.maxInboundConnections}.`,
 			);
 			configV4.network.maxInboundConnections = configV3.network.maxInboundConnections;
 			cli.action.stop();
@@ -209,7 +216,7 @@ export const migrateUserConfig = async (
 
 		if (configV3.network.wsMaxPayload) {
 			cli.action.start(
-				`Migrating config property 'network' wsMaxPayload to: ${configV3.network.wsMaxPayload}.`,
+				`Migrating config property 'network.wsMaxPayload' to: ${configV3.network.wsMaxPayload}.`,
 			);
 			configV4.network.wsMaxPayload = configV3.network.wsMaxPayload;
 			cli.action.stop();
@@ -217,12 +224,21 @@ export const migrateUserConfig = async (
 
 		if (configV3.network.advertiseAddress) {
 			cli.action.start(
-				`Migrating config property 'network' advertiseAddress to: ${configV3.network.advertiseAddress}.`,
+				`Migrating config property 'network.advertiseAddress' to: ${configV3.network.advertiseAddress}.`,
 			);
 			configV4.network.advertiseAddress = configV3.network.advertiseAddress;
 			cli.action.stop();
 		}
 	}
+
+	cli.action.start("Calculating and updating config property 'genesis.minimumCertifyHeight'.");
+	configV4.genesis.minimumCertifyHeight =
+		snapshotHeight +
+		1 +
+		(POS_INIT_ROUNDS + NUMBER_ACTIVE_VALIDATORS - 1) *
+			(NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS) +
+		1;
+	cli.action.stop();
 
 	return configV4;
 };
