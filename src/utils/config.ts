@@ -23,6 +23,7 @@ import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
 import { ApplicationConfigV3, LoggerConfig } from '../types';
 import {
 	DEFAULT_VERSION,
+	MAX_BFT_WEIGHT_CAP,
 	NETWORK_CONSTANT,
 	NUMBER_ACTIVE_VALIDATORS,
 	NUMBER_STANDBY_VALIDATORS,
@@ -239,6 +240,14 @@ export const migrateUserConfig = async (
 			(NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS) +
 		1;
 	cli.action.stop();
+
+	if (configV4.modules.pos && !configV4.modules.pos.maxBFTWeightCap) {
+		cli.action.start(
+			`Update config property 'modules.pos.maxBFTWeightCap' to: ${MAX_BFT_WEIGHT_CAP}.`,
+		);
+		configV4.modules.pos.maxBFTWeightCap = MAX_BFT_WEIGHT_CAP;
+		cli.action.stop();
+	}
 
 	return configV4;
 };
