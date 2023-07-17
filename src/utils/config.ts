@@ -239,8 +239,7 @@ export const migrateUserConfig = async (
 		snapshotHeight +
 		1 +
 		(POS_INIT_ROUNDS + NUMBER_ACTIVE_VALIDATORS - 1) *
-			(NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS) +
-		1;
+			(NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS);
 	cli.action.stop();
 
 	if (configV4.modules.pos && !configV4.modules.pos.maxBFTWeightCap) {
