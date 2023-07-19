@@ -58,8 +58,8 @@ const TOKEN_ID_LSK = Object.freeze({
 
 const HEIGHT_PREVIOUS_SNAPSHOT_BLOCK = Object.freeze({
 	MAINNET: 16270293,
-	TESTNET: 19333300,
-});
+	TESTNET: 14075260,
+}) as { [key: string]: number };
 
 export const NETWORK_CONSTANT: { [key: string]: NetworkConfigLocal } = {
 	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': {
