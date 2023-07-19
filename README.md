@@ -20,8 +20,8 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies | Version        |
 | ------------ | -------------- |
-| NodeJS       | 16.20          |
-| Lisk Core    | 3.0.4 or later |
+| NodeJS       | 18.16          |
+| Lisk Core    | 3.0.5 or later |
 
 ## Setup
 
@@ -36,7 +36,7 @@ $ npm install -g lisk-migrator
 $ lisk-migrator COMMAND
 running command...
 $ lisk-migrator (-v|--version|version)
-lisk-migrator/2.0.0-beta.0 darwin-arm64 node-v16.20.0
+lisk-migrator/2.0.0-beta.2 darwin-arm64 node-v18.16.1
 $ lisk-migrator --help [COMMAND]
 USAGE
   $ lisk-migrator COMMAND
@@ -65,7 +65,7 @@ $ npx oclif-dev pack --targets=linux-x64,darwin-x64
 
 <!-- commands -->
 
-# Commands
+# Command Topics
 
 - [`lisk-migrator help`](docs/commands/help.md) - display help for lisk-migrator
 
