@@ -12,11 +12,9 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import cli from 'cli-ux';
-import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
 import { NETWORK_CONSTANT } from '../constants';
 
-let blockIDAtSnapshotHeight: string;
 let tokenIDLsk: string;
 let heightPreviousSnapshotBlock: number;
 
@@ -49,26 +47,6 @@ export const getNodeInfo = async (
 	const client = await getAPIClient(liskCorePath);
 	const { height, finalizedHeight } = await client.node.getNodeInfo();
 	return { height, finalizedHeight };
-};
-
-export const setBlockIDAtSnapshotHeight = async (
-	liskCorePath: string,
-	height: number,
-): Promise<void> => {
-	const client = await getAPIClient(liskCorePath);
-	const result = (await client.block.getByHeight(height)) as Record<string, Block>;
-	const blockHeader = (result.header as unknown) as BlockHeader;
-	blockIDAtSnapshotHeight = blockHeader.id.toString('hex');
-};
-
-export const getBlockIDAtSnapshotHeight = (): string => blockIDAtSnapshotHeight;
-
-export const getBlockIDAtHeight = async (liskCorePath: string, height: number): Promise<string> => {
-	const client = await getAPIClient(liskCorePath);
-	const result: Record<string, unknown> = await client.block.getByHeight(height);
-	const blockHeader = (result.header as unknown) as BlockHeader;
-	const blockID = blockHeader.id.toString('hex');
-	return blockID;
 };
 
 const secondsToHumanString = (seconds: number): string => {
