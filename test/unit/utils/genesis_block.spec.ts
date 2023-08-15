@@ -17,7 +17,7 @@ import { when } from 'jest-when';
 import { Application, Block as BlockVersion4 } from 'lisk-framework';
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
 
 import { CreateAsset } from '../../../src/createAsset';
@@ -39,6 +39,7 @@ import { createFakeDefaultAccount } from './account';
 
 import { UnregisteredAccount, Account, VoteWeightsWrapper } from '../../../src/types';
 import { generateBlocks } from './blocks';
+import { formatInt } from '../../../src/assets/pos';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -82,7 +83,7 @@ describe('Create genesis block', () => {
 
 	describe('Create/Export Genesis block', () => {
 		beforeAll(async () => {
-			db = new KVStore('testDB');
+			db = new Database('testDB');
 			createAsset = new CreateAsset(db);
 			app = Application.defaultApplication(
 				{
@@ -201,26 +202,28 @@ describe('Create genesis block', () => {
 
 		it('should create genesis block', async () => {
 			when(db.get)
-				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
+				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`))
 				.mockResolvedValue(encodedUnregisteredAddresses as never);
 
 			const encodedAccount = await codec.encode(accountSchema, accounts[0]);
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
-					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
+					lte: Buffer.from(
+						`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					),
 				})
 				.mockReturnValue(Readable.from([{ value: Buffer.from(encodedAccount) }]));
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 				})
 				.mockReturnValue(Readable.from([]));
 
 			when(db.get)
-				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
+				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
 				.mockResolvedValue(encodedVoteWeights as never);
 
 			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);

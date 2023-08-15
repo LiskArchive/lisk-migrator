@@ -17,7 +17,7 @@ import { when } from 'jest-when';
 
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { Block, blockHeaderSchema, blockHeaderAssetSchema } from '@liskhq/lisk-chain';
 
 import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID, MODULE_NAME_POS } from '../../../src/constants';
@@ -38,6 +38,7 @@ import {
 	getStakes,
 	getValidatorKeys,
 	getPoSModuleEntry,
+	formatInt,
 } from '../../../src/assets/pos';
 
 jest.mock('@liskhq/lisk-db');
@@ -53,7 +54,7 @@ describe('Build assets/pos', () => {
 	const snapshotHeightPrevious = 5000;
 
 	beforeAll(async () => {
-		db = new KVStore('testDB');
+		db = new Database('testDB');
 		blocks = generateBlocks({
 			startHeight: 1,
 			numberOfBlocks: 10,
@@ -149,8 +150,8 @@ describe('Build assets/pos', () => {
 	it('should create createValidatorsArrayEntry', async () => {
 		when(db.createReadStream)
 			.calledWith({
-				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 			})
 			.mockReturnValue(Readable.from(blockIDsStream));
 
@@ -161,7 +162,7 @@ describe('Build assets/pos', () => {
 				asset: blockAssetBuffer,
 			});
 			when(db.get)
-				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
+				.calledWith(Buffer.from(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`))
 				.mockResolvedValue(blockHeader as never);
 		});
 
@@ -242,8 +243,8 @@ describe('Build assets/pos', () => {
 	it('should throw error when creating stream with invalid file path', async () => {
 		when(db.createReadStream)
 			.calledWith({
-				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 			})
 			.mockReturnValue(createReadStream('test.txt') as never);
 
@@ -255,8 +256,8 @@ describe('Build assets/pos', () => {
 	it('should create PoS module asset', async () => {
 		when(db.createReadStream)
 			.calledWith({
-				gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-				lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 			})
 			.mockReturnValue(Readable.from(blockIDsStream));
 

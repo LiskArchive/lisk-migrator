@@ -17,7 +17,7 @@ import { when } from 'jest-when';
 
 import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { CreateAsset } from '../../src/createAsset';
 import {
 	DB_KEY_CHAIN_STATE,
@@ -41,6 +41,7 @@ import {
 	GenesisAssetEntry,
 	VoteWeightsWrapper,
 } from '../../src/types';
+import { formatInt } from '../../src/assets/pos';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -81,7 +82,7 @@ describe('Build assets/legacy', () => {
 
 	describe('createAsset', () => {
 		beforeAll(async () => {
-			db = new KVStore('testDB');
+			db = new Database('testDB');
 			createAsset = new CreateAsset(db);
 
 			for (const account of Object.values(testAccounts)) {
@@ -193,26 +194,28 @@ describe('Build assets/legacy', () => {
 
 		it('should create assets', async () => {
 			when(db.get)
-				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`)
+				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`))
 				.mockResolvedValue(encodedUnregisteredAddresses as never);
 
 			const encodedAccount = await codec.encode(accountSchema, accounts[0]);
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
-					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
+					lte: Buffer.from(
+						`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					),
 				})
 				.mockReturnValue(Readable.from([{ value: Buffer.from(encodedAccount) }]));
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 				})
 				.mockReturnValue(Readable.from([]));
 
 			when(db.get)
-				.calledWith(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`)
+				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
 				.mockResolvedValue(encodedVoteWeights as never);
 
 			const response = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
@@ -235,8 +238,10 @@ describe('Build assets/legacy', () => {
 		it('should throw error when account stream is undefined', async () => {
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
-					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
+					lte: Buffer.from(
+						`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					),
 				})
 				.mockReturnValue(undefined);
 
@@ -248,8 +253,8 @@ describe('Build assets/legacy', () => {
 		it('should throw error when block stream is undefined', async () => {
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-					lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 				})
 				.mockReturnValue(undefined);
 
@@ -265,8 +270,10 @@ describe('Build assets/legacy', () => {
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
-					lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
+					lte: Buffer.from(
+						`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+					),
 				})
 				.mockReturnValue(createReadStream('test.txt') as never);
 
