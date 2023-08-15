@@ -25,6 +25,7 @@ import {
 	ROUND_LENGTH,
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
+	DEFAULT_LISK_CORE_PATH,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -109,7 +110,7 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		try {
 			const { flags } = this.parse(LiskMigrator);
-			const liskCorePath = flags['lisk-core-v3-data-path'] ?? process.cwd();
+			const liskCorePath = flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH;
 			const outputPath = flags.output ?? join(__dirname, '..', 'output');
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
