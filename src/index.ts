@@ -15,12 +15,17 @@ import util from 'util';
 import * as fs from 'fs-extra';
 import { join } from 'path';
 import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-framework';
-import { KVStore } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
 import { Block } from '@liskhq/lisk-chain';
-import { NETWORK_CONSTANT, ROUND_LENGTH, SNAPSHOT_DIR, EXACT_LISK_CORE_VERSION } from './constants';
+import {
+	NETWORK_CONSTANT,
+	ROUND_LENGTH,
+	SNAPSHOT_DIR,
+	MIN_SUPPORTED_LISK_CORE_VERSION,
+} from './constants';
 import { getAPIClient } from './client';
 import {
 	getConfig,
@@ -32,9 +37,6 @@ import {
 } from './utils/config';
 import {
 	observeChainHeight,
-	setBlockIDAtSnapshotHeight,
-	getBlockIDAtSnapshotHeight,
-	getBlockIDAtHeight,
 	getTokenIDLsk,
 	getHeightPrevSnapshotBlock,
 	setTokenIDLskByNetID,
@@ -42,17 +44,10 @@ import {
 } from './utils/chain';
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
-import { ApplicationConfigV3, NetworkConfigLocal } from './types';
+import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
 
 let finalConfigCorev4: PartialApplicationConfig;
-
-// // TODO: Import snapshot command from core once implemented
-// const createSnapshot = async (liskCorePath: string, snapshotPath: string) => ({
-// 	liskCorePath,
-// 	snapshotPath,
-// });
-
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
@@ -123,14 +118,16 @@ class LiskMigrator extends Command {
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
 			const client = await getAPIClient(liskCorePath);
-			const nodeInfo = await client.node.getNodeInfo();
+			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
 			const { version: appVersion, networkIdentifier } = nodeInfo;
 
-			// cli.action.start('Verifying if backup height from the node config matches snapshot height');
-			// if (snapshotHeight !== nodeInfo.backup.height) {
-			// 	this.error(`Snapshot height ${snapshotHeight} does not matches backup height ${nodeInfo.backup.height}.`);
-			// }
-			// cli.action.stop('Snapshot Height matches backup height');
+			cli.action.start('Verifying if backup height from node config matches snapshot height');
+			if (snapshotHeight !== nodeInfo.backup.height) {
+				this.error(
+					`Snapshot height ${snapshotHeight} does not matches backup height ${nodeInfo.backup.height}.`,
+				);
+			}
+			cli.action.stop('Snapshot Height matches backup height');
 
 			cli.action.start(
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -155,12 +152,12 @@ class LiskMigrator extends Command {
 			const liskCoreVersion = semver.coerce(appVersion);
 			if (!liskCoreVersion) {
 				this.error(
-					`Unsupported lisk-core version detected. Supported version range ${EXACT_LISK_CORE_VERSION}.`,
+					`Unsupported lisk-core version detected. Supported version range ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
-			if (!semver.eq(EXACT_LISK_CORE_VERSION, liskCoreVersion)) {
+			if (!semver.gte(MIN_SUPPORTED_LISK_CORE_VERSION, liskCoreVersion)) {
 				this.error(
-					`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${EXACT_LISK_CORE_VERSION}.`,
+					`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			cli.action.stop(`${liskCoreVersion.version} detected`);
@@ -174,16 +171,6 @@ class LiskMigrator extends Command {
 			await setHeightPrevSnapshotBlockByNetID(networkIdentifier);
 
 			await observeChainHeight({
-				label: 'Waiting for snapshot height',
-				liskCorePath,
-				height: snapshotHeight,
-				delay: 500,
-				isFinal: false,
-			});
-
-			await setBlockIDAtSnapshotHeight(liskCorePath, snapshotHeight);
-
-			await observeChainHeight({
 				label: 'Waiting for snapshot height to be finalized',
 				liskCorePath,
 				height: snapshotHeight,
@@ -191,19 +178,10 @@ class LiskMigrator extends Command {
 				isFinal: true,
 			});
 
-			const blockID = getBlockIDAtSnapshotHeight();
-			const finalizedBlockID = await getBlockIDAtHeight(liskCorePath, snapshotHeight);
-
-			cli.action.start('Verifying blockID');
-			if (blockID !== finalizedBlockID) {
-				this.error('Snapshotted blockID does not match with the finalized blockID.');
-			}
-			cli.action.stop();
-
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const snapshotFilePath = join(liskCorePath, SNAPSHOT_DIR);
-			const db = new KVStore(snapshotFilePath);
+			const snapshotDirPath = join(liskCorePath, SNAPSHOT_DIR);
+			const db = new Database(snapshotDirPath);
 			cli.action.stop();
 
 			// Create genesis assets

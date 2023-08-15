@@ -116,12 +116,8 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		? (await getNodeInfo(options.liskCorePath)).finalizedHeight
 		: (await getNodeInfo(options.liskCorePath)).height;
 
-	if (startHeight === observedHeight) {
+	if (startHeight >= observedHeight) {
 		return startHeight;
-	}
-
-	if (startHeight > observedHeight) {
-		throw new Error(`Chain height: ${startHeight} crossed the observed height: ${observedHeight}`);
 	}
 
 	const progress = cli.progress({
@@ -158,15 +154,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 				height,
 			});
 
-			if (height === observedHeight) {
+			if (height >= observedHeight) {
 				clearInterval(intervalId);
 				return resolve(height);
-			}
-
-			if (height > observedHeight) {
-				return reject(
-					new Error(`Chain height: ${height} crossed the observed height: ${observedHeight}`),
-				);
 			}
 		};
 

@@ -623,14 +623,14 @@
     ws "8.11.0"
     zeromq "6.0.0-beta.6"
 
-"@liskhq/lisk-api-client@5.1.6":
-  version "5.1.6"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-api-client/-/lisk-api-client-5.1.6.tgz"
-  integrity sha512-SacmT4+FJchVG6aXwkxJc9zG4ontgYopSX/PnltEwLQRlpymkdzAry2XBvnDcXqrliPmuvu5sLgO3Rf4RLH0iQ==
+"@liskhq/lisk-api-client@5.1.7-alpha.2":
+  version "5.1.7-alpha.2"
+  resolved "https://npm.lisk.com/@liskhq/lisk-api-client/-/lisk-api-client-5.1.7-alpha.2.tgz"
+  integrity sha512-dE7QtO0ic0vwvL58UHwrQUpa0gQRxuyKUscWtBvu466pc+SjrlpcQBzQlxgHZ2wCifUzIDZpYdgs3c0c3wHjZw==
   dependencies:
-    "@liskhq/lisk-codec" "^0.2.2"
-    "@liskhq/lisk-cryptography" "^3.2.1"
-    "@liskhq/lisk-transactions" "^5.2.2"
+    "@liskhq/lisk-codec" "^0.2.3-alpha.1"
+    "@liskhq/lisk-cryptography" "^3.2.2-alpha.1"
+    "@liskhq/lisk-transactions" "^5.2.3-alpha.1"
     isomorphic-ws "4.0.1"
     pm2-axon "4.0.1"
     pm2-axon-rpc "0.7.1"
@@ -649,26 +649,26 @@
     "@liskhq/lisk-validator" "^0.7.0-beta.4"
     debug "4.3.4"
 
-"@liskhq/lisk-chain@0.3.4":
-  version "0.3.4"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-chain/-/lisk-chain-0.3.4.tgz"
-  integrity sha512-GsmtHfqX6EMSBKV39Dg126UKgOd9GwxFO0/F3UXddxkjoZI0W8rYOo+hj0z2T9I3dz9M9HRYTkswLlxL49g0Ew==
+"@liskhq/lisk-chain@0.3.5-alpha.2":
+  version "0.3.5-alpha.2"
+  resolved "https://npm.lisk.com/@liskhq/lisk-chain/-/lisk-chain-0.3.5-alpha.2.tgz"
+  integrity sha512-hT6FGn3xyrpR4rDgWddK92x7WNUTodAEIQK1/5swaeX0o49hmJDZIrEF9PKCvGbaL+k0hDMmUdzTuem/6CpnHA==
   dependencies:
-    "@liskhq/lisk-codec" "^0.2.2"
-    "@liskhq/lisk-cryptography" "^3.2.1"
-    "@liskhq/lisk-db" "^0.2.1"
-    "@liskhq/lisk-tree" "^0.2.2"
-    "@liskhq/lisk-utils" "^0.2.1"
-    "@liskhq/lisk-validator" "^0.6.2"
+    "@liskhq/lisk-codec" "^0.2.3-alpha.1"
+    "@liskhq/lisk-cryptography" "^3.2.2-alpha.1"
+    "@liskhq/lisk-db" "^0.3.6"
+    "@liskhq/lisk-tree" "^0.2.3-alpha.1"
+    "@liskhq/lisk-utils" "^0.2.2-alpha.1"
+    "@liskhq/lisk-validator" "^0.6.3-alpha.1"
     debug "4.3.4"
 
-"@liskhq/lisk-codec@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-codec/-/lisk-codec-0.2.2.tgz"
-  integrity sha512-TrjZYBrhKLNBuPIG0hIKVzb2UddzmhjWNvQE3RQWuBcLK1BbnSr7Zz7r0B1Ta2Rrd1+gJNjF1U6SkXAcqEkw1A==
+"@liskhq/lisk-codec@^0.2.3-alpha.1":
+  version "0.2.3-alpha.1"
+  resolved "https://npm.lisk.com/@liskhq/lisk-codec/-/lisk-codec-0.2.3-alpha.1.tgz"
+  integrity sha512-1oaWdM/ZwJj9mMMgQFY2w2i3yCfAwMgWpSVOeMRL1p3Rzi2uf4Hp4KOAP3Zy6lWMcTkIcMJ44jdHkccFQ9J/lQ==
   dependencies:
-    "@liskhq/lisk-utils" "^0.2.1"
-    "@liskhq/lisk-validator" "^0.6.2"
+    "@liskhq/lisk-utils" "^0.2.2-alpha.1"
+    "@liskhq/lisk-validator" "^0.6.3-alpha.1"
 
 "@liskhq/lisk-codec@^0.3.0-beta.4", "@liskhq/lisk-codec@0.3.0-beta.4":
   version "0.3.0-beta.4"
@@ -679,10 +679,10 @@
     "@liskhq/lisk-utils" "^0.3.0-beta.3"
     "@liskhq/lisk-validator" "^0.7.0-beta.4"
 
-"@liskhq/lisk-cryptography@^3.2.1", "@liskhq/lisk-cryptography@3.2.1":
-  version "3.2.1"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-cryptography/-/lisk-cryptography-3.2.1.tgz"
-  integrity sha512-n1yoVXSzKj9ZeVMvOmVkpZwyRBcvInu0sXBB7Z7d1bsgAiTSGKJDz6TVGWTwpEkfn0kk79Sie2QBbulaON57YQ==
+"@liskhq/lisk-cryptography@^3.2.2-alpha.1", "@liskhq/lisk-cryptography@3.2.2-alpha.1":
+  version "3.2.2-alpha.1"
+  resolved "https://npm.lisk.com/@liskhq/lisk-cryptography/-/lisk-cryptography-3.2.2-alpha.1.tgz"
+  integrity sha512-TVIb2ZC7iZQwmFJ8ScDs0PdXanGsXCHxiX4wtuBuWz2g7vh4fTf7NSoDQ27vyct+jsrqmn7Faqr5DmQpZOjnWg==
   dependencies:
     buffer-reverse "1.0.1"
     ed2curve "0.3.0"
@@ -702,14 +702,25 @@
     tweetnacl "1.0.3"
     varuint-bitcoin "1.1.2"
 
-"@liskhq/lisk-db@^0.2.1", "@liskhq/lisk-db@0.2.1":
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-db/-/lisk-db-0.2.1.tgz"
-  integrity sha512-YhjRJfdO/uiAVpjyvls95RGEHVfnSiq+MuKc7Pk9idcQkigradzCgergU4jMekx11jfiiMcAGJsUZvFbK38tQw==
+"@liskhq/lisk-db@^0.3.6":
+  version "0.3.7"
+  resolved "https://npm.lisk.com/@liskhq/lisk-db/-/lisk-db-0.3.7.tgz"
+  integrity sha512-n0/i3lea8ApTaSX99mhEJr3IZgG5l65M8Bmoo3D4ytbzyTySY9q7ITqj0y3kEZd997g4IUJl0x6Slq2RgFeucA==
   dependencies:
-    debug "4.3.4"
-    levelup "4.4.0"
-    rocksdb "5.1.1"
+    "@mapbox/node-pre-gyp" "^1.0.9"
+    "@types/node" "^16 || ^18"
+    cargo-cp-artifact "^0.1"
+    shelljs "^0.8.5"
+
+"@liskhq/lisk-db@0.3.6":
+  version "0.3.6"
+  resolved "https://npm.lisk.com/@liskhq/lisk-db/-/lisk-db-0.3.6.tgz"
+  integrity sha512-x1NtivGhfIrgzusDhOTqiz7eNIpQbNrPnEbEcbK32Iz1KWagZpdaJ6kOAXTTNA4QBwM6brbmxjFagFPvIMkgnw==
+  dependencies:
+    "@mapbox/node-pre-gyp" "^1.0.9"
+    "@types/node" "^16 || ^18"
+    cargo-cp-artifact "^0.1"
+    shelljs "^0.8.5"
 
 "@liskhq/lisk-db@0.3.7":
   version "0.3.7"
@@ -750,14 +761,14 @@
     "@liskhq/lisk-utils" "^0.3.0-beta.3"
     debug "4.3.4"
 
-"@liskhq/lisk-transactions@^5.2.2":
-  version "5.2.2"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-transactions/-/lisk-transactions-5.2.2.tgz"
-  integrity sha512-jmwTK15y/RjMQCHSJqbDECTZUR/UKxpp4xYiQTqtoxy7TAztrphurnVZXSwtW52/vEVNCSGA8GCHfgCjtBqgAA==
+"@liskhq/lisk-transactions@^5.2.3-alpha.1":
+  version "5.2.3-alpha.1"
+  resolved "https://npm.lisk.com/@liskhq/lisk-transactions/-/lisk-transactions-5.2.3-alpha.1.tgz"
+  integrity sha512-OV3fddXvAxPwiHhNicgAAWdPkY6vkhIMCWAhWhPcDr7xQnZvn1OSNjHbOsJXgUI+OJacF7FoqEnA8Lyg4EvAOw==
   dependencies:
-    "@liskhq/lisk-codec" "^0.2.2"
-    "@liskhq/lisk-cryptography" "^3.2.1"
-    "@liskhq/lisk-validator" "^0.6.2"
+    "@liskhq/lisk-codec" "^0.2.3-alpha.1"
+    "@liskhq/lisk-cryptography" "^3.2.2-alpha.1"
+    "@liskhq/lisk-validator" "^0.6.3-alpha.1"
 
 "@liskhq/lisk-transactions@^6.0.0-beta.4":
   version "6.0.0-beta.4"
@@ -768,13 +779,13 @@
     "@liskhq/lisk-cryptography" "^4.0.0-beta.3"
     "@liskhq/lisk-validator" "^0.7.0-beta.4"
 
-"@liskhq/lisk-tree@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-tree/-/lisk-tree-0.2.2.tgz"
-  integrity sha512-BSuKh/OpykVTQ5I6ocmtY6J8tieu3/4ikbAD1t1npkpCC5YzKu5ARtzPQw/Y70oYLwO6RsutefrTLLIsIt+Ifw==
+"@liskhq/lisk-tree@^0.2.3-alpha.1":
+  version "0.2.3-alpha.1"
+  resolved "https://npm.lisk.com/@liskhq/lisk-tree/-/lisk-tree-0.2.3-alpha.1.tgz"
+  integrity sha512-iHxvfpZEHyWsXBrHXknML3FsprPxf8x38b6DsQr+XcXy0csOGYQJ4nLlP0esId1YPzH0pDJoFAxbxaxACFCc3w==
   dependencies:
-    "@liskhq/lisk-cryptography" "^3.2.1"
-    "@liskhq/lisk-utils" "^0.2.1"
+    "@liskhq/lisk-cryptography" "^3.2.2-alpha.1"
+    "@liskhq/lisk-utils" "^0.2.2-alpha.1"
 
 "@liskhq/lisk-tree@^0.3.0-beta.4":
   version "0.3.0-beta.4"
@@ -784,10 +795,10 @@
     "@liskhq/lisk-cryptography" "^4.0.0-beta.3"
     "@liskhq/lisk-utils" "^0.3.0-beta.3"
 
-"@liskhq/lisk-utils@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-utils/-/lisk-utils-0.2.1.tgz"
-  integrity sha512-2vPLoCRVJVYEh8KUePBj/qBrD3i9aM5g3lhimn+RiEweKQSpBBe+BGcBIuNeKtCJtm2A0ChVjSXJV39t7nNh+A==
+"@liskhq/lisk-utils@^0.2.2-alpha.1":
+  version "0.2.2-alpha.1"
+  resolved "https://npm.lisk.com/@liskhq/lisk-utils/-/lisk-utils-0.2.2-alpha.1.tgz"
+  integrity sha512-sUwU22WPKSX7B2GjRNpnJEphqmCy5MHmbo/mIKSvxBd0OReoJ0yxkEQ1rUWgiWb8EFijJK9fbykLWbCELJaEwQ==
   dependencies:
     lodash.clonedeep "4.5.0"
 
@@ -798,12 +809,12 @@
   dependencies:
     lodash.clonedeep "4.5.0"
 
-"@liskhq/lisk-validator@^0.6.2":
-  version "0.6.2"
-  resolved "https://registry.npmjs.org/@liskhq/lisk-validator/-/lisk-validator-0.6.2.tgz"
-  integrity sha512-BUqi74EqnrTtpVsjGVgD4et8/nJdA/Oau9tK+SeD2vCrzwA09+AI8Eow5d4arJMcvtjOeNbgX7FApJs8MQ38Xw==
+"@liskhq/lisk-validator@^0.6.3-alpha.1":
+  version "0.6.3-alpha.1"
+  resolved "https://npm.lisk.com/@liskhq/lisk-validator/-/lisk-validator-0.6.3-alpha.1.tgz"
+  integrity sha512-S43yRepcyb3Giz59c6Oom1ifOcN6/y9JwOtHJTmP6UY0GFPdxnBq/8KQSRoahXIIo/a0cO+WYO6zswfx2NVL3g==
   dependencies:
-    "@liskhq/lisk-cryptography" "^3.2.1"
+    "@liskhq/lisk-cryptography" "^3.2.2-alpha.1"
     ajv "8.1.0"
     ajv-formats "2.0.2"
     debug "4.3.4"
@@ -1182,9 +1193,9 @@
   integrity sha512-O+x6uIpa6oMNTkPuHDa9MhMMehlxLAd5QcOvKRjAFsBVpeFWTOPnXbDvILvFgFFZfQ1xh1EZi1FbXxUix+zpsQ==
 
 "@types/node@^16 || ^18":
-  version "18.17.4"
-  resolved "https://registry.npmjs.org/@types/node/-/node-18.17.4.tgz"
-  integrity sha512-ATL4WLgr7/W40+Sp1WnNTSKbgVn6Pvhc/2RHAdt8fl6NsQyp4oPCi2eKcGOvA494bwf1K/W6nGgZ9TwDqvpjdw==
+  version "18.17.5"
+  resolved "https://npm.lisk.com/@types/node/-/node-18.17.5.tgz"
+  integrity sha512-xNbS75FxH6P4UXTPUJp/zNPq6/xsfdJKussCWNOnz4aULWIRwMgP1LgaB5RiBnMX1DPCYenuqGZfnIAx5mbFLA==
 
 "@types/node@11.11.6":
   version "11.11.6"
@@ -1406,29 +1417,6 @@ abbrev@1:
   resolved "https://registry.npmjs.org/abbrev/-/abbrev-1.1.1.tgz"
   integrity sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==
 
-abstract-leveldown@^7.0.0:
-  version "7.2.0"
-  resolved "https://registry.npmjs.org/abstract-leveldown/-/abstract-leveldown-7.2.0.tgz"
-  integrity sha512-DnhQwcFEaYsvYDnACLZhMmCWd3rkOeEvglpa4q5i/5Jlm3UIsWaxVzuXvDLFCSCWRO3yy2/+V/G7FusFgejnfQ==
-  dependencies:
-    buffer "^6.0.3"
-    catering "^2.0.0"
-    is-buffer "^2.0.5"
-    level-concat-iterator "^3.0.0"
-    level-supports "^2.0.1"
-    queue-microtask "^1.2.3"
-
-abstract-leveldown@~6.2.1:
-  version "6.2.3"
-  resolved "https://registry.npmjs.org/abstract-leveldown/-/abstract-leveldown-6.2.3.tgz"
-  integrity sha512-BsLm5vFMRUrrLeCcRc+G0t2qOaTzpoJQLOubq2XM72eNpjF5UdU5o/5NvlNhx95XHcAvcl8OMXr4mlg/fRgUXQ==
-  dependencies:
-    buffer "^5.5.0"
-    immediate "^3.2.3"
-    level-concat-iterator "~2.0.0"
-    level-supports "~1.0.0"
-    xtend "~4.0.0"
-
 acorn-globals@^6.0.0:
   version "6.0.0"
   resolved "https://registry.npmjs.org/acorn-globals/-/acorn-globals-6.0.0.tgz"
@@ -1491,7 +1479,7 @@ aggregate-error@^3.0.0:
 
 ajv-formats@2.0.2:
   version "2.0.2"
-  resolved "https://registry.npmjs.org/ajv-formats/-/ajv-formats-2.0.2.tgz"
+  resolved "https://npm.lisk.com/ajv-formats/-/ajv-formats-2.0.2.tgz"
   integrity sha512-Brah4Uo5/U8v76c6euTwtjVFFaVishwnJrQBYpev1JRh4vjA1F4HY3UzQez41YUCszUCXKagG8v6eVRBHV1gkw==
   dependencies:
     ajv "^8.0.0"
@@ -1870,14 +1858,6 @@ buffer@^5.2.1, buffer@^5.5.0:
     base64-js "^1.3.1"
     ieee754 "^1.1.13"
 
-buffer@^6.0.3:
-  version "6.0.3"
-  resolved "https://registry.npmjs.org/buffer/-/buffer-6.0.3.tgz"
-  integrity sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==
-  dependencies:
-    base64-js "^1.3.1"
-    ieee754 "^1.2.1"
-
 bunyan@1.8.15:
   version "1.8.15"
   resolved "https://registry.npmjs.org/bunyan/-/bunyan-1.8.15.tgz"
@@ -1952,11 +1932,6 @@ cargo-cp-artifact@^0.1:
   version "0.1.8"
   resolved "https://registry.npmjs.org/cargo-cp-artifact/-/cargo-cp-artifact-0.1.8.tgz"
   integrity sha512-3j4DaoTrsCD1MRkTF2Soacii0Nx7UHCce0EwUf4fHnggwiE4fbmF2AbnfzayR36DF8KGadfh7M/Yfy625kgPlA==
-
-catering@^2.0.0, catering@^2.1.0:
-  version "2.1.1"
-  resolved "https://registry.npmjs.org/catering/-/catering-2.1.1.tgz"
-  integrity sha512-K7Qy8O9p76sL3/3m7/zLKbRkyOlSZAgzEaLhyj2mXS8PsCud2Eo4hAb8aLtZqHh0QGqLcb9dlJSu6lHRVENm1w==
 
 chalk@^2.0.0:
   version "2.4.2"
@@ -2412,14 +2387,6 @@ deepmerge@^4.2.2:
   resolved "https://registry.npmjs.org/deepmerge/-/deepmerge-4.3.1.tgz"
   integrity sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==
 
-deferred-leveldown@~5.3.0:
-  version "5.3.0"
-  resolved "https://registry.npmjs.org/deferred-leveldown/-/deferred-leveldown-5.3.0.tgz"
-  integrity sha512-a59VOT+oDy7vtAbLRCZwWgxu2BaCfd5Hk7wxJd48ei7I+nsg8Orlb9CLG0PMZienk9BSUKgeAqkO2+Lw+1+Ukw==
-  dependencies:
-    abstract-leveldown "~6.2.1"
-    inherits "^2.0.3"
-
 define-properties@^1.1.3, define-properties@^1.1.4, define-properties@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/define-properties/-/define-properties-1.2.0.tgz"
@@ -2520,7 +2487,7 @@ ecdsa-sig-formatter@1.0.11:
 
 ed2curve@0.3.0:
   version "0.3.0"
-  resolved "https://registry.npmjs.org/ed2curve/-/ed2curve-0.3.0.tgz"
+  resolved "https://npm.lisk.com/ed2curve/-/ed2curve-0.3.0.tgz"
   integrity sha512-8w2fmmq3hv9rCrcI7g9hms2pMunQr1JINfcjwR9tAyZqhtyaMN991lF/ZfHfr5tzZQ8c7y7aBgZbjfbd0fjFwQ==
   dependencies:
     tweetnacl "1.x.x"
@@ -2575,13 +2542,6 @@ err-code@^2.0.2:
   version "2.0.3"
   resolved "https://registry.npmjs.org/err-code/-/err-code-2.0.3.tgz"
   integrity sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==
-
-errno@~0.1.1:
-  version "0.1.8"
-  resolved "https://registry.npmjs.org/errno/-/errno-0.1.8.tgz"
-  integrity sha512-dJ6oBr5SQ1VSd9qkk7ByRgb/1SH4JZjCHSW/mr63/QcXO9zLVxvJ6Oy13nio03rxpSnVDDjFor75SjVeZWPW/A==
-  dependencies:
-    prr "~1.0.1"
 
 error-ex@^1.2.0, error-ex@^1.3.1:
   version "1.3.2"
@@ -3672,7 +3632,7 @@ iconv-lite@0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
-ieee754@^1.1.13, ieee754@^1.2.1:
+ieee754@^1.1.13:
   version "1.2.1"
   resolved "https://registry.npmjs.org/ieee754/-/ieee754-1.2.1.tgz"
   integrity sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==
@@ -3686,11 +3646,6 @@ ignore@^5.1.1, ignore@^5.2.0:
   version "5.2.4"
   resolved "https://registry.npmjs.org/ignore/-/ignore-5.2.4.tgz"
   integrity sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==
-
-immediate@^3.2.3:
-  version "3.3.0"
-  resolved "https://registry.npmjs.org/immediate/-/immediate-3.3.0.tgz"
-  integrity sha512-HR7EVodfFUdQCTIeySw+WDRFJlPcLOJbXfwwZ7Oom6tjsvZ3bOkCDJHehQC3nxJrv7+f9XecwazynjU8e4Vw3Q==
 
 import-fresh@^3.0.0, import-fresh@^3.1.0, import-fresh@^3.2.1:
   version "3.3.0"
@@ -3793,11 +3748,6 @@ is-boolean-object@^1.1.0:
   dependencies:
     call-bind "^1.0.2"
     has-tostringtag "^1.0.0"
-
-is-buffer@^2.0.5:
-  version "2.0.5"
-  resolved "https://registry.npmjs.org/is-buffer/-/is-buffer-2.0.5.tgz"
-  integrity sha512-i2R6zNFDwgEHJyQUtJEk0XFi1i0dPFn/oqjK3/vPCcDeJvW5NQ83V8QbicfF1SupOaB0h8ntgBC2YiE7dfyctQ==
 
 is-callable@^1.1.3, is-callable@^1.1.4, is-callable@^1.2.7:
   version "1.2.7"
@@ -4669,57 +4619,6 @@ kleur@^3.0.3:
   resolved "https://registry.npmjs.org/kleur/-/kleur-3.0.3.tgz"
   integrity sha512-eTIzlVOSUR+JxdDFepEYcBMtZ9Qqdef+rnzWdRZuMbOywu5tO2w2N7rqjoANZ5k9vywhL6Br1VRjUIgTQx4E8w==
 
-level-concat-iterator@^3.0.0:
-  version "3.1.0"
-  resolved "https://registry.npmjs.org/level-concat-iterator/-/level-concat-iterator-3.1.0.tgz"
-  integrity sha512-BWRCMHBxbIqPxJ8vHOvKUsaO0v1sLYZtjN3K2iZJsRBYtp+ONsY6Jfi6hy9K3+zolgQRryhIn2NRZjZnWJ9NmQ==
-  dependencies:
-    catering "^2.1.0"
-
-level-concat-iterator@~2.0.0:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/level-concat-iterator/-/level-concat-iterator-2.0.1.tgz"
-  integrity sha512-OTKKOqeav2QWcERMJR7IS9CUo1sHnke2C0gkSmcR7QuEtFNLLzHQAvnMw8ykvEcv0Qtkg0p7FOwP1v9e5Smdcw==
-
-level-errors@~2.0.0:
-  version "2.0.1"
-  resolved "https://registry.npmjs.org/level-errors/-/level-errors-2.0.1.tgz"
-  integrity sha512-UVprBJXite4gPS+3VznfgDSU8PTRuVX0NXwoWW50KLxd2yw4Y1t2JUR5In1itQnudZqRMT9DlAM3Q//9NCjCFw==
-  dependencies:
-    errno "~0.1.1"
-
-level-iterator-stream@~4.0.0:
-  version "4.0.2"
-  resolved "https://registry.npmjs.org/level-iterator-stream/-/level-iterator-stream-4.0.2.tgz"
-  integrity sha512-ZSthfEqzGSOMWoUGhTXdX9jv26d32XJuHz/5YnuHZzH6wldfWMOVwI9TBtKcya4BKTyTt3XVA0A3cF3q5CY30Q==
-  dependencies:
-    inherits "^2.0.4"
-    readable-stream "^3.4.0"
-    xtend "^4.0.2"
-
-level-supports@^2.0.1:
-  version "2.1.0"
-  resolved "https://registry.npmjs.org/level-supports/-/level-supports-2.1.0.tgz"
-  integrity sha512-E486g1NCjW5cF78KGPrMDRBYzPuueMZ6VBXHT6gC7A8UYWGiM14fGgp+s/L1oFfDWSPV/+SFkYCmZ0SiESkRKA==
-
-level-supports@~1.0.0:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/level-supports/-/level-supports-1.0.1.tgz"
-  integrity sha512-rXM7GYnW8gsl1vedTJIbzOrRv85c/2uCMpiiCzO2fndd06U/kUXEEU9evYn4zFggBOg36IsBW8LzqIpETwwQzg==
-  dependencies:
-    xtend "^4.0.2"
-
-levelup@4.4.0:
-  version "4.4.0"
-  resolved "https://registry.npmjs.org/levelup/-/levelup-4.4.0.tgz"
-  integrity sha512-94++VFO3qN95cM/d6eBXvd894oJE0w3cInq9USsyQzzoJxmiYzPAocNcuGCPGGjoXqDVJcr3C1jzt1TSjyaiLQ==
-  dependencies:
-    deferred-leveldown "~5.3.0"
-    level-errors "~2.0.0"
-    level-iterator-stream "~4.0.0"
-    level-supports "~1.0.0"
-    xtend "~4.0.0"
-
 leven@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/leven/-/leven-3.1.0.tgz"
@@ -5213,11 +5112,6 @@ nan@^2.14.0:
   resolved "https://registry.npmjs.org/nan/-/nan-2.17.0.tgz"
   integrity sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ==
 
-napi-macros@^2.0.0:
-  version "2.2.2"
-  resolved "https://registry.npmjs.org/napi-macros/-/napi-macros-2.2.2.tgz"
-  integrity sha512-hmEVtAGYzVQpCKdbQea4skABsdXW4RUh5t5mJ2zzqowJS2OyXZTU1KhDVFhx+NlWZ4ap9mqR9TcDO3LTTttd+g==
-
 natural-compare-lite@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/natural-compare-lite/-/natural-compare-lite-1.4.0.tgz"
@@ -5255,7 +5149,7 @@ node-fetch@^2.6.1, node-fetch@^2.6.7:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-gyp-build@^4.1.0, node-gyp-build@^4.2.0, node-gyp-build@^4.3.0:
+node-gyp-build@^4.1.0, node-gyp-build@^4.2.0:
   version "4.6.0"
   resolved "https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.6.0.tgz"
   integrity sha512-NTZVKn9IylLwUzaKjkas1e4u2DLNcV4rdYagA4PWdPwW87Bi7z+BznyKSRwS/761tV/lzCGXplWsiaMjLqP2zQ==
@@ -5752,11 +5646,6 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prr@~1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npmjs.org/prr/-/prr-1.0.1.tgz"
-  integrity sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==
-
 ps-list@7.2.0:
   version "7.2.0"
   resolved "https://registry.npmjs.org/ps-list/-/ps-list-7.2.0.tgz"
@@ -5809,7 +5698,7 @@ querystringify@^2.1.1:
   resolved "https://registry.npmjs.org/querystringify/-/querystringify-2.2.0.tgz"
   integrity sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==
 
-queue-microtask@^1.2.2, queue-microtask@^1.2.3:
+queue-microtask@^1.2.2:
   version "1.2.3"
   resolved "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
@@ -6001,15 +5890,6 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-rocksdb@5.1.1:
-  version "5.1.1"
-  resolved "https://registry.npmjs.org/rocksdb/-/rocksdb-5.1.1.tgz"
-  integrity sha512-eHQKJCa1gsvzK31nYJIwZvscIx/MSPbC4ipted2zdSv99OoJSzYCyaEbhujQFo7m+WVR0XC3xTT/parjBn2Uzw==
-  dependencies:
-    abstract-leveldown "^7.0.0"
-    napi-macros "^2.0.0"
-    node-gyp-build "^4.3.0"
-
 run-parallel@^1.1.9:
   version "1.2.0"
   resolved "https://registry.npmjs.org/run-parallel/-/run-parallel-1.2.0.tgz"
@@ -6160,7 +6040,7 @@ semver@^7.3.8:
 
 semver@7.3.5:
   version "7.3.5"
-  resolved "https://registry.npmjs.org/semver/-/semver-7.3.5.tgz"
+  resolved "https://npm.lisk.com/semver/-/semver-7.3.5.tgz"
   integrity sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==
   dependencies:
     lru-cache "^6.0.0"
@@ -7194,7 +7074,7 @@ xmlchars@^2.2.0:
   resolved "https://registry.npmjs.org/xmlchars/-/xmlchars-2.2.0.tgz"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xtend@^4.0.2, xtend@~4.0.0, xtend@~4.0.1:
+xtend@~4.0.1:
   version "4.0.2"
   resolved "https://registry.npmjs.org/xtend/-/xtend-4.0.2.tgz"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
