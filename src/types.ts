@@ -359,3 +359,33 @@ export interface NetworkConfigLocal {
 	tokenID: string;
 	snapshotHeightPrevious: number;
 }
+
+export interface RegisteredModule {
+	id: number;
+	name: string;
+	actions: string[];
+	events: string[];
+	reducers: string[];
+	transactionAssets: {
+		id: number;
+		name: string;
+	}[];
+}
+
+export interface Backup {
+	height: number;
+}
+
+export interface NodeInfo {
+	readonly version: string;
+	readonly networkVersion: string;
+	readonly networkIdentifier: string;
+	readonly lastBlockID: string;
+	readonly height: number;
+	readonly finalizedHeight: number;
+	readonly syncing: boolean;
+	readonly unconfirmedTransactions: number;
+	readonly genesisConfig: GenesisConfig;
+	readonly registeredModules: RegisteredModule[];
+	readonly backup: Backup;
+}

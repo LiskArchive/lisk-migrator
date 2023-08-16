@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import {
@@ -68,9 +68,9 @@ const addressComparator = (
 	b: StakerBuffer | ValidatorEntryBuffer,
 ) => a.address.compare(b.address);
 export class CreateAsset {
-	private readonly _db: KVStore;
+	private readonly _db: Database;
 
-	public constructor(db: KVStore) {
+	public constructor(db: Database) {
 		this._db = db;
 	}
 
@@ -88,12 +88,12 @@ export class CreateAsset {
 		const stakers: StakerBuffer[] = [];
 
 		const encodedUnregisteredAddresses = await this._db.get(
-			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`,
+			Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`),
 		);
 
 		const accountStream = await this._db.createReadStream({
-			gte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`,
-			lte: `${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
+			gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
+			lte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`),
 		});
 
 		const allAccounts = ((await getDataFromDBStream(
@@ -206,7 +206,7 @@ export class CreateAsset {
 		}));
 
 		const encodedDelegatesVoteWeights = await this._db.get(
-			`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`,
+			Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`),
 		);
 
 		const decodedDelegatesVoteWeights: VoteWeightsWrapper = await codec.decode(

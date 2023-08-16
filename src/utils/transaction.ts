@@ -13,7 +13,7 @@
  */
 import { hash } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
-import { KVStore } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { Transaction, transactionSchema } from '@liskhq/lisk-chain';
 
 import {
@@ -24,10 +24,10 @@ import {
 
 export const keyString = (key: Buffer): string => key.toString('binary');
 
-export const getTransactions = async (blockID: Buffer, db: KVStore) => {
+export const getTransactions = async (blockID: Buffer, db: Database) => {
 	try {
 		const txIDs: Buffer[] = [];
-		const ids = await db.get(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${keyString(blockID)}`);
+		const ids = await db.get(Buffer.from(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${keyString(blockID)}`));
 		for (let idx = 0; idx < ids.length; idx += TRANSACTION_ID_LENGTH) {
 			txIDs.push(ids.slice(idx, idx + TRANSACTION_ID_LENGTH));
 		}
@@ -36,7 +36,7 @@ export const getTransactions = async (blockID: Buffer, db: KVStore) => {
 		}
 		const transactions = [];
 		for (const txID of txIDs) {
-			const tx = await db.get(`${DB_KEY_TRANSACTIONS_ID}:${keyString(txID)}`);
+			const tx = await db.get(Buffer.from(`${DB_KEY_TRANSACTIONS_ID}:${keyString(txID)}`));
 			const decodedTransactions = (await codec.decode(transactionSchema, tx)) as Transaction;
 
 			const id = hash(tx);
