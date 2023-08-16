@@ -110,7 +110,7 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		try {
 			const { flags } = this.parse(LiskMigrator);
-			const liskCorePath = flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH;
+			const liskCoreV3Path = flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH;
 			const outputPath = flags.output ?? join(__dirname, '..', 'output');
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
@@ -118,7 +118,7 @@ class LiskMigrator extends Command {
 			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 
-			const client = await getAPIClient(liskCorePath);
+			const client = await getAPIClient(liskCoreV3Path);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
 			const { version: appVersion, networkIdentifier } = nodeInfo;
 
@@ -128,7 +128,7 @@ class LiskMigrator extends Command {
 					`Snapshot height ${snapshotHeight} does not matches backup height ${nodeInfo.backup.height}.`,
 				);
 			}
-			cli.action.stop('Snapshot Height matches backup height');
+			cli.action.stop('Snapshot height matches backup height');
 
 			cli.action.start(
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
@@ -136,7 +136,7 @@ class LiskMigrator extends Command {
 			if (snapshotHeight % ROUND_LENGTH !== 0) {
 				this.error(`Invalid Snapshot Height: ${snapshotHeight}.`);
 			}
-			cli.action.stop('Snapshot Height is valid');
+			cli.action.stop('Snapshot height is valid');
 
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
 			const networkDir = `${outputPath}/${networkIdentifier}`;
@@ -149,7 +149,7 @@ class LiskMigrator extends Command {
 				}
 			}
 
-			cli.action.start('Verifying Lisk-Core version');
+			cli.action.start('Verifying Lisk Core version');
 			const liskCoreVersion = semver.coerce(appVersion);
 			if (!liskCoreVersion) {
 				this.error(
@@ -158,22 +158,22 @@ class LiskMigrator extends Command {
 			}
 			if (!semver.gte(MIN_SUPPORTED_LISK_CORE_VERSION, liskCoreVersion)) {
 				this.error(
-					`Lisk-Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Lisk Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			cli.action.stop(`${liskCoreVersion.version} detected`);
 
 			// User specified custom config file
 			const configV3: ApplicationConfigV3 = customConfigPath
-				? await getConfig(liskCorePath, customConfigPath)
-				: await getConfig(liskCorePath);
+				? await getConfig(liskCoreV3Path, customConfigPath)
+				: await getConfig(liskCoreV3Path);
 
 			await setTokenIDLskByNetID(networkIdentifier);
 			await setHeightPrevSnapshotBlockByNetID(networkIdentifier);
 
 			await observeChainHeight({
 				label: 'Waiting for snapshot height to be finalized',
-				liskCorePath,
+				liskCoreV3Path,
 				height: snapshotHeight,
 				delay: 500,
 				isFinal: true,
@@ -181,7 +181,7 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const snapshotDirPath = join(liskCorePath, SNAPSHOT_DIR);
+			const snapshotDirPath = join(liskCoreV3Path, SNAPSHOT_DIR);
 			const db = new Database(snapshotDirPath);
 			cli.action.stop();
 
@@ -262,7 +262,7 @@ class LiskMigrator extends Command {
 						if (isUserConfirmed) {
 							cli.action.start('Starting lisk-core v4');
 							const network = networkConstant.name as string;
-							await startLiskCore(this, finalConfigCorev4, appVersion, liskCorePath, network);
+							await startLiskCore(this, finalConfigCorev4, appVersion, liskCoreV3Path, network);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
 						} else {

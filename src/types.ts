@@ -375,6 +375,7 @@ export interface RegisteredModule {
 export interface Backup {
 	height: number;
 }
+
 export interface NodeInfo {
 	readonly version: string;
 	readonly networkVersion: string;

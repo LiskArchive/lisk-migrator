@@ -21,7 +21,7 @@ let heightPreviousSnapshotBlock: number;
 interface ObserveParams {
 	readonly label: string;
 	readonly height: number;
-	readonly liskCorePath: string;
+	readonly liskCoreV3Path: string;
 	readonly delay: number;
 	readonly isFinal: boolean;
 }
@@ -91,8 +91,8 @@ const getRemainingTime = (currentHeight: number, observedHeight: number): string
 export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
 	const observedHeight = options.height;
 	const startHeight = options.isFinal
-		? (await getNodeInfo(options.liskCorePath)).finalizedHeight
-		: (await getNodeInfo(options.liskCorePath)).height;
+		? (await getNodeInfo(options.liskCoreV3Path)).finalizedHeight
+		: (await getNodeInfo(options.liskCoreV3Path)).height;
 
 	if (startHeight >= observedHeight) {
 		return startHeight;
@@ -120,8 +120,8 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 			let height!: number;
 			try {
 				height = options.isFinal
-					? (await getNodeInfo(options.liskCorePath)).finalizedHeight
-					: (await getNodeInfo(options.liskCorePath)).height;
+					? (await getNodeInfo(options.liskCoreV3Path)).finalizedHeight
+					: (await getNodeInfo(options.liskCoreV3Path)).height;
 			} catch (error) {
 				return reject(error);
 			}
