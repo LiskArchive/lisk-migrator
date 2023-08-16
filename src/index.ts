@@ -158,7 +158,7 @@ class LiskMigrator extends Command {
 			}
 			if (!semver.gte(MIN_SUPPORTED_LISK_CORE_VERSION, liskCoreVersion)) {
 				this.error(
-					`Lisk Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. Compatible versions range is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Lisk Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. The minimum compatible version is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			cli.action.stop(`${liskCoreVersion.version} detected`);
