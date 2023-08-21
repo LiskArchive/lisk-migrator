@@ -48,195 +48,188 @@ const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	return getFirstEightBytesReversed(hash(publicKey));
 };
 
-describe('Create genesis block', () => {
-	let db: any;
-	let accounts: Account[];
-	let block: BlockVersion3;
-	let createAsset: any;
-	let unregisteredAddresses: UnregisteredAccount[];
-	let encodedUnregisteredAddresses: Buffer;
-	let delegates: VoteWeightsWrapper;
-	let encodedVoteWeights: Buffer;
-	let app: any;
-	const snapshotHeight = 10815;
-	const snapshotHeightPrevious = 5000;
-	const tokenID = '0400000000000000';
-	const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
+let db: any;
+let accounts: Account[];
+let block: BlockVersion3;
+let createAsset: any;
+let unregisteredAddresses: UnregisteredAccount[];
+let encodedUnregisteredAddresses: Buffer;
+let delegates: VoteWeightsWrapper;
+let encodedVoteWeights: Buffer;
+let app: any;
 
-	interface Accounts {
-		[key: string]: {
-			passphrase: string;
-		};
-	}
+const snapshotHeight = 10815;
+const snapshotHeightPrevious = 5000;
+const tokenID = '0400000000000000';
+const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
 
-	const testAccounts: Accounts = {
-		account1: {
-			passphrase: 'float slow tiny rubber seat lion arrow skirt reveal garlic draft shield',
-		},
-		account2: {
-			passphrase: 'hand nominee keen alarm skate latin seek fox spring guilt loop snake',
-		},
-		account3: {
-			passphrase: 'february large secret save risk album opera rebel tray roast air captain',
-		},
+interface Accounts {
+	[key: string]: {
+		passphrase: string;
 	};
+}
 
-	describe('Create/Export Genesis block', () => {
-		beforeAll(async () => {
-			db = new Database('testDB');
-			createAsset = new CreateAsset(db);
-			app = Application.defaultApplication(
-				{
-					genesis: { chainID: '04000000' },
-					modules: {
-						pos: {
-							useInvalidBLSKey: true,
-						},
+const testAccounts: Accounts = {
+	account1: {
+		passphrase: 'float slow tiny rubber seat lion arrow skirt reveal garlic draft shield',
+	},
+	account2: {
+		passphrase: 'hand nominee keen alarm skate latin seek fox spring guilt loop snake',
+	},
+	account3: {
+		passphrase: 'february large secret save risk album opera rebel tray roast air captain',
+	},
+};
+
+describe('Create/export genesis block', () => {
+	beforeAll(async () => {
+		db = new Database('testDB');
+		createAsset = new CreateAsset(db);
+		app = Application.defaultApplication(
+			{
+				genesis: { chainID: '04000000' },
+				modules: {
+					pos: {
+						useInvalidBLSKey: true,
 					},
 				},
-				true,
-			);
-			[block] = generateBlocks({
-				startHeight: 16281110,
-				numberOfBlocks: 1,
-			});
-
-			for (const account of Object.values(testAccounts)) {
-				unregisteredAddresses = [];
-				unregisteredAddresses.push({
-					address: getLegacyBytesFromPassphrase(account.passphrase),
-					balance: BigInt(Math.floor(Math.random() * 1000)),
-				});
-			}
-
-			encodedUnregisteredAddresses = await codec.encode(unregisteredAddressesSchema, {
-				unregisteredAddresses,
-			});
-
-			accounts = [
-				createFakeDefaultAccount({
-					address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
-					token: {
-						balance: BigInt('100000000'),
-					},
-					sequence: {
-						nonce: BigInt('0'),
-					},
-					keys: {
-						mandatoryKeys: [],
-						optionalKeys: [],
-						numberOfSignatures: 0,
-					},
-					dpos: {
-						delegate: {
-							username: 'test1',
-							pomHeights: [],
-							consecutiveMissedBlocks: 0,
-							lastForgedHeight: 0,
-							isBanned: false,
-							totalVotesReceived: BigInt('0'),
-						},
-						sentVotes: [],
-						unlocking: [],
-					},
-				}),
-				createFakeDefaultAccount({
-					address: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
-					keys: {
-						mandatoryKeys: [
-							Buffer.from(
-								'456efe283f25ea5bb21476b6dfb77cec4dbd33a4d1b5e60e4dc28e8e8b10fc4e',
-								'hex',
-							),
-						],
-						optionalKeys: [],
-						numberOfSignatures: 3,
-					},
-					token: {
-						balance: BigInt('100000000'),
-					},
-					sequence: {
-						nonce: BigInt('0'),
-					},
-					dpos: {
-						delegate: {
-							username: 'test2',
-							pomHeights: [],
-							consecutiveMissedBlocks: 0,
-							lastForgedHeight: 0,
-							isBanned: false,
-							totalVotesReceived: BigInt('0'),
-						},
-						sentVotes: [
-							{
-								delegateAddress: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
-								amount: BigInt('1000000000000'),
-							},
-							{
-								delegateAddress: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
-								amount: BigInt('1000000000000'),
-							},
-						],
-						unlocking: [],
-					},
-				}),
-			];
-
-			delegates = {
-				voteWeights: [
-					{
-						round: 103,
-						delegates: [
-							{
-								address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
-								voteWeight: BigInt('2130000000000'),
-							},
-						],
-					},
-				],
-			};
-			encodedVoteWeights = await codec.encode(voteWeightsSchema, delegates);
+			},
+			true,
+		);
+		[block] = generateBlocks({
+			startHeight: 16281110,
+			numberOfBlocks: 1,
 		});
 
-		afterAll(async () => fs.removeSync(genesisBlockPath));
+		for (const account of Object.values(testAccounts)) {
+			unregisteredAddresses = [];
+			unregisteredAddresses.push({
+				address: getLegacyBytesFromPassphrase(account.passphrase),
+				balance: BigInt(Math.floor(Math.random() * 1000)),
+			});
+		}
 
-		it('should create genesis block', async () => {
-			when(db.get)
-				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`))
-				.mockResolvedValue(encodedUnregisteredAddresses as never);
-
-			const encodedAccount = await codec.encode(accountSchema, accounts[0]);
-			when(db.createReadStream)
-				.calledWith({
-					gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
-					lte: Buffer.from(
-						`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`,
-					),
-				})
-				.mockReturnValue(Readable.from([{ value: Buffer.from(encodedAccount) }]));
-
-			when(db.createReadStream)
-				.calledWith({
-					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
-					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
-				})
-				.mockReturnValue(Readable.from([]));
-
-			when(db.get)
-				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
-				.mockResolvedValue(encodedVoteWeights as never);
-
-			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
-			const genesisBlock: BlockVersion4 = await createGenesisBlock(app.app, assets, block);
-
-			await writeGenesisBlock(genesisBlock, assets, genesisBlockPath);
-			expect(fs.existsSync(genesisBlockPath)).toBe(true);
-			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json`)).toBe(true);
-			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.blob`)).toBe(true);
-			expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json.SHA256`)).toBe(true);
-			expect(fs.existsSync(`${genesisBlockPath}/genesis_assets.json`)).toBe(true);
-
-			expect(() => genesisBlock.validateGenesis()).not.toThrow();
+		encodedUnregisteredAddresses = await codec.encode(unregisteredAddressesSchema, {
+			unregisteredAddresses,
 		});
+
+		accounts = [
+			createFakeDefaultAccount({
+				address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
+				token: {
+					balance: BigInt('100000000'),
+				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				keys: {
+					mandatoryKeys: [],
+					optionalKeys: [],
+					numberOfSignatures: 0,
+				},
+				dpos: {
+					delegate: {
+						username: 'test1',
+						pomHeights: [],
+						consecutiveMissedBlocks: 0,
+						lastForgedHeight: 0,
+						isBanned: false,
+						totalVotesReceived: BigInt('0'),
+					},
+					sentVotes: [],
+					unlocking: [],
+				},
+			}),
+			createFakeDefaultAccount({
+				address: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
+				keys: {
+					mandatoryKeys: [
+						Buffer.from('456efe283f25ea5bb21476b6dfb77cec4dbd33a4d1b5e60e4dc28e8e8b10fc4e', 'hex'),
+					],
+					optionalKeys: [],
+					numberOfSignatures: 3,
+				},
+				token: {
+					balance: BigInt('100000000'),
+				},
+				sequence: {
+					nonce: BigInt('0'),
+				},
+				dpos: {
+					delegate: {
+						username: 'test2',
+						pomHeights: [],
+						consecutiveMissedBlocks: 0,
+						lastForgedHeight: 0,
+						isBanned: false,
+						totalVotesReceived: BigInt('0'),
+					},
+					sentVotes: [
+						{
+							delegateAddress: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
+							amount: BigInt('1000000000000'),
+						},
+						{
+							delegateAddress: Buffer.from('584dd8a902822a9469fb2911fcc14ed5fd98220d', 'hex'),
+							amount: BigInt('1000000000000'),
+						},
+					],
+					unlocking: [],
+				},
+			}),
+		];
+
+		delegates = {
+			voteWeights: [
+				{
+					round: 103,
+					delegates: [
+						{
+							address: Buffer.from('cc96c0a5db38b968f563e7af6fb435585c889111', 'hex'),
+							voteWeight: BigInt('2130000000000'),
+						},
+					],
+				},
+			],
+		};
+		encodedVoteWeights = await codec.encode(voteWeightsSchema, delegates);
+	});
+
+	afterAll(async () => fs.removeSync(genesisBlockPath));
+
+	it('should create genesis block', async () => {
+		when(db.get)
+			.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`))
+			.mockResolvedValue(encodedUnregisteredAddresses as never);
+
+		const encodedAccount = await codec.encode(accountSchema, accounts[0]);
+		when(db.createReadStream)
+			.calledWith({
+				gte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 0).toString('binary')}`),
+				lte: Buffer.from(`${DB_KEY_ACCOUNTS_ADDRESS}:${Buffer.alloc(20, 255).toString('binary')}`),
+			})
+			.mockReturnValue(Readable.from([{ value: Buffer.from(encodedAccount) }]));
+
+		when(db.createReadStream)
+			.calledWith({
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
+			})
+			.mockReturnValue(Readable.from([]));
+
+		when(db.get)
+			.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
+			.mockResolvedValue(encodedVoteWeights as never);
+
+		const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
+		const genesisBlock: BlockVersion4 = await createGenesisBlock(app.app, assets, block);
+
+		await writeGenesisBlock(genesisBlock, assets, genesisBlockPath);
+		expect(fs.existsSync(genesisBlockPath)).toBe(true);
+		expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json`)).toBe(true);
+		expect(fs.existsSync(`${genesisBlockPath}/genesis_block.blob`)).toBe(true);
+		expect(fs.existsSync(`${genesisBlockPath}/genesis_block.json.SHA256`)).toBe(true);
+		expect(fs.existsSync(`${genesisBlockPath}/genesis_assets.json`)).toBe(true);
+		expect(() => genesisBlock.validateGenesis()).not.toThrow();
 	});
 });
