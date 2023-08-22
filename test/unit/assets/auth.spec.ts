@@ -88,9 +88,9 @@ describe('Build assets/auth', () => {
 	it('should get auth module substore entries Buffer', async () => {
 		const response: AuthStoreEntryBuffer = await getAuthModuleEntryBuffer(accounts[0]);
 
-		expect(Object.getOwnPropertyNames(response)).toEqual(['storeKey', 'storeValue']);
-		expect(response.storeKey).toBeInstanceOf(Buffer);
-		expect(Object.getOwnPropertyNames(response.storeValue)).toEqual([
+		expect(Object.getOwnPropertyNames(response)).toEqual(['address', 'authAccount']);
+		expect(response.address).toBeInstanceOf(Buffer);
+		expect(Object.getOwnPropertyNames(response.authAccount)).toEqual([
 			'numberOfSignatures',
 			'mandatoryKeys',
 			'optionalKeys',
@@ -103,10 +103,10 @@ describe('Build assets/auth', () => {
 
 		const response: GenesisAssetEntry = await getAuthModuleEntry(
 			[authStoreEntries]
-				.sort((a, b) => a.storeKey.compare(b.storeKey))
+				.sort((a, b) => a.address.compare(b.address))
 				.map(entry => ({
 					...entry,
-					storeKey: getLisk32AddressFromAddress(entry.storeKey),
+					address: getLisk32AddressFromAddress(entry.address),
 				})),
 		);
 
@@ -114,10 +114,10 @@ describe('Build assets/auth', () => {
 
 		expect(response.module).toEqual(MODULE_NAME_AUTH);
 		expect(authDataSubstore).toHaveLength(1);
-		expect(Object.getOwnPropertyNames(authDataSubstore[0])).toEqual(['storeKey', 'storeValue']);
-		authDataSubstore.forEach((asset: { storeKey: string; storeValue: AuthAccountEntry }) => {
-			expect(asset.storeKey).toEqual(expect.stringMatching(ADDRESS_LISK32));
-			expect(Object.getOwnPropertyNames(asset.storeValue)).toEqual([
+		expect(Object.getOwnPropertyNames(authDataSubstore[0])).toEqual(['address', 'authAccount']);
+		authDataSubstore.forEach((asset: { address: string; authAccount: AuthAccountEntry }) => {
+			expect(asset.address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+			expect(Object.getOwnPropertyNames(asset.authAccount)).toEqual([
 				'numberOfSignatures',
 				'mandatoryKeys',
 				'optionalKeys',

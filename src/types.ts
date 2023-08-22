@@ -100,12 +100,12 @@ export interface AuthAccountEntry {
 }
 
 export interface AuthStoreEntry {
-	storeKey: string;
-	storeValue: AuthAccountEntry;
+	address: string;
+	authAccount: AuthAccountEntry;
 }
 
-export interface AuthStoreEntryBuffer extends Omit<AuthStoreEntry, 'storeKey'> {
-	storeKey: Buffer;
+export interface AuthStoreEntryBuffer extends Omit<AuthStoreEntry, 'address'> {
+	address: Buffer;
 }
 
 export interface Account {
