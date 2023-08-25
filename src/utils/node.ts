@@ -73,8 +73,3 @@ export const startLiskCore = async (
 
 	return execAsync(`lisk-core start--network ${network} --api - ipc--log info`);
 };
-
-export const resolveAbsolutePath = (path: string) => {
-	const homeDirectory = homedir();
-	return homeDirectory ? path.replace(/^~(?=$|\/|\\)/, homeDirectory) : path;
-};

@@ -47,7 +47,8 @@ import {
 import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
-import { installLiskCore, startLiskCore, resolveAbsolutePath } from './utils/node';
+import { installLiskCore, startLiskCore } from './utils/node';
+import { resolveAbsolutePath } from './utils/fs';
 
 let finalConfigCorev4: PartialApplicationConfig;
 class LiskMigrator extends Command {
