@@ -26,6 +26,7 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
+	SNAPSHOT_TIME_GAP,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -47,6 +48,7 @@ import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
+import { resolveAbsolutePath } from './utils/fs';
 
 let finalConfigCorev4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -110,13 +112,16 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		try {
 			const { flags } = this.parse(LiskMigrator);
-			const liskCoreV3Path = flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH;
+			const liskCoreV3Path = resolveAbsolutePath(
+				flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH,
+			);
 			const outputPath = flags.output ?? join(__dirname, '..', 'output');
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
+			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
 
 			const client = await getAPIClient(liskCoreV3Path);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
@@ -202,7 +207,12 @@ class LiskMigrator extends Command {
 			const blockAtSnapshotHeight = ((await client.block.getByHeight(
 				snapshotHeight,
 			)) as unknown) as Block;
-			const genesisBlock = await createGenesisBlock(app, genesisAssets, blockAtSnapshotHeight);
+			const genesisBlock = await createGenesisBlock(
+				app,
+				genesisAssets,
+				blockAtSnapshotHeight,
+				snapshotTimeGap,
+			);
 			cli.action.stop();
 
 			cli.action.start(`Exporting genesis block to the path ${networkDir}`);

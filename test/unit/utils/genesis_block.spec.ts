@@ -62,6 +62,7 @@ describe('Create genesis block', () => {
 	const snapshotHeightPrevious = 5000;
 	const tokenID = '0400000000000000';
 	const genesisBlockPath = `${process.cwd()}/test/genesisBlock`;
+	const snapshotTimeGap = 1000;
 
 	interface Accounts {
 		[key: string]: {
@@ -227,7 +228,12 @@ describe('Create genesis block', () => {
 				.mockResolvedValue(encodedVoteWeights as never);
 
 			const assets = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
-			const genesisBlock: BlockVersion4 = await createGenesisBlock(app.app, assets, block);
+			const genesisBlock: BlockVersion4 = await createGenesisBlock(
+				app.app,
+				assets,
+				block,
+				snapshotTimeGap,
+			);
 
 			await writeGenesisBlock(genesisBlock, assets, genesisBlockPath);
 			expect(fs.existsSync(genesisBlockPath)).toBe(true);
