@@ -12,7 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { extractTarBall, exists, rmdir } from '../../../src/utils/fs';
+import { homedir } from 'os';
+import { join } from 'path';
+
+import { extractTarBall, exists, rmdir, resolveAbsolutePath } from '../../../src/utils/fs';
 
 const testDir = `${process.cwd()}/test/data`;
 const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
@@ -51,5 +54,20 @@ describe('Test rmdir method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(rmdir('')).rejects.toThrow();
+	});
+});
+
+describe('Test resolveAbsolutePath method', () => {
+	it('should resolve absolute path when called with valid path which contains ~', async () => {
+		const path = '~/.test/testFolder';
+		const expectedResult = join(homedir(), '.test/testFolder');
+		const absolutePath = resolveAbsolutePath(path);
+		expect(absolutePath).toBe(expectedResult);
+	});
+
+	it('should resolve absolute path when called with valid path', async () => {
+		const path = '/.test/testFolder';
+		const absolutePath = resolveAbsolutePath(path);
+		expect(absolutePath).toBe(path);
 	});
 });

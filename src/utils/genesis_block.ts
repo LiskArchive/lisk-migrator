@@ -18,7 +18,7 @@ import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
 import { Block as BlockVersion4 } from 'lisk-framework';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { GenesisAssetEntry } from '../types';
-import { SNAPSHOT_BLOCK_VERSION, SNAPSHOT_TIME_GAP } from '../constants';
+import { SNAPSHOT_BLOCK_VERSION } from '../constants';
 
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
@@ -50,6 +50,7 @@ export const createGenesisBlock = async (
 	app: any,
 	assets: GenesisAssetEntry[],
 	blockAtSnapshotHeight: BlockVersion3,
+	snapshotTimeGap: number,
 ): Promise<BlockVersion4> => {
 	const input = {
 		assets: assets.map((a: { module: string; schema: Schema; data: object }) => ({
@@ -58,7 +59,7 @@ export const createGenesisBlock = async (
 			schema: a.schema,
 		})),
 		chainID: Buffer.from(app.config.genesis.chainID, 'hex'),
-		timestamp: blockAtSnapshotHeight.header.timestamp + SNAPSHOT_TIME_GAP,
+		timestamp: blockAtSnapshotHeight.header.timestamp + snapshotTimeGap,
 		height: blockAtSnapshotHeight.header.height + 1,
 		previousBlockID: blockAtSnapshotHeight.header.previousBlockID,
 	};
