@@ -88,5 +88,6 @@ export const DEFAULT_DATA_DIR = 'data';
 export const SNAPSHOT_DIR = `${DEFAULT_DATA_DIR}/backup`;
 export const MIN_SUPPORTED_LISK_CORE_VERSION = '3.1.0';
 export const DEFAULT_LISK_CORE_PATH = '~/.lisk/lisk-core';
+export const LEGACY_DB = 'legacy.db';
 
 export const DEFAULT_VERSION = '0.1.0';
