@@ -21,7 +21,19 @@ The following dependencies need to be installed in order to run applications cre
 | Dependencies | Version        |
 | ------------ | -------------- |
 | NodeJS       | 18.16          |
-| Lisk Core    | 3.0.5 or later |
+| Lisk Core    | 3.1.0 or later |
+
+### System requirements
+
+The following system requirements are recommended to run Lisk Migrator v2.0.0:
+
+#### Memory
+
+- Machines with a minimum of 16 GB RAM.
+
+#### Storage
+
+- Machines with a minimum of 40 GB HDD.
 
 ## Setup
 
