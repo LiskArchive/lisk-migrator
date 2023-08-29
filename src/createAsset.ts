@@ -221,10 +221,10 @@ export class CreateAsset {
 		);
 
 		const sortedAuthSubstoreEntries: AuthStoreEntry[] = authSubstoreEntries
-			.sort((a, b) => a.storeKey.compare(b.storeKey))
+			.sort((a, b) => a.address.compare(b.address))
 			.map(entry => ({
 				...entry,
-				storeKey: getLisk32AddressFromAddress(entry.storeKey),
+				address: getLisk32AddressFromAddress(entry.address),
 			}));
 
 		// Create auth module assets
