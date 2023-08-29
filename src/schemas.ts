@@ -332,14 +332,14 @@ export const genesisAuthStoreSchema = {
 			fieldNumber: 1,
 			items: {
 				type: 'object',
-				required: ['storeKey', 'storeValue'],
+				required: ['address', 'authAccount'],
 				properties: {
-					storeKey: {
+					address: {
 						dataType: 'bytes',
 						format: 'lisk32',
 						fieldNumber: 1,
 					},
-					storeValue: {
+					authAccount: {
 						type: 'object',
 						fieldNumber: 2,
 						required: ['nonce', 'numberOfSignatures', 'mandatoryKeys', 'optionalKeys'],
