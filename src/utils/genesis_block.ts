@@ -86,5 +86,8 @@ export const writeGenesisBlock = async (
 	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
 
 	const genesisAssetsJsonFilepath = path.resolve(outputPath, 'genesis_assets.json');
-	fs.writeFileSync(genesisAssetsJsonFilepath, JSON.stringify(genesisAssets, null, '\t'));
+	fs.writeFileSync(
+		genesisAssetsJsonFilepath,
+		JSON.stringify({ assets: genesisAssets }, null, '\t'),
+	);
 };
