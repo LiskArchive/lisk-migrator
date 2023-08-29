@@ -262,7 +262,7 @@ class LiskMigrator extends Command {
 					}
 
 					cli.action.start(`Creating legacy.db at ${LEGACY_DB_PATH}`);
-					await copyDir(snapshotDirPath, LEGACY_DB_PATH);
+					await copyDir(snapshotDirPath, resolveAbsolutePath(LEGACY_DB_PATH));
 					this.log(`Legacy database has been created at ${LEGACY_DB_PATH}`);
 					cli.action.stop();
 
