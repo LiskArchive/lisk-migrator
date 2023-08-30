@@ -14,6 +14,7 @@
 import { homedir } from 'os';
 import * as tar from 'tar';
 import fs from 'fs';
+import { join } from 'path';
 
 export const extractTarBall = async (
 	srcFilePath: string,
@@ -50,4 +51,19 @@ export const rmdir = async (directoryPath: string, options = {}): Promise<boolea
 export const resolveAbsolutePath = (path: string) => {
 	const homeDirectory = homedir();
 	return homeDirectory ? path.replace(/^~(?=$|\/|\\)/, homeDirectory) : path;
+};
+
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+export const copyDir = async (src: string, dest: string) => {
+	await fs.promises.mkdir(dest, { recursive: true });
+	const files = await fs.promises.readdir(src, { withFileTypes: true });
+
+	for (const fileInfo of files) {
+		const srcPath = join(src, fileInfo.name);
+		const destPath = join(dest, fileInfo.name);
+
+		fileInfo.isDirectory()
+			? await copyDir(srcPath, destPath)
+			: await fs.promises.copyFile(srcPath, destPath);
+	}
 };

@@ -27,6 +27,7 @@ import {
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
 	SNAPSHOT_TIME_GAP,
+	LEGACY_DB_PATH,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -48,7 +49,7 @@ import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
-import { resolveAbsolutePath } from './utils/fs';
+import { copyDir, resolveAbsolutePath } from './utils/fs';
 
 let finalConfigCorev4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -260,6 +261,11 @@ class LiskMigrator extends Command {
 						finalConfigCorev4 = configV4;
 					}
 
+					cli.action.start(`Creating legacy.db at ${LEGACY_DB_PATH}`);
+					await copyDir(snapshotDirPath, resolveAbsolutePath(LEGACY_DB_PATH));
+					this.log(`Legacy database has been created at ${LEGACY_DB_PATH}`);
+					cli.action.stop();
+
 					// Ask user to manually stop Lisk Core v3 and continue
 					const isLiskCoreV3Stopped = await cli.confirm(`
 					Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]`);
@@ -289,6 +295,10 @@ class LiskMigrator extends Command {
 					/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
 					this.error(`Failed to auto-start Lisk Core v4.\nError: ${err}`);
 				}
+			} else {
+				this.log(
+					`Please copy ${snapshotDirPath} directory to the Lisk Core V4 data directory in order to access legacy blockchain information`,
+				);
 			}
 		} catch (error) {
 			this.error(error as string);
