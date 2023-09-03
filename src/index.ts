@@ -14,7 +14,7 @@
 import util from 'util';
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { Application, ApplicationConfig, PartialApplicationConfig } from 'lisk-framework';
+import { ApplicationConfig, PartialApplicationConfig } from 'lisk-framework';
 import { Database } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
@@ -45,7 +45,7 @@ import {
 	setTokenIDLskByNetID,
 	setHeightPrevSnapshotBlockByNetID,
 } from './utils/chain';
-import { createGenesisBlock, writeGenesisBlock } from './utils/genesis_block';
+import { createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
@@ -96,12 +96,12 @@ class LiskMigrator extends Command {
 			description: 'Migrate user configuration automatically. Default to false.',
 			default: false,
 		}),
-		'auto-download-lisk-core-v4': flagsParser.boolean({
-			required: false,
-			env: 'AUTO_DOWNLOAD_LISK_CORE',
-			description: 'Download lisk core v4 automatically. Default to false.',
-			default: false,
-		}),
+		// 'auto-download-lisk-core-v4': flagsParser.boolean({
+		// 	required: false,
+		// 	env: 'AUTO_DOWNLOAD_LISK_CORE',
+		// 	description: 'Download lisk core v4 automatically. Default to false.',
+		// 	default: false,
+		// }),
 		'auto-start-lisk-core-v4': flagsParser.boolean({
 			required: false,
 			env: 'AUTO_START_LISK_CORE',
@@ -120,7 +120,7 @@ class LiskMigrator extends Command {
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
-			const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
+			// const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
 
@@ -202,22 +202,9 @@ class LiskMigrator extends Command {
 			// Create an app instance for creating genesis block
 			const configFilePath = await resolveConfigPathByNetworkID(networkIdentifier);
 			const configV4 = await fs.readJSON(configFilePath);
-			const { app } = await Application.defaultApplication(configV4, true);
-
-			cli.action.start('Creating genesis block');
-			const blockAtSnapshotHeight = ((await client.block.getByHeight(
-				snapshotHeight,
-			)) as unknown) as Block;
-			const genesisBlock = await createGenesisBlock(
-				app,
-				genesisAssets,
-				blockAtSnapshotHeight,
-				snapshotTimeGap,
-			);
-			cli.action.stop();
 
 			cli.action.start(`Exporting genesis block to the path ${networkDir}`);
-			await writeGenesisBlock(genesisBlock, genesisAssets, networkDir);
+			await writeGenesisAssets(genesisAssets, networkDir);
 			cli.action.stop();
 
 			if (autoMigrateUserConfig) {
@@ -247,11 +234,22 @@ class LiskMigrator extends Command {
 				finalConfigCorev4 = migratedConfigV4 as PartialApplicationConfig;
 			}
 
-			if (autoDownloadLiskCoreV4) {
-				cli.action.start('Installing lisk-core v4');
-				await installLiskCore();
-				cli.action.stop();
-			}
+			cli.action.start('Installing lisk-core v4');
+			await installLiskCore();
+			cli.action.stop();
+
+			cli.action.start('Creating genesis block');
+			const blockAtSnapshotHeight = ((await client.block.getByHeight(
+				snapshotHeight,
+			)) as unknown) as Block;
+			await createGenesisBlock(
+				networkConstant.name,
+				configFilePath,
+				networkDir,
+				blockAtSnapshotHeight,
+				snapshotTimeGap,
+			);
+			cli.action.stop();
 
 			if (autoStartLiskCoreV4) {
 				try {

@@ -19,6 +19,7 @@ import { Block as BlockVersion4 } from 'lisk-framework';
 import { codec, Schema } from '@liskhq/lisk-codec';
 import { GenesisAssetEntry } from '../types';
 import { SNAPSHOT_BLOCK_VERSION } from '../constants';
+import { execAsync } from './process';
 
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
@@ -47,43 +48,33 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 
 export const createGenesisBlock = async (
 	// TODO: Update type any once GenesisBlockGenerateInput exported by SDK
-	app: any,
-	assets: GenesisAssetEntry[],
+	network: string,
+	config: string,
+	output: string,
 	blockAtSnapshotHeight: BlockVersion3,
 	snapshotTimeGap: number,
-): Promise<BlockVersion4> => {
-	const input = {
-		assets: assets.map((a: { module: string; schema: Schema; data: object }) => ({
-			module: a.module,
-			data: codec.fromJSON(a.schema, a.data),
-			schema: a.schema,
-		})),
-		chainID: Buffer.from(app.config.genesis.chainID, 'hex'),
-		timestamp: blockAtSnapshotHeight.header.timestamp + snapshotTimeGap,
-		height: blockAtSnapshotHeight.header.height + 1,
-		previousBlockID: blockAtSnapshotHeight.header.previousBlockID,
-	};
-
-	const genesisBlock = await app.generateGenesisBlock(input);
-	genesisBlock.header.version = SNAPSHOT_BLOCK_VERSION;
-	return genesisBlock;
+) => {
+	const timestamp = blockAtSnapshotHeight.header.timestamp + snapshotTimeGap;
+	const height = blockAtSnapshotHeight.header.height + 1;
+	const previousBlockID = blockAtSnapshotHeight.header.previousBlockID.toString('hex');
+	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${config} --output=${output} --assets-file=${output}/genesis_assets.json --height=${height} --previousBlockID=${previousBlockID} --timestamp=${timestamp}`;
+	await execAsync(genesisBlockCreateCommand);
 };
 
-export const writeGenesisBlock = async (
-	genesisBlock: BlockVersion4,
+export const writeGenesisAssets = async (
 	genesisAssets: GenesisAssetEntry[],
 	outputPath: string,
 ): Promise<void> => {
 	if (fs.existsSync(outputPath)) fs.rmdirSync(outputPath, { recursive: true });
 	fs.mkdirSync(outputPath, { recursive: true });
 
-	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
+	// fs.writeFileSync(path.resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
 
-	const genesisBlockJsonFilepath = path.resolve(outputPath, 'genesis_block.json');
-	fs.writeFileSync(genesisBlockJsonFilepath, JSON.stringify(genesisBlock, null, '\t'));
+	// const genesisBlockJsonFilepath = path.resolve(outputPath, 'genesis_block.json');
+	// fs.writeFileSync(genesisBlockJsonFilepath, JSON.stringify(genesisBlock, null, '\t'));
 
-	const genesisBlockHash = await createChecksum(genesisBlockJsonFilepath);
-	fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
+	// const genesisBlockHash = await createChecksum(genesisBlockJsonFilepath);
+	// fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
 
 	const genesisAssetsJsonFilepath = path.resolve(outputPath, 'genesis_assets.json');
 	fs.writeFileSync(
