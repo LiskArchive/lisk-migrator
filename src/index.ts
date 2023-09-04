@@ -96,12 +96,6 @@ class LiskMigrator extends Command {
 			description: 'Migrate user configuration automatically. Default to false.',
 			default: false,
 		}),
-		// 'auto-download-lisk-core-v4': flagsParser.boolean({
-		// 	required: false,
-		// 	env: 'AUTO_DOWNLOAD_LISK_CORE',
-		// 	description: 'Download lisk core v4 automatically. Default to false.',
-		// 	default: false,
-		// }),
 		'auto-start-lisk-core-v4': flagsParser.boolean({
 			required: false,
 			env: 'AUTO_START_LISK_CORE',

@@ -22,8 +22,7 @@ import { Port } from '../types';
 import { getAPIClient } from '../client';
 import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../constants';
 
-// TODO: Remove custom registry after Lisk Core is published to public NPM registry
-const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core --registry https://npm.lisk.com';
+const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-beta.5';
 
 const DEFAULT_LISK_DATA_DIR = `${homedir()}/.lisk/lisk-core`;
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;

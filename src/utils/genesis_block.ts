@@ -15,10 +15,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
-import { Block as BlockVersion4 } from 'lisk-framework';
-import { codec, Schema } from '@liskhq/lisk-codec';
 import { GenesisAssetEntry } from '../types';
-import { SNAPSHOT_BLOCK_VERSION } from '../constants';
 import { execAsync } from './process';
 
 (BigInt.prototype as any).toJSON = function () {
@@ -47,7 +44,6 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 };
 
 export const createGenesisBlock = async (
-	// TODO: Update type any once GenesisBlockGenerateInput exported by SDK
 	network: string,
 	config: string,
 	output: string,
@@ -57,7 +53,7 @@ export const createGenesisBlock = async (
 	const timestamp = blockAtSnapshotHeight.header.timestamp + snapshotTimeGap;
 	const height = blockAtSnapshotHeight.header.height + 1;
 	const previousBlockID = blockAtSnapshotHeight.header.previousBlockID.toString('hex');
-	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${config} --output=${output} --assets-file=${output}/genesis_assets.json --height=${height} --previousBlockID=${previousBlockID} --timestamp=${timestamp}`;
+	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${config} --output=${output} --assets-file=${output}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp}`;
 	await execAsync(genesisBlockCreateCommand);
 };
 
@@ -67,14 +63,6 @@ export const writeGenesisAssets = async (
 ): Promise<void> => {
 	if (fs.existsSync(outputPath)) fs.rmdirSync(outputPath, { recursive: true });
 	fs.mkdirSync(outputPath, { recursive: true });
-
-	// fs.writeFileSync(path.resolve(outputPath, 'genesis_block.blob'), genesisBlock.getBytes());
-
-	// const genesisBlockJsonFilepath = path.resolve(outputPath, 'genesis_block.json');
-	// fs.writeFileSync(genesisBlockJsonFilepath, JSON.stringify(genesisBlock, null, '\t'));
-
-	// const genesisBlockHash = await createChecksum(genesisBlockJsonFilepath);
-	// fs.writeFileSync(path.resolve(outputPath, 'genesis_block.json.SHA256'), genesisBlockHash);
 
 	const genesisAssetsJsonFilepath = path.resolve(outputPath, 'genesis_assets.json');
 	fs.writeFileSync(
