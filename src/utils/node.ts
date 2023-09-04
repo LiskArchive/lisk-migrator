@@ -11,6 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { resolve } from 'path';
+import * as fs from 'fs-extra';
 import { homedir } from 'os';
 import { Command } from '@oclif/command';
 import { existsSync, renameSync } from 'fs-extra';
@@ -23,11 +25,16 @@ import { getAPIClient } from '../client';
 import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../constants';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-beta.5';
+const INSTALL_PM2_COMMAND = 'npm i -g pm2';
+const START_PM2_COMMAND = 'pm2 start pm2.config.json';
 
 const DEFAULT_LISK_DATA_DIR = `${homedir()}/.lisk/lisk-core`;
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
+const PM2_FILE_NAME = 'pm2.config.json';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
+
+export const installPM2 = async (): Promise<string> => execAsync(INSTALL_PM2_COMMAND);
 
 export const isLiskCoreV3Running = async (liskCorePath: string): Promise<boolean> => {
 	try {
@@ -53,7 +60,7 @@ export const startLiskCore = async (
 	_previousLiskCoreVersion: string,
 	liskCorePath: string,
 	network: string,
-	configFilePath: string,
+	networkDir: string,
 ): Promise<string | Error> => {
 	await isLiskCoreV3Running(liskCorePath);
 	const isCoreV3Running = await isLiskCoreV3Running(liskCorePath);
@@ -71,7 +78,40 @@ export const startLiskCore = async (
 
 	await backupDefaultDirectoryIfExists(_this);
 
-	return execAsync(
-		`lisk-core start --network ${network} --config ${configFilePath} --api-ipc --api-ws --log info`,
+	_this.log('Installing pm2...');
+	await installPM2();
+	_this.log('Finished installing pm2.');
+
+	const customConfigFilepath = resolve(networkDir, 'custom_config.json');
+
+	fs.writeFileSync(
+		customConfigFilepath,
+		JSON.stringify(
+			{
+				..._config,
+				genesis: {
+					..._config.genesis,
+					block: {
+						fromFile: `${networkDir}/genesis_block.blob`,
+					},
+				},
+			},
+			null,
+			'\t',
+		),
 	);
+
+	fs.writeFileSync(
+		PM2_FILE_NAME,
+		JSON.stringify(
+			{
+				name: 'lisk-core',
+				script: `lisk-core start --network ${network} --config ${customConfigFilepath}`,
+			},
+			null,
+			'\t',
+		),
+	);
+
+	return execAsync(START_PM2_COMMAND);
 };

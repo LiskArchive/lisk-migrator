@@ -114,7 +114,6 @@ class LiskMigrator extends Command {
 			const snapshotHeight = flags['snapshot-height'];
 			const customConfigPath = flags.config;
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
-			// const autoDownloadLiskCoreV4 = flags['auto-download-lisk-core-v4'];
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
 
@@ -276,7 +275,7 @@ class LiskMigrator extends Command {
 								appVersion,
 								liskCoreV3Path,
 								network,
-								configFilePath,
+								networkDir,
 							);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
