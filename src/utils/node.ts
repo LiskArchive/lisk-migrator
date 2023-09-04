@@ -53,6 +53,7 @@ export const startLiskCore = async (
 	_previousLiskCoreVersion: string,
 	liskCorePath: string,
 	network: string,
+	configFilePath: string,
 ): Promise<string | Error> => {
 	await isLiskCoreV3Running(liskCorePath);
 	const isCoreV3Running = await isLiskCoreV3Running(liskCorePath);
@@ -70,5 +71,7 @@ export const startLiskCore = async (
 
 	await backupDefaultDirectoryIfExists(_this);
 
-	return execAsync(`lisk-core start--network ${network} --api - ipc--log info`);
+	return execAsync(
+		`lisk-core start --network ${network} --config ${configFilePath} --api-ipc --api-ws --log info`,
+	);
 };
