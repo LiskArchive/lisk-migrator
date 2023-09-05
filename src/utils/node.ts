@@ -26,11 +26,11 @@ import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../constants';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-beta.5';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
-const START_PM2_COMMAND = 'pm2 start pm2.config.json';
+const PM2_FILE_NAME = 'pm2.migrator.config.json';
+const START_PM2_COMMAND = `pm2 start ${PM2_FILE_NAME}`;
 
 const DEFAULT_LISK_DATA_DIR = `${homedir()}/.lisk/lisk-core`;
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
-const PM2_FILE_NAME = 'pm2.config.json';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
@@ -56,14 +56,12 @@ const backupDefaultDirectoryIfExists = async (_this: Command) => {
 
 export const startLiskCore = async (
 	_this: Command,
+	liskCoreV3DataPath: string,
 	_config: PartialApplicationConfig,
-	_previousLiskCoreVersion: string,
-	liskCorePath: string,
 	network: string,
-	networkDir: string,
+	outputDir: string,
 ): Promise<string | Error> => {
-	await isLiskCoreV3Running(liskCorePath);
-	const isCoreV3Running = await isLiskCoreV3Running(liskCorePath);
+	const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
 	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running.');
 
 	const networkPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_P2P;
@@ -82,7 +80,7 @@ export const startLiskCore = async (
 	await installPM2();
 	_this.log('Finished installing pm2.');
 
-	const customConfigFilepath = resolve(networkDir, 'custom_config.json');
+	const customConfigFilepath = resolve(outputDir, 'custom_config.json');
 
 	fs.writeFileSync(
 		customConfigFilepath,
@@ -92,7 +90,7 @@ export const startLiskCore = async (
 				genesis: {
 					..._config.genesis,
 					block: {
-						fromFile: `${networkDir}/genesis_block.blob`,
+						fromFile: `${outputDir}/genesis_block.blob`,
 					},
 				},
 			},

@@ -45,26 +45,28 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 
 export const createGenesisBlock = async (
 	network: string,
-	config: string,
-	output: string,
+	configFilepath: string,
+	outputDir: string,
 	blockAtSnapshotHeight: BlockVersion3,
 	snapshotTimeGap: number,
 ) => {
-	const timestamp = blockAtSnapshotHeight.header.timestamp + snapshotTimeGap;
 	const height = blockAtSnapshotHeight.header.height + 1;
-	const previousBlockID = blockAtSnapshotHeight.header.previousBlockID.toString('hex');
-	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${config} --output=${output} --assets-file=${output}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp}`;
+	const timestamp = blockAtSnapshotHeight.header.timestamp + snapshotTimeGap;
+	const previousBlockID = blockAtSnapshotHeight.header.id.toString('hex');
+
+	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp}`;
+
 	await execAsync(genesisBlockCreateCommand);
 };
 
 export const writeGenesisAssets = async (
 	genesisAssets: GenesisAssetEntry[],
-	outputPath: string,
+	outputDir: string,
 ): Promise<void> => {
-	if (fs.existsSync(outputPath)) fs.rmdirSync(outputPath, { recursive: true });
-	fs.mkdirSync(outputPath, { recursive: true });
+	if (fs.existsSync(outputDir)) fs.rmdirSync(outputDir, { recursive: true });
+	fs.mkdirSync(outputDir, { recursive: true });
 
-	const genesisAssetsJsonFilepath = path.resolve(outputPath, 'genesis_assets.json');
+	const genesisAssetsJsonFilepath = path.resolve(outputDir, 'genesis_assets.json');
 	fs.writeFileSync(
 		genesisAssetsJsonFilepath,
 		JSON.stringify({ assets: genesisAssets }, null, '\t'),

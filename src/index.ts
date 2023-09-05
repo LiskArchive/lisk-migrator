@@ -51,7 +51,7 @@ import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
 import { copyDir, resolveAbsolutePath } from './utils/fs';
 
-let finalConfigCorev4: PartialApplicationConfig;
+let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
@@ -107,7 +107,7 @@ class LiskMigrator extends Command {
 	public async run(): Promise<void> {
 		try {
 			const { flags } = this.parse(LiskMigrator);
-			const liskCoreV3Path = resolveAbsolutePath(
+			const liskCoreV3DataPath = resolveAbsolutePath(
 				flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH,
 			);
 			const outputPath = flags.output ?? join(__dirname, '..', 'output');
@@ -117,7 +117,7 @@ class LiskMigrator extends Command {
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
 
-			const client = await getAPIClient(liskCoreV3Path);
+			const client = await getAPIClient(liskCoreV3DataPath);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
 			const { version: appVersion, networkIdentifier } = nodeInfo;
 
@@ -138,7 +138,7 @@ class LiskMigrator extends Command {
 			cli.action.stop('Snapshot height is valid');
 
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
-			const networkDir = `${outputPath}/${networkIdentifier}`;
+			const outputDir = `${outputPath}/${networkIdentifier}`;
 
 			if (autoStartLiskCoreV4) {
 				if (!networkConstant) {
@@ -164,15 +164,15 @@ class LiskMigrator extends Command {
 
 			// User specified custom config file
 			const configV3: ApplicationConfigV3 = customConfigPath
-				? await getConfig(liskCoreV3Path, customConfigPath)
-				: await getConfig(liskCoreV3Path);
+				? await getConfig(liskCoreV3DataPath, customConfigPath)
+				: await getConfig(liskCoreV3DataPath);
 
 			await setTokenIDLskByNetID(networkIdentifier);
 			await setHeightPrevSnapshotBlockByNetID(networkIdentifier);
 
 			await observeChainHeight({
 				label: 'Waiting for snapshot height to be finalized',
-				liskCoreV3Path,
+				liskCoreV3DataPath,
 				height: snapshotHeight,
 				delay: 500,
 				isFinal: true,
@@ -180,7 +180,7 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const snapshotDirPath = join(liskCoreV3Path, SNAPSHOT_DIR);
+			const snapshotDirPath = join(liskCoreV3DataPath, SNAPSHOT_DIR);
 			const db = new Database(snapshotDirPath);
 			cli.action.stop();
 
@@ -193,11 +193,11 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			// Create an app instance for creating genesis block
-			const configFilePath = await resolveConfigPathByNetworkID(networkIdentifier);
-			const configV4 = await fs.readJSON(configFilePath);
+			const defaultConfigFilePath = await resolveConfigPathByNetworkID(networkIdentifier);
+			const defaultConfigV4 = await fs.readJSON(defaultConfigFilePath);
 
-			cli.action.start(`Exporting genesis block to the path ${networkDir}`);
-			await writeGenesisAssets(genesisAssets, networkDir);
+			cli.action.start(`Exporting genesis block to the path ${outputDir}`);
+			await writeGenesisAssets(genesisAssets, outputDir);
 			cli.action.stop();
 
 			if (autoMigrateUserConfig) {
@@ -208,7 +208,7 @@ class LiskMigrator extends Command {
 				cli.action.start('Migrating user configuration');
 				const migratedConfigV4 = (await migrateUserConfig(
 					configV3,
-					configV4,
+					defaultConfigV4,
 					snapshotHeight,
 				)) as ApplicationConfig;
 				cli.action.stop();
@@ -219,12 +219,12 @@ class LiskMigrator extends Command {
 
 				if (!isValidConfig) throw new Error('Migrated user configuration is invalid.');
 
-				cli.action.start(`Exporting user configuration to the path: ${networkDir}`);
-				await writeConfig(migratedConfigV4, networkDir);
+				cli.action.start(`Exporting user configuration to the path: ${outputDir}`);
+				await writeConfig(migratedConfigV4, outputDir);
 				cli.action.stop();
 
-				// Set finalConfigCorev4 to the migrated Core config
-				finalConfigCorev4 = migratedConfigV4 as PartialApplicationConfig;
+				// Set configCoreV4 to the migrated Core config
+				configCoreV4 = migratedConfigV4 as PartialApplicationConfig;
 			}
 
 			cli.action.start('Installing lisk-core v4');
@@ -237,8 +237,8 @@ class LiskMigrator extends Command {
 			)) as unknown) as Block;
 			await createGenesisBlock(
 				networkConstant.name,
-				configFilePath,
-				networkDir,
+				defaultConfigFilePath,
+				outputDir,
 				blockAtSnapshotHeight,
 				snapshotTimeGap,
 			);
@@ -246,10 +246,8 @@ class LiskMigrator extends Command {
 
 			if (autoStartLiskCoreV4) {
 				try {
-					// TODO: Verify and update the implementation
-					// If finalConfigCorev4 is not set to the migrated config use the default config
 					if (!autoMigrateUserConfig) {
-						finalConfigCorev4 = configV4;
+						configCoreV4 = defaultConfigV4;
 					}
 
 					cli.action.start(`Creating legacy.db at ${LEGACY_DB_PATH}`);
@@ -264,19 +262,12 @@ class LiskMigrator extends Command {
 					if (isLiskCoreV3Stopped) {
 						const isUserConfirmed = await cli.confirm(`
 						Start Lisk Core with the following configuration? [yes/no] \n
-						${util.inspect(finalConfigCorev4, false, 3)}`);
+						${util.inspect(configCoreV4, false, 3)}`);
 
 						if (isUserConfirmed) {
 							cli.action.start('Starting lisk-core v4');
 							const network = networkConstant.name as string;
-							await startLiskCore(
-								this,
-								finalConfigCorev4,
-								appVersion,
-								liskCoreV3Path,
-								network,
-								networkDir,
-							);
+							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
 						} else {
