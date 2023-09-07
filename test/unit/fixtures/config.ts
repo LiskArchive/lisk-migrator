@@ -62,6 +62,9 @@ export const configV3 = {
 		wsMaxPayload: 10,
 		advertiseAddress: true,
 	},
+	backup: {
+		height: 10,
+	},
 	transactionPool: {
 		maxTransactions: 4096,
 		maxTransactionsPerAccount: 64,
