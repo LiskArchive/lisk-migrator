@@ -264,10 +264,10 @@ export const validateConfig = async (config: ApplicationConfig): Promise<boolean
 	}
 };
 
-export const writeConfig = async (config: ApplicationConfig, outputPath: string): Promise<void> => {
-	if (!existsSync(outputPath)) {
-		mkdirSync(outputPath, { recursive: true });
+export const writeConfig = async (config: ApplicationConfig, outputDir: string): Promise<void> => {
+	if (!existsSync(outputDir)) {
+		mkdirSync(outputDir, { recursive: true });
 	}
 
-	writeFileSync(resolve(outputPath, 'config.json'), JSON.stringify(config));
+	writeFileSync(resolve(outputDir, 'config.json'), JSON.stringify(config));
 };
