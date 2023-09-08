@@ -135,6 +135,17 @@ export const migrateUserConfig = async (
 		cli.action.stop();
 	}
 
+	// TODO: Verify if needed
+	if (configV3.backup?.height) {
+		cli.action.start(
+			`Setting config property 'system.backup.height' to: ${configV3.backup.height}.`,
+		);
+		configV4.system.backup = {
+			height: Math.max(snapshotHeight + 1, configV3.backup.height + 1),
+		};
+		cli.action.stop();
+	}
+
 	if (configV3.transactionPool) {
 		if (configV3.transactionPool.maxTransactions) {
 			cli.action.start(
@@ -259,7 +270,7 @@ export const validateConfig = async (config: ApplicationConfig): Promise<boolean
 	try {
 		(await validator.validate(applicationConfigSchema, config)) as unknown;
 		return true;
-	} catch (_) {
+	} catch (error) {
 		return false;
 	}
 };

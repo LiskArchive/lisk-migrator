@@ -67,6 +67,9 @@ export interface TransactionPool {
 	readonly minReplacementFeeDifference?: string;
 }
 
+export interface Backup {
+	height: number;
+}
 export interface ApplicationConfigV3 {
 	label: string;
 	version: string;
@@ -79,6 +82,7 @@ export interface ApplicationConfigV3 {
 	plugins: {
 		[key: string]: PluginOptions;
 	};
+	backup: Backup;
 	transactionPool: TransactionPool;
 	rpc: RPCConfig;
 }
@@ -370,10 +374,6 @@ export interface RegisteredModule {
 		id: number;
 		name: string;
 	}[];
-}
-
-export interface Backup {
-	height: number;
 }
 
 export interface NodeInfo {
