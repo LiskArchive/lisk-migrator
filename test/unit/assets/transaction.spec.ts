@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { when } from 'jest-when';
-import { KVStore } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { Block, Transaction } from '@liskhq/lisk-chain';
 
 import { DB_KEY_TRANSACTIONS_ID, DB_KEY_TRANSACTIONS_BLOCK_ID } from '../../../src/constants';
@@ -27,7 +27,7 @@ describe('Test Transaction utility', () => {
 	let transaction: Transaction;
 
 	beforeAll(async () => {
-		db = new KVStore('testDB');
+		db = new Database('testDB');
 		[block] = generateBlocks({
 			startHeight: 1,
 			numberOfBlocks: 1,
@@ -57,12 +57,14 @@ describe('Test Transaction utility', () => {
 
 		when(db.get)
 			.calledWith(
-				`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${blockWithPayload.header.id.toString('binary')}`,
+				Buffer.from(
+					`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${blockWithPayload.header.id.toString('binary')}`,
+				),
 			)
 			.mockResolvedValue(transaction.id as never);
 
 		when(db.get)
-			.calledWith(`${DB_KEY_TRANSACTIONS_ID}:${transaction.id.toString('binary')}`)
+			.calledWith(Buffer.from(`${DB_KEY_TRANSACTIONS_ID}:${transaction.id.toString('binary')}`))
 			.mockResolvedValue(transaction.getBytes() as never);
 
 		const result = await getTransactions(blockWithPayload.header.id, db);
@@ -85,7 +87,9 @@ describe('Test Transaction utility', () => {
 
 	it('should return empty array when block has no transactions', async () => {
 		when(db.get)
-			.calledWith(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${block.header.id.toString('binary')}`)
+			.calledWith(
+				Buffer.from(`${DB_KEY_TRANSACTIONS_BLOCK_ID}:${block.header.id.toString('binary')}`),
+			)
 			.mockResolvedValue([] as never);
 
 		const result = await getTransactions(block.header.id, db);

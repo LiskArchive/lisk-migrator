@@ -85,6 +85,9 @@ export const BINARY_ADDRESS_LENGTH = 20;
 export const TRANSACTION_ID_LENGTH = SHA_256_HASH_LENGTH;
 
 export const DEFAULT_DATA_DIR = 'data';
-export const EXTRACTED_SNAPSHOT_DIR = 'blockchain.db';
+export const SNAPSHOT_DIR = `${DEFAULT_DATA_DIR}/backup`;
+export const MIN_SUPPORTED_LISK_CORE_VERSION = '3.1.0';
+export const DEFAULT_LISK_CORE_PATH = '~/.lisk/lisk-core';
+export const LEGACY_DB_PATH = `${DEFAULT_LISK_CORE_PATH}/${DEFAULT_DATA_DIR}/legacy.db`;
 
 export const DEFAULT_VERSION = '0.1.0';

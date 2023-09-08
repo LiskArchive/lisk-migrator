@@ -16,7 +16,7 @@ pipeline {
 					nvm(readFile(".nvmrc").trim()) {
 						sh '''
 						npm install --global yarn
-						yarn --frozen-lockfile --ignore-engines
+						yarn --frozen-lockfile
 						yarn build
 						'''
 					}

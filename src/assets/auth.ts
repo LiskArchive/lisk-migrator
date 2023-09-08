@@ -33,8 +33,8 @@ export const getAuthModuleEntryBuffer = async (account: Account): Promise<AuthSt
 	};
 
 	return {
-		storeKey: account.address,
-		storeValue: authObj,
+		address: account.address,
+		authAccount: authObj,
 	};
 };
 

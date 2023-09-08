@@ -73,27 +73,23 @@ The Lisk Migrator v2 also allows users to download and start the Lisk Core v4.x 
 
 ```
 USAGE
-$ lisk-migrator [-d <value>] [-m <value>] [-c <value>] [-o <value>] [-p <value>] [-p <value>] [--snapshot-time-gap <value>] [--auto-download-lisk-core-v4] [--auto-migrate-config] [--auto-start-lisk-core-v4] [--use-existing-snapshot]
+$ lisk-migrator [-d <value>] [-m <value>] [-c <value>] [-o <value>] [-p <value>] [-p <value>] [--snapshot-time-gap <value>] [--auto-migrate-config] [--auto-start-lisk-core-v4] [--use-existing-snapshot]
 
 FLAGS
   -c, --config=config                                  Custom configuration file path.
   -d, --lisk-core-v3-data-path=lisk-core-v3-data-path  Path where the lisk-core v3.x instance is running. Current home directory will be considered the default if not provided.
   -h, --help                                           Shows CLI help.
-  -m, --min-compatible-version=min-compatible-version  [default: >=3.0.4 <=3.0] Minimum compatible version required to run the migrator.
   -o, --output=output                                  File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.
-  -p, --snapshot-path=snapshot-path                    Path where the state snapshot will be created. When not provided it defaults to the current directory.
   -s, --snapshot-height=snapshot-height                (Required) The height at which the re-genesis block will be generated. Can be specified with the SNAPSHOT_HEIGHT as well.
   -v, --version                                        Shows the CLI version.
-  --auto-download-lisk-core-v4                         Download lisk-core v4 automatically. Default to false.
   --auto-migrate-config                                Migrate user configuration automatically. Default to false.
   --auto-start-lisk-core-v4                            Start lisk-core v4 automatically. Default to false.
   --snapshot-time-gap=snapshot-time-gap                The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.
-  --use-existing-snapshot                              Use the existing database snapshot (Temporary flag, will be removed once the `createSnapshot` command is available on Lisk Core v3.x).
 
 EXAMPLES
-  lisk-migrator --snapshot-path  /path/to/snapshot  --snapshot-height 20931763 --lisk-core-path /path/to/data-dir
+  lisk-migrator --snapshot-height 20931763 --lisk-core-path /path/to/data-dir
 
-  lisk-migrator --snapshot-path  /path/to/snapshot  --snapshot-height 20931763 --lisk-core-path /path/to/data-dir --auto-download-lisk-core-v4 --auto-start-lisk-core-v4 --auto-migrate-config
+  lisk-migrator --snapshot-height 20931763 --lisk-core-path /path/to/data-dir --auto-start-lisk-core-v4 --auto-migrate-config
 ```
 
 <!--
@@ -107,13 +103,13 @@ You can start the migration script by running the following command in the termi
 **Mainnet**
 
 ```
-lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/mainnet --lisk-core-v3-data-path ~/lisk-main --auto-migrate-config --auto-start-lisk-core-v4
 ```
 
 **Testnet**
 
 ```
-lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-download-lisk-core-v4  --auto-migrate-config --auto-start-lisk-core-v4
+lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lisk-core/config/testnet --lisk-core-v3-data-path ~/lisk-test --auto-migrate-config --auto-start-lisk-core-v4
 ```
 
 - `--snapshot-height`:
@@ -123,8 +119,6 @@ lisk-migrator --snapshot-height [recommendedSnapshotHeight] --output ~/.lisk/lis
   The absolute path to the directory, where the newly generated genesis block should be saved.
 - `--lisk-core-v3-data-path`:
   The absolute path to the directory, where the Lisk Core v3.x node is located.
-- `--auto-download-lisk-core-v4`:
-  Download Lisk Core v4.x automatically.
 - `--auto-migrate-config`:
   Migrate Lisk Core v3.x configuration to v4.x automatically.
 - `--auto-start-lisk-core-v4`:

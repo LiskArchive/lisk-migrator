@@ -12,18 +12,16 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import cli from 'cli-ux';
-import { Block, BlockHeader } from '@liskhq/lisk-chain';
 import { getAPIClient } from '../client';
 import { NETWORK_CONSTANT } from '../constants';
 
-let blockIDAtSnapshotHeight: string;
 let tokenIDLsk: string;
 let heightPreviousSnapshotBlock: number;
 
 interface ObserveParams {
 	readonly label: string;
 	readonly height: number;
-	readonly liskCorePath: string;
+	readonly liskCoreV3DataPath: string;
 	readonly delay: number;
 	readonly isFinal: boolean;
 }
@@ -49,26 +47,6 @@ export const getNodeInfo = async (
 	const client = await getAPIClient(liskCorePath);
 	const { height, finalizedHeight } = await client.node.getNodeInfo();
 	return { height, finalizedHeight };
-};
-
-export const setBlockIDAtSnapshotHeight = async (
-	liskCorePath: string,
-	height: number,
-): Promise<void> => {
-	const client = await getAPIClient(liskCorePath);
-	const result = (await client.block.getByHeight(height)) as Record<string, Block>;
-	const blockHeader = (result.header as unknown) as BlockHeader;
-	blockIDAtSnapshotHeight = blockHeader.id.toString('hex');
-};
-
-export const getBlockIDAtSnapshotHeight = (): string => blockIDAtSnapshotHeight;
-
-export const getBlockIDAtHeight = async (liskCorePath: string, height: number): Promise<string> => {
-	const client = await getAPIClient(liskCorePath);
-	const result: Record<string, unknown> = await client.block.getByHeight(height);
-	const blockHeader = (result.header as unknown) as BlockHeader;
-	const blockID = blockHeader.id.toString('hex');
-	return blockID;
 };
 
 const secondsToHumanString = (seconds: number): string => {
@@ -113,15 +91,11 @@ const getRemainingTime = (currentHeight: number, observedHeight: number): string
 export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
 	const observedHeight = options.height;
 	const startHeight = options.isFinal
-		? (await getNodeInfo(options.liskCorePath)).finalizedHeight
-		: (await getNodeInfo(options.liskCorePath)).height;
+		? (await getNodeInfo(options.liskCoreV3DataPath)).finalizedHeight
+		: (await getNodeInfo(options.liskCoreV3DataPath)).height;
 
-	if (startHeight === observedHeight) {
+	if (startHeight >= observedHeight) {
 		return startHeight;
-	}
-
-	if (startHeight > observedHeight) {
-		throw new Error(`Chain height: ${startHeight} crossed the observed height: ${observedHeight}`);
 	}
 
 	const progress = cli.progress({
@@ -146,8 +120,8 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 			let height!: number;
 			try {
 				height = options.isFinal
-					? (await getNodeInfo(options.liskCorePath)).finalizedHeight
-					: (await getNodeInfo(options.liskCorePath)).height;
+					? (await getNodeInfo(options.liskCoreV3DataPath)).finalizedHeight
+					: (await getNodeInfo(options.liskCoreV3DataPath)).height;
 			} catch (error) {
 				return reject(error);
 			}
@@ -158,15 +132,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 				height,
 			});
 
-			if (height === observedHeight) {
+			if (height >= observedHeight) {
 				clearInterval(intervalId);
 				return resolve(height);
-			}
-
-			if (height > observedHeight) {
-				return reject(
-					new Error(`Chain height: ${height} crossed the observed height: ${observedHeight}`),
-				);
 			}
 		};
 

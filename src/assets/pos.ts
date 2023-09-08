@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { posGenesisStoreSchema } from 'lisk-framework';
-import { KVStore, formatInt } from '@liskhq/lisk-db';
+import { Database } from '@liskhq/lisk-db';
 import { codec } from '@liskhq/lisk-codec';
 import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
 import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
@@ -55,23 +55,42 @@ const ceiling = (a: number, b: number) => {
 	return Math.floor((a + b - 1) / b);
 };
 
+// TODO: Remove method once exported from lisk-db
+export const formatInt = (num: number | bigint): string => {
+	let buf: Buffer;
+	if (typeof num === 'bigint') {
+		if (num < BigInt(0)) {
+			throw new Error('Negative number cannot be formatted');
+		}
+		buf = Buffer.alloc(8);
+		buf.writeBigUInt64BE(num);
+	} else {
+		if (num < 0) {
+			throw new Error('Negative number cannot be formatted');
+		}
+		buf = Buffer.alloc(4);
+		buf.writeUInt32BE(num, 0);
+	}
+	return buf.toString('binary');
+};
+
 export const getValidatorKeys = async (
 	accounts: Account[],
 	snapshotHeight: number,
 	snapshotHeightPrevious: number,
-	db: KVStore,
+	db: Database,
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 
 	const blocksStream = db.createReadStream({
-		gte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`,
-		lte: `${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`,
+		gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+		lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 	});
 
 	const blockIDs: Buffer[] = await getBlocksIDsFromDBStream(blocksStream);
 
 	for (const id of blockIDs) {
-		const blockHeaderBuffer = await db.get(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`);
+		const blockHeaderBuffer = await db.get(Buffer.from(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`));
 		const blockHeader: BlockHeader = codec.decode(blockHeaderSchema, blockHeaderBuffer);
 		const payload = ((await getTransactions(id, db)) as unknown) as Transaction[];
 
