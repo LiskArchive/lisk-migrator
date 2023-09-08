@@ -141,7 +141,7 @@ export const migrateUserConfig = async (
 			`Setting config property 'system.backup.height' to: ${configV3.backup.height}.`,
 		);
 		configV4.system.backup = {
-			height: configV3.backup.height + 1,
+			height: Math.max(snapshotHeight + 1, configV3.backup.height + 1),
 		};
 		cli.action.stop();
 	}
