@@ -135,12 +135,13 @@ export const migrateUserConfig = async (
 		cli.action.stop();
 	}
 
+	// TODO: Verify if needed
 	if (configV3.backup?.height) {
 		cli.action.start(
 			`Setting config property 'system.backup.height' to: ${configV3.backup.height}.`,
 		);
 		configV4.system.backup = {
-			height: configV3.backup.height,
+			height: configV3.backup.height + 1,
 		};
 		cli.action.stop();
 	}
