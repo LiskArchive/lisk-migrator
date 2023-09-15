@@ -22,7 +22,6 @@ import {
 	DB_KEY_ACCOUNTS_ADDRESS,
 	BINARY_ADDRESS_LENGTH,
 	ADDRESS_LEGACY_RESERVE,
-	ALL_SUPPORTED_TOKENS_KEY,
 } from './constants';
 import { accountSchema, voteWeightsSchema } from './schemas';
 import {
@@ -76,7 +75,7 @@ export class CreateAsset {
 
 	public init = async (
 		snapshotHeight: number,
-		snapshotHeightPrevious: number,
+		prevSnapshotBlockHeight: number,
 		tokenID: string,
 	): Promise<GenesisAssetEntry[]> => {
 		const authSubstoreEntries: AuthStoreEntryBuffer[] = [];
@@ -130,7 +129,7 @@ export class CreateAsset {
 		const validatorKeys = await getValidatorKeys(
 			accounts,
 			snapshotHeight,
-			snapshotHeightPrevious,
+			prevSnapshotBlockHeight,
 			this._db,
 		);
 
@@ -140,11 +139,11 @@ export class CreateAsset {
 			authSubstoreEntries.push(authModuleAsset);
 
 			// genesis asset for token module
-			// Create user subtore entries
+			// Create user substore entries
 			const userSubstoreEntry = await createUserSubstoreArrayEntry(account, tokenID);
 			if (userSubstoreEntry) userSubstoreEntries.push(userSubstoreEntry);
 
-			// Create total lisk supply for supply subtore
+			// Create total lisk supply for supply substore
 			totalLSKSupply += BigInt(account.token.balance);
 			const lockedBalances = await getLockedBalances(account);
 			totalLSKSupply = lockedBalances.reduce(
@@ -185,12 +184,6 @@ export class CreateAsset {
 		supplySubstoreEntries.push({
 			tokenID,
 			totalSupply: String(totalLSKSupply + legacyReserveAmount),
-		});
-
-		// Update supported tokens substore to support all tokens by default
-		supportedTokensSubstoreEntries.push({
-			chainID: ALL_SUPPORTED_TOKENS_KEY,
-			supportedTokenIDs: [],
 		});
 
 		// Sort validators substore entries in lexicographical order

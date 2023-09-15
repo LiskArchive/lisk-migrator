@@ -51,7 +51,7 @@ describe('Build assets/pos', () => {
 	let blockIDsStream: { value: Buffer }[];
 	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 10815;
-	const snapshotHeightPrevious = 5000;
+	const prevSnapshotBlockHeight = 5000;
 
 	beforeAll(async () => {
 		db = new Database('testDB');
@@ -150,7 +150,7 @@ describe('Build assets/pos', () => {
 	it('should create createValidatorsArrayEntry', async () => {
 		when(db.createReadStream)
 			.calledWith({
-				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
 				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 			})
 			.mockReturnValue(Readable.from(blockIDsStream));
@@ -169,7 +169,7 @@ describe('Build assets/pos', () => {
 		const validatorKeys = await getValidatorKeys(
 			accounts,
 			snapshotHeight,
-			snapshotHeightPrevious,
+			prevSnapshotBlockHeight,
 			db,
 		);
 
@@ -243,20 +243,20 @@ describe('Build assets/pos', () => {
 	it('should throw error when creating stream with invalid file path', async () => {
 		when(db.createReadStream)
 			.calledWith({
-				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
 				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 			})
 			.mockReturnValue(createReadStream('test.txt') as never);
 
 		await expect(
-			getValidatorKeys(accounts, snapshotHeight, snapshotHeightPrevious, db),
+			getValidatorKeys(accounts, snapshotHeight, prevSnapshotBlockHeight, db),
 		).rejects.toThrow();
 	});
 
 	it('should create PoS module asset', async () => {
 		when(db.createReadStream)
 			.calledWith({
-				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
 				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 			})
 			.mockReturnValue(Readable.from(blockIDsStream));
@@ -275,7 +275,7 @@ describe('Build assets/pos', () => {
 		const validatorKeys = await getValidatorKeys(
 			accounts,
 			snapshotHeight,
-			snapshotHeightPrevious,
+			prevSnapshotBlockHeight,
 			db,
 		);
 
