@@ -41,9 +41,9 @@ import {
 import {
 	observeChainHeight,
 	getTokenIDLsk,
-	getHeightPrevSnapshotBlock,
+	getPrevSnapshotBlockHeight,
 	setTokenIDLskByNetID,
-	setHeightPrevSnapshotBlockByNetID,
+	setPrevSnapshotBlockHeightByNetID,
 } from './utils/chain';
 import { createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
@@ -168,7 +168,7 @@ class LiskMigrator extends Command {
 				: await getConfig(liskCoreV3DataPath);
 
 			await setTokenIDLskByNetID(networkIdentifier);
-			await setHeightPrevSnapshotBlockByNetID(networkIdentifier);
+			await setPrevSnapshotBlockHeightByNetID(networkIdentifier);
 
 			await observeChainHeight({
 				label: 'Waiting for snapshot height to be finalized',
@@ -188,7 +188,7 @@ class LiskMigrator extends Command {
 			cli.action.start('Creating genesis assets');
 			const createAsset = new CreateAsset(db);
 			const tokenID = getTokenIDLsk();
-			const prevSnapshotBlockHeight = getHeightPrevSnapshotBlock();
+			const prevSnapshotBlockHeight = getPrevSnapshotBlockHeight();
 			const genesisAssets = await createAsset.init(
 				snapshotHeight,
 				prevSnapshotBlockHeight,

@@ -16,7 +16,7 @@ import { getAPIClient } from '../client';
 import { NETWORK_CONSTANT } from '../constants';
 
 let tokenIDLsk: string;
-let heightPreviousSnapshotBlock: number;
+let prevSnapshotBlockHeight: number;
 
 interface ObserveParams {
 	readonly label: string;
@@ -32,13 +32,12 @@ export const setTokenIDLskByNetID = async (networkIdentifier: string): Promise<v
 	tokenIDLsk = NETWORK_CONSTANT[networkIdentifier].tokenID as string;
 };
 
-export const getHeightPrevSnapshotBlock = (): number => heightPreviousSnapshotBlock;
+export const getPrevSnapshotBlockHeight = (): number => prevSnapshotBlockHeight;
 
-export const setHeightPrevSnapshotBlockByNetID = async (
+export const setPrevSnapshotBlockHeightByNetID = async (
 	networkIdentifier: string,
 ): Promise<void> => {
-	heightPreviousSnapshotBlock = NETWORK_CONSTANT[networkIdentifier]
-		.prevSnapshotBlockHeight as number;
+	prevSnapshotBlockHeight = NETWORK_CONSTANT[networkIdentifier].prevSnapshotBlockHeight as number;
 };
 
 export const getNodeInfo = async (
