@@ -59,7 +59,7 @@ describe('Build assets/legacy', () => {
 	let delegates: VoteWeightsWrapper;
 	let encodedVoteWeights: Buffer;
 	const snapshotHeight = 10815;
-	const snapshotHeightPrevious = 5000;
+	const prevSnapshotBlockHeight = 5000;
 	const tokenID = '0400000000000000';
 
 	interface Accounts {
@@ -209,7 +209,7 @@ describe('Build assets/legacy', () => {
 
 			when(db.createReadStream)
 				.calledWith({
-					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
 					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 				})
 				.mockReturnValue(Readable.from([]));
@@ -218,7 +218,7 @@ describe('Build assets/legacy', () => {
 				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const response = await createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID);
+			const response = await createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID);
 
 			const moduleList = [
 				MODULE_NAME_LEGACY,
@@ -246,20 +246,20 @@ describe('Build assets/legacy', () => {
 				.mockReturnValue(undefined);
 
 			await expect(
-				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
+				createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID),
 			).rejects.toThrow();
 		});
 
 		it('should throw error when block stream is undefined', async () => {
 			when(db.createReadStream)
 				.calledWith({
-					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
 					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 				})
 				.mockReturnValue(undefined);
 
 			await expect(
-				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
+				createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID),
 			).rejects.toThrow();
 		});
 
@@ -278,7 +278,7 @@ describe('Build assets/legacy', () => {
 				.mockReturnValue(createReadStream('test.txt') as never);
 
 			await expect(
-				createAsset.init(snapshotHeight, snapshotHeightPrevious, tokenID),
+				createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID),
 			).rejects.toThrow();
 		});
 	});

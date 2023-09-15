@@ -77,13 +77,13 @@ export const formatInt = (num: number | bigint): string => {
 export const getValidatorKeys = async (
 	accounts: Account[],
 	snapshotHeight: number,
-	snapshotHeightPrevious: number,
+	prevSnapshotBlockHeight: number,
 	db: Database,
 ): Promise<Record<string, string>> => {
 	const keys: Record<string, string> = {};
 
 	const blocksStream = db.createReadStream({
-		gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeightPrevious + 1)}`),
+		gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
 		lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
 	});
 
