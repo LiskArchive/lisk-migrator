@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import * as fs from 'fs-extra';
-import { resolve } from 'path';
+import { resolve, join } from 'path';
 import { ApplicationConfig } from 'lisk-framework';
 import { configV3, configV4 } from '../fixtures/config';
 import {
@@ -20,13 +20,18 @@ import {
 	validateConfig,
 	writeConfig,
 	resolveConfigPathByNetworkID,
+	createBackup,
 } from '../../../src/utils/config';
 import { ApplicationConfigV3 } from '../../../src/types';
 
 describe('Migrate user configuration', () => {
 	const migratedConfigFilePath = `${process.cwd()}/test/config`;
+	const backupPath = join(__dirname, '../../..', 'backup');
 
-	afterAll(() => fs.removeSync(migratedConfigFilePath));
+	afterAll(() => {
+		fs.removeSync(migratedConfigFilePath);
+		fs.removeSync(backupPath);
+	});
 
 	it('should migrate user configuration', async () => {
 		const snapshotHeight = 10815;
@@ -62,5 +67,13 @@ describe('Test resolveConfigPathByNetworkID method', () => {
 
 	it('should throw error when called by invalid networkID', async () => {
 		await expect(resolveConfigPathByNetworkID('invalid')).rejects.toThrow();
+	});
+});
+
+describe('Test createBackup method', () => {
+	it('should create backup', async () => {
+		const backupPath = join(__dirname, '../../..', 'backup');
+		await createBackup((configV3 as unknown) as ApplicationConfigV3);
+		expect(fs.existsSync(backupPath)).toBe(true);
 	});
 });
