@@ -39,27 +39,9 @@ The following system requirements are recommended to run Lisk Migrator v2.0.0:
 
 Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator).
 
-### From NPM
-
-<!-- usage -->
-
-```sh-session
-$ npm install -g lisk-migrator
-$ lisk-migrator COMMAND
-running command...
-$ lisk-migrator (-v|--version|version)
-lisk-migrator/2.0.0-rc.0 darwin-arm64 node-v18.16.1
-$ lisk-migrator --help [COMMAND]
-USAGE
-  $ lisk-migrator COMMAND
-...
-```
-
-<!-- usagestop -->
-
 ### Build Distributions (Linux, Darwin) from source
 
-Clone the Lisk Core repository using Git and initialize the modules.
+Clone the Lisk Migrator repository using Git and initialize the modules.
 
 <!-- build -->
 
