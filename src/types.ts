@@ -361,7 +361,7 @@ export interface GenesisInteroperability {
 export interface NetworkConfigLocal {
 	name: string;
 	tokenID: string;
-	snapshotHeightPrevious: number;
+	prevSnapshotBlockHeight: number;
 }
 
 export interface RegisteredModule {
