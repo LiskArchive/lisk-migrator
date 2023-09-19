@@ -72,8 +72,8 @@ describe('Test resolveConfigPathByNetworkID method', () => {
 
 describe('Test createBackup method', () => {
 	it('should create backup', async () => {
-		const backupPath = join(__dirname, '../../..', 'backup');
+		const expectedBackupPath = join(__dirname, '../../..', 'backup');
 		await createBackup((configV3 as unknown) as ApplicationConfigV3);
-		expect(fs.existsSync(backupPath)).toBe(true);
+		expect(fs.existsSync(expectedBackupPath)).toBe(true);
 	});
 });

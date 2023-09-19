@@ -124,7 +124,7 @@ class LiskMigrator extends Command {
 			cli.action.start('Verifying if backup height from node config matches snapshot height');
 			if (snapshotHeight !== nodeInfo.backup.height) {
 				this.error(
-					`Lisk Core v3 backup height ${nodeInfo.backup.height} does not match the expected snapshot height of ${snapshotHeight}`,
+					`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
 				);
 			}
 			cli.action.stop('Snapshot height matches backup height');
