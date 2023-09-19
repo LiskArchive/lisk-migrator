@@ -24,13 +24,13 @@ import {
 } from '../../../src/utils/config';
 import { ApplicationConfigV3 } from '../../../src/types';
 
-describe('Migrate user configuration', () => {
-	const migratedConfigFilePath = `${process.cwd()}/test/config`;
-	const backupPath = join(__dirname, '../../..', 'backup');
+const migratedConfigFilePath = `${process.cwd()}/test/config`;
+const expectedBackupPath = join(__dirname, '../../..', 'backup');
 
+describe('Migrate user configuration', () => {
 	afterAll(() => {
 		fs.removeSync(migratedConfigFilePath);
-		fs.removeSync(backupPath);
+		fs.removeSync(expectedBackupPath);
 	});
 
 	it('should migrate user configuration', async () => {
@@ -72,7 +72,6 @@ describe('Test resolveConfigPathByNetworkID method', () => {
 
 describe('Test createBackup method', () => {
 	it('should create backup', async () => {
-		const expectedBackupPath = join(__dirname, '../../..', 'backup');
 		await createBackup((configV3 as unknown) as ApplicationConfigV3);
 		expect(fs.existsSync(expectedBackupPath)).toBe(true);
 	});
