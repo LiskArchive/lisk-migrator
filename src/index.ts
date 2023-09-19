@@ -177,7 +177,7 @@ class LiskMigrator extends Command {
 				label: 'Waiting for snapshot height to be finalized',
 				liskCoreV3DataPath,
 				height: snapshotHeight,
-				delay: 500,
+				delay: nodeInfo.genesisConfig.blockTime * 1000,
 				isFinal: true,
 			});
 
