@@ -29,7 +29,7 @@ import {
 	SNAPSHOT_TIME_GAP,
 	LEGACY_DB_PATH,
 } from './constants';
-import { getAPIClient } from './client';
+import { getAPIClient, subscribeToNewBlockEvent } from './client';
 import {
 	getConfig,
 	migrateUserConfig,
@@ -139,6 +139,8 @@ class LiskMigrator extends Command {
 
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
 			const outputDir = `${outputPath}/${networkIdentifier}`;
+
+			subscribeToNewBlockEvent(client, snapshotHeight, outputDir);
 
 			if (autoStartLiskCoreV4) {
 				if (!networkConstant) {
