@@ -17,8 +17,8 @@ import { join } from 'path';
 
 import { extractTarBall, exists, rmdir, resolveAbsolutePath, copyDir } from '../../../src/utils/fs';
 
-const testDir = `${process.cwd()}/test/data`;
-const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
+const testDir = join(__dirname, 'test/data');
+const tarFilePath = join(__dirname, '../../..', 'test/unit/fixtures/blockchain.db.tar.gz');
 
 afterAll(async () => rmdir(testDir, { force: true, recursive: true }));
 
@@ -76,7 +76,7 @@ describe('Test resolveAbsolutePath method', () => {
 
 describe('Test copyDir method', () => {
 	it('should copy directory', async () => {
-		const sourcePath = `${process.cwd()}/test/unit/fixtures`;
+		const sourcePath = join(__dirname, '../../..', 'test/unit/fixtures');
 		const destinationPath = `${testDir}/fixtures`;
 		await copyDir(sourcePath, destinationPath);
 		expect(await exists(destinationPath)).toBe(true);

@@ -24,7 +24,7 @@ import {
 } from '../../../src/utils/config';
 import { ApplicationConfigV3 } from '../../../src/types';
 
-const migratedConfigFilePath = `${process.cwd()}/test/config`;
+const migratedConfigFilePath = join(__dirname, 'test/config');
 const expectedBackupPath = join(__dirname, '../../..', 'backup');
 
 describe('Migrate user configuration', () => {
