@@ -29,7 +29,7 @@ import {
 	SNAPSHOT_TIME_GAP,
 	LEGACY_DB_PATH,
 } from './constants';
-import { getAPIClient, subscribeToNewBlockEvent } from './client';
+import { getAPIClient } from './client';
 import {
 	getConfig,
 	migrateUserConfig,
@@ -45,6 +45,7 @@ import {
 	setTokenIDLskByNetID,
 	setPrevSnapshotBlockHeightByNetID,
 } from './utils/chain';
+import { captureForgingStatusAtSnapshotHeight } from './events';
 import { createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
@@ -140,7 +141,7 @@ class LiskMigrator extends Command {
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
 			const outputDir = `${outputPath}/${networkIdentifier}`;
 
-			subscribeToNewBlockEvent(client, snapshotHeight, outputDir);
+			captureForgingStatusAtSnapshotHeight(client, snapshotHeight, outputDir);
 
 			if (autoStartLiskCoreV4) {
 				if (!networkConstant) {
