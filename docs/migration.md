@@ -5,7 +5,7 @@ This section explains how to migrate a Lisk Core v3.0.4 (or later) node to Lisk 
 The Lisk Migrator CLI tool will generate a new genesis (snapshot) block for Lisk Core v4.x.
 The new genesis block is created based on a snapshot of the existing blockchain (running on Lisk Core v3.0.4+) at a pre-determined height.
 
-Lisk migrator automatically exports node forging status information to a file named `forgingStatus.json` in the output directory. In case the migrater is unable to save to the disk, forging status information is available in the logs.
+Lisk Migrator automatically exports the node's Forging Status information to the file named `forgingStatus.json` under the output directory. In case, Lisk Migrator is unable to save to the disk, as a fallback, the Forging Status information is logged to the standard output.
 
 <!--
 
