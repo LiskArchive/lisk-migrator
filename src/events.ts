@@ -25,7 +25,7 @@ export const captureForgingStatusAtSnapshotHeight = (
 	client.subscribe(EVENT_NEW_BLOCK, async data => {
 		const { block: encodedBlock } = (data as unknown) as Record<string, string>;
 		const newBlock = client.block.decode(Buffer.from(encodedBlock, 'hex')) as Block;
-		if (newBlock.header.height !== snapshotHeight) {
+		if (newBlock.header.height === snapshotHeight) {
 			const forgingStatus = await client.invoke('app:getForgingStatus');
 			const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
 			await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus));
