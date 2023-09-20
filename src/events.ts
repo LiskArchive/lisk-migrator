@@ -36,7 +36,7 @@ export const captureForgingStatusAtSnapshotHeight = (
 				_this.log(`Finished exporting forging status to ${forgingStatusJsonFilepath}.`);
 			} catch (error) {
 				_this.log(
-					`Unable to write to disk, please find forging status below: \n${JSON.stringify(
+					`Unable to save the node Forging Status information to the disk, please find it below instead:\n${JSON.stringify(
 						forgingStatus,
 						null,
 						2,
