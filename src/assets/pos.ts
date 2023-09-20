@@ -55,7 +55,6 @@ const ceiling = (a: number, b: number) => {
 	return Math.floor((a + b - 1) / b);
 };
 
-// TODO: Remove method once exported from lisk-db
 export const formatInt = (num: number | bigint): string => {
 	let buf: Buffer;
 	if (typeof num === 'bigint') {

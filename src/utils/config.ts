@@ -107,7 +107,6 @@ export const createBackup = async (config: ApplicationConfigV3): Promise<void> =
 	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
 };
 
-// TODO: Set up a default config file. Log properties and map migrated config values
 export const migrateUserConfig = async (
 	configV3: ApplicationConfigV3,
 	configV4: ApplicationConfig,
