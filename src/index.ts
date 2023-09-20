@@ -141,7 +141,7 @@ class LiskMigrator extends Command {
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
 			const outputDir = `${outputPath}/${networkIdentifier}`;
 
-			captureForgingStatusAtSnapshotHeight(client, snapshotHeight, outputDir);
+			captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
 
 			if (autoStartLiskCoreV4) {
 				if (!networkConstant) {

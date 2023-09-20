@@ -12,12 +12,15 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { resolve } from 'path';
+import { Command } from '@oclif/command';
+
 import { APIClient } from '@liskhq/lisk-api-client';
 import { Block } from '@liskhq/lisk-chain';
 import { EVENT_NEW_BLOCK } from './constants';
 import { write } from './utils/fs';
 
 export const captureForgingStatusAtSnapshotHeight = (
+	_this: Command,
 	client: APIClient,
 	snapshotHeight: number,
 	outputDir: string,
@@ -28,7 +31,18 @@ export const captureForgingStatusAtSnapshotHeight = (
 		if (newBlock.header.height === snapshotHeight) {
 			const forgingStatus = await client.invoke('app:getForgingStatus');
 			const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
-			await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus));
+			try {
+				await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus, null, 2));
+				_this.log(`Finished exporting forging status to ${forgingStatusJsonFilepath}.`);
+			} catch (error) {
+				_this.log(
+					`Unable to write to disk, please find forging status below: \n${JSON.stringify(
+						forgingStatus,
+						null,
+						2,
+					)}`,
+				);
+			}
 		}
 	});
 };
