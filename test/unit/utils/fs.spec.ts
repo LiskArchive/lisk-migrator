@@ -15,7 +15,15 @@
 import { homedir } from 'os';
 import { join } from 'path';
 
-import { extractTarBall, exists, rmdir, resolveAbsolutePath, copyDir } from '../../../src/utils/fs';
+import {
+	extractTarBall,
+	exists,
+	rmdir,
+	resolveAbsolutePath,
+	copyDir,
+	write,
+} from '../../../src/utils/fs';
+import { configV3 } from '../fixtures/config';
 
 const testDir = join(__dirname, 'test/data');
 const tarFilePath = join(__dirname, '../../..', 'test/unit/fixtures/blockchain.db.tar.gz');
@@ -84,5 +92,20 @@ describe('Test copyDir method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(copyDir('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test write method', () => {
+	it('should write to file when write() method is called', async () => {
+		const filePath = `${testDir}/config.json`;
+		expect(await exists(filePath)).toBe(false);
+
+		await write(filePath, JSON.stringify(configV3));
+
+		expect(await exists(filePath)).toBe(true);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(write('', '')).rejects.toThrow();
 	});
 });

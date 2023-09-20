@@ -67,3 +67,13 @@ export const copyDir = async (src: string, dest: string) => {
 			: await fs.promises.copyFile(srcPath, destPath);
 	}
 };
+
+export const write = async (filePath: string, content: string): Promise<boolean | Error> =>
+	new Promise((resolve, reject) => {
+		fs.writeFile(filePath, content, err => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(true);
+		});
+	});
