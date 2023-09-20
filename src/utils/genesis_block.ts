@@ -54,7 +54,7 @@ export const createGenesisBlock = async (
 	const timestamp = blockAtSnapshotHeight.header.timestamp + snapshotTimeGap;
 	const previousBlockID = blockAtSnapshotHeight.header.id.toString('hex');
 
-	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp}`;
+	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp} --export-json`;
 
 	await execAsync(genesisBlockCreateCommand);
 };
