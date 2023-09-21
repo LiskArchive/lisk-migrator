@@ -77,4 +77,4 @@ export const writeGenesisAssets = async (
 export const copyGenesisBlock = async (
 	currGenesisBlockFilepath: string,
 	liskCoreV4ConfigPath: string,
-): Promise<void> => copyFile(currGenesisBlockFilepath, liskCoreV4ConfigPath);
+): Promise<Boolean | Error> => copyFile(currGenesisBlockFilepath, liskCoreV4ConfigPath);
