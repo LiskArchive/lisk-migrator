@@ -141,6 +141,8 @@ class LiskMigrator extends Command {
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
 			const outputDir = `${outputPath}/${networkIdentifier}`;
 
+			// Asynchronously capture the node's Forging Status information at the snapshot height
+			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
 			captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
 
 			if (autoStartLiskCoreV4) {
