@@ -46,8 +46,9 @@ describe('Migrate user configuration', () => {
 	});
 
 	it('should return false when user configuration is invalid', async () => {
-		const { system, ...invalidConfig } = configV4;
-		const isValidConfig = await validateConfig((invalidConfig as unknown) as ApplicationConfig);
+		const isValidConfig = await validateConfig(({
+			invalid: 'invalid',
+		} as unknown) as ApplicationConfig);
 		expect(isValidConfig).toBe(false);
 	});
 });
