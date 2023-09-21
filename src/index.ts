@@ -270,7 +270,7 @@ class LiskMigrator extends Command {
 						`${outputDir}/genesis_block.blob`,
 						`${liskCoreV4ConfigPath}/genesis_block.blob`,
 					);
-					this.log(`Genesis block has been copied to: ${liskCoreV4ConfigPath}`);
+					this.log(`Genesis block has been copied to: ${liskCoreV4ConfigPath}.`);
 					cli.action.stop();
 
 					cli.action.start(`Creating legacy.db at ${LEGACY_DB_PATH}`);
@@ -290,7 +290,7 @@ class LiskMigrator extends Command {
 						if (isUserConfirmed) {
 							cli.action.start('Starting lisk-core v4');
 							const network = networkConstant.name as string;
-							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
+							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
 						} else {
@@ -309,8 +309,9 @@ class LiskMigrator extends Command {
 				}
 			} else {
 				this.log(
-					`Please copy ${snapshotDirPath} directory to the Lisk Core V4 data directory in order to access legacy blockchain information`,
+					`Please copy ${snapshotDirPath} directory to the Lisk Core V4 data directory in order to access legacy blockchain information.`,
 				);
+				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
 		} catch (error) {
 			this.error(error as string);

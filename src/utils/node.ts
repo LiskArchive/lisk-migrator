@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { resolve } from 'path';
 import * as fs from 'fs-extra';
 import { homedir } from 'os';
 import { Command } from '@oclif/command';
@@ -59,7 +58,6 @@ export const startLiskCore = async (
 	liskCoreV3DataPath: string,
 	_config: PartialApplicationConfig,
 	network: string,
-	outputDir: string,
 ): Promise<string | Error> => {
 	const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
 	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running.');
@@ -80,31 +78,12 @@ export const startLiskCore = async (
 	await installPM2();
 	_this.log('Finished installing pm2.');
 
-	const customConfigFilepath = resolve(outputDir, 'custom_config.json');
-
-	fs.writeFileSync(
-		customConfigFilepath,
-		JSON.stringify(
-			{
-				..._config,
-				genesis: {
-					..._config.genesis,
-					block: {
-						fromFile: `${outputDir}/genesis_block.blob`,
-					},
-				},
-			},
-			null,
-			'\t',
-		),
-	);
-
 	fs.writeFileSync(
 		PM2_FILE_NAME,
 		JSON.stringify(
 			{
 				name: 'lisk-core',
-				script: `lisk-core start --network ${network} --config ${customConfigFilepath}`,
+				script: `lisk-core start --network ${network}`,
 			},
 			null,
 			'\t',
