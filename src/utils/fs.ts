@@ -77,3 +77,5 @@ export const write = async (filePath: string, content: string): Promise<boolean 
 			return resolve(true);
 		});
 	});
+
+export const copyFile = async (src: string, dest: string) => fs.promises.copyFile(src, dest);
