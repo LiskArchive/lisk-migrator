@@ -17,7 +17,7 @@ import path from 'path';
 import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
-import { copyFile, resolveAbsolutePath } from './fs';
+import { copyFile } from './fs';
 
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
@@ -74,11 +74,7 @@ export const writeGenesisAssets = async (
 	);
 };
 
-export const copyGenesisBlock = async (outputDir: string, network: string): Promise<void> => {
-	const liskCoreV4Path = `~/.nvm/versions/node/${process.version}/lib/node_modules/lisk-core/config/${network}`;
-
-	await copyFile(
-		`${outputDir}/genesis_block.blob`,
-		resolveAbsolutePath(`${liskCoreV4Path}/genesis_block.blob`),
-	);
-};
+export const copyGenesisBlock = async (
+	currGenesisBlockFilepath: string,
+	liskCoreV4ConfigPath: string,
+): Promise<void> => copyFile(currGenesisBlockFilepath, liskCoreV4ConfigPath);

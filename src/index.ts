@@ -13,7 +13,7 @@
  */
 import util from 'util';
 import * as fs from 'fs-extra';
-import { join } from 'path';
+import { join, resolve } from 'path';
 import { ApplicationConfig, PartialApplicationConfig } from 'lisk-framework';
 import { Database } from '@liskhq/lisk-db';
 import * as semver from 'semver';
@@ -46,11 +46,12 @@ import {
 	setPrevSnapshotBlockHeightByNetID,
 } from './utils/chain';
 import { captureForgingStatusAtSnapshotHeight } from './events';
-import { createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
+import { copyGenesisBlock, createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
 import { copyDir, resolveAbsolutePath } from './utils/fs';
+import { execAsync } from './utils/process';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -256,6 +257,21 @@ class LiskMigrator extends Command {
 					if (!autoMigrateUserConfig) {
 						configCoreV4 = defaultConfigV4;
 					}
+
+					cli.action.start('Copying genesis block to the Lisk Core executable directory');
+					const liskCoreExecPath = await execAsync('which lisk-core');
+					const liskCoreV4ConfigPath = resolve(
+						liskCoreExecPath,
+						'../..',
+						`lib/node_modules/lisk-core/config/${networkConstant.name}`,
+					);
+
+					await copyGenesisBlock(
+						`${outputDir}/genesis_block.blob`,
+						`${liskCoreV4ConfigPath}/genesis_block.blob`,
+					);
+					this.log(`Genesis block has been copied to: ${liskCoreV4ConfigPath}`);
+					cli.action.stop();
 
 					cli.action.start(`Creating legacy.db at ${LEGACY_DB_PATH}`);
 					await copyDir(snapshotDirPath, resolveAbsolutePath(LEGACY_DB_PATH));
