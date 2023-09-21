@@ -14,7 +14,7 @@
 import { posGenesisStoreSchema } from 'lisk-framework';
 import { Database } from '@liskhq/lisk-db';
 import { codec } from '@liskhq/lisk-codec';
-import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
+import { BlockHeader, Transaction, transactionSchema } from '@liskhq/lisk-chain';
 import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
 
 import {
@@ -25,10 +25,10 @@ import {
 	ROUND_LENGTH,
 	Q96_ZERO,
 	MAX_COMMISSION,
-	DB_KEY_BLOCKS_HEIGHT,
 	DB_KEY_BLOCKS_ID,
 	MODULE_NAME_POS,
 	EMPTY_STRING,
+	DB_KEY_TRANSACTIONS_ID,
 } from '../constants';
 
 import {
@@ -47,15 +47,13 @@ import {
 } from '../types';
 
 import { blockHeaderSchema } from '../schemas';
-import { getBlocksIDsFromDBStream } from '../utils/block';
-import { getTransactions, keyString } from '../utils/transaction';
+import { keyString } from '../utils/transaction';
 
 const ceiling = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');
 	return Math.floor((a + b - 1) / b);
 };
 
-// TODO: Remove method once exported from lisk-db
 export const formatInt = (num: number | bigint): string => {
 	let buf: Buffer;
 	if (typeof num === 'bigint') {
@@ -74,41 +72,128 @@ export const formatInt = (num: number | bigint): string => {
 	return buf.toString('binary');
 };
 
+const incrementOne = (input: Buffer): Buffer => {
+	const copiedInput = Buffer.alloc(input.length);
+	input.copy(copiedInput);
+	for (let i = copiedInput.length - 1; i >= 0; i -= 1) {
+		const sum = copiedInput[i] + 1;
+		// eslint-disable-next-line no-bitwise
+		copiedInput[i] = sum & 0xff;
+
+		// Check for carry (overflow) to the next byte
+		if (sum <= 0xff) {
+			return copiedInput;
+		}
+	}
+	throw new Error('input is already maximum at the size');
+};
+
+const getBlockPublicKeySet = async (db: Database, pageSize: number): Promise<Set<string>> => {
+	const result = new Set<string>();
+	let startingKey = Buffer.from(`${DB_KEY_BLOCKS_ID}:${keyString(Buffer.alloc(32, 0))}`);
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		let exist = false;
+		const blocksStream = db.createReadStream({
+			gte: startingKey,
+			lte: Buffer.from(`${DB_KEY_BLOCKS_ID}:${keyString(Buffer.alloc(32, 255))}`),
+			limit: pageSize,
+		});
+		let lastKey = startingKey;
+		// eslint-disable-next-line no-loop-func
+		await new Promise<void>((resolve, reject) => {
+			blocksStream
+				.on('data', async ({ key, value }) => {
+					exist = true;
+					const header = await codec.decode<BlockHeader>(blockHeaderSchema, value);
+					result.add(header.generatorPublicKey.toString('hex'));
+					lastKey = key;
+				})
+				.on('error', error => {
+					reject(error);
+				})
+				.on('end', () => {
+					resolve();
+				});
+		});
+		if (!exist) {
+			break;
+		}
+		startingKey = incrementOne(lastKey as Buffer);
+	}
+	return result;
+};
+
+const getTransactionPublicKeySet = async (db: Database, pageSize: number): Promise<Set<string>> => {
+	const result = new Set<string>();
+	let startingKey = Buffer.from(`${DB_KEY_TRANSACTIONS_ID}:${keyString(Buffer.alloc(32, 0))}`);
+	// eslint-disable-next-line no-constant-condition
+	while (true) {
+		let exist = false;
+		const txsStream = db.createReadStream({
+			gte: startingKey,
+			lte: Buffer.from(`${DB_KEY_TRANSACTIONS_ID}:${keyString(Buffer.alloc(32, 255))}`),
+			limit: pageSize,
+		});
+		let lastKey = startingKey;
+		// eslint-disable-next-line no-loop-func
+		await new Promise<void>((resolve, reject) => {
+			txsStream
+				.on('data', async ({ key, value }) => {
+					exist = true;
+					const tx = await codec.decode<Transaction>(transactionSchema, value);
+					result.add(tx.senderPublicKey.toString('hex'));
+					lastKey = key;
+				})
+				.on('error', error => {
+					reject(error);
+				})
+				.on('end', () => {
+					resolve();
+				});
+		});
+		if (!exist) {
+			break;
+		}
+		startingKey = incrementOne(lastKey as Buffer);
+	}
+	return result;
+};
+
 export const getValidatorKeys = async (
 	accounts: Account[],
-	snapshotHeight: number,
-	prevSnapshotBlockHeight: number,
+	_snapshotHeight: number,
+	_prevSnapshotBlockHeight: number,
 	db: Database,
 ): Promise<Record<string, string>> => {
-	const keys: Record<string, string> = {};
-
-	const blocksStream = db.createReadStream({
-		gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
-		lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
-	});
-
-	const blockIDs: Buffer[] = await getBlocksIDsFromDBStream(blocksStream);
-
-	for (const id of blockIDs) {
-		const blockHeaderBuffer = await db.get(Buffer.from(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`));
-		const blockHeader: BlockHeader = codec.decode(blockHeaderSchema, blockHeaderBuffer);
-		const payload = ((await getTransactions(id, db)) as unknown) as Transaction[];
-
-		const base32Address: string = getAddressFromPublicKey(blockHeader.generatorPublicKey).toString(
-			'hex',
-		);
-		keys[base32Address] = blockHeader.generatorPublicKey.toString('hex');
-		for (const trx of payload) {
-			const trxSenderAddress: string = getAddressFromPublicKey(trx.senderPublicKey).toString('hex');
-			const account: Account | undefined = accounts.find(
-				acc => acc.address.toString('hex') === trxSenderAddress,
-			);
-			if (account?.dpos.delegate.username) {
-				keys[trxSenderAddress] = trx.senderPublicKey.toString('hex');
-			}
+	const delegateSet = new Set();
+	for (const account of accounts) {
+		if (account.dpos.delegate.username !== '') {
+			delegateSet.add(account.address.toString('hex'));
 		}
 	}
 
+	const PAGE_SIZE = 100000;
+	const blockPublicKeySet = await getBlockPublicKeySet(db, PAGE_SIZE);
+	const txPublicKeySet = await getTransactionPublicKeySet(db, PAGE_SIZE);
+
+	const keys: Record<string, string> = {};
+	for (const key of blockPublicKeySet) {
+		keys[getAddressFromPublicKey(Buffer.from(key, 'hex')).toString('hex')] = key;
+	}
+	for (const key of txPublicKeySet) {
+		// if public key included in block, skip
+		if (blockPublicKeySet.has(key)) {
+			// eslint-disable-next-line no-continue
+			continue;
+		}
+		const trxSenderAddress: string = getAddressFromPublicKey(Buffer.from(key, 'hex')).toString(
+			'hex',
+		);
+		if (delegateSet.has(trxSenderAddress)) {
+			keys[trxSenderAddress] = key;
+		}
+	}
 	return keys;
 };
 
@@ -206,12 +291,12 @@ export const createGenesisDataObj = async (
 	const topValidators = voteWeightR2.delegates;
 
 	const initValidators: Buffer[] = [];
-	const accountbannedMap = new Map(
+	const accountBannedMap = new Map(
 		accounts.map(account => [account.address, account.dpos.delegate.isBanned]),
 	);
 
 	topValidators.forEach((delegate: DelegateWeight) => {
-		const isAccountBanned = accountbannedMap.get(delegate.address);
+		const isAccountBanned = accountBannedMap.get(delegate.address);
 		if (!isAccountBanned) {
 			initValidators.push(delegate.address);
 		}
