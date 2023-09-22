@@ -29,7 +29,7 @@ The following system requirements are recommended to run Lisk Migrator v2.0.0:
 
 #### Memory
 
-- Machines with a minimum of 16 GB RAM.
+- Machines with a minimum of 4 GB RAM.
 
 #### Storage
 

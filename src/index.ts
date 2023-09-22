@@ -41,7 +41,6 @@ import {
 import {
 	observeChainHeight,
 	getTokenIDLsk,
-	getPrevSnapshotBlockHeight,
 	setTokenIDLskByNetID,
 	setPrevSnapshotBlockHeightByNetID,
 } from './utils/chain';
@@ -192,12 +191,7 @@ class LiskMigrator extends Command {
 			cli.action.start('Creating genesis assets');
 			const createAsset = new CreateAsset(db);
 			const tokenID = getTokenIDLsk();
-			const prevSnapshotBlockHeight = getPrevSnapshotBlockHeight();
-			const genesisAssets = await createAsset.init(
-				snapshotHeight,
-				prevSnapshotBlockHeight,
-				tokenID,
-			);
+			const genesisAssets = await createAsset.init(snapshotHeight, tokenID);
 			cli.action.stop();
 
 			// Create an app instance for creating genesis block

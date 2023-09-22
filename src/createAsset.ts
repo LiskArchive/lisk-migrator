@@ -73,11 +73,7 @@ export class CreateAsset {
 		this._db = db;
 	}
 
-	public init = async (
-		snapshotHeight: number,
-		prevSnapshotBlockHeight: number,
-		tokenID: string,
-	): Promise<GenesisAssetEntry[]> => {
+	public init = async (snapshotHeight: number, tokenID: string): Promise<GenesisAssetEntry[]> => {
 		const authSubstoreEntries: AuthStoreEntryBuffer[] = [];
 		const userSubstoreEntries: UserSubstoreEntryBuffer[] = [];
 		const supplySubstoreEntries: SupplySubstoreEntry[] = [];
@@ -126,12 +122,7 @@ export class CreateAsset {
 		);
 
 		// Get all validator keys for PoS module
-		const validatorKeys = await getValidatorKeys(
-			accounts,
-			snapshotHeight,
-			prevSnapshotBlockHeight,
-			this._db,
-		);
+		const validatorKeys = await getValidatorKeys(accounts, this._db);
 
 		for (const account of accounts) {
 			// genesis asset for auth module
