@@ -37,7 +37,7 @@ export const installPM2 = async (): Promise<string> => execAsync(INSTALL_PM2_COM
 
 export const isLiskCoreV3Running = async (liskCorePath: string): Promise<boolean> => {
 	try {
-		const client = await getAPIClient(liskCorePath);
+		const client = await getAPIClient(liskCorePath, true);
 		const nodeInfo = await client.node.getNodeInfo();
 		return !!nodeInfo;
 	} catch (_) {
