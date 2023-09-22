@@ -26,7 +26,6 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
-	SNAPSHOT_TIME_GAP,
 	LEGACY_DB_PATH,
 } from './constants';
 import { getAPIClient } from './client';
@@ -85,12 +84,6 @@ class LiskMigrator extends Command {
 			description:
 				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
 		}),
-		'snapshot-time-gap': flagsParser.integer({
-			required: false,
-			env: 'SNAPSHOT_TIME_GAP',
-			description:
-				'The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.',
-		}),
 		'auto-migrate-config': flagsParser.boolean({
 			required: false,
 			env: 'AUTO_MIGRATE_CONFIG',
@@ -116,7 +109,6 @@ class LiskMigrator extends Command {
 			const customConfigPath = flags.config;
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
-			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
 
 			const client = await getAPIClient(liskCoreV3DataPath);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
@@ -249,7 +241,6 @@ class LiskMigrator extends Command {
 				defaultConfigFilePath,
 				outputDir,
 				blockAtSnapshotHeight,
-				snapshotTimeGap,
 			);
 			cli.action.stop();
 
