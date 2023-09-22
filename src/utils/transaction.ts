@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { hash } from '@liskhq/lisk-cryptography';
+import { utils } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
 import { Transaction, transactionSchema } from '@liskhq/lisk-chain';
@@ -21,6 +21,8 @@ import {
 	DB_KEY_TRANSACTIONS_ID,
 	TRANSACTION_ID_LENGTH,
 } from '../constants';
+
+const { hash } = utils;
 
 export const keyString = (key: Buffer): string => key.toString('binary');
 

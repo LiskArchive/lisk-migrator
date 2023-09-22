@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { hash } from '@liskhq/lisk-cryptography';
+import { utils } from '@liskhq/lisk-cryptography';
 
 import { NetworkConfigLocal } from './types';
 
@@ -40,6 +40,8 @@ export const MAX_BFT_WEIGHT_CAP = 1000;
 
 export const SNAPSHOT_BLOCK_VERSION = 0;
 export const SNAPSHOT_TIME_GAP = 3600;
+
+const { hash } = utils;
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');

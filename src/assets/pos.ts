@@ -15,7 +15,7 @@ import { posGenesisStoreSchema } from 'lisk-framework';
 import { Database } from '@liskhq/lisk-db';
 import { codec } from '@liskhq/lisk-codec';
 import { BlockHeader, Transaction } from '@liskhq/lisk-chain';
-import { getLisk32AddressFromAddress, getAddressFromPublicKey } from '@liskhq/lisk-cryptography';
+import { address } from '@liskhq/lisk-cryptography';
 
 import {
 	INVALID_BLS_KEY,
@@ -49,6 +49,8 @@ import {
 import { blockHeaderSchema } from '../schemas';
 import { getBlocksIDsFromDBStream } from '../utils/block';
 import { getTransactions, keyString } from '../utils/transaction';
+
+const { getLisk32AddressFromAddress, getAddressFromPublicKey } = address;
 
 const ceiling = (a: number, b: number) => {
 	if (b === 0) throw new Error('Can not divide by 0.');
