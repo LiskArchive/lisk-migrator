@@ -98,17 +98,16 @@ export const getConfig = async (
 
 export const resolveConfigPathByNetworkID = async (networkIdentifier: string): Promise<string> => {
 	const network = NETWORK_CONSTANT[networkIdentifier].name;
-	const configFilePath = resolve(process.cwd(), `config/${network}/config.json`);
+	const configFilePath = join(__dirname, '../..', `config/${network}/config.json`);
 	return configFilePath;
 };
 
 export const createBackup = async (config: ApplicationConfigV3): Promise<void> => {
-	const backupPath = `${process.cwd()}/backup`;
+	const backupPath = join(__dirname, '../..', 'backup');
 	mkdirSync(backupPath, { recursive: true });
 	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
 };
 
-// TODO: Set up a default config file. Log properties and map migrated config values
 export const migrateUserConfig = async (
 	configV3: ApplicationConfigV3,
 	configV4: ApplicationConfig,

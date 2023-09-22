@@ -13,7 +13,7 @@
  */
 import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { address } from '@liskhq/lisk-cryptography';
 
 import {
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
@@ -58,6 +58,8 @@ import {
 import { getLegacyModuleEntry, getLegacyReserveAmount } from './assets/legacy';
 
 import { getDataFromDBStream } from './utils/block';
+
+const { getLisk32AddressFromAddress } = address;
 
 const AMOUNT_ZERO = BigInt('0');
 let totalLSKSupply = AMOUNT_ZERO;
@@ -169,9 +171,9 @@ export class CreateAsset {
 			.sort((a: UserSubstoreEntryBuffer, b: UserSubstoreEntryBuffer) =>
 				a.address.equals(b.address) ? a.tokenID.compare(b.tokenID) : a.address.compare(b.address),
 			)
-			.map(({ address, ...entry }) => ({
+			.map(({ address: addr, ...entry }) => ({
 				...entry,
-				address: getLisk32AddressFromAddress(address),
+				address: getLisk32AddressFromAddress(addr),
 				tokenID: entry.tokenID.toString('hex'),
 			}));
 
@@ -182,15 +184,17 @@ export class CreateAsset {
 		});
 
 		// Sort validators substore entries in lexicographical order
-		const sortedValidators = validators.sort(addressComparator).map(({ address, ...entry }) => ({
-			...entry,
-			address: getLisk32AddressFromAddress(address),
-		}));
+		const sortedValidators = validators
+			.sort(addressComparator)
+			.map(({ address: addr, ...entry }) => ({
+				...entry,
+				address: getLisk32AddressFromAddress(addr),
+			}));
 
 		// Sort stakers substore entries in lexicographical order
-		const sortedStakers = stakers.sort(addressComparator).map(({ address, ...entry }) => ({
+		const sortedStakers = stakers.sort(addressComparator).map(({ address: addr, ...entry }) => ({
 			...entry,
-			address: getLisk32AddressFromAddress(address),
+			address: getLisk32AddressFromAddress(addr),
 		}));
 
 		const encodedDelegatesVoteWeights = await this._db.get(
