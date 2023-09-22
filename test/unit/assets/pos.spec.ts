@@ -16,9 +16,9 @@
 
 import { resolve } from 'path';
 
+import { address } from '@liskhq/lisk-cryptography';
 import { Database } from '@liskhq/lisk-db';
 import { Block } from '@liskhq/lisk-chain';
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
 
 import {
 	Account,
@@ -42,6 +42,8 @@ import { MODULE_NAME_POS } from '../../../src/constants';
 
 const mockBlockFilePath = resolve(`${__dirname}/../../../src/utils/block.ts`);
 const mockTransactionFilePath = resolve(`${__dirname}/../../../src/utils/transaction.ts`);
+
+const { getLisk32AddressFromAddress } = address;
 
 jest.mock('@liskhq/lisk-db');
 
@@ -222,8 +224,8 @@ describe('Build assets/pos', () => {
 		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
 
 		// Assert
-		genesisDataObj.initValidators.forEach(address => {
-			expect(address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+		genesisDataObj.initValidators.forEach(addr => {
+			expect(addr).toEqual(expect.stringMatching(ADDRESS_LISK32));
 		});
 		expect(Object.getOwnPropertyNames(genesisDataObj)).toEqual(['initRounds', 'initValidators']);
 	});

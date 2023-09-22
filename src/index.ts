@@ -26,7 +26,6 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
-	SNAPSHOT_TIME_GAP,
 	LEGACY_DB_PATH,
 } from './constants';
 import { getAPIClient } from './client';
@@ -84,12 +83,6 @@ class LiskMigrator extends Command {
 			description:
 				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
 		}),
-		'snapshot-time-gap': flagsParser.integer({
-			required: false,
-			env: 'SNAPSHOT_TIME_GAP',
-			description:
-				'The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.',
-		}),
 		'auto-migrate-config': flagsParser.boolean({
 			required: false,
 			env: 'AUTO_MIGRATE_CONFIG',
@@ -115,7 +108,6 @@ class LiskMigrator extends Command {
 			const customConfigPath = flags.config;
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
-			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
 
 			const client = await getAPIClient(liskCoreV3DataPath);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
@@ -124,7 +116,7 @@ class LiskMigrator extends Command {
 			cli.action.start('Verifying if backup height from node config matches snapshot height');
 			if (snapshotHeight !== nodeInfo.backup.height) {
 				this.error(
-					`Snapshot height ${snapshotHeight} does not matches backup height ${nodeInfo.backup.height}.`,
+					`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
 				);
 			}
 			cli.action.stop('Snapshot height matches backup height');
@@ -140,6 +132,8 @@ class LiskMigrator extends Command {
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
 			const outputDir = `${outputPath}/${networkIdentifier}`;
 
+			// Asynchronously capture the node's Forging Status information at the snapshot height
+			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
 			captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
 
 			if (autoStartLiskCoreV4) {
@@ -241,7 +235,6 @@ class LiskMigrator extends Command {
 				defaultConfigFilePath,
 				outputDir,
 				blockAtSnapshotHeight,
-				snapshotTimeGap,
 			);
 			cli.action.stop();
 

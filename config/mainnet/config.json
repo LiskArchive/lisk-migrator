@@ -15,7 +15,6 @@
 			"fromFile": "./config/genesis_block.blob"
 		},
 		"blockTime": 10,
-		"bftBatchSize": 103,
 		"chainID": "00000000",
 		"maxTransactionsSize": 15360,
 		"minimumCertifyHeight": 1
@@ -25,46 +24,46 @@
 		"seedPeers": [
 			{
 				"ip": "mainnet-seed-01.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-02.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-03.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-04.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-05.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-06.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-07.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-08.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-09.lisk.com",
-				"port": 8001
+				"port": 7667
 			},
 			{
 				"ip": "mainnet-seed-10.lisk-nodes.net",
-				"port": 8001
+				"port": 7667
 			}
 		],
-		"port": 8001
+		"port": 7667
 	},
 	"transactionPool": {
 		"maxTransactions": 4096,
@@ -86,9 +85,6 @@
 		"pos": {
 			"maxBFTWeightCap": 1000,
 			"useInvalidBLSKey": true
-		},
-		"token": {
-			"feeTokenID": "0000000000000000"
 		}
 	},
 	"plugins": {}

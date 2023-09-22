@@ -15,6 +15,7 @@ import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import path from 'path';
 import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
+import { SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
 
@@ -48,13 +49,12 @@ export const createGenesisBlock = async (
 	configFilepath: string,
 	outputDir: string,
 	blockAtSnapshotHeight: BlockVersion3,
-	snapshotTimeGap: number,
 ) => {
 	const height = blockAtSnapshotHeight.header.height + 1;
-	const timestamp = blockAtSnapshotHeight.header.timestamp + snapshotTimeGap;
+	const timestamp = blockAtSnapshotHeight.header.timestamp + SNAPSHOT_TIME_GAP;
 	const previousBlockID = blockAtSnapshotHeight.header.id.toString('hex');
 
-	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp}`;
+	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp} --export-json`;
 
 	await execAsync(genesisBlockCreateCommand);
 };

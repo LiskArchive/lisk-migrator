@@ -18,7 +18,7 @@ import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { when } from 'jest-when';
 
-import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
+import { utils, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
 import { resolve } from 'path';
@@ -46,6 +46,9 @@ import {
 } from '../../src/types';
 import { formatInt } from '../../src/assets/pos';
 
+const { hash } = utils;
+const { getKeys } = legacy;
+const { getFirstEightBytesReversed } = legacyAddress;
 const mockPoSFilePath = resolve(`${__dirname}/../../src/assets/pos.ts`);
 
 jest.mock('@liskhq/lisk-db');

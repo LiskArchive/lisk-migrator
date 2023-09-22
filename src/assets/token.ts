@@ -86,14 +86,12 @@ export const createUserSubstoreArrayEntry = async (
 
 	if (!ADDRESS_LEGACY_RESERVE.equals(account.address)) {
 		const lockedBalances = await getLockedBalances(account);
-		if (account.token.balance !== AMOUNT_ZERO || lockedBalances.length) {
-			return {
-				address: account.address,
-				tokenID: tokenIDBuffer,
-				availableBalance: String(account.token.balance),
-				lockedBalances,
-			};
-		}
+		return {
+			address: account.address,
+			tokenID: tokenIDBuffer,
+			availableBalance: String(account.token.balance),
+			lockedBalances,
+		};
 	}
 	return null;
 };
