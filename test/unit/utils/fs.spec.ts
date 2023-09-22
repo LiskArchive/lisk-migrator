@@ -113,7 +113,7 @@ describe('Test write method', () => {
 
 describe('Test copyFile method', () => {
 	it('should copy file', async () => {
-		const srcPath = join(__dirname, '../../..', 'test/unit/fixtures/blockchain.db.tar.gz');
+		const srcPath = join(__dirname, '../fixtures/blockchain.db.tar.gz');
 		const destPath = `${testDir}/blockchain.db.tar.gz`;
 		expect(await exists(destPath)).toBe(false);
 
