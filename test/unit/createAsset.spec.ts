@@ -11,6 +11,9 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
 import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { when } from 'jest-when';
@@ -18,7 +21,7 @@ import { when } from 'jest-when';
 import { utils, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
-import { CreateAsset } from '../../src/createAsset';
+import { resolve } from 'path';
 import {
 	DB_KEY_CHAIN_STATE,
 	DB_KEY_ACCOUNTS_ADDRESS,
@@ -46,6 +49,7 @@ import { formatInt } from '../../src/assets/pos';
 const { hash } = utils;
 const { getKeys } = legacy;
 const { getFirstEightBytesReversed } = legacyAddress;
+const mockPoSFilePath = resolve(`${__dirname}/../../src/assets/pos.ts`);
 
 jest.mock('@liskhq/lisk-db');
 
@@ -87,7 +91,6 @@ describe('Build assets/legacy', () => {
 	describe('createAsset', () => {
 		beforeAll(async () => {
 			db = new Database('testDB');
-			createAsset = new CreateAsset(db);
 
 			for (const account of Object.values(testAccounts)) {
 				unregisteredAddresses = [];
@@ -197,6 +200,19 @@ describe('Build assets/legacy', () => {
 		});
 
 		it('should create assets', async () => {
+			jest.mock(mockPoSFilePath, () => {
+				const actual = jest.requireActual(mockPoSFilePath);
+				return {
+					...actual,
+					getValidatorKeys() {
+						return new Set();
+					},
+				};
+			});
+
+			const { CreateAsset } = require('../../src/createAsset');
+			createAsset = new CreateAsset(db);
+
 			when(db.get)
 				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_UNREGISTERED_ADDRESSES}`))
 				.mockResolvedValue(encodedUnregisteredAddresses as never);
@@ -211,18 +227,11 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(Readable.from([{ value: Buffer.from(encodedAccount) }]));
 
-			when(db.createReadStream)
-				.calledWith({
-					gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
-					lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
-				})
-				.mockReturnValue(Readable.from([]));
-
 			when(db.get)
 				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const response = await createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID);
+			const response = await createAsset.init(snapshotHeight, tokenID);
 
 			const moduleList = [
 				MODULE_NAME_LEGACY,
@@ -233,7 +242,6 @@ describe('Build assets/legacy', () => {
 			];
 			// Assert
 			expect(db.get).toHaveBeenCalledTimes(2);
-			expect(db.createReadStream).toHaveBeenCalledTimes(2);
 			expect(response).toHaveLength(moduleList.length);
 
 			response.forEach((asset: GenesisAssetEntry) => expect(moduleList).toContain(asset.module));
@@ -249,9 +257,7 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(undefined);
 
-			await expect(
-				createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID),
-			).rejects.toThrow();
+			await expect(createAsset.init(snapshotHeight, tokenID)).rejects.toThrow();
 		});
 
 		it('should throw error when block stream is undefined', async () => {
@@ -262,9 +268,7 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(undefined);
 
-			await expect(
-				createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID),
-			).rejects.toThrow();
+			await expect(createAsset.init(snapshotHeight, tokenID)).rejects.toThrow();
 		});
 
 		it('should throw error when creating stream with invalid file path', async () => {
@@ -281,9 +285,7 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(createReadStream('test.txt') as never);
 
-			await expect(
-				createAsset.init(snapshotHeight, prevSnapshotBlockHeight, tokenID),
-			).rejects.toThrow();
+			await expect(createAsset.init(snapshotHeight, tokenID)).rejects.toThrow();
 		});
 	});
 });

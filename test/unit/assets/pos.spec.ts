@@ -11,16 +11,15 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { createReadStream } from 'fs';
-import { Readable } from 'stream';
-import { when } from 'jest-when';
+/* eslint-disable global-require */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+import { resolve } from 'path';
 
 import { address } from '@liskhq/lisk-cryptography';
-import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
-import { Block, blockHeaderSchema, blockHeaderAssetSchema } from '@liskhq/lisk-chain';
+import { Block } from '@liskhq/lisk-chain';
 
-import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID, MODULE_NAME_POS } from '../../../src/constants';
 import {
 	Account,
 	StakerBuffer,
@@ -36,10 +35,13 @@ import {
 	createValidatorsArrayEntry,
 	createStakersArrayEntry,
 	getStakes,
-	getValidatorKeys,
 	getPoSModuleEntry,
 	formatInt,
 } from '../../../src/assets/pos';
+import { MODULE_NAME_POS } from '../../../src/constants';
+
+const mockBlockFilePath = resolve(`${__dirname}/../../../src/utils/block.ts`);
+const mockTransactionFilePath = resolve(`${__dirname}/../../../src/utils/transaction.ts`);
 
 const { getLisk32AddressFromAddress } = address;
 
@@ -50,7 +52,7 @@ describe('Build assets/pos', () => {
 	const tokenID = '0400000000000000';
 	let accounts: Account[];
 	let blocks: Block[];
-	let blockIDsStream: { value: Buffer }[];
+	let blockIDs: string[];
 	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 10815;
 	const prevSnapshotBlockHeight = 5000;
@@ -62,7 +64,7 @@ describe('Build assets/pos', () => {
 			numberOfBlocks: 10,
 		});
 
-		blockIDsStream = blocks.map(block => ({ value: block.header.id }));
+		blockIDs = blocks.map(block => block.header.id.toString('hex'));
 
 		delegates = {
 			voteWeights: [
@@ -150,23 +152,27 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create createValidatorsArrayEntry', async () => {
-		when(db.createReadStream)
-			.calledWith({
-				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
-				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
-			})
-			.mockReturnValue(Readable.from(blockIDsStream));
-
-		blocks.forEach(block => {
-			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
-			const blockHeader = codec.encode(blockHeaderSchema, {
-				...block.header,
-				asset: blockAssetBuffer,
-			});
-			when(db.get)
-				.calledWith(Buffer.from(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`))
-				.mockResolvedValue(blockHeader as never);
+		jest.mock(mockBlockFilePath, () => {
+			const actual = jest.requireActual(mockBlockFilePath);
+			return {
+				...actual,
+				getBlockPublicKeySet() {
+					return new Set(blockIDs);
+				},
+			};
 		});
+
+		jest.mock(mockTransactionFilePath, () => {
+			const actual = jest.requireActual(mockTransactionFilePath);
+			return {
+				...actual,
+				getTransactionPublicKeySet() {
+					return new Set();
+				},
+			};
+		});
+
+		const { getValidatorKeys } = require('../../../src/assets/pos');
 
 		const validatorKeys = await getValidatorKeys(
 			accounts,
@@ -242,13 +248,18 @@ describe('Build assets/pos', () => {
 		});
 	});
 
-	it('should throw error when creating stream with invalid file path', async () => {
-		when(db.createReadStream)
-			.calledWith({
-				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
-				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
-			})
-			.mockReturnValue(createReadStream('test.txt') as never);
+	it('should throw error when getBlockPublicKeySet methods fails', async () => {
+		jest.mock(mockBlockFilePath, () => {
+			const actual = jest.requireActual(mockBlockFilePath);
+			return {
+				...actual,
+				getBlockPublicKeySet() {
+					throw new Error();
+				},
+			};
+		});
+
+		const { getValidatorKeys } = require('../../../src/assets/pos');
 
 		await expect(
 			getValidatorKeys(accounts, snapshotHeight, prevSnapshotBlockHeight, db),
@@ -256,23 +267,27 @@ describe('Build assets/pos', () => {
 	});
 
 	it('should create PoS module asset', async () => {
-		when(db.createReadStream)
-			.calledWith({
-				gte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(prevSnapshotBlockHeight + 1)}`),
-				lte: Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(snapshotHeight)}`),
-			})
-			.mockReturnValue(Readable.from(blockIDsStream));
-
-		blocks.forEach(block => {
-			const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
-			const blockHeader = codec.encode(blockHeaderSchema, {
-				...block.header,
-				asset: blockAssetBuffer,
-			});
-			when(db.get)
-				.calledWith(`${DB_KEY_BLOCKS_ID}:${block.header.id.toString('binary')}`)
-				.mockResolvedValue(blockHeader as never);
+		jest.mock(mockBlockFilePath, () => {
+			const actual = jest.requireActual(mockBlockFilePath);
+			return {
+				...actual,
+				getBlockPublicKeySet() {
+					return new Set(blockIDs);
+				},
+			};
 		});
+
+		jest.mock(mockTransactionFilePath, () => {
+			const actual = jest.requireActual(mockTransactionFilePath);
+			return {
+				...actual,
+				getTransactionPublicKeySet() {
+					return new Set();
+				},
+			};
+		});
+
+		const { getValidatorKeys } = require('../../../src/assets/pos');
 
 		const validatorKeys = await getValidatorKeys(
 			accounts,
