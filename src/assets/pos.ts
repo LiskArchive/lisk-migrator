@@ -70,8 +70,6 @@ export const formatInt = (num: number | bigint): string => {
 
 export const getValidatorKeys = async (
 	accounts: Account[],
-	_snapshotHeight: number,
-	_prevSnapshotBlockHeight: number,
 	db: Database,
 ): Promise<Record<string, string>> => {
 	const delegateSet = new Set();
