@@ -15,7 +15,7 @@ import { createReadStream } from 'fs';
 import { Readable } from 'stream';
 import { when } from 'jest-when';
 
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { address } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
 import { Block, blockHeaderSchema, blockHeaderAssetSchema } from '@liskhq/lisk-chain';
@@ -40,6 +40,8 @@ import {
 	getPoSModuleEntry,
 	formatInt,
 } from '../../../src/assets/pos';
+
+const { getLisk32AddressFromAddress } = address;
 
 jest.mock('@liskhq/lisk-db');
 
@@ -216,8 +218,8 @@ describe('Build assets/pos', () => {
 		const genesisDataObj = await createGenesisDataObj(accounts, delegates, snapshotHeight);
 
 		// Assert
-		genesisDataObj.initValidators.forEach(address => {
-			expect(address).toEqual(expect.stringMatching(ADDRESS_LISK32));
+		genesisDataObj.initValidators.forEach(addr => {
+			expect(addr).toEqual(expect.stringMatching(ADDRESS_LISK32));
 		});
 		expect(Object.getOwnPropertyNames(genesisDataObj)).toEqual(['initRounds', 'initValidators']);
 	});
