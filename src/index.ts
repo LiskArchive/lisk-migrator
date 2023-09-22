@@ -108,7 +108,7 @@ class LiskMigrator extends Command {
 			required: false,
 			default: 100000,
 			description:
-				'Maximum number of blocks to be considered at once for computation. Default to 10000.',
+				'Maximum number of blocks to be iterated at once for computation. Default to 10000.',
 		}),
 	};
 

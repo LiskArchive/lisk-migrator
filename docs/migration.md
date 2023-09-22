@@ -82,7 +82,7 @@ FLAGS
   -d, --lisk-core-v3-data-path=lisk-core-v3-data-path  Path where the lisk-core v3.x instance is running. Current home directory will be considered the default if not provided.
   -h, --help                                           Shows CLI help.
   -o, --output=output                                  File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.
-  -p, --page-size                                      Maximum number of blocks to be considered at once for computation. Default to 10000.
+  -p, --page-size                                      Maximum number of blocks to be iterated at once for computation. Default to 10000.
   -s, --snapshot-height=snapshot-height                (Required) The height at which the re-genesis block will be generated. Can be specified with the SNAPSHOT_HEIGHT as well.
   -v, --version                                        Shows the CLI version.
   --auto-migrate-config                                Migrate user configuration automatically. Default to false.
