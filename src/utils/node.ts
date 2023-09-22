@@ -24,7 +24,7 @@ import { Port } from '../types';
 import { getAPIClient } from '../client';
 import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../constants';
 
-const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.0';
+const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
 const START_PM2_COMMAND = `pm2 start ${PM2_FILE_NAME}`;
