@@ -66,6 +66,7 @@ describe('Build assets/legacy', () => {
 	const snapshotHeight = 10815;
 	const prevSnapshotBlockHeight = 5000;
 	const tokenID = '0400000000000000';
+	const pageSize = 1000;
 
 	interface Accounts {
 		[key: string]: {
@@ -228,7 +229,7 @@ describe('Build assets/legacy', () => {
 				.calledWith(Buffer.from(`${DB_KEY_CHAIN_STATE}:${CHAIN_STATE_DELEGATE_VOTE_WEIGHTS}`))
 				.mockResolvedValue(encodedVoteWeights as never);
 
-			const response = await createAsset.init(snapshotHeight, tokenID);
+			const response = await createAsset.init(snapshotHeight, tokenID, pageSize);
 
 			const moduleList = [
 				MODULE_NAME_LEGACY,
@@ -254,7 +255,7 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(undefined);
 
-			await expect(createAsset.init(snapshotHeight, tokenID)).rejects.toThrow();
+			await expect(createAsset.init(snapshotHeight, tokenID, pageSize)).rejects.toThrow();
 		});
 
 		it('should throw error when block stream is undefined', async () => {
@@ -265,7 +266,7 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(undefined);
 
-			await expect(createAsset.init(snapshotHeight, tokenID)).rejects.toThrow();
+			await expect(createAsset.init(snapshotHeight, tokenID, pageSize)).rejects.toThrow();
 		});
 
 		it('should throw error when creating stream with invalid file path', async () => {
@@ -282,7 +283,7 @@ describe('Build assets/legacy', () => {
 				})
 				.mockReturnValue(createReadStream('test.txt') as never);
 
-			await expect(createAsset.init(snapshotHeight, tokenID)).rejects.toThrow();
+			await expect(createAsset.init(snapshotHeight, tokenID, pageSize)).rejects.toThrow();
 		});
 	});
 });

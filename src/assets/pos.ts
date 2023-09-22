@@ -71,6 +71,7 @@ export const formatInt = (num: number | bigint): string => {
 export const getValidatorKeys = async (
 	accounts: Account[],
 	db: Database,
+	pageSize: number,
 ): Promise<Record<string, string>> => {
 	const delegateSet = new Set();
 	for (const account of accounts) {
@@ -79,9 +80,8 @@ export const getValidatorKeys = async (
 		}
 	}
 
-	const PAGE_SIZE = 100000;
-	const blockPublicKeySet = await getBlockPublicKeySet(db, PAGE_SIZE);
-	const txPublicKeySet = await getTransactionPublicKeySet(db, PAGE_SIZE);
+	const blockPublicKeySet = await getBlockPublicKeySet(db, pageSize);
+	const txPublicKeySet = await getTransactionPublicKeySet(db, pageSize);
 
 	const keys: Record<string, string> = {};
 	for (const key of blockPublicKeySet) {

@@ -103,6 +103,13 @@ class LiskMigrator extends Command {
 			description: 'Start lisk core v4 automatically. Default to false.',
 			default: false,
 		}),
+		'page-size': flagsParser.integer({
+			char: 'p',
+			required: false,
+			default: 100000,
+			description:
+				'Maximum number of blocks to be considered at once for computation. Default to 10000.',
+		}),
 	};
 
 	public async run(): Promise<void> {
@@ -117,6 +124,7 @@ class LiskMigrator extends Command {
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const snapshotTimeGap = Number(flags['snapshot-time-gap'] ?? SNAPSHOT_TIME_GAP);
+			const pageSize = Number(flags['page-size']);
 
 			const client = await getAPIClient(liskCoreV3DataPath);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
@@ -191,7 +199,7 @@ class LiskMigrator extends Command {
 			cli.action.start('Creating genesis assets');
 			const createAsset = new CreateAsset(db);
 			const tokenID = getTokenIDLsk();
-			const genesisAssets = await createAsset.init(snapshotHeight, tokenID);
+			const genesisAssets = await createAsset.init(snapshotHeight, tokenID, pageSize);
 			cli.action.stop();
 
 			// Create an app instance for creating genesis block
