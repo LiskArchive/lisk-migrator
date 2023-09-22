@@ -70,12 +70,12 @@ class LiskMigrator extends Command {
 			char: 'd',
 			required: false,
 			description:
-				'Path where the lisk-core v3.x instance is running. The current home directory will be considered the default directory if not otherwise provided.',
+				'Path where the Lisk Core v3.x instance is running. When not supplied, defaults to the default data directory for Lisk Core.',
 		}),
 		config: flagsParser.string({
 			char: 'c',
 			required: false,
-			description: 'Custom configuration file path.',
+			description: 'Custom configuration file path for Lisk Core v3.x.',
 		}),
 		'snapshot-height': flagsParser.integer({
 			char: 's',
@@ -101,7 +101,7 @@ class LiskMigrator extends Command {
 			required: false,
 			default: 100000,
 			description:
-				'Maximum number of blocks to be iterated at once for computation. Default to 10000.',
+				'Maximum number of blocks to be iterated at once for computation. Default to 100000.',
 		}),
 	};
 
