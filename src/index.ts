@@ -164,7 +164,7 @@ class LiskMigrator extends Command {
 					`Lisk Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. The minimum compatible version is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
-			cli.action.stop(`${liskCoreVersion.version} detected`);
+			cli.action.stop(`${appVersion} detected`);
 
 			// User specified custom config file
 			const configV3: ApplicationConfigV3 = customConfigPath
@@ -268,13 +268,18 @@ class LiskMigrator extends Command {
 					cli.action.stop();
 
 					// Ask user to manually stop Lisk Core v3 and continue
-					const isLiskCoreV3Stopped = await cli.confirm(`
-					Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]`);
+					const isLiskCoreV3Stopped = await cli.confirm(
+						"Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]",
+					);
 
 					if (isLiskCoreV3Stopped) {
-						const isUserConfirmed = await cli.confirm(`
-						Start Lisk Core with the following configuration? [yes/no] \n
-						${util.inspect(configCoreV4, false, 3)}`);
+						const isUserConfirmed = await cli.confirm(
+							`Start Lisk Core with the following configuration? [yes/no] \n${util.inspect(
+								configCoreV4,
+								false,
+								3,
+							)}`,
+						);
 
 						if (isUserConfirmed) {
 							cli.action.start('Starting lisk-core v4');
