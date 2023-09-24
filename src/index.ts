@@ -284,7 +284,7 @@ class LiskMigrator extends Command {
 						if (isUserConfirmed) {
 							cli.action.start('Starting lisk-core v4');
 							const network = networkConstant.name as string;
-							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network);
+							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
 						} else {
