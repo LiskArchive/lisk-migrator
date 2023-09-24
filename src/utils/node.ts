@@ -95,7 +95,7 @@ export const startLiskCore = async (
 		JSON.stringify(
 			{
 				name: 'lisk-core-v4',
-				script: `lisk-core start --network ${network} --log debug`,
+				script: `lisk-core start --network ${network}`,
 			},
 			null,
 			'\t',

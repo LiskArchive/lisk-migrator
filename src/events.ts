@@ -30,18 +30,20 @@ export const captureForgingStatusAtSnapshotHeight = (
 		const newBlock = client.block.decode(Buffer.from(encodedBlock, 'hex')) as Block;
 		if (newBlock.header.height === snapshotHeight) {
 			const forgingStatus = await client.invoke('app:getForgingStatus');
-			const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
-			try {
-				await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus, null, 2));
-				_this.log(`Finished exporting forging status to ${forgingStatusJsonFilepath}.`);
-			} catch (error) {
-				_this.log(
-					`Unable to save the node Forging Status information to the disk, please find it below instead:\n${JSON.stringify(
-						forgingStatus,
-						null,
-						2,
-					)}`,
-				);
+			if (forgingStatus.length) {
+				const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
+				try {
+					await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus, null, 2));
+					_this.log(`\nFinished exporting forging status to ${forgingStatusJsonFilepath}.`);
+				} catch (error) {
+					_this.log(
+						`\nUnable to save the node Forging Status information to the disk, please find it below instead:\n${JSON.stringify(
+							forgingStatus,
+							null,
+							2,
+						)}`,
+					);
+				}
 			}
 		}
 	});
