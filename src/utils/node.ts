@@ -21,7 +21,8 @@ import { execAsync } from './process';
 import { isPortAvailable } from './network';
 import { Port } from '../types';
 import { getAPIClient } from '../client';
-import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC } from '../constants';
+import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC, LEGACY_DB_PATH } from '../constants';
+import { copyDir, resolveAbsolutePath } from './fs';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
@@ -53,11 +54,18 @@ const backupDefaultDirectoryIfExists = async (_this: Command) => {
 	}
 };
 
+const copyLegcyDB = async (_this: Command, snapshotDirPath: string) => {
+	_this.log(`Creating legacy.db at ${LEGACY_DB_PATH}`);
+	await copyDir(snapshotDirPath, resolveAbsolutePath(LEGACY_DB_PATH));
+	_this.log(`Legacy database has been created at ${LEGACY_DB_PATH}`);
+};
+
 export const startLiskCore = async (
 	_this: Command,
 	liskCoreV3DataPath: string,
 	_config: PartialApplicationConfig,
 	network: string,
+	snapshotDirPath: string,
 ): Promise<string | Error> => {
 	const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
 	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running.');
@@ -73,6 +81,7 @@ export const startLiskCore = async (
 	}
 
 	await backupDefaultDirectoryIfExists(_this);
+	await copyLegcyDB(_this, snapshotDirPath);
 
 	_this.log('Installing pm2...');
 	await installPM2();
@@ -83,7 +92,7 @@ export const startLiskCore = async (
 		JSON.stringify(
 			{
 				name: 'lisk-core',
-				script: `lisk-core start --network ${network}`,
+				script: `lisk-core start --network ${network} --log debug`,
 			},
 			null,
 			'\t',

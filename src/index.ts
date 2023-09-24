@@ -26,7 +26,6 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
-	LEGACY_DB_PATH,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -48,7 +47,7 @@ import { copyGenesisBlock, createGenesisBlock, writeGenesisAssets } from './util
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
-import { copyDir, resolveAbsolutePath } from './utils/fs';
+import { resolveAbsolutePath } from './utils/fs';
 import { execAsync } from './utils/process';
 
 let configCoreV4: PartialApplicationConfig;
@@ -268,11 +267,6 @@ class LiskMigrator extends Command {
 					this.log(`Genesis block has been copied to: ${liskCoreV4ConfigPath}.`);
 					cli.action.stop();
 
-					cli.action.start(`Creating legacy.db at ${LEGACY_DB_PATH}`);
-					await copyDir(snapshotDirPath, resolveAbsolutePath(LEGACY_DB_PATH));
-					this.log(`Legacy database has been created at ${LEGACY_DB_PATH}`);
-					cli.action.stop();
-
 					// Ask user to manually stop Lisk Core v3 and continue
 					const isLiskCoreV3Stopped = await cli.confirm(`
 					Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]`);
@@ -285,7 +279,7 @@ class LiskMigrator extends Command {
 						if (isUserConfirmed) {
 							cli.action.start('Starting lisk-core v4');
 							const network = networkConstant.name as string;
-							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network);
+							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, snapshotDirPath);
 							this.log('Started Lisk Core v4 at default data directory.');
 							cli.action.stop();
 						} else {
