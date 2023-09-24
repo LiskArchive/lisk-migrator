@@ -28,7 +28,7 @@ import { copyDir, exists, resolveAbsolutePath } from './fs';
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
-const START_PM2_COMMAND = `pm2 start ${PM2_FILE_NAME}`;
+const PM2_COMMAND_START = `pm2 start ${PM2_FILE_NAME}`;
 
 const DEFAULT_LISK_DATA_DIR = `${homedir()}/.lisk/lisk-core`;
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
@@ -75,7 +75,7 @@ export const startLiskCore = async (
 	_config: PartialApplicationConfig,
 	network: string,
 	outputDir: string,
-): Promise<string | Error> => {
+): Promise<void | Error> => {
 	const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
 	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running.');
 
@@ -111,5 +111,5 @@ export const startLiskCore = async (
 	);
 	_this.log(`Successfully created the PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
 
-	return execAsync(START_PM2_COMMAND);
+	_this.log(await execAsync(PM2_COMMAND_START));
 };
