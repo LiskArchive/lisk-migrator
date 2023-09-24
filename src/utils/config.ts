@@ -12,13 +12,11 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 /* eslint-disable no-param-reassign */
-import debugInit from 'debug';
+import * as fs from 'fs-extra';
 import cli from 'cli-ux';
 import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
-import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
-
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
 import { objects } from '@liskhq/lisk-utils';
 import { ApplicationConfigV3, LoggerConfig } from '../types';
@@ -30,8 +28,7 @@ import {
 	NUMBER_STANDBY_VALIDATORS,
 	POS_INIT_ROUNDS,
 } from '../constants';
-
-const debug = debugInit('lisk:migrator');
+import { resolveAbsolutePath } from './fs';
 
 const LOG_LEVEL_PRIORITY = Object.freeze({
 	FATAL: 0,
@@ -61,36 +58,17 @@ export const getConfig = async (
 	corePath: string,
 	customConfigPath?: string,
 ): Promise<ApplicationConfigV3> => {
-	const command = [];
-
 	const [network] = readdirSync(`${corePath}/config`);
 
-	let compiledConfigPath = `${corePath}/config/${network}/config.json`;
+	const dataDirConfigPath = `${corePath}/config/${network}/config.json`;
+	const dataDirConfig = await fs.readJSON(dataDirConfigPath);
 
-	command.push(`cd ${corePath}`);
-
-	if (isBinaryBuild(corePath)) {
-		command.push('&& source env.sh');
-	}
-
-	if (customConfigPath) {
-		command.push(`--config ${customConfigPath}`);
-		compiledConfigPath = customConfigPath;
-	}
-
-	const fullCommand = command.join(' ');
-
-	debug(`Core path: ${corePath}`);
-	debug(`Cmd: ${fullCommand}`);
+	const customConfig = customConfigPath
+		? await fs.readJSON(resolveAbsolutePath(customConfigPath))
+		: {};
 
 	cli.action.start('Compiling Lisk Core configuration');
-	// Executing command to compile the configuration
-	// 	to use the "source" command on Linux we have to explicity set shell to bash
-	execSync(fullCommand, { shell: '/bin/bash' });
-	cli.action.stop();
-
-	cli.action.start('Loading Lisk Core configuration');
-	const config = await import(compiledConfigPath);
+	const config = objects.mergeDeep({}, dataDirConfig, customConfig) as ApplicationConfigV3;
 	cli.action.stop();
 
 	return config;

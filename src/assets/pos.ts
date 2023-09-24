@@ -193,7 +193,7 @@ export const createGenesisDataObj = async (
 	);
 
 	if (!voteWeightR2 || voteWeightR2.delegates.length === 0) {
-		throw new Error(`Top delegates for round ${r - 2}(r-2)  unavailable, cannot proceed.`);
+		throw new Error(`Top delegates for round ${r - 2} (r-2) unavailable, cannot proceed.`);
 	}
 
 	const topValidators = voteWeightR2.delegates;

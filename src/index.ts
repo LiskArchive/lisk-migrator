@@ -156,12 +156,12 @@ class LiskMigrator extends Command {
 			const liskCoreVersion = semver.coerce(appVersion);
 			if (!liskCoreVersion) {
 				this.error(
-					`Unsupported lisk-core version detected. Supported version range ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Unsupported Lisk Core version detected. Supported version range ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			if (!semver.gte(MIN_SUPPORTED_LISK_CORE_VERSION, liskCoreVersion)) {
 				this.error(
-					`Lisk Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. The minimum compatible version is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Lisk Migrator utility is not compatible for Lisk Core version ${liskCoreVersion.version}. The minimum compatible version is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			cli.action.stop(`${appVersion} detected`);
@@ -230,7 +230,7 @@ class LiskMigrator extends Command {
 				configCoreV4 = migratedConfigV4 as PartialApplicationConfig;
 			}
 
-			cli.action.start('Installing lisk-core v4');
+			cli.action.start('Installing Lisk Core v4');
 			await installLiskCore();
 			cli.action.stop();
 
@@ -282,7 +282,7 @@ class LiskMigrator extends Command {
 						);
 
 						if (isUserConfirmed) {
-							cli.action.start('Starting lisk-core v4');
+							cli.action.start('Starting Lisk Core v4');
 							const network = networkConstant.name as string;
 							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
 							this.log('Started Lisk Core v4 at default data directory.');
