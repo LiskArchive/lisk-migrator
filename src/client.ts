@@ -15,10 +15,13 @@ import { createIPCClient, APIClient } from '@liskhq/lisk-api-client';
 
 const clientCache: Record<string, APIClient> = {};
 
-export const getAPIClient = async (liskCorePath: string): Promise<APIClient> => {
+export const getAPIClient = async (
+	liskCorePath: string,
+	isForceInstantiate?: boolean,
+): Promise<APIClient> => {
 	let _client = clientCache[liskCorePath];
 
-	if (!_client) {
+	if (!_client || isForceInstantiate) {
 		_client = await createIPCClient(liskCorePath);
 		clientCache[liskCorePath] = _client;
 	}

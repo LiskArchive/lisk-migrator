@@ -20,6 +20,7 @@ import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
+import { objects } from '@liskhq/lisk-utils';
 import { ApplicationConfigV3, LoggerConfig } from '../types';
 import {
 	DEFAULT_VERSION,
@@ -131,17 +132,6 @@ export const migrateUserConfig = async (
 		const logLevel = getLogLevel(configV3.logger);
 		cli.action.start(`Setting config property 'system.logLevel' to: ${logLevel}.`);
 		configV4.system.logLevel = logLevel;
-		cli.action.stop();
-	}
-
-	// TODO: Verify if needed
-	if (configV3.backup?.height) {
-		cli.action.start(
-			`Setting config property 'system.backup.height' to: ${configV3.backup.height}.`,
-		);
-		configV4.system.backup = {
-			height: Math.max(snapshotHeight + 1, configV3.backup.height + 1),
-		};
 		cli.action.stop();
 	}
 
@@ -267,7 +257,8 @@ export const migrateUserConfig = async (
 
 export const validateConfig = async (config: ApplicationConfig): Promise<boolean> => {
 	try {
-		(await validator.validate(applicationConfigSchema, config)) as unknown;
+		const mergedConfig = objects.mergeDeep({}, applicationConfigSchema.default, config);
+		(await validator.validate(applicationConfigSchema, mergedConfig)) as unknown;
 		return true;
 	} catch (error) {
 		return false;

@@ -805,17 +805,17 @@
     "@liskhq/lisk-cryptography" "^4.0.0-rc.1"
     "@liskhq/lisk-utils" "^0.4.0-rc.0"
 
+"@liskhq/lisk-utils@0.4.0-rc.0", "@liskhq/lisk-utils@^0.4.0-rc.0":
+  version "0.4.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@liskhq/lisk-utils/-/lisk-utils-0.4.0-rc.0.tgz#6337e1d7e8ca766bbc7ea07408eaf34b2e51bd93"
+  integrity sha512-oMTRwkWWBNqZABXQTFxvo6L/vyAeYka9MlNGNZE7ObaAO8JjxHRukQDZAX36+NcrvREsp1yNQF8YW1xFs+XIvg==
+  dependencies:
+    lodash.clonedeep "4.5.0"
+
 "@liskhq/lisk-utils@^0.3.0-rc.0":
   version "0.3.0-rc.0"
   resolved "https://registry.yarnpkg.com/@liskhq/lisk-utils/-/lisk-utils-0.3.0-rc.0.tgz#64af69f4f629fcd14dd5e56fcbb51160c6698ce2"
   integrity sha512-+If9OyH+QD6rYZ7YepNnZYqe83upaPzcPEn8bXN5uKs/07dwYMnFdk2Braqk5hfpPeEYTJOWQFkFsftXB7G4Pg==
-  dependencies:
-    lodash.clonedeep "4.5.0"
-
-"@liskhq/lisk-utils@^0.4.0-rc.0":
-  version "0.4.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@liskhq/lisk-utils/-/lisk-utils-0.4.0-rc.0.tgz#6337e1d7e8ca766bbc7ea07408eaf34b2e51bd93"
-  integrity sha512-oMTRwkWWBNqZABXQTFxvo6L/vyAeYka9MlNGNZE7ObaAO8JjxHRukQDZAX36+NcrvREsp1yNQF8YW1xFs+XIvg==
   dependencies:
     lodash.clonedeep "4.5.0"
 

@@ -55,7 +55,7 @@ describe('Build assets/pos', () => {
 	let blockIDs: string[];
 	let delegates: VoteWeightsWrapper;
 	const snapshotHeight = 10815;
-	const prevSnapshotBlockHeight = 5000;
+	const pageSize = 1000;
 
 	beforeAll(async () => {
 		db = new Database('testDB');
@@ -174,12 +174,7 @@ describe('Build assets/pos', () => {
 
 		const { getValidatorKeys } = require('../../../src/assets/pos');
 
-		const validatorKeys = await getValidatorKeys(
-			accounts,
-			snapshotHeight,
-			prevSnapshotBlockHeight,
-			db,
-		);
+		const validatorKeys = await getValidatorKeys(accounts, db, pageSize);
 
 		const validator = (await createValidatorsArrayEntry(
 			accounts[0],
@@ -261,9 +256,7 @@ describe('Build assets/pos', () => {
 
 		const { getValidatorKeys } = require('../../../src/assets/pos');
 
-		await expect(
-			getValidatorKeys(accounts, snapshotHeight, prevSnapshotBlockHeight, db),
-		).rejects.toThrow();
+		await expect(getValidatorKeys(accounts, db, pageSize)).rejects.toThrow();
 	});
 
 	it('should create PoS module asset', async () => {
@@ -289,12 +282,7 @@ describe('Build assets/pos', () => {
 
 		const { getValidatorKeys } = require('../../../src/assets/pos');
 
-		const validatorKeys = await getValidatorKeys(
-			accounts,
-			snapshotHeight,
-			prevSnapshotBlockHeight,
-			db,
-		);
+		const validatorKeys = await getValidatorKeys(accounts, db, pageSize);
 
 		const validator = (await createValidatorsArrayEntry(
 			accounts[0],

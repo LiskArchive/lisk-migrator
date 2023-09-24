@@ -22,6 +22,7 @@ import {
 	resolveAbsolutePath,
 	copyDir,
 	write,
+	copyFile,
 } from '../../../src/utils/fs';
 import { configV3 } from '../fixtures/config';
 
@@ -107,5 +108,21 @@ describe('Test write method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(write('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test copyFile method', () => {
+	it('should copy file', async () => {
+		const srcPath = join(__dirname, '../fixtures/blockchain.db.tar.gz');
+		const destPath = `${testDir}/blockchain.db.tar.gz`;
+		expect(await exists(destPath)).toBe(false);
+
+		await copyFile(srcPath, destPath);
+
+		expect(await exists(destPath)).toBe(true);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(copyFile('', '')).rejects.toThrow();
 	});
 });

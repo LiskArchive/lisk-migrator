@@ -18,6 +18,7 @@ import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
 import { SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
+import { copyFile } from './fs';
 
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
@@ -72,3 +73,8 @@ export const writeGenesisAssets = async (
 		JSON.stringify({ assets: genesisAssets }, null, '\t'),
 	);
 };
+
+export const copyGenesisBlock = async (
+	currGenesisBlockFilepath: string,
+	liskCoreV4ConfigPath: string,
+): Promise<boolean | Error> => copyFile(currGenesisBlockFilepath, liskCoreV4ConfigPath);

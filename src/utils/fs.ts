@@ -77,3 +77,13 @@ export const write = async (filePath: string, content: string): Promise<boolean 
 			return resolve(true);
 		});
 	});
+
+export const copyFile = async (src: string, dest: string): Promise<boolean | Error> =>
+	new Promise((resolve, reject) => {
+		fs.copyFile(src, dest, err => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(true);
+		});
+	});
