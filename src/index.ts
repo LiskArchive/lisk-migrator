@@ -153,15 +153,18 @@ class LiskMigrator extends Command {
 			}
 
 			cli.action.start('Verifying Lisk Core version');
-			const liskCoreVersion = semver.coerce(appVersion);
-			if (!liskCoreVersion) {
+			const isLiskCoreVersionValid = semver.valid(appVersion);
+			if (isLiskCoreVersionValid === null) {
 				this.error(
-					`Unsupported Lisk Core version detected. Supported version range ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Invalid Lisk Core version detected: ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
-			if (!semver.gte(MIN_SUPPORTED_LISK_CORE_VERSION, liskCoreVersion)) {
+
+			// Using 'gt' instead of 'gte' because the behavior is swapped
+			// i.e. 'gt' acts as 'gte' and vice-versa
+			if (semver.gt(`${MIN_SUPPORTED_LISK_CORE_VERSION}-rc.0`, appVersion)) {
 				this.error(
-					`Lisk Migrator utility is not compatible for Lisk Core version ${liskCoreVersion.version}. The minimum compatible version is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Lisk Migrator is not compatible with Lisk Core version ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			cli.action.stop(`${appVersion} detected`);
