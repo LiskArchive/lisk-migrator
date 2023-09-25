@@ -11,12 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import {
-	hash,
-	getKeys,
-	getFirstEightBytesReversed,
-	getLisk32AddressFromAddress,
-} from '@liskhq/lisk-cryptography';
+import { utils, address, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
 
 import { Account, LegacyStoreEntry, UserSubstoreEntryBuffer } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
@@ -27,6 +22,11 @@ import {
 	getTokenModuleEntry,
 } from '../../../src/assets/token';
 import { MODULE_NAME_TOKEN } from '../../../src/constants';
+
+const { hash } = utils;
+const { getLisk32AddressFromAddress } = address;
+const { getKeys } = legacy;
+const { getFirstEightBytesReversed } = legacyAddress;
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = getKeys(passphrase);

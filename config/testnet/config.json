@@ -8,43 +8,42 @@
 		"modes": ["ipc", "ws"],
 		"port": 7887,
 		"host": "127.0.0.1",
-		"allowedMethods": []
+		"allowedMethods": ["generator", "system", "random"]
 	},
 	"genesis": {
 		"block": {
 			"fromFile": "./config/genesis_block.blob"
 		},
 		"blockTime": 10,
-		"bftBatchSize": 103,
 		"chainID": "01000000",
 		"maxTransactionsSize": 15360,
-		"minimumCertifyHeight": 1
+		"minimumCertifyHeight": 26689155
 	},
 	"network": {
 		"version": "4.0",
 		"seedPeers": [
 			{
 				"ip": "testnet-seed-01.lisk.com",
-				"port": 7001
+				"port": 7667
 			},
 			{
 				"ip": "testnet-seed-02.lisk-nodes.net",
-				"port": 7001
+				"port": 7667
 			},
 			{
 				"ip": "testnet-seed-03.lisk.com",
-				"port": 7001
+				"port": 7667
 			},
 			{
 				"ip": "testnet-seed-04.lisk-nodes.net",
-				"port": 7001
+				"port": 7667
 			},
 			{
 				"ip": "testnet-seed-05.lisk.com",
-				"port": 7001
+				"port": 7667
 			}
 		],
-		"port": 7001
+		"port": 7667
 	},
 	"transactionPool": {
 		"maxTransactions": 4096,
@@ -66,9 +65,6 @@
 		"pos": {
 			"maxBFTWeightCap": 1000,
 			"useInvalidBLSKey": true
-		},
-		"token": {
-			"feeTokenID": "0100000000000000"
 		}
 	},
 	"plugins": {}

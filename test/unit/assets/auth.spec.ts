@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { address } from '@liskhq/lisk-cryptography';
 import { getAuthModuleEntry, getAuthModuleEntryBuffer } from '../../../src/assets/auth';
 import { MODULE_NAME_AUTH } from '../../../src/constants';
 import {
@@ -23,6 +23,8 @@ import {
 } from '../../../src/types';
 import { createFakeDefaultAccount } from '../utils/account';
 import { ADDRESS_LISK32 } from '../utils/regex';
+
+const { getLisk32AddressFromAddress } = address;
 
 describe('Build assets/auth', () => {
 	let accounts: Account[];

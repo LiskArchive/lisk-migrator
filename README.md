@@ -29,7 +29,7 @@ The following system requirements are recommended to run Lisk Migrator v2.0.0:
 
 #### Memory
 
-- Machines with a minimum of 16 GB RAM.
+- Machines with a minimum of 4 GB RAM.
 
 #### Storage
 
@@ -39,27 +39,9 @@ The following system requirements are recommended to run Lisk Migrator v2.0.0:
 
 Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator).
 
-### From NPM
-
-<!-- usage -->
-
-```sh-session
-$ npm install -g lisk-migrator
-$ lisk-migrator COMMAND
-running command...
-$ lisk-migrator (-v|--version|version)
-lisk-migrator/2.0.0-rc.0 darwin-arm64 node-v18.16.1
-$ lisk-migrator --help [COMMAND]
-USAGE
-  $ lisk-migrator COMMAND
-...
-```
-
-<!-- usagestop -->
-
 ### Build Distributions (Linux, Darwin) from source
 
-Clone the Lisk Core repository using Git and initialize the modules.
+Clone the Lisk Migrator repository using Git and initialize the modules.
 
 <!-- build -->
 
@@ -107,7 +89,7 @@ The [migration guide](./docs/migration.md) explains the transition process from 
 
 ## License
 
-Copyright 2016-2023 Lisk Foundation
+Copyright 2016-2024 Lisk Foundation
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

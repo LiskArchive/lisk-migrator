@@ -15,10 +15,19 @@
 import { homedir } from 'os';
 import { join } from 'path';
 
-import { extractTarBall, exists, rmdir, resolveAbsolutePath, copyDir } from '../../../src/utils/fs';
+import {
+	extractTarBall,
+	exists,
+	rmdir,
+	resolveAbsolutePath,
+	copyDir,
+	write,
+	copyFile,
+} from '../../../src/utils/fs';
+import { configV3 } from '../fixtures/config';
 
-const testDir = `${process.cwd()}/test/data`;
-const tarFilePath = `${process.cwd()}/test/unit/fixtures/blockchain.db.tar.gz`;
+const testDir = join(__dirname, 'test/data');
+const tarFilePath = join(__dirname, '../../..', 'test/unit/fixtures/blockchain.db.tar.gz');
 
 afterAll(async () => rmdir(testDir, { force: true, recursive: true }));
 
@@ -76,7 +85,7 @@ describe('Test resolveAbsolutePath method', () => {
 
 describe('Test copyDir method', () => {
 	it('should copy directory', async () => {
-		const sourcePath = `${process.cwd()}/test/unit/fixtures`;
+		const sourcePath = join(__dirname, '../../..', 'test/unit/fixtures');
 		const destinationPath = `${testDir}/fixtures`;
 		await copyDir(sourcePath, destinationPath);
 		expect(await exists(destinationPath)).toBe(true);
@@ -84,5 +93,36 @@ describe('Test copyDir method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(copyDir('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test write method', () => {
+	it('should write to file when write() method is called', async () => {
+		const filePath = `${testDir}/config.json`;
+		expect(await exists(filePath)).toBe(false);
+
+		await write(filePath, JSON.stringify(configV3));
+
+		expect(await exists(filePath)).toBe(true);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(write('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test copyFile method', () => {
+	it('should copy file', async () => {
+		const srcPath = join(__dirname, '../fixtures/blockchain.db.tar.gz');
+		const destPath = `${testDir}/blockchain.db.tar.gz`;
+		expect(await exists(destPath)).toBe(false);
+
+		await copyFile(srcPath, destPath);
+
+		expect(await exists(destPath)).toBe(true);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(copyFile('', '')).rejects.toThrow();
 	});
 });

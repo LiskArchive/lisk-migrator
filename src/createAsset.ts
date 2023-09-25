@@ -13,7 +13,7 @@
  */
 import { codec } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
-import { getLisk32AddressFromAddress } from '@liskhq/lisk-cryptography';
+import { address } from '@liskhq/lisk-cryptography';
 
 import {
 	CHAIN_STATE_UNREGISTERED_ADDRESSES,
@@ -22,7 +22,6 @@ import {
 	DB_KEY_ACCOUNTS_ADDRESS,
 	BINARY_ADDRESS_LENGTH,
 	ADDRESS_LEGACY_RESERVE,
-	ALL_SUPPORTED_TOKENS_KEY,
 } from './constants';
 import { accountSchema, voteWeightsSchema } from './schemas';
 import {
@@ -60,6 +59,8 @@ import { getLegacyModuleEntry, getLegacyReserveAmount } from './assets/legacy';
 
 import { getDataFromDBStream } from './utils/block';
 
+const { getLisk32AddressFromAddress } = address;
+
 const AMOUNT_ZERO = BigInt('0');
 let totalLSKSupply = AMOUNT_ZERO;
 
@@ -76,8 +77,8 @@ export class CreateAsset {
 
 	public init = async (
 		snapshotHeight: number,
-		snapshotHeightPrevious: number,
 		tokenID: string,
+		pageSize: number,
 	): Promise<GenesisAssetEntry[]> => {
 		const authSubstoreEntries: AuthStoreEntryBuffer[] = [];
 		const userSubstoreEntries: UserSubstoreEntryBuffer[] = [];
@@ -127,12 +128,7 @@ export class CreateAsset {
 		);
 
 		// Get all validator keys for PoS module
-		const validatorKeys = await getValidatorKeys(
-			accounts,
-			snapshotHeight,
-			snapshotHeightPrevious,
-			this._db,
-		);
+		const validatorKeys = await getValidatorKeys(accounts, this._db, pageSize);
 
 		for (const account of accounts) {
 			// genesis asset for auth module
@@ -140,11 +136,11 @@ export class CreateAsset {
 			authSubstoreEntries.push(authModuleAsset);
 
 			// genesis asset for token module
-			// Create user subtore entries
+			// Create user substore entries
 			const userSubstoreEntry = await createUserSubstoreArrayEntry(account, tokenID);
 			if (userSubstoreEntry) userSubstoreEntries.push(userSubstoreEntry);
 
-			// Create total lisk supply for supply subtore
+			// Create total lisk supply for supply substore
 			totalLSKSupply += BigInt(account.token.balance);
 			const lockedBalances = await getLockedBalances(account);
 			totalLSKSupply = lockedBalances.reduce(
@@ -175,9 +171,9 @@ export class CreateAsset {
 			.sort((a: UserSubstoreEntryBuffer, b: UserSubstoreEntryBuffer) =>
 				a.address.equals(b.address) ? a.tokenID.compare(b.tokenID) : a.address.compare(b.address),
 			)
-			.map(({ address, ...entry }) => ({
+			.map(({ address: addr, ...entry }) => ({
 				...entry,
-				address: getLisk32AddressFromAddress(address),
+				address: getLisk32AddressFromAddress(addr),
 				tokenID: entry.tokenID.toString('hex'),
 			}));
 
@@ -187,22 +183,18 @@ export class CreateAsset {
 			totalSupply: String(totalLSKSupply + legacyReserveAmount),
 		});
 
-		// Update supported tokens substore to support all tokens by default
-		supportedTokensSubstoreEntries.push({
-			chainID: ALL_SUPPORTED_TOKENS_KEY,
-			supportedTokenIDs: [],
-		});
-
 		// Sort validators substore entries in lexicographical order
-		const sortedValidators = validators.sort(addressComparator).map(({ address, ...entry }) => ({
-			...entry,
-			address: getLisk32AddressFromAddress(address),
-		}));
+		const sortedValidators = validators
+			.sort(addressComparator)
+			.map(({ address: addr, ...entry }) => ({
+				...entry,
+				address: getLisk32AddressFromAddress(addr),
+			}));
 
 		// Sort stakers substore entries in lexicographical order
-		const sortedStakers = stakers.sort(addressComparator).map(({ address, ...entry }) => ({
+		const sortedStakers = stakers.sort(addressComparator).map(({ address: addr, ...entry }) => ({
 			...entry,
-			address: getLisk32AddressFromAddress(address),
+			address: getLisk32AddressFromAddress(addr),
 		}));
 
 		const encodedDelegatesVoteWeights = await this._db.get(

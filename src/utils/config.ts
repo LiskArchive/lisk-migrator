@@ -12,14 +12,13 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 /* eslint-disable no-param-reassign */
-import debugInit from 'debug';
+import * as fs from 'fs-extra';
 import cli from 'cli-ux';
 import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
-import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
-
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
+import { objects } from '@liskhq/lisk-utils';
 import { ApplicationConfigV3, LoggerConfig } from '../types';
 import {
 	DEFAULT_VERSION,
@@ -29,8 +28,7 @@ import {
 	NUMBER_STANDBY_VALIDATORS,
 	POS_INIT_ROUNDS,
 } from '../constants';
-
-const debug = debugInit('lisk:migrator');
+import { resolveAbsolutePath } from './fs';
 
 const LOG_LEVEL_PRIORITY = Object.freeze({
 	FATAL: 0,
@@ -60,36 +58,17 @@ export const getConfig = async (
 	corePath: string,
 	customConfigPath?: string,
 ): Promise<ApplicationConfigV3> => {
-	const command = [];
-
 	const [network] = readdirSync(`${corePath}/config`);
 
-	let compiledConfigPath = `${corePath}/config/${network}/config.json`;
+	const dataDirConfigPath = `${corePath}/config/${network}/config.json`;
+	const dataDirConfig = await fs.readJSON(dataDirConfigPath);
 
-	command.push(`cd ${corePath}`);
-
-	if (isBinaryBuild(corePath)) {
-		command.push('&& source env.sh');
-	}
-
-	if (customConfigPath) {
-		command.push(`--config ${customConfigPath}`);
-		compiledConfigPath = customConfigPath;
-	}
-
-	const fullCommand = command.join(' ');
-
-	debug(`Core path: ${corePath}`);
-	debug(`Cmd: ${fullCommand}`);
+	const customConfig = customConfigPath
+		? await fs.readJSON(resolveAbsolutePath(customConfigPath))
+		: {};
 
 	cli.action.start('Compiling Lisk Core configuration');
-	// Executing command to compile the configuration
-	// 	to use the "source" command on Linux we have to explicity set shell to bash
-	execSync(fullCommand, { shell: '/bin/bash' });
-	cli.action.stop();
-
-	cli.action.start('Loading Lisk Core configuration');
-	const config = await import(compiledConfigPath);
+	const config = objects.mergeDeep({}, dataDirConfig, customConfig) as ApplicationConfigV3;
 	cli.action.stop();
 
 	return config;
@@ -97,17 +76,16 @@ export const getConfig = async (
 
 export const resolveConfigPathByNetworkID = async (networkIdentifier: string): Promise<string> => {
 	const network = NETWORK_CONSTANT[networkIdentifier].name;
-	const configFilePath = resolve(process.cwd(), `config/${network}/config.json`);
+	const configFilePath = join(__dirname, '../..', `config/${network}/config.json`);
 	return configFilePath;
 };
 
 export const createBackup = async (config: ApplicationConfigV3): Promise<void> => {
-	const backupPath = `${process.cwd()}/backup`;
+	const backupPath = join(__dirname, '../..', 'backup');
 	mkdirSync(backupPath, { recursive: true });
 	writeFileSync(resolve(`${backupPath}/config.json`), JSON.stringify(config, null, '\t'));
 };
 
-// TODO: Set up a default config file. Log properties and map migrated config values
 export const migrateUserConfig = async (
 	configV3: ApplicationConfigV3,
 	configV4: ApplicationConfig,
@@ -132,17 +110,6 @@ export const migrateUserConfig = async (
 		const logLevel = getLogLevel(configV3.logger);
 		cli.action.start(`Setting config property 'system.logLevel' to: ${logLevel}.`);
 		configV4.system.logLevel = logLevel;
-		cli.action.stop();
-	}
-
-	// TODO: Verify if needed
-	if (configV3.backup?.height) {
-		cli.action.start(
-			`Setting config property 'system.backup.height' to: ${configV3.backup.height}.`,
-		);
-		configV4.system.backup = {
-			height: Math.max(snapshotHeight + 1, configV3.backup.height + 1),
-		};
 		cli.action.stop();
 	}
 
@@ -268,7 +235,8 @@ export const migrateUserConfig = async (
 
 export const validateConfig = async (config: ApplicationConfig): Promise<boolean> => {
 	try {
-		(await validator.validate(applicationConfigSchema, config)) as unknown;
+		const mergedConfig = objects.mergeDeep({}, applicationConfigSchema.default, config);
+		(await validator.validate(applicationConfigSchema, mergedConfig)) as unknown;
 		return true;
 	} catch (error) {
 		return false;

@@ -5,6 +5,8 @@ This section explains how to migrate a Lisk Core v3.0.4 (or later) node to Lisk 
 The Lisk Migrator CLI tool will generate a new genesis (snapshot) block for Lisk Core v4.x.
 The new genesis block is created based on a snapshot of the existing blockchain (running on Lisk Core v3.0.4+) at a pre-determined height.
 
+Lisk Migrator automatically exports the node's Forging Status information to the file named `forgingStatus.json` under the output directory. In case, Lisk Migrator is unable to save to the disk, as a fallback, the Forging Status information is logged to the standard output.
+
 <!--
 
 > Note: Please ensure that the file name and the checksum filename are the same, whereby the checksum file has an additional extension (lisk-migrator-v2.0.0.tar.gz, and will have a checksum file by the name of lisk-migrator-v2.0.0.tar.gz.SHA256), and are present in the same directory.
@@ -80,11 +82,11 @@ FLAGS
   -d, --lisk-core-v3-data-path=lisk-core-v3-data-path  Path where the lisk-core v3.x instance is running. Current home directory will be considered the default if not provided.
   -h, --help                                           Shows CLI help.
   -o, --output=output                                  File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.
+  -p, --page-size                                      Maximum number of blocks to be iterated at once for computation. Default to 100000.
   -s, --snapshot-height=snapshot-height                (Required) The height at which the re-genesis block will be generated. Can be specified with the SNAPSHOT_HEIGHT as well.
   -v, --version                                        Shows the CLI version.
   --auto-migrate-config                                Migrate user configuration automatically. Default to false.
   --auto-start-lisk-core-v4                            Start lisk-core v4 automatically. Default to false.
-  --snapshot-time-gap=snapshot-time-gap                The number of seconds elapsed between the block at height HEIGHT_SNAPSHOT and the snapshot block.
 
 EXAMPLES
   lisk-migrator --snapshot-height 20931763 --lisk-core-path /path/to/data-dir

@@ -11,7 +11,7 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { hash } from '@liskhq/lisk-cryptography';
+import { utils } from '@liskhq/lisk-cryptography';
 
 import { NetworkConfigLocal } from './types';
 
@@ -39,8 +39,9 @@ export const ROUND_LENGTH = NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS
 export const MAX_BFT_WEIGHT_CAP = 1000;
 
 export const SNAPSHOT_BLOCK_VERSION = 0;
-export const SNAPSHOT_TIME_GAP = 0; // TODO: Update once decided
-export const ALL_SUPPORTED_TOKENS_KEY = Buffer.alloc(0);
+export const SNAPSHOT_TIME_GAP = 3600;
+
+const { hash } = utils;
 
 export const ADDRESS_LEGACY_RESERVE = hash(Buffer.from('legacyReserve', 'utf8')).slice(0, 20);
 export const INVALID_BLS_KEY = Buffer.alloc(48, 0).toString('hex');
@@ -65,12 +66,12 @@ export const NETWORK_CONSTANT: { [key: string]: NetworkConfigLocal } = {
 	'4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99': {
 		name: 'mainnet',
 		tokenID: TOKEN_ID_LSK.MAINNET,
-		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.MAINNET,
+		prevSnapshotBlockHeight: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.MAINNET,
 	},
 	'15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c': {
 		name: 'testnet',
 		tokenID: TOKEN_ID_LSK.TESTNET,
-		snapshotHeightPrevious: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.TESTNET,
+		prevSnapshotBlockHeight: HEIGHT_PREVIOUS_SNAPSHOT_BLOCK.TESTNET,
 	},
 };
 
@@ -91,3 +92,4 @@ export const DEFAULT_LISK_CORE_PATH = '~/.lisk/lisk-core';
 export const LEGACY_DB_PATH = `${DEFAULT_LISK_CORE_PATH}/${DEFAULT_DATA_DIR}/legacy.db`;
 
 export const DEFAULT_VERSION = '0.1.0';
+export const EVENT_NEW_BLOCK = 'app:block:new';

@@ -11,13 +11,17 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { hash, getKeys, getFirstEightBytesReversed } from '@liskhq/lisk-cryptography';
+import { utils, legacy, legacyAddress } from '@liskhq/lisk-cryptography';
 import { codec } from '@liskhq/lisk-codec';
 
 import { getLegacyModuleEntry } from '../../../src/assets/legacy';
 import { MODULE_NAME_LEGACY } from '../../../src/constants';
 import { unregisteredAddressesSchema } from '../../../src/schemas';
 import { UnregisteredAccount, LegacyStoreData, LegacyStoreEntry } from '../../../src/types';
+
+const { hash } = utils;
+const { getKeys } = legacy;
+const { getFirstEightBytesReversed } = legacyAddress;
 
 const getLegacyBytesFromPassphrase = (passphrase: string): Buffer => {
 	const { publicKey } = getKeys(passphrase);

@@ -12,8 +12,10 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { hash, getRandomBytes } from '@liskhq/lisk-cryptography';
+import { utils } from '@liskhq/lisk-cryptography';
 import { BlockHeader, Block } from '@liskhq/lisk-chain';
+
+const { hash, getRandomBytes } = utils;
 
 type DeepPartial<T> = T extends Buffer
 	? T // eslint-disable-next-line @typescript-eslint/ban-types
