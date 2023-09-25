@@ -64,9 +64,6 @@ export const writeGenesisAssets = async (
 	genesisAssets: GenesisAssetEntry[],
 	outputDir: string,
 ): Promise<void> => {
-	if (fs.existsSync(outputDir)) fs.rmdirSync(outputDir, { recursive: true });
-	fs.mkdirSync(outputDir, { recursive: true });
-
 	const genesisAssetsJsonFilepath = path.resolve(outputDir, 'genesis_assets.json');
 	fs.writeFileSync(
 		genesisAssetsJsonFilepath,

@@ -33,7 +33,7 @@ export const captureForgingStatusAtSnapshotHeight = (
 			if (forgingStatus.length) {
 				const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
 				try {
-					await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus, null, 2));
+					await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus, null, '\t'));
 					_this.log(`\nFinished exporting forging status to ${forgingStatusJsonFilepath}.`);
 				} catch (error) {
 					_this.log(
