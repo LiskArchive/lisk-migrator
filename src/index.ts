@@ -63,7 +63,7 @@ class LiskMigrator extends Command {
 			char: 'o',
 			required: false,
 			description:
-				'File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.',
+				'File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob.',
 		}),
 		'lisk-core-v3-data-path': flagsParser.string({
 			char: 'd',
@@ -138,7 +138,10 @@ class LiskMigrator extends Command {
 			cli.action.stop('Snapshot height is valid');
 
 			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
-			const outputDir = `${outputPath}/${networkIdentifier}`;
+			const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
+
+			// Ensure the output directory is present
+			if (fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
 			// Asynchronously capture the node's Forging Status information at the snapshot height
 			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
@@ -303,7 +306,7 @@ class LiskMigrator extends Command {
 				}
 			} else {
 				this.log(
-					`Please copy ${snapshotDirPath} directory to the Lisk Core V4 data directory in order to access legacy blockchain information.`,
+					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core V4 data directory (e.g: ~/.lisk/lisk-core/data/legacy.db/) in order to access legacy blockchain information.`,
 				);
 				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
