@@ -63,7 +63,7 @@ class LiskMigrator extends Command {
 			char: 'o',
 			required: false,
 			description:
-				'File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob.',
+				"File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob. Do not use any value starting with the default data path reserved for Lisk Core: '~/.lisk/lisk-core'.",
 		}),
 		'lisk-core-v3-data-path': flagsParser.string({
 			char: 'd',
@@ -141,7 +141,7 @@ class LiskMigrator extends Command {
 			const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
 
 			// Ensure the output directory is present
-			if (fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+			if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
 			// Asynchronously capture the node's Forging Status information at the snapshot height
 			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
@@ -156,15 +156,18 @@ class LiskMigrator extends Command {
 			}
 
 			cli.action.start('Verifying Lisk Core version');
-			const liskCoreVersion = semver.coerce(appVersion);
-			if (!liskCoreVersion) {
+			const isLiskCoreVersionValid = semver.valid(appVersion);
+			if (isLiskCoreVersionValid === null) {
 				this.error(
-					`Unsupported lisk-core version detected. Supported version range ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Invalid Lisk Core version detected: ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
-			if (!semver.gte(MIN_SUPPORTED_LISK_CORE_VERSION, liskCoreVersion)) {
+
+			// Using 'gt' instead of 'gte' because the behavior is swapped
+			// i.e. 'gt' acts as 'gte' and vice-versa
+			if (semver.gt(`${MIN_SUPPORTED_LISK_CORE_VERSION}-rc.0`, appVersion)) {
 				this.error(
-					`Lisk Migrator utility is not compatible for lisk-core version ${liskCoreVersion.version}. The minimum compatible version is: ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					`Lisk Migrator is not compatible with Lisk Core version ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 				);
 			}
 			cli.action.stop(`${appVersion} detected`);
@@ -233,7 +236,7 @@ class LiskMigrator extends Command {
 				configCoreV4 = migratedConfigV4 as PartialApplicationConfig;
 			}
 
-			cli.action.start('Installing lisk-core v4');
+			cli.action.start('Installing Lisk Core v4');
 			await installLiskCore();
 			cli.action.stop();
 
@@ -285,7 +288,7 @@ class LiskMigrator extends Command {
 						);
 
 						if (isUserConfirmed) {
-							cli.action.start('Starting lisk-core v4');
+							cli.action.start('Starting Lisk Core v4');
 							const network = networkConstant.name as string;
 							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
 							this.log('Started Lisk Core v4 at default data directory.');
