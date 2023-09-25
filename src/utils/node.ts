@@ -30,7 +30,6 @@ const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
 const PM2_COMMAND_START = `pm2 start ${PM2_FILE_NAME}`;
 
-const DEFAULT_LISK_DATA_DIR = `${homedir()}/.lisk/lisk-core`;
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
@@ -47,10 +46,14 @@ export const isLiskCoreV3Running = async (liskCorePath: string): Promise<boolean
 	}
 };
 
-const backupDefaultDirectoryIfExists = async (_this: Command) => {
-	if (existsSync(DEFAULT_LISK_DATA_DIR)) {
-		_this.log(`Backing Lisk Core v3 data directory at ${DEFAULT_LISK_DATA_DIR}`);
-		renameSync(DEFAULT_LISK_DATA_DIR, LISK_V3_BACKUP_DATA_DIR);
+const backupDefaultDirectoryIfExists = async (_this: Command, liskCoreV3DataPath: string) => {
+	if (existsSync(liskCoreV3DataPath)) {
+		if (!liskCoreV3DataPath.includes('.lisk/lisk-core')) {
+			fs.mkdirSync(`${homedir()}/.lisk`, { recursive: true });
+		}
+
+		_this.log(`Backing Lisk Core v3 data directory at ${liskCoreV3DataPath}`);
+		renameSync(liskCoreV3DataPath, LISK_V3_BACKUP_DATA_DIR);
 		_this.log(`Backed Lisk Core v3 data directory to: ${LISK_V3_BACKUP_DATA_DIR}`);
 	}
 };
@@ -89,7 +92,7 @@ export const startLiskCore = async (
 		throw new Error(`Port ${rpcPort} is not available to start the RPC server.`);
 	}
 
-	await backupDefaultDirectoryIfExists(_this);
+	await backupDefaultDirectoryIfExists(_this, liskCoreV3DataPath);
 	await copyLegacyDB(_this);
 
 	_this.log('Installing pm2...');
