@@ -48,6 +48,10 @@ export const isLiskCoreV3Running = async (liskCorePath: string): Promise<boolean
 
 const backupDefaultDirectoryIfExists = async (_this: Command, liskCoreV3DataPath: string) => {
 	if (existsSync(liskCoreV3DataPath)) {
+		if (!liskCoreV3DataPath.includes('.lisk/lisk-core')) {
+			fs.mkdirSync(`${homedir()}/.lisk`, { recursive: true });
+		}
+
 		_this.log(`Backing Lisk Core v3 data directory at ${liskCoreV3DataPath}`);
 		renameSync(liskCoreV3DataPath, LISK_V3_BACKUP_DATA_DIR);
 		_this.log(`Backed Lisk Core v3 data directory to: ${LISK_V3_BACKUP_DATA_DIR}`);
