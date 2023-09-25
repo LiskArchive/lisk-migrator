@@ -141,7 +141,7 @@ class LiskMigrator extends Command {
 			const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
 
 			// Ensure the output directory is present
-			if (fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+			if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
 			// Asynchronously capture the node's Forging Status information at the snapshot height
 			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
