@@ -63,7 +63,7 @@ class LiskMigrator extends Command {
 			char: 'o',
 			required: false,
 			description:
-				'File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.',
+				'File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob.',
 		}),
 		'lisk-core-v3-data-path': flagsParser.string({
 			char: 'd',
