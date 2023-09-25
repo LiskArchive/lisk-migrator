@@ -306,7 +306,7 @@ class LiskMigrator extends Command {
 				}
 			} else {
 				this.log(
-					`Please copy ${snapshotDirPath} directory to the Lisk Core V4 data directory in order to access legacy blockchain information.`,
+					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core V4 data directory (e.g: ~/.lisk/lisk-core/data/legacy.db/) in order to access legacy blockchain information.`,
 				);
 				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
