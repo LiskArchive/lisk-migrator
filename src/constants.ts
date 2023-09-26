@@ -31,7 +31,7 @@ export const DB_KEY_TRANSACTIONS_ID = 'transactions:id';
 export const CHAIN_STATE_DELEGATE_VOTE_WEIGHTS = 'dpos:delegateVoteWeights';
 export const CHAIN_STATE_UNREGISTERED_ADDRESSES = 'unregisteredAddresses';
 
-export const POS_INIT_ROUNDS = 60480;
+export const POS_INIT_ROUNDS = 587;
 export const MAX_COMMISSION = 10000;
 export const NUMBER_ACTIVE_VALIDATORS = 101;
 export const NUMBER_STANDBY_VALIDATORS = 2;
