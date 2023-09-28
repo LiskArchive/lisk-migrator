@@ -121,7 +121,7 @@ export const migrateUserConfig = async (
 	cli.action.start('Starting migration of custom config properties.');
 
 	// Assign default version if not available
-	if (!configV4?.system?.version) {
+	if (!configV4.system?.version) {
 		cli.action.start(`Setting config property 'system.version' to: ${DEFAULT_VERSION}.`);
 		configV4.system.version = DEFAULT_VERSION;
 		cli.action.stop();
@@ -247,7 +247,7 @@ export const migrateUserConfig = async (
 			(NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS);
 	cli.action.stop();
 
-	if (configV4?.modules?.pos && !configV4?.modules?.pos?.maxBFTWeightCap) {
+	if (configV4.modules?.pos && !configV4.modules?.pos?.maxBFTWeightCap) {
 		cli.action.start(
 			`Setting config property 'modules.pos.maxBFTWeightCap' to: ${MAX_BFT_WEIGHT_CAP}.`,
 		);
