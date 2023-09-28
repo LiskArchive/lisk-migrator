@@ -78,9 +78,6 @@ export const startLiskCore = async (
 	network: string,
 	outputDir: string,
 ): Promise<void | Error> => {
-	const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
-	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running.');
-
 	const networkPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_P2P;
 	if (!(await isPortAvailable(networkPort))) {
 		throw new Error(`Port ${networkPort} is not available for P2P communication.`);

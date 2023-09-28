@@ -46,7 +46,7 @@ import { captureForgingStatusAtSnapshotHeight } from './events';
 import { copyGenesisBlock, createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
-import { installLiskCore, startLiskCore } from './utils/node';
+import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/node';
 import { resolveAbsolutePath } from './utils/fs';
 import { execAsync } from './utils/process';
 
@@ -276,23 +276,23 @@ class LiskMigrator extends Command {
 
 					// Ask user to manually stop Lisk Core v3 and continue
 					const isLiskCoreV3Stopped = await cli.confirm(
-						"Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]",
+						"Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no] ",
 					);
 
 					if (isLiskCoreV3Stopped) {
+						const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
+						if (isCoreV3Running) this.error('Lisk Core v3 is still running.');
+
 						const isUserConfirmed = await cli.confirm(
-							`Start Lisk Core with the following configuration? [yes/no] \n${util.inspect(
-								configCoreV4,
-								false,
-								3,
-							)}`,
+							`Start Lisk Core with the following configuration? [yes/no]
+							${util.inspect(configCoreV4, false, 3)} `,
 						);
 
 						if (isUserConfirmed) {
 							cli.action.start('Starting Lisk Core v4');
 							const network = networkConstant.name as string;
 							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
-							this.log('Started Lisk Core v4 at default data directory.');
+							this.log("Started Lisk Core v4 at default data directory ('~/.lisk/lisk-core').");
 							cli.action.stop();
 						} else {
 							this.log(
