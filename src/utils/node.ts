@@ -28,7 +28,6 @@ import { copyDir, exists, resolveAbsolutePath } from './fs';
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
-const PM2_COMMAND_START = `pm2 start ${PM2_FILE_NAME}`;
 
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
 
@@ -99,10 +98,11 @@ export const startLiskCore = async (
 	await installPM2();
 	_this.log('Finished installing pm2.');
 
-	_this.log(`Creating PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+	const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
+	_this.log(`Creating PM2 config at ${pm2FilePath}`);
 	const configPath = await getFinalConfigPath(outputDir, network);
 	fs.writeFileSync(
-		PM2_FILE_NAME,
+		pm2FilePath,
 		JSON.stringify(
 			{
 				name: 'lisk-core-v4',
@@ -112,7 +112,8 @@ export const startLiskCore = async (
 			'\t',
 		),
 	);
-	_this.log(`Successfully created the PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+	_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
 
+	const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
 	_this.log(await execAsync(PM2_COMMAND_START));
 };
