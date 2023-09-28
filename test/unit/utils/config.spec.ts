@@ -16,6 +16,8 @@ import { resolve, join } from 'path';
 import { ApplicationConfig } from 'lisk-framework';
 import { configV3, configV4 } from '../fixtures/config';
 import {
+	NETWORKS,
+	getNetworkByNetworkID,
 	migrateUserConfig,
 	validateConfig,
 	writeConfig,
@@ -55,6 +57,21 @@ describe('Migrate user configuration', () => {
 			invalid: 'invalid',
 		} as unknown) as ApplicationConfig);
 		expect(isValidConfig).toBe(false);
+	});
+});
+
+describe('Test networkIdentifier method', () => {
+	it('should determine network correctly by networkIdentifier', async () => {
+		NETWORKS.forEach(networkInfo => {
+			const network = getNetworkByNetworkID(networkInfo.networkID);
+			expect(network).toBe(networkInfo.name);
+		});
+	});
+
+	it('should throw error with unknown networkIdentifier', async () => {
+		expect(() => getNetworkByNetworkID('unknown network identifier')).toThrowError(
+			'Migrator running against unsupported network.',
+		);
 	});
 });
 

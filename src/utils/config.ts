@@ -14,7 +14,8 @@
 /* eslint-disable no-param-reassign */
 import * as fs from 'fs-extra';
 import cli from 'cli-ux';
-import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
+import { Command } from '@oclif/command';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
@@ -30,6 +31,17 @@ import {
 } from '../constants';
 import { resolveAbsolutePath } from './fs';
 
+export const NETWORKS = Object.freeze([
+	{
+		name: 'mainnet',
+		networkID: '4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99',
+	},
+	{
+		name: 'testnet',
+		networkID: '15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c',
+	},
+]);
+
 const LOG_LEVEL_PRIORITY = Object.freeze({
 	FATAL: 0,
 	ERROR: 1,
@@ -39,7 +51,11 @@ const LOG_LEVEL_PRIORITY = Object.freeze({
 	TRACE: 5,
 }) as Record<string, number>;
 
-export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
+export const getNetworkByNetworkID = (_networkID: string): string | Error => {
+	const networkInfo = NETWORKS.find(info => info.networkID === _networkID);
+	if (!networkInfo) throw new Error('Migrator running against unsupported network.');
+	return networkInfo.name;
+};
 
 export const getLogLevel = (loggerConfig: LoggerConfig): string => {
 	const highestLogPriority = Math.max(
@@ -47,20 +63,31 @@ export const getLogLevel = (loggerConfig: LoggerConfig): string => {
 		LOG_LEVEL_PRIORITY[String(loggerConfig.consoleLogLevel).toUpperCase()],
 	);
 
-	const [logLevel] = Object.entries(LOG_LEVEL_PRIORITY).find(
-		([, v]) => v === highestLogPriority,
-	) as [string, number];
+	try {
+		const [logLevel] = Object.entries(LOG_LEVEL_PRIORITY).find(
+			([, v]) => v === highestLogPriority,
+		) as [string, number];
 
-	return logLevel.toLowerCase();
+		return logLevel.toLowerCase();
+	} catch (err) {
+		return 'info';
+	}
 };
 
 export const getConfig = async (
+	_this: Command,
 	corePath: string,
+	_networkID: string,
 	customConfigPath?: string,
 ): Promise<ApplicationConfigV3> => {
-	const [network] = readdirSync(`${corePath}/config`);
+	let network: String | Error = 'mainnet';
+	try {
+		network = getNetworkByNetworkID(_networkID);
+	} catch (err) {
+		_this.error(err as Error);
+	}
 
-	const dataDirConfigPath = `${corePath}/config/${network}/config.json`;
+	const dataDirConfigPath = join(corePath, 'config', network as string, 'config.json');
 	const dataDirConfig = await fs.readJSON(dataDirConfigPath);
 
 	const customConfig = customConfigPath
@@ -114,7 +141,7 @@ export const migrateUserConfig = async (
 	}
 
 	if (configV3?.transactionPool) {
-		if (configV3.transactionPool.maxTransactions) {
+		if (configV3?.transactionPool?.maxTransactions) {
 			cli.action.start(
 				`Setting config property 'transactionPool.maxTransactions' to: ${configV3.transactionPool.maxTransactions}.`,
 			);
