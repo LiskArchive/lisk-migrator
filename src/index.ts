@@ -47,7 +47,7 @@ import { copyGenesisBlock, createGenesisBlock, writeGenesisAssets } from './util
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/node';
-import { resolveAbsolutePath } from './utils/fs';
+import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
 
 let configCoreV4: PartialApplicationConfig;
@@ -62,8 +62,7 @@ class LiskMigrator extends Command {
 		output: flagsParser.string({
 			char: 'o',
 			required: false,
-			description:
-				"File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob. Do not use any value starting with the default data path reserved for Lisk Core: '~/.lisk/lisk-core'.",
+			description: `File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob. Do not use any value starting with the default data path reserved for Lisk Core: '${DEFAULT_LISK_CORE_PATH}'.`,
 		}),
 		'lisk-core-v3-data-path': flagsParser.string({
 			char: 'd',
@@ -116,6 +115,8 @@ class LiskMigrator extends Command {
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const pageSize = Number(flags['page-size']);
+
+			verifyOutputPath(this, outputPath);
 
 			const client = await getAPIClient(liskCoreV3DataPath);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;

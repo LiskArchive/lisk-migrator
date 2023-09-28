@@ -19,11 +19,12 @@ import { existsSync, renameSync } from 'fs-extra';
 import { PartialApplicationConfig } from 'lisk-framework';
 
 import { execAsync } from './process';
+import { copyDir, exists } from './fs';
 import { isPortAvailable } from './network';
+import { resolveAbsolutePath } from './path';
 import { Port } from '../types';
 import { getAPIClient } from '../client';
 import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC, LEGACY_DB_PATH, SNAPSHOT_DIR } from '../constants';
-import { copyDir, exists, resolveAbsolutePath } from './fs';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
