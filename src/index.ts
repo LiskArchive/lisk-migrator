@@ -280,8 +280,30 @@ class LiskMigrator extends Command {
 					);
 
 					if (isLiskCoreV3Stopped) {
-						const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
-						if (isCoreV3Running) this.error('Lisk Core v3 is still running.');
+						let numTriesLeft = 3;
+						// eslint-disable-next-line no-plusplus
+						while (numTriesLeft--) {
+							const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
+							if (isCoreV3Running) {
+								if (numTriesLeft) {
+									const isStopReconfirmed = await cli.confirm(
+										"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no] ",
+									);
+									if (!isStopReconfirmed) {
+										this.log(
+											'Cannot proceed with Lisk Core v4 auto-start. Please continue manually.  Exiting!!!',
+										);
+										process.exit(0);
+									}
+								} else {
+									this.error(
+										'Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Exiting!!!',
+									);
+								}
+							} else {
+								break;
+							}
+						}
 
 						const isUserConfirmed = await cli.confirm(
 							`Start Lisk Core with the following configuration? [yes/no]
