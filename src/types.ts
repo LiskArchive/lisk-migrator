@@ -389,3 +389,12 @@ export interface NodeInfo {
 	readonly registeredModules: RegisteredModule[];
 	readonly backup: Backup;
 }
+
+export interface ForgingStatus {
+	readonly address: string;
+	lskAddress?: string;
+	readonly forging: boolean;
+	readonly height?: number;
+	readonly maxHeightPrevoted?: number;
+	readonly maxHeightPreviouslyForged?: number;
+}
