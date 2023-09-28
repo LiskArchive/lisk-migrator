@@ -245,6 +245,7 @@ class LiskMigrator extends Command {
 				snapshotHeight,
 			)) as unknown) as Block;
 			await createGenesisBlock(
+				this,
 				networkConstant.name,
 				defaultConfigFilePath,
 				outputDir,
