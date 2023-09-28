@@ -201,6 +201,7 @@ export const createGenesisDataObj = async (
 		accounts.map(account => [account.address, account.dpos.delegate.isBanned]),
 	);
 
+	// Sorting delegates by voteWeight is unnecessary as framework already does it
 	const { delegates } = voteWeightR2;
 	delegates.forEach((delegate: DelegateWeight) => {
 		const isAccountBanned = accountBannedMap.get(delegate.address);
