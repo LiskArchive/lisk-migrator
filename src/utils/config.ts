@@ -14,7 +14,8 @@
 /* eslint-disable no-param-reassign */
 import * as fs from 'fs-extra';
 import cli from 'cli-ux';
-import { existsSync, readdirSync, mkdirSync, writeFileSync } from 'fs';
+import { Command } from '@oclif/command';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 import { validator } from '@liskhq/lisk-validator';
 import { ApplicationConfig, applicationConfigSchema } from 'lisk-framework';
@@ -39,7 +40,13 @@ const LOG_LEVEL_PRIORITY = Object.freeze({
 	TRACE: 5,
 }) as Record<string, number>;
 
-export const isBinaryBuild = (corePath: string): boolean => existsSync(join(corePath, '.build'));
+export const getNetworkByNetworkID = (_networkID: string): string | Error => {
+	const networkInfo = NETWORK_CONSTANT[_networkID];
+	if (!networkInfo) {
+		throw new Error('Migrator running against unidentified network. Cannot proceed.');
+	}
+	return networkInfo.name;
+};
 
 export const getLogLevel = (loggerConfig: LoggerConfig): string => {
 	const highestLogPriority = Math.max(
@@ -47,20 +54,31 @@ export const getLogLevel = (loggerConfig: LoggerConfig): string => {
 		LOG_LEVEL_PRIORITY[String(loggerConfig.consoleLogLevel).toUpperCase()],
 	);
 
-	const [logLevel] = Object.entries(LOG_LEVEL_PRIORITY).find(
-		([, v]) => v === highestLogPriority,
-	) as [string, number];
+	try {
+		const [logLevel] = Object.entries(LOG_LEVEL_PRIORITY).find(
+			([, v]) => v === highestLogPriority,
+		) as [string, number];
 
-	return logLevel.toLowerCase();
+		return logLevel.toLowerCase();
+	} catch (err) {
+		return 'info';
+	}
 };
 
 export const getConfig = async (
+	_this: Command,
 	corePath: string,
+	_networkID: string,
 	customConfigPath?: string,
 ): Promise<ApplicationConfigV3> => {
-	const [network] = readdirSync(`${corePath}/config`);
+	let network: string | Error = 'mainnet';
+	try {
+		network = getNetworkByNetworkID(_networkID);
+	} catch (err) {
+		_this.error(err as Error);
+	}
 
-	const dataDirConfigPath = `${corePath}/config/${network}/config.json`;
+	const dataDirConfigPath = join(corePath, 'config', network as string, 'config.json');
 	const dataDirConfig = await fs.readJSON(dataDirConfigPath);
 
 	const customConfig = customConfigPath
@@ -94,27 +112,27 @@ export const migrateUserConfig = async (
 	cli.action.start('Starting migration of custom config properties.');
 
 	// Assign default version if not available
-	if (!configV4.system.version) {
+	if (!configV4.system?.version) {
 		cli.action.start(`Setting config property 'system.version' to: ${DEFAULT_VERSION}.`);
 		configV4.system.version = DEFAULT_VERSION;
 		cli.action.stop();
 	}
 
-	if (configV3.rootPath) {
+	if (configV3?.rootPath) {
 		cli.action.start(`Setting config property 'system.dataPath' to: ${configV3.rootPath}.`);
 		configV4.system.dataPath = configV3.rootPath;
 		cli.action.stop();
 	}
 
-	if (configV3.logger) {
+	if (configV3?.logger) {
 		const logLevel = getLogLevel(configV3.logger);
 		cli.action.start(`Setting config property 'system.logLevel' to: ${logLevel}.`);
 		configV4.system.logLevel = logLevel;
 		cli.action.stop();
 	}
 
-	if (configV3.transactionPool) {
-		if (configV3.transactionPool.maxTransactions) {
+	if (configV3?.transactionPool) {
+		if (configV3?.transactionPool?.maxTransactions) {
 			cli.action.start(
 				`Setting config property 'transactionPool.maxTransactions' to: ${configV3.transactionPool.maxTransactions}.`,
 			);
@@ -123,7 +141,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.transactionPool.maxTransactionsPerAccount) {
+		if (configV3?.transactionPool?.maxTransactionsPerAccount) {
 			cli.action.start(
 				`Setting config property 'transactionPool.maxTransactionsPerAccount' to: ${configV3.transactionPool.maxTransactionsPerAccount}.`,
 			);
@@ -132,7 +150,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.transactionPool.transactionExpiryTime) {
+		if (configV3?.transactionPool?.transactionExpiryTime) {
 			cli.action.start(
 				`Setting config property 'transactionPool.transactionExpiryTime' to: ${configV3.transactionPool.transactionExpiryTime}.`,
 			);
@@ -141,7 +159,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.transactionPool.minEntranceFeePriority) {
+		if (configV3?.transactionPool?.minEntranceFeePriority) {
 			cli.action.start(
 				`Setting config property 'transactionPool.minEntranceFeePriority' to: ${configV3.transactionPool.minEntranceFeePriority}.`,
 			);
@@ -150,7 +168,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.transactionPool.minReplacementFeeDifference) {
+		if (configV3?.transactionPool?.minReplacementFeeDifference) {
 			cli.action.start(
 				`Setting config property 'transactionPool.minReplacementFeeDifference' to: ${configV3.transactionPool.minReplacementFeeDifference}.`,
 			);
@@ -160,26 +178,26 @@ export const migrateUserConfig = async (
 		}
 	}
 
-	if (configV3.rpc?.mode) {
+	if (configV3?.rpc?.mode) {
 		cli.action.start(`Setting config property 'rpc.modes' to: ${configV3.rpc.mode}.`);
 		configV4.rpc.modes = [configV3.rpc.mode];
 		cli.action.stop();
 	}
 
-	if (configV3.network) {
-		if (configV3.network.port) {
+	if (configV3?.network) {
+		if (configV3?.network?.port) {
 			cli.action.start(`Setting config property 'network.port' to: ${configV3.network.port}.`);
 			configV4.network.port = configV3.network.port;
 			cli.action.stop();
 		}
 
-		if (configV3.network.hostIp) {
+		if (configV3?.network?.hostIp) {
 			cli.action.start(`Setting config property 'network.host' to: ${configV3.network.hostIp}.`);
 			configV4.network.host = configV3.network.hostIp;
 			cli.action.stop();
 		}
 
-		if (configV3.network.maxOutboundConnections) {
+		if (configV3?.network?.maxOutboundConnections) {
 			cli.action.start(
 				`Setting config property 'network.maxOutboundConnections' to: ${configV3.network.maxOutboundConnections}.`,
 			);
@@ -187,7 +205,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.network.maxInboundConnections) {
+		if (configV3?.network?.maxInboundConnections) {
 			cli.action.start(
 				`Setting config property 'network.maxInboundConnections' to: ${configV3.network.maxInboundConnections}.`,
 			);
@@ -195,7 +213,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.network.wsMaxPayload) {
+		if (configV3?.network?.wsMaxPayload) {
 			cli.action.start(
 				`Setting config property 'network.wsMaxPayload' to: ${configV3.network.wsMaxPayload}.`,
 			);
@@ -203,7 +221,7 @@ export const migrateUserConfig = async (
 			cli.action.stop();
 		}
 
-		if (configV3.network.advertiseAddress) {
+		if (configV3?.network?.advertiseAddress) {
 			cli.action.start(
 				`Setting config property 'network.advertiseAddress' to: ${configV3.network.advertiseAddress}.`,
 			);
@@ -220,7 +238,7 @@ export const migrateUserConfig = async (
 			(NUMBER_ACTIVE_VALIDATORS + NUMBER_STANDBY_VALIDATORS);
 	cli.action.stop();
 
-	if (configV4.modules.pos && !configV4.modules.pos.maxBFTWeightCap) {
+	if (configV4.modules?.pos && !configV4.modules?.pos?.maxBFTWeightCap) {
 		cli.action.start(
 			`Setting config property 'modules.pos.maxBFTWeightCap' to: ${MAX_BFT_WEIGHT_CAP}.`,
 		);
