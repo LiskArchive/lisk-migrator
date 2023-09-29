@@ -23,6 +23,7 @@ import {
 	copyDir,
 	write,
 	copyFile,
+	createTarball,
 } from '../../../src/utils/fs';
 import { configV3 } from '../fixtures/config';
 
@@ -124,5 +125,23 @@ describe('Test copyFile method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(copyFile('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test createTarball method', () => {
+	it('should create tar.gz file', async () => {
+		const filePath = join(__dirname, '../fixtures/genesis_block.json');
+		const outputDir = `${testDir}/fixtures`;
+		const expectedTarFilePath = `${testDir}/fixtures/genesis_block.json.tar.gz`;
+
+		expect(await exists(expectedTarFilePath)).toBe(false);
+
+		await createTarball(filePath, outputDir);
+
+		expect(await exists(expectedTarFilePath)).toBe(true);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(createTarball('', '')).rejects.toThrow();
 	});
 });

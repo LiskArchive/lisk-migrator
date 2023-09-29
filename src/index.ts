@@ -43,7 +43,12 @@ import {
 	setPrevSnapshotBlockHeightByNetID,
 } from './utils/chain';
 import { captureForgingStatusAtSnapshotHeight } from './events';
-import { copyGenesisBlock, createGenesisBlock, writeGenesisAssets } from './utils/genesis_block';
+import {
+	copyGenesisBlock,
+	createGenesisBlock,
+	writeGenesisAssets,
+	writeGenesisBlock,
+} from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore } from './utils/node';
@@ -250,6 +255,11 @@ class LiskMigrator extends Command {
 				outputDir,
 				blockAtSnapshotHeight,
 			);
+			cli.action.stop();
+
+			cli.action.start('Creating genesis block tar and SHA256 files');
+			await writeGenesisBlock(outputDir);
+			this.log(`Genesis block tar and SHA256 files have been created at: ${outputDir}.`);
 			cli.action.stop();
 
 			if (autoStartLiskCoreV4) {
