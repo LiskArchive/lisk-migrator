@@ -116,7 +116,7 @@ class LiskMigrator extends Command {
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const pageSize = Number(flags['page-size']);
 
-			verifyOutputPath(this, outputPath);
+			verifyOutputPath(outputPath);
 
 			const client = await getAPIClient(liskCoreV3DataPath);
 			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
