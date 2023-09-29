@@ -15,15 +15,8 @@
 import { homedir } from 'os';
 import { join } from 'path';
 
-import {
-	extractTarBall,
-	exists,
-	rmdir,
-	resolveAbsolutePath,
-	copyDir,
-	write,
-	copyFile,
-} from '../../../src/utils/fs';
+import { extractTarBall, exists, rmdir, copyDir, write, copyFile } from '../../../src/utils/fs';
+import { resolveAbsolutePath } from '../../../src/utils/path';
 import { configV3 } from '../fixtures/config';
 
 const testDir = join(__dirname, 'test/data');
