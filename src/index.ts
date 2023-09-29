@@ -179,8 +179,8 @@ class LiskMigrator extends Command {
 
 			// User specified custom config file
 			const configV3: ApplicationConfigV3 = customConfigPath
-				? await getConfig(liskCoreV3DataPath, customConfigPath)
-				: await getConfig(liskCoreV3DataPath);
+				? await getConfig(this, liskCoreV3DataPath, networkIdentifier, customConfigPath)
+				: await getConfig(this, liskCoreV3DataPath, networkIdentifier);
 
 			await setTokenIDLskByNetID(networkIdentifier);
 			await setPrevSnapshotBlockHeightByNetID(networkIdentifier);
