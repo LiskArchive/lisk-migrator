@@ -317,7 +317,9 @@ class LiskMigrator extends Command {
 							cli.action.start('Starting Lisk Core v4');
 							const network = networkConstant.name as string;
 							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
-							this.log("Started Lisk Core v4 at default data directory ('~/.lisk/lisk-core').");
+							this.log(
+								`Started Lisk Core v4 at default data directory ('${DEFAULT_LISK_CORE_PATH}').`,
+							);
 							cli.action.stop();
 						} else {
 							this.log(
@@ -335,7 +337,7 @@ class LiskMigrator extends Command {
 				}
 			} else {
 				this.log(
-					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core V4 data directory (e.g: ~/.lisk/lisk-core/data/legacy.db/) in order to access legacy blockchain information.`,
+					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core V4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/) in order to access legacy blockchain information.`,
 				);
 				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
