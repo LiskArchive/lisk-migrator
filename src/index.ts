@@ -73,7 +73,7 @@ class LiskMigrator extends Command {
 		config: flagsParser.string({
 			char: 'c',
 			required: false,
-			description: 'Custom configuration file path for Lisk Core v3.x.',
+			description: 'Custom configuration file path for Lisk Core v3.1.x.',
 		}),
 		'snapshot-height': flagsParser.integer({
 			char: 's',
@@ -85,13 +85,14 @@ class LiskMigrator extends Command {
 		'auto-migrate-config': flagsParser.boolean({
 			required: false,
 			env: 'AUTO_MIGRATE_CONFIG',
-			description: 'Migrate user configuration automatically. Default to false.',
+			description: 'Migrate user configuration automatically. Defaults to false.',
 			default: false,
 		}),
 		'auto-start-lisk-core-v4': flagsParser.boolean({
 			required: false,
 			env: 'AUTO_START_LISK_CORE',
-			description: 'Start lisk core v4 automatically. Default to false.',
+			description:
+				'Start Lisk Core v4 automatically. Defaults to false. When using this flag, kindly open another terminal window to stop Lisk Core v3.1.x for when the migrator prompts.',
 			default: false,
 		}),
 		'page-size': flagsParser.integer({
@@ -99,7 +100,7 @@ class LiskMigrator extends Command {
 			required: false,
 			default: 100000,
 			description:
-				'Maximum number of blocks to be iterated at once for computation. Default to 100000.',
+				'Maximum number of blocks to be iterated at once for computation. Defaults to 100000.',
 		}),
 	};
 
