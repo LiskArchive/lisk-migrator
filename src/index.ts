@@ -259,7 +259,7 @@ class LiskMigrator extends Command {
 
 			cli.action.start('Creating genesis block tar and SHA256 files');
 			await writeGenesisBlock(outputDir);
-			this.log(`Genesis block tar and SHA256 files has been created at: ${outputDir}.`);
+			this.log(`Genesis block tar and SHA256 files have been created at: ${outputDir}.`);
 			cli.action.stop();
 
 			if (autoStartLiskCoreV4) {
