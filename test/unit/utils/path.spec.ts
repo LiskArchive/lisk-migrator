@@ -31,17 +31,29 @@ describe('Test resolveAbsolutePath method', () => {
 		const absolutePath = resolveAbsolutePath(path);
 		expect(absolutePath).toBe(path);
 	});
+
+	it('should resolve relative path (current directory) when called with valid path', async () => {
+		const path = './test/testFolder';
+		const absolutePath = resolveAbsolutePath(path);
+		expect(absolutePath).toBe(join(process.cwd(), path));
+	});
+
+	it('should resolve relative path (parent directory) when called with valid path', async () => {
+		const path = '../test/testFolder';
+		const absolutePath = resolveAbsolutePath(path);
+		expect(absolutePath).toBe(join(process.cwd(), path));
+	});
 });
 
 describe('Test verifyOutputPath method', () => {
 	it('should throw error when user provides the output path same as the default Lisk Core data directory', async () => {
-		expect(() => verifyOutputPath(DEFAULT_LISK_CORE_PATH)).toThrowError(
+		expect(() => verifyOutputPath(DEFAULT_LISK_CORE_PATH)).toThrow(
 			`Output path '${DEFAULT_LISK_CORE_PATH}' is not allowed. Please restart the migrator with a different output path.`,
 		);
 	});
 
 	it('should throw error when user provides the output path starting with the default Lisk Core data directory', async () => {
-		expect(() => verifyOutputPath(`${DEFAULT_LISK_CORE_PATH}/output`)).toThrowError(
+		expect(() => verifyOutputPath(`${DEFAULT_LISK_CORE_PATH}/output`)).toThrow(
 			`Output path '${DEFAULT_LISK_CORE_PATH}/output' is not allowed. Please restart the migrator with a different output path.`,
 		);
 	});

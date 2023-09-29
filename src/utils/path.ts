@@ -12,11 +12,19 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { homedir } from 'os';
+import { isAbsolute, join } from 'path';
 import { DEFAULT_LISK_CORE_PATH } from '../constants';
 
 export const resolveAbsolutePath = (path: string) => {
-	const homeDirectory = homedir();
-	return homeDirectory ? path.replace(/^~(?=$|\/|\\)/, homeDirectory) : path;
+	if (isAbsolute(path)) {
+		return path;
+	}
+
+	if (path.startsWith('~')) {
+		return path.replace('~', homedir());
+	}
+
+	return join(process.cwd(), path);
 };
 
 export const verifyOutputPath = (_outputPath: string): void | Error => {

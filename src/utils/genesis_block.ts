@@ -21,12 +21,14 @@ import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
 import { copyFile } from './fs';
 
+/* eslint-disable func-names, @typescript-eslint/no-explicit-any */
 (BigInt.prototype as any).toJSON = function () {
 	return this.toString();
 };
 (Buffer.prototype as any).toJSON = function () {
 	return this.toString('hex');
 };
+/* eslint-enable func-names, @typescript-eslint/no-explicit-any */
 
 export const createChecksum = async (filePath: string): Promise<string> => {
 	const fileStream = fs.createReadStream(filePath);
