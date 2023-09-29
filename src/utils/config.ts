@@ -248,5 +248,5 @@ export const writeConfig = async (config: ApplicationConfig, outputDir: string):
 		mkdirSync(outputDir, { recursive: true });
 	}
 
-	writeFileSync(resolve(outputDir, 'config.json'), JSON.stringify(config));
+	writeFileSync(resolve(outputDir, 'config.json'), JSON.stringify(config, null, '\t'));
 };

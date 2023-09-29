@@ -101,7 +101,7 @@ describe('Test write method', () => {
 		const filePath = `${testDir}/config.json`;
 		expect(await exists(filePath)).toBe(false);
 
-		await write(filePath, JSON.stringify(configV3));
+		await write(filePath, JSON.stringify(configV3, null, '\t'));
 
 		expect(await exists(filePath)).toBe(true);
 	});
