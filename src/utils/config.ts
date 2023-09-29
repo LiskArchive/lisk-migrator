@@ -31,17 +31,6 @@ import {
 } from '../constants';
 import { resolveAbsolutePath } from './fs';
 
-export const NETWORKS = Object.freeze([
-	{
-		name: 'mainnet',
-		networkID: '4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99',
-	},
-	{
-		name: 'testnet',
-		networkID: '15f0dacc1060e91818224a94286b13aa04279c640bd5d6f193182031d133df7c',
-	},
-]);
-
 const LOG_LEVEL_PRIORITY = Object.freeze({
 	FATAL: 0,
 	ERROR: 1,
@@ -52,8 +41,10 @@ const LOG_LEVEL_PRIORITY = Object.freeze({
 }) as Record<string, number>;
 
 export const getNetworkByNetworkID = (_networkID: string): string | Error => {
-	const networkInfo = NETWORKS.find(info => info.networkID === _networkID);
-	if (!networkInfo) throw new Error('Migrator running against unsupported network.');
+	const networkInfo = NETWORK_CONSTANT[_networkID];
+	if (!networkInfo) {
+		throw new Error('Migrator running against unidentified network. Cannot proceed.');
+	}
 	return networkInfo.name;
 };
 
@@ -80,7 +71,7 @@ export const getConfig = async (
 	_networkID: string,
 	customConfigPath?: string,
 ): Promise<ApplicationConfigV3> => {
-	let network: String | Error = 'mainnet';
+	let network: string | Error = 'mainnet';
 	try {
 		network = getNetworkByNetworkID(_networkID);
 	} catch (err) {

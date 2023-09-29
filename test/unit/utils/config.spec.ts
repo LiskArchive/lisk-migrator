@@ -15,8 +15,8 @@ import * as fs from 'fs-extra';
 import { resolve, join } from 'path';
 import { ApplicationConfig } from 'lisk-framework';
 import { configV3, configV4 } from '../fixtures/config';
+import { NETWORK_CONSTANT } from '../../../src/constants';
 import {
-	NETWORKS,
 	getNetworkByNetworkID,
 	migrateUserConfig,
 	validateConfig,
@@ -62,15 +62,15 @@ describe('Migrate user configuration', () => {
 
 describe('Test networkIdentifier method', () => {
 	it('should determine network correctly by networkIdentifier', async () => {
-		NETWORKS.forEach(networkInfo => {
-			const network = getNetworkByNetworkID(networkInfo.networkID);
-			expect(network).toBe(networkInfo.name);
+		Object.keys(NETWORK_CONSTANT).forEach(networkID => {
+			const network = getNetworkByNetworkID(networkID);
+			expect(network).toBe(NETWORK_CONSTANT[networkID].name);
 		});
 	});
 
 	it('should throw error with unknown networkIdentifier', async () => {
-		expect(() => getNetworkByNetworkID('unknown network identifier')).toThrowError(
-			'Migrator running against unsupported network.',
+		expect(() => getNetworkByNetworkID('unknown network identifier')).toThrow(
+			'Migrator running against unidentified network. Cannot proceed.',
 		);
 	});
 });
