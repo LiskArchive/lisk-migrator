@@ -1,0 +1,26 @@
+{
+	"header": {
+		"version": 0,
+		"timestamp": 1693395510,
+		"height": 1,
+		"previousBlockID": "21bf5541c661ad72167bb1238fa81695ca6df00bbb8986262551bb6f7f14d703",
+		"stateRoot": "f5535322e2a338f76b007b3e1831eb632b51f80971c385b5d3a172064df960eb",
+		"assetRoot": "523ec59f002f996ed8cfb9598df17b1e5d16f16b2d45f88a1db29d83d237f126",
+		"eventRoot": "85775091c4b25cbdbd46e1efc4fb3d19264d6939290d18feece714daad259d0f",
+		"transactionRoot": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+		"validatorsHash": "652b84751db42b3767900900cf39ffe93fcf51be2a29d1b0eba2c56295305940",
+		"aggregateCommit": {
+			"height": 0,
+			"aggregationBits": "",
+			"certificateSignature": ""
+		},
+		"generatorAddress": "lskzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz5fw596",
+		"maxHeightPrevoted": 20220446,
+		"maxHeightGenerated": 0,
+		"impliesMaxPrevotes": true,
+		"signature": "",
+		"id": "8a4da363d192c70237d2473041f6a131298693d5b6714e0a3024e8a476923001"
+	},
+	"transactions": [],
+	"assets": []
+}
