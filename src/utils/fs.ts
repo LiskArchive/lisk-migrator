@@ -14,7 +14,7 @@
 import { homedir } from 'os';
 import * as tar from 'tar';
 import fs from 'fs';
-import { join } from 'path';
+import { join, basename } from 'path';
 
 export const extractTarBall = async (
 	srcFilePath: string,
@@ -86,4 +86,12 @@ export const copyFile = async (src: string, dest: string): Promise<boolean | Err
 			}
 			return resolve(true);
 		});
+	});
+
+export const createTarball = async (filePath: string, outputDir: string) =>
+	new Promise((resolve, reject) => {
+		tar
+			.create({ gzip: true, file: `${outputDir}/${basename(filePath)}.tar.gz` }, [filePath])
+			.then(() => resolve(true))
+			.catch(err => reject(err));
 	});
