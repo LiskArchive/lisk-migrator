@@ -19,7 +19,7 @@ import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
 import { SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
-import { copyFile } from './fs';
+import { copyFile, createTarball } from './fs';
 
 /* eslint-disable func-names, @typescript-eslint/no-explicit-any */
 (BigInt.prototype as any).toJSON = function () {
@@ -82,3 +82,23 @@ export const copyGenesisBlock = async (
 	currGenesisBlockFilepath: string,
 	liskCoreV4ConfigPath: string,
 ): Promise<boolean | Error> => copyFile(currGenesisBlockFilepath, liskCoreV4ConfigPath);
+
+export const writeGenesisBlock = async (outputDir: string): Promise<void> => {
+	const genesisBlockJsonFilepath = path.resolve(outputDir, 'genesis_block.json');
+	await createTarball(genesisBlockJsonFilepath, outputDir);
+
+	const genesisBlockBlobFilepath = path.resolve(outputDir, 'genesis_block.blob');
+	await createTarball(genesisBlockBlobFilepath, outputDir);
+
+	const genesisBlockJsonHash = await createChecksum(`${genesisBlockJsonFilepath}.tar.gz`);
+	fs.writeFileSync(
+		path.resolve(outputDir, 'genesis_block.json.tar.gz.SHA256'),
+		genesisBlockJsonHash,
+	);
+
+	const genesisBlockBlobHash = await createChecksum(`${genesisBlockBlobFilepath}.tar.gz`);
+	fs.writeFileSync(
+		path.resolve(outputDir, 'genesis_block.blob.tar.gz.SHA256'),
+		genesisBlockBlobHash,
+	);
+};

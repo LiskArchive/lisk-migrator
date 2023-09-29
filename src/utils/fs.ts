@@ -13,7 +13,7 @@
  */
 import * as tar from 'tar';
 import fs from 'fs';
-import { join } from 'path';
+import path from 'path';
 
 export const extractTarBall = async (
 	srcFilePath: string,
@@ -30,9 +30,9 @@ export const extractTarBall = async (
 		fileStream.on('end', () => setTimeout(resolve.bind(null, true), 100));
 	});
 
-export const exists = async (path: string): Promise<boolean | Error> => {
+export const exists = async (inputPath: string): Promise<boolean | Error> => {
 	try {
-		await fs.promises.access(path);
+		await fs.promises.access(inputPath);
 		return true;
 	} catch (_) {
 		return false;
@@ -53,8 +53,8 @@ export const copyDir = async (src: string, dest: string) => {
 	const files = await fs.promises.readdir(src, { withFileTypes: true });
 
 	for (const fileInfo of files) {
-		const srcPath = join(src, fileInfo.name);
-		const destPath = join(dest, fileInfo.name);
+		const srcPath = path.join(src, fileInfo.name);
+		const destPath = path.join(dest, fileInfo.name);
 
 		fileInfo.isDirectory()
 			? await copyDir(srcPath, destPath)
@@ -80,4 +80,21 @@ export const copyFile = async (src: string, dest: string): Promise<boolean | Err
 			}
 			return resolve(true);
 		});
+	});
+
+export const createTarball = async (filePath: string, outputDir: string) =>
+	new Promise((resolve, reject) => {
+		const fileName = path.basename(filePath);
+
+		tar
+			.create(
+				{
+					gzip: true,
+					file: `${outputDir}/${fileName}.tar.gz`,
+					cwd: outputDir,
+				},
+				[fileName],
+			)
+			.then(() => resolve(true))
+			.catch(err => reject(err));
 	});
