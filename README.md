@@ -24,6 +24,8 @@ The following dependencies need to be installed in order to run applications cre
 | NPM          | 8.3.1 or later |
 | Lisk Core    | 3.1.0 or later |
 
+**NOTE**: It is important that NodeJS is installed using NVM. Please refer our documentation [here](https://lisk.com/documentation/lisk-core/v4/setup/npm.html#node-js-npm).
+
 ### System requirements
 
 The following system requirements are recommended to run Lisk Migrator v2.0.0:

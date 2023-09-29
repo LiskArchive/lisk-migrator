@@ -284,27 +284,26 @@ class LiskMigrator extends Command {
 
 					if (isLiskCoreV3Stopped) {
 						let numTriesLeft = 3;
-						// eslint-disable-next-line no-plusplus
-						while (numTriesLeft--) {
+						while (numTriesLeft) {
+							numTriesLeft -= 1;
+
 							const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
-							if (isCoreV3Running) {
-								if (numTriesLeft) {
-									const isStopReconfirmed = await cli.confirm(
-										"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no] ",
+							if (!isCoreV3Running) break;
+
+							if (numTriesLeft >= 0) {
+								const isStopReconfirmed = await cli.confirm(
+									"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no] ",
+								);
+								if (!isStopReconfirmed) {
+									this.log(
+										`Cannot proceed with Lisk Core v4 auto-start. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
 									);
-									if (!isStopReconfirmed) {
-										this.log(
-											'Cannot proceed with Lisk Core v4 auto-start. Please continue manually.  Exiting!!!',
-										);
-										process.exit(0);
-									}
-								} else {
-									this.error(
-										'Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Exiting!!!',
-									);
+									process.exit(0);
 								}
 							} else {
-								break;
+								this.error(
+									`Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+								);
 							}
 						}
 
@@ -337,7 +336,7 @@ class LiskMigrator extends Command {
 				}
 			} else {
 				this.log(
-					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core V4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/) in order to access legacy blockchain information.`,
+					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/) in order to access legacy blockchain information.`,
 				);
 				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
