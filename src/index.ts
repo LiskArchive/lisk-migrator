@@ -134,7 +134,9 @@ class LiskMigrator extends Command {
 				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
 			);
 			if (snapshotHeight % ROUND_LENGTH !== 0) {
-				this.error(`Invalid Snapshot Height: ${snapshotHeight}.`);
+				this.error(
+					`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
+				);
 			}
 			cli.action.stop('Snapshot height is valid');
 

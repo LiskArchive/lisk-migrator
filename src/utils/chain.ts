@@ -98,7 +98,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 	}
 
 	const progress = cli.progress({
-		format: `${options.label}: [{bar}] {percentage}% | Remaining: {remaining}/{total} | Height: {height}/${observedHeight} | ETA: {timeLeft}`,
+		format: options.isFinal
+			? `${options.label}: [{bar}] {percentage}% | Remaining: {remaining}/{total} | Finalized height: {height}/${observedHeight} | ETA: {timeLeft}`
+			: `${options.label}: [{bar}] {percentage}% | Remaining: {remaining}/{total} | Height: {height}/${observedHeight} | ETA: {timeLeft}`,
 		fps: 2,
 		synchronousUpdate: false,
 		etaAsynchronousUpdate: false,
