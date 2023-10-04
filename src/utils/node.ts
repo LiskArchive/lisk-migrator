@@ -11,11 +11,14 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import cli from 'cli-ux';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { homedir } from 'os';
 import { Command } from '@oclif/command';
 import { existsSync, renameSync } from 'fs-extra';
+import util from 'util';
+
 import { PartialApplicationConfig } from 'lisk-framework';
 
 import { execAsync } from './process';
@@ -99,20 +102,52 @@ export const startLiskCore = async (
 	await installPM2();
 	_this.log('Finished installing pm2.');
 
-	_this.log(`Creating PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
 	const configPath = await getFinalConfigPath(outputDir, network);
-	fs.writeFileSync(
-		PM2_FILE_NAME,
-		JSON.stringify(
-			{
-				name: 'lisk-core-v4',
-				script: `lisk-core start --network ${network} --config ${configPath}/config.json`,
-			},
-			null,
-			'\t',
-		),
-	);
-	_this.log(`Successfully created the PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+	const defaultStartParams = `--network ${network}`;
+	let startParams = `${defaultStartParams} --config ${configPath}/config.json`;
 
-	_this.log(await execAsync(PM2_COMMAND_START));
+	const isUserConfirmed = await cli.confirm('Would you like to customize start params? [yes/no]');
+	if (isUserConfirmed) {
+		_this.log('Customizing Lisk Core start parameters');
+		const userInput = await cli.prompt(
+			'Please pass all parameters you wish you use to start Lisk Core node',
+		);
+		/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+		startParams = `${defaultStartParams} ${userInput}`;
+	}
+
+	const pm2Config = {
+		name: 'lisk-core-v4',
+		script: `lisk-core start ${startParams}`,
+	};
+
+	const isStartWithPm2Config = await cli.confirm(
+		`Start Lisk Core with the following pm2 configuration? [yes/no] \n${util.inspect(
+			pm2Config,
+			false,
+			3,
+		)}`,
+	);
+
+	if (isStartWithPm2Config) {
+		_this.log(`Creating PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+		fs.writeFileSync(
+			PM2_FILE_NAME,
+			JSON.stringify(
+				{
+					name: 'lisk-core-v4',
+					script: `lisk-core start ${startParams}`,
+				},
+				null,
+				'\t',
+			),
+		);
+		_this.log(`Successfully created the PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+
+		_this.log(await execAsync(PM2_COMMAND_START));
+	} else {
+		_this.log(
+			'User did not confirm to start Lisk Core with customized PM2 configuration. Skipping the Lisk Core v4 auto-start process.',
+		);
+	}
 };
