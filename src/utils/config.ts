@@ -29,7 +29,7 @@ import {
 	NUMBER_STANDBY_VALIDATORS,
 	POS_INIT_ROUNDS,
 } from '../constants';
-import { resolveAbsolutePath } from './fs';
+import { resolveAbsolutePath } from './path';
 
 const LOG_LEVEL_PRIORITY = Object.freeze({
 	FATAL: 0,

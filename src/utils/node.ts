@@ -19,16 +19,16 @@ import { existsSync, renameSync } from 'fs-extra';
 import { PartialApplicationConfig } from 'lisk-framework';
 
 import { execAsync } from './process';
+import { copyDir, exists } from './fs';
 import { isPortAvailable } from './network';
+import { resolveAbsolutePath } from './path';
 import { Port } from '../types';
 import { getAPIClient } from '../client';
 import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC, LEGACY_DB_PATH, SNAPSHOT_DIR } from '../constants';
-import { copyDir, exists, resolveAbsolutePath } from './fs';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
-const PM2_COMMAND_START = `pm2 start ${PM2_FILE_NAME}`;
 
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
 
@@ -79,9 +79,6 @@ export const startLiskCore = async (
 	network: string,
 	outputDir: string,
 ): Promise<void | Error> => {
-	const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
-	if (isCoreV3Running) throw new Error('Lisk Core v3 is still running.');
-
 	const networkPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_P2P;
 	if (!(await isPortAvailable(networkPort))) {
 		throw new Error(`Port ${networkPort} is not available for P2P communication.`);
@@ -99,10 +96,11 @@ export const startLiskCore = async (
 	await installPM2();
 	_this.log('Finished installing pm2.');
 
-	_this.log(`Creating PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+	const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
+	_this.log(`Creating PM2 config at ${pm2FilePath}`);
 	const configPath = await getFinalConfigPath(outputDir, network);
 	fs.writeFileSync(
-		PM2_FILE_NAME,
+		pm2FilePath,
 		JSON.stringify(
 			{
 				name: 'lisk-core-v4',
@@ -112,7 +110,8 @@ export const startLiskCore = async (
 			'\t',
 		),
 	);
-	_this.log(`Successfully created the PM2 config at ${process.cwd()}/${PM2_FILE_NAME}`);
+	_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
 
+	const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
 	_this.log(await execAsync(PM2_COMMAND_START));
 };

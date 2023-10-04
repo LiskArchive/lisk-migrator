@@ -12,18 +12,16 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { homedir } from 'os';
 import { join } from 'path';
 
 import {
+	createTarball,
 	extractTarBall,
 	exists,
 	rmdir,
-	resolveAbsolutePath,
 	copyDir,
 	write,
 	copyFile,
-	createTarball,
 } from '../../../src/utils/fs';
 import { configV3 } from '../fixtures/config';
 
@@ -66,21 +64,6 @@ describe('Test rmdir method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(rmdir('')).rejects.toThrow();
-	});
-});
-
-describe('Test resolveAbsolutePath method', () => {
-	it('should resolve absolute path when called with valid path which contains ~', async () => {
-		const path = '~/.test/testFolder';
-		const expectedResult = join(homedir(), '.test/testFolder');
-		const absolutePath = resolveAbsolutePath(path);
-		expect(absolutePath).toBe(expectedResult);
-	});
-
-	it('should resolve absolute path when called with valid path', async () => {
-		const path = '/.test/testFolder';
-		const absolutePath = resolveAbsolutePath(path);
-		expect(absolutePath).toBe(path);
 	});
 });
 

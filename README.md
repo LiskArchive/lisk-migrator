@@ -20,8 +20,11 @@ The following dependencies need to be installed in order to run applications cre
 
 | Dependencies | Version        |
 | ------------ | -------------- |
-| NodeJS       | 18.16          |
+| NodeJS       | ^18.16         |
+| NPM          | 8.3.1 or later |
 | Lisk Core    | 3.1.0 or later |
+
+**NOTE**: It is important that NodeJS is installed using NVM. Please refer our documentation [here](https://lisk.com/documentation/lisk-core/v4/setup/npm.html#node-js-npm).
 
 ### System requirements
 
