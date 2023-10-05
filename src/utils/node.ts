@@ -75,6 +75,22 @@ const getFinalConfigPath = async (outputDir: string, network: string) =>
 		? outputDir
 		: path.resolve(__dirname, '../..', 'config', network);
 
+const resolveLiskCoreStartCommand = async (_this: Command, defaultStartCommand: string) => {
+	const isUserConfirmed = await cli.confirm('Would you like to customize start params? [yes/no]');
+
+	if (isUserConfirmed) {
+		_this.log('Customizing Lisk Core start parameters');
+		const userInput = await cli.prompt(
+			'Please provide all parameters you would like to use to start Lisk Core node (for e.g. --network mainnet)',
+		);
+		/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+		const startCommand = `lisk core start ${userInput}`;
+		return startCommand;
+	}
+
+	return defaultStartCommand;
+};
+
 export const startLiskCore = async (
 	_this: Command,
 	liskCoreV3DataPath: string,
@@ -95,30 +111,16 @@ export const startLiskCore = async (
 	await backupDefaultDirectoryIfExists(_this, liskCoreV3DataPath);
 	await copyLegacyDB(_this);
 
-	_this.log('Installing pm2...');
-	await installPM2();
-	_this.log('Finished installing pm2.');
-
 	const configPath = await getFinalConfigPath(outputDir, network);
-	const defaultStartParams = `--network ${network}`;
-	let startParams = `${defaultStartParams} --config ${configPath}/config.json`;
-
-	const isUserConfirmed = await cli.confirm('Would you like to customize start params? [yes/no]');
-	if (isUserConfirmed) {
-		_this.log('Customizing Lisk Core start parameters');
-		const userInput = await cli.prompt(
-			'Please pass all parameters you wish you use to start Lisk Core node',
-		);
-		/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-		startParams = `${defaultStartParams} ${userInput}`;
-	}
+	const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
+	const liskCoreStartCommand = await resolveLiskCoreStartCommand(_this, defaultStartCommand);
 
 	const pm2Config = {
 		name: 'lisk-core-v4',
-		script: `lisk-core start ${startParams}`,
+		script: liskCoreStartCommand,
 	};
 
-	const isStartWithPm2Config = await cli.confirm(
+	const isUserConfirmed = await cli.confirm(
 		`Start Lisk Core with the following pm2 configuration? [yes/no] \n${util.inspect(
 			pm2Config,
 			false,
@@ -126,26 +128,20 @@ export const startLiskCore = async (
 		)}`,
 	);
 
-	if (isStartWithPm2Config) {
+	if (isUserConfirmed) {
+		_this.log('Installing pm2...');
+		await installPM2();
+		_this.log('Finished installing pm2.');
+
 		const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
 		_this.log(`Creating PM2 config at ${pm2FilePath}`);
-		fs.writeFileSync(
-			pm2FilePath,
-			JSON.stringify(
-				{
-					name: 'lisk-core-v4',
-					script: `lisk-core start ${startParams}`,
-				},
-				null,
-				'\t',
-			),
-		);
+		fs.writeFileSync(pm2FilePath, JSON.stringify(pm2Config, null, '\t'));
 		_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
 
 		const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
 		_this.log(await execAsync(PM2_COMMAND_START));
 	} else {
-		_this.log(
+		_this.error(
 			'User did not confirm to start Lisk Core with customized PM2 configuration. Skipping the Lisk Core v4 auto-start process.',
 		);
 	}
