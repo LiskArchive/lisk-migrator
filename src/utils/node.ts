@@ -81,7 +81,7 @@ const resolveLiskCoreStartCommand = async (_this: Command, defaultStartCommand: 
 	if (isUserConfirmed) {
 		_this.log('Customizing Lisk Core start parameters');
 		const userInput = await cli.prompt(
-			'Please provide all parameters you would like to use to start Lisk Core node (for e.g. --network mainnet)',
+			'Please provide all parameters you would like to use to start Lisk Core (for e.g. --network mainnet)',
 		);
 		/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
 		const startCommand = `lisk core start ${userInput}`;
