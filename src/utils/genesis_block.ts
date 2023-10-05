@@ -14,6 +14,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs-extra';
 import path from 'path';
+import { Command } from '@oclif/command';
 import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
 import { SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
@@ -48,6 +49,7 @@ export const createChecksum = async (filePath: string): Promise<string> => {
 };
 
 export const createGenesisBlock = async (
+	_this: Command,
 	network: string,
 	configFilepath: string,
 	outputDir: string,
@@ -58,6 +60,9 @@ export const createGenesisBlock = async (
 	const previousBlockID = blockAtSnapshotHeight.header.id.toString('hex');
 
 	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp} --export-json`;
+	_this.log(
+		`\nExecuting the following command to generate the genesis block:\n${genesisBlockCreateCommand}`,
+	);
 
 	await execAsync(genesisBlockCreateCommand);
 };

@@ -13,11 +13,14 @@
  */
 import { resolve } from 'path';
 import { Command } from '@oclif/command';
-
-import { APIClient } from '@liskhq/lisk-api-client';
 import { Block } from '@liskhq/lisk-chain';
-import { EVENT_NEW_BLOCK } from './constants';
+import { address } from '@liskhq/lisk-cryptography';
+import { APIClient } from '@liskhq/lisk-api-client';
 import { write } from './utils/fs';
+import { EVENT_NEW_BLOCK } from './constants';
+import { ForgingStatus } from './types';
+
+const { getLisk32AddressFromAddress } = address;
 
 export const captureForgingStatusAtSnapshotHeight = (
 	_this: Command,
@@ -28,17 +31,23 @@ export const captureForgingStatusAtSnapshotHeight = (
 	client.subscribe(EVENT_NEW_BLOCK, async data => {
 		const { block: encodedBlock } = (data as unknown) as Record<string, string>;
 		const newBlock = client.block.decode(Buffer.from(encodedBlock, 'hex')) as Block;
+
 		if (newBlock.header.height === snapshotHeight) {
-			const forgingStatus = await client.invoke('app:getForgingStatus');
-			if (forgingStatus.length) {
-				const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
+			const forgingStatuses: ForgingStatus[] = await client.invoke('app:getForgingStatus');
+			const finalForgingStatuses: ForgingStatus[] = forgingStatuses.map(entry => ({
+				...entry,
+				lskAddress: getLisk32AddressFromAddress(Buffer.from(entry.address, 'hex')),
+			}));
+
+			if (finalForgingStatuses.length) {
 				try {
-					await write(forgingStatusJsonFilepath, JSON.stringify(forgingStatus, null, '\t'));
+					const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
+					await write(forgingStatusJsonFilepath, JSON.stringify(finalForgingStatuses, null, '\t'));
 					_this.log(`\nFinished exporting forging status to ${forgingStatusJsonFilepath}.`);
 				} catch (error) {
 					_this.log(
 						`\nUnable to save the node Forging Status information to the disk, please find it below instead:\n${JSON.stringify(
-							forgingStatus,
+							finalForgingStatuses,
 							null,
 							2,
 						)}`,

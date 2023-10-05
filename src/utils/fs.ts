@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { homedir } from 'os';
 import * as tar from 'tar';
 import fs from 'fs';
 import path from 'path';
@@ -47,11 +46,6 @@ export const rmdir = async (directoryPath: string, options = {}): Promise<boolea
 			return resolve(true);
 		});
 	});
-
-export const resolveAbsolutePath = (inputPath: string) => {
-	const homeDirectory = homedir();
-	return homeDirectory ? inputPath.replace(/^~(?=$|\/|\\)/, homeDirectory) : inputPath;
-};
 
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 export const copyDir = async (src: string, dest: string) => {
