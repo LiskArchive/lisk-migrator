@@ -11,13 +11,13 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import util from 'util';
 import cli from 'cli-ux';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { homedir } from 'os';
 import { Command } from '@oclif/command';
 import { existsSync, renameSync } from 'fs-extra';
-import util from 'util';
 
 import { PartialApplicationConfig } from 'lisk-framework';
 
@@ -75,8 +75,10 @@ const getFinalConfigPath = async (outputDir: string, network: string) =>
 		? outputDir
 		: path.resolve(__dirname, '../..', 'config', network);
 
-const resolveLiskCoreStartCommand = async (_this: Command, defaultStartCommand: string) => {
-	const isUserConfirmed = await cli.confirm('Would you like to customize start params? [yes/no]');
+const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
+	const isUserConfirmed = await cli.confirm(
+		'Would you like to customize the Lisk Core v4 start command params? [yes/no]',
+	);
 
 	if (isUserConfirmed) {
 		_this.log('Customizing Lisk Core start parameters');
@@ -88,6 +90,7 @@ const resolveLiskCoreStartCommand = async (_this: Command, defaultStartCommand: 
 		return startCommand;
 	}
 
+	const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
 	return defaultStartCommand;
 };
 
@@ -112,8 +115,7 @@ export const startLiskCore = async (
 	await copyLegacyDB(_this);
 
 	const configPath = await getFinalConfigPath(outputDir, network);
-	const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
-	const liskCoreStartCommand = await resolveLiskCoreStartCommand(_this, defaultStartCommand);
+	const liskCoreStartCommand = await resolveLiskCoreStartCommand(_this, network, configPath);
 
 	const pm2Config = {
 		name: 'lisk-core-v4',
