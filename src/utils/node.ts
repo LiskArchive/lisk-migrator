@@ -75,19 +75,59 @@ const getFinalConfigPath = async (outputDir: string, network: string) =>
 		? outputDir
 		: path.resolve(__dirname, '../..', 'config', network);
 
+export const validateStartCommandParams = async (
+	_this: Command,
+	allowedFlags: string[],
+	userInputs: string,
+): Promise<boolean | Error> => {
+	try {
+		const userInputsArray = userInputs.split(/[\s=]+/);
+
+		for (let i = 0; i < userInputsArray.length; i += 1) {
+			const userInput = userInputsArray[i];
+			if (userInput.startsWith('-')) {
+				const isFlagExists = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
+				if (!isFlagExists) _this.error('Invalid Lisk Core command params');
+				else if (isFlagExists.includes('value') || isFlagExists.includes('option')) {
+					const value = userInputsArray[i + 1];
+					if (value.startsWith('-')) {
+						_this.error(`Lisk Core command:${isFlagExists} requires either a value or an option.`);
+					}
+				}
+			}
+		}
+		return true;
+	} catch (error) {
+		return false;
+	}
+};
+
 const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
 	const isUserConfirmed = await cli.confirm(
 		'Would you like to customize the Lisk Core v4 start command params? [yes/no]',
 	);
 
+	// TODO: Make it retry based
 	if (isUserConfirmed) {
 		_this.log('Customizing Lisk Core start parameters');
 		const userInput = await cli.prompt(
 			'Please provide all parameters you would like to use to start Lisk Core (for e.g. --network mainnet)',
 		);
-		/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-		const startCommand = `lisk core start ${userInput}`;
-		return startCommand;
+
+		const command = "lisk-core start --help | grep -- '^\\s\\+-' | cut -d ' ' -f 3,4";
+		const allowedFlags = await execAsync(command);
+		const allowedFlagsArray = allowedFlags.split(/\n+/);
+
+		const isValidUserInput = await validateStartCommandParams(_this, allowedFlagsArray, userInput);
+
+		if (isValidUserInput) {
+			/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+			const startCommand = `lisk core start ${userInput}`;
+			return startCommand;
+		}
+		_this.error(
+			'Invalid Lisk Core start command params. Skipping the Lisk Core v4 auto-start process.',
+		);
 	}
 
 	const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
