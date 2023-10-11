@@ -76,7 +76,6 @@ const getFinalConfigPath = async (outputDir: string, network: string) =>
 		: path.resolve(__dirname, '../..', 'config', network);
 
 export const validateStartCommandParams = async (
-	_this: Command,
 	allowedFlags: string[],
 	userInputs: string,
 ): Promise<boolean | Error> => {
@@ -87,11 +86,13 @@ export const validateStartCommandParams = async (
 			const userInput = userInputsArray[i];
 			if (userInput.startsWith('-')) {
 				const isFlagExists = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
-				if (!isFlagExists) _this.error('Invalid Lisk Core command params');
+				if (!isFlagExists) throw new Error('Invalid Lisk Core command params');
 				else if (isFlagExists.includes('value') || isFlagExists.includes('option')) {
 					const value = userInputsArray[i + 1];
 					if (value.startsWith('-')) {
-						_this.error(`Lisk Core command:${isFlagExists} requires either a value or an option.`);
+						throw new Error(
+							`Lisk Core command:${isFlagExists} requires either a value or an option.`,
+						);
 					}
 				}
 			}
@@ -118,7 +119,7 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 		const allowedFlags = await execAsync(command);
 		const allowedFlagsArray = allowedFlags.split(/\n+/);
 
-		const isValidUserInput = await validateStartCommandParams(_this, allowedFlagsArray, userInput);
+		const isValidUserInput = await validateStartCommandParams(allowedFlagsArray, userInput);
 
 		if (isValidUserInput) {
 			/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
