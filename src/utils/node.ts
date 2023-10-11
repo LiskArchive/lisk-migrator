@@ -34,6 +34,8 @@ const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
 
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
+const START_COMMAND_OPTION = '<option>';
+const START_COMMAND_VALUE = '<value>';
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
@@ -78,7 +80,7 @@ const getFinalConfigPath = async (outputDir: string, network: string) =>
 export const validateStartCommandParams = async (
 	allowedFlags: string[],
 	userInputs: string,
-): Promise<boolean | Error> => {
+): Promise<boolean> => {
 	try {
 		const userInputsArray = userInputs.split(/[\s=]+/);
 
@@ -86,8 +88,11 @@ export const validateStartCommandParams = async (
 			const userInput = userInputsArray[i];
 			if (userInput.startsWith('-')) {
 				const isFlagExists = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
-				if (!isFlagExists) throw new Error('Invalid Lisk Core command params');
-				else if (isFlagExists.includes('value') || isFlagExists.includes('option')) {
+				if (!isFlagExists) throw new Error('Invalid Lisk Core command params.');
+				else if (
+					isFlagExists.includes(START_COMMAND_VALUE) ||
+					isFlagExists.includes(START_COMMAND_OPTION)
+				) {
 					const value = userInputsArray[i + 1];
 					if (value.startsWith('-')) {
 						throw new Error(
@@ -104,14 +109,15 @@ export const validateStartCommandParams = async (
 };
 
 const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
+	let startCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
+
 	const isUserConfirmed = await cli.confirm(
 		'Would you like to customize the Lisk Core v4 start command params? [yes/no]',
 	);
 
-	// TODO: Make it retry based
 	if (isUserConfirmed) {
 		_this.log('Customizing Lisk Core start parameters');
-		const userInput = await cli.prompt(
+		let userInput = await cli.prompt(
 			'Please provide all parameters you would like to use to start Lisk Core (for e.g. --network mainnet)',
 		);
 
@@ -119,20 +125,35 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 		const allowedFlags = await execAsync(command);
 		const allowedFlagsArray = allowedFlags.split(/\n+/);
 
-		const isValidUserInput = await validateStartCommandParams(allowedFlagsArray, userInput);
+		let isValidUserInput = await validateStartCommandParams(allowedFlagsArray, userInput);
 
-		if (isValidUserInput) {
-			/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-			const startCommand = `lisk core start ${userInput}`;
-			return startCommand;
+		let numTriesLeft = 3;
+		while (numTriesLeft) {
+			numTriesLeft -= 1;
+
+			if (isValidUserInput) {
+				/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+				startCommand = `lisk core start ${userInput}`;
+				break;
+			}
+
+			if (numTriesLeft >= 0) {
+				userInput = await cli.prompt(
+					'Invalid parameters passed, please provide all valid parameters you would like to use to start Lisk Core (for e.g. --network mainnet)',
+				);
+
+				isValidUserInput = await validateStartCommandParams(allowedFlagsArray, userInput);
+
+				if (numTriesLeft === 0 && !isValidUserInput) {
+					throw new Error(
+						'Invalid Lisk Core start command params. Cannot proceed with Lisk Core v4 auto-start. Please continue manually. Exiting!!!',
+					);
+				}
+			}
 		}
-		_this.error(
-			'Invalid Lisk Core start command params. Skipping the Lisk Core v4 auto-start process.',
-		);
 	}
 
-	const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
-	return defaultStartCommand;
+	return startCommand;
 };
 
 export const startLiskCore = async (
