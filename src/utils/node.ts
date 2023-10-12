@@ -87,17 +87,12 @@ export const validateStartCommandParams = async (
 		for (let i = 0; i < userInputsArray.length; i += 1) {
 			const userInput = userInputsArray[i];
 			if (userInput.startsWith('-')) {
-				const isFlagExists = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
-				if (!isFlagExists) throw new Error('Invalid Lisk Core command params.');
-				else if (
-					isFlagExists.includes(START_COMMAND_VALUE) ||
-					isFlagExists.includes(START_COMMAND_OPTION)
-				) {
+				const flag = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
+				if (!flag) throw new Error('Invalid Lisk Core command params.');
+				else if (flag.includes(START_COMMAND_VALUE) || flag.includes(START_COMMAND_OPTION)) {
 					const value = userInputsArray[i + 1];
 					if (value.startsWith('-')) {
-						throw new Error(
-							`Lisk Core command:${isFlagExists} requires either a value or an option.`,
-						);
+						throw new Error(`Lisk Core command:${flag} requires either a value or an option.`);
 					}
 				}
 			}
