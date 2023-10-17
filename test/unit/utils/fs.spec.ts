@@ -22,6 +22,7 @@ import {
 	copyDir,
 	write,
 	copyFile,
+	read,
 } from '../../../src/utils/fs';
 import { configV3 } from '../fixtures/config';
 
@@ -92,6 +93,20 @@ describe('Test write method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(write('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test read method', () => {
+	it('should read file', async () => {
+		const filePath = `${testDir}/config.json`;
+		expect(await exists(filePath)).toBe(true);
+
+		const result = await read(filePath);
+		expect(result).toBe(JSON.stringify(configV3, null, '\t'));
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(read('')).rejects.toThrow();
 	});
 });
 
