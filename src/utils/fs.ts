@@ -72,7 +72,7 @@ export const write = async (filePath: string, content: string): Promise<boolean 
 		});
 	});
 
-export const read = (filePath: string): Promise<string | Error> =>
+export const read = async (filePath: string): Promise<string | Error> =>
 	new Promise((resolve, reject) => {
 		fs.promises
 			.readFile(filePath, 'utf8')
