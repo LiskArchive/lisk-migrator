@@ -76,7 +76,7 @@ const copyLegacyDB = async (_this: Command) => {
 	_this.log(`Legacy database for Lisk Core v4 has been created at ${LEGACY_DB_PATH}`);
 };
 
-const getFinalConfigPath = async (outputDir: string, network: string) =>
+export const getFinalConfigPath = async (outputDir: string, network: string) =>
 	(await exists(`${outputDir}/config.json`))
 		? outputDir
 		: path.resolve(__dirname, '../..', 'config', network);

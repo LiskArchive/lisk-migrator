@@ -11,7 +11,15 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { validateStartCommandParams } from '../../../src/utils/node';
+import { join, resolve } from 'path';
+import { validateStartCommandParams, getFinalConfigPath } from '../../../src/utils/node';
+
+const clientFilePath = resolve(`${__dirname}/../../../src/client`);
+
+afterEach(() => {
+	jest.clearAllMocks();
+	jest.resetModules();
+});
 
 describe('Test validateStartCommandParams method', () => {
 	const allowedFlags = [
@@ -125,5 +133,55 @@ describe('Test validateStartCommandParams method', () => {
 				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
 			});
 		});
+	});
+});
+
+describe('Test getFinalConfigPath method', () => {
+	const network = 'mainnet';
+
+	it('should return default config filepath when output directory does not exists', async () => {
+		const outputDir = join(__dirname, '../../..', 'test/unit/fixtures/outputDir');
+		const configPath = await getFinalConfigPath(outputDir, network);
+
+		const expectedResponse = join(__dirname, '../../..', 'config/mainnet');
+		expect(configPath).toBe(expectedResponse);
+	});
+
+	it('should return correct config filepath when output directory exists', async () => {
+		const outputDir = join(__dirname, '../../..', 'config');
+		const configPath = await getFinalConfigPath(outputDir, network);
+
+		const expectedResponse = join(__dirname, '../../..', 'config/mainnet');
+		expect(configPath).toBe(expectedResponse);
+	});
+});
+
+describe('Test isLiskCoreV3Running method', () => {
+	it('should return true when node is running', async () => {
+		jest.mock(clientFilePath, () => ({
+			getAPIClient: jest.fn().mockResolvedValueOnce({
+				node: { getNodeInfo: jest.fn().mockReturnValue({}) },
+			}),
+		}));
+
+		/* eslint-disable-next-line global-require, @typescript-eslint/no-var-requires */
+		const { isLiskCoreV3Running } = require('../../../src/utils/node');
+		const response = await isLiskCoreV3Running();
+
+		expect(response).toBe(true);
+	});
+
+	it('should return false when node is not running', async () => {
+		jest.mock(clientFilePath, () => ({
+			getAPIClient: jest.fn().mockResolvedValueOnce({
+				node: { getNodeInfo: undefined },
+			}),
+		}));
+
+		/* eslint-disable-next-line global-require, @typescript-eslint/no-var-requires */
+		const { isLiskCoreV3Running } = require('../../../src/utils/node');
+		const response = await isLiskCoreV3Running();
+
+		expect(response).toBe(false);
 	});
 });
