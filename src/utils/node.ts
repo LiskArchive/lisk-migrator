@@ -11,7 +11,6 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import util from 'util';
 import cli from 'cli-ux';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -83,13 +82,15 @@ export const validateStartCommandParams = async (
 ): Promise<boolean> => {
 	try {
 		const userInputsArray = userInputs.split(/[\s=]+/);
-
 		for (let i = 0; i < userInputsArray.length; i += 1) {
 			const userInput = userInputsArray[i];
+
 			if (userInput.startsWith('-')) {
 				const flag = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
+
 				if (!flag) throw new Error('Invalid Lisk Core command params.');
-				else if (flag.includes(START_COMMAND_VALUE) || flag.includes(START_COMMAND_OPTION)) {
+
+				if (flag.includes(START_COMMAND_VALUE) || flag.includes(START_COMMAND_OPTION)) {
 					const value = userInputsArray[i + 1];
 					if (value.startsWith('-')) {
 						throw new Error(`Lisk Core command:${flag} requires either a value or an option.`);
@@ -97,6 +98,7 @@ export const validateStartCommandParams = async (
 				}
 			}
 		}
+
 		return true;
 	} catch (error) {
 		return false;
@@ -104,51 +106,50 @@ export const validateStartCommandParams = async (
 };
 
 const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
-	let startCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
-
 	const isUserConfirmed = await cli.confirm(
 		'Would you like to customize the Lisk Core v4 start command params? [yes/no]',
 	);
 
-	if (isUserConfirmed) {
-		_this.log('Customizing Lisk Core start parameters');
-		let userInput = await cli.prompt(
-			'Please provide all parameters you would like to use to start Lisk Core (for e.g. --network mainnet)',
-		);
+	if (!isUserConfirmed) {
+		const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
+		return defaultStartCommand;
+	}
 
-		const command = "lisk-core start --help | grep -- '^\\s\\+-' | cut -d ' ' -f 3,4";
-		const allowedFlags = await execAsync(command);
-		const allowedFlagsArray = allowedFlags.split(/\n+/);
+	// Let user customize the start command
+	let customStartCommand;
 
-		let isValidUserInput = await validateStartCommandParams(allowedFlagsArray, userInput);
+	_this.log('Customizing Lisk Core start parameters');
+	let userInput = await cli.prompt(
+		"Please provide the Lisk Core start command params you would like to specify except the '--network (-n)' flag (e.g. --api-ws):",
+	);
 
-		let numTriesLeft = 3;
-		while (numTriesLeft) {
-			numTriesLeft -= 1;
+	const command = "lisk-core start --help | grep -- '^\\s\\+-' | cut -d ' ' -f 3,4";
+	const allowedFlags = await execAsync(command);
+	const allowedFlagsArray = allowedFlags.split(/\n+/).filter(e => !!e);
 
-			if (isValidUserInput) {
-				/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-				startCommand = `lisk core start ${userInput}`;
-				break;
-			}
+	let numTriesLeft = 3;
+	while (numTriesLeft) {
+		numTriesLeft -= 1;
 
-			if (numTriesLeft >= 0) {
-				userInput = await cli.prompt(
-					'Invalid parameters passed, please provide all valid parameters you would like to use to start Lisk Core (for e.g. --network mainnet)',
-				);
+		const isValidParams = await validateStartCommandParams(allowedFlagsArray, userInput);
+		if (isValidParams) {
+			/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+			customStartCommand = `lisk core start --network ${network} ${userInput}`;
+			break;
+		}
 
-				isValidUserInput = await validateStartCommandParams(allowedFlagsArray, userInput);
-
-				if (numTriesLeft === 0 && !isValidUserInput) {
-					throw new Error(
-						'Invalid Lisk Core start command params. Cannot proceed with Lisk Core v4 auto-start. Please continue manually. Exiting!!!',
-					);
-				}
-			}
+		if (numTriesLeft >= 0) {
+			userInput = await cli.prompt(
+				"Invalid params passed, please provide the Lisk Core start command params you would like to specify except the '--network (-n)' flag (e.g. --api-ws):",
+			);
+		} else {
+			throw new Error(
+				'Invalid Lisk Core start command params provided. Cannot proceed with Lisk Core v4 auto-start. Please continue manually. Exiting!!!',
+			);
 		}
 	}
 
-	return startCommand;
+	return customStartCommand;
 };
 
 export const startLiskCore = async (
@@ -180,28 +181,28 @@ export const startLiskCore = async (
 	};
 
 	const isUserConfirmed = await cli.confirm(
-		`Start Lisk Core with the following pm2 configuration? [yes/no] \n${util.inspect(
+		`Start Lisk Core with the following pm2 configuration? [yes/no]\n${JSON.stringify(
 			pm2Config,
-			false,
-			3,
+			null,
+			'\t',
 		)}`,
 	);
 
-	if (isUserConfirmed) {
-		_this.log('Installing pm2...');
-		await installPM2();
-		_this.log('Finished installing pm2.');
-
-		const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
-		_this.log(`Creating PM2 config at ${pm2FilePath}`);
-		fs.writeFileSync(pm2FilePath, JSON.stringify(pm2Config, null, '\t'));
-		_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
-
-		const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
-		_this.log(await execAsync(PM2_COMMAND_START));
-	} else {
+	if (!isUserConfirmed) {
 		_this.error(
-			'User did not confirm to start Lisk Core with customized PM2 configuration. Skipping the Lisk Core v4 auto-start process.',
+			'User did not confirm to start Lisk Core v4 with the customized PM2 config. Skipping the Lisk Core v4 auto-start process. Please start the node manually.',
 		);
 	}
+
+	_this.log('Installing PM2...');
+	await installPM2();
+	_this.log('Finished installing PM2.');
+
+	const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
+	_this.log(`Creating PM2 config at ${pm2FilePath}`);
+	fs.writeFileSync(pm2FilePath, JSON.stringify(pm2Config, null, '\t'));
+	_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
+
+	const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
+	_this.log(await execAsync(PM2_COMMAND_START));
 };
