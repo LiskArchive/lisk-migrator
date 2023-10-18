@@ -38,41 +38,92 @@ describe('Test validateStartCommandParams method', () => {
 		'--monitor-plugin-whitelist=<value> ',
 		'--overwrite-config ',
 		'--overwrite-genesis-block ',
-		'--seed-peers=<value> ',
+		'--seed-peers=<value>',
 	];
 
-	it('should return true when valid parameters passed', async () => {
-		let startParams = '-n mainnet --api-ws --api-host 0.0.0.0';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(true);
+	const userInputs: Record<string, string[]> = {
+		valid: [
+			'-c ./custom-config.json',
+			'-c=./custom-config.json',
+			'--config=./custom-config.json',
+			'--config ./custom-config.json',
+			'--seed-peers 127.0.0.1:7667',
+			'--seed-peers 127.0.0.1:7667,127.0.0.1:7777',
+			'--seed-peers=127.0.0.1:7667',
+			'--seed-peers=127.0.0.1:7667,12.0.0.1:7777',
+		],
+		withNetwork: [
+			'-n mainnet',
+			'-n=mainnet',
+			'--network mainnet',
+			'--network=mainnet',
+			'-n mainnet --api-ws --api-host 0.0.0.0',
+			'--network=mainnet --api-ws --api-host 0.0.0.0',
+		],
+		withUnknownFlags: [
+			'--unknown-flag',
+			'--seed-peers=127.0.0.1:7667 --unknown-flag',
+			'--seed-peers=127.0.0.1:7667 --api-ws a --unknown-flag',
+		],
+		withValidFlagsButUnexpectedValues: ['--seed-peers=127.0.0.1:7667 --api-ws a'],
+		withFlagsWithoutValues: ['--seed-peers', '--seed-peers -c', '-c', '-c --api-ws'],
+		withValuesWithoutFlags: ['a'],
+		withNoUserInput: ['', '    '],
+	};
 
-		startParams = '--network mainnet --api-ws --api-host 0.0.0.0 --enable-chain-connector-plugin';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(true);
-
-		startParams =
-			'--network mainnet --api-ws --api-host 0.0.0.0 --api-port 8000 --enable-chain-connector-plugin -c=~/config.json';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(true);
+	describe('with valid params', () => {
+		userInputs.valid.forEach(startParams => {
+			it(`should return 'true' with following params: '${startParams}'`, async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(true);
+			});
+		});
 	});
 
-	it('should return false when parameters passed without value', async () => {
-		let startParams = '-n mainnet --api-ws --api-host';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
-
-		startParams = '-n mainnet --api-ws --api-host 0.0.0.0 --api-port';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
-
-		startParams = '-n mainnet --api-ws --api-host 0.0.0.0 --api-port 8000 --genesis-block-url';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+	describe('with network specified in the params', () => {
+		userInputs.withNetwork.forEach(startParams => {
+			it(`should return 'false' with following params: '${startParams}'`, async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+			});
+		});
 	});
 
-	it('should return false when parameter is invalid', async () => {
-		let startParams = '--network mainnet --api-ws --api-ho';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+	describe('with unknown flags specified in the params', () => {
+		userInputs.withUnknownFlags.forEach(startParams => {
+			it(`should return 'false' with following params: '${startParams}'`, async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+			});
+		});
+	});
 
-		startParams = '-n mainnet --api-ws --api-host 0.0.0.0 --api-port 8000 --genesis-block';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+	describe('with flags expecting no values but values specified in the params', () => {
+		userInputs.withValidFlagsButUnexpectedValues.forEach(startParams => {
+			it(`should return 'false' with following params: '${startParams}'`, async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+			});
+		});
+	});
 
-		startParams =
-			'-n mainnet --api-ws --api-host 0.0.0.0 --api-port 8000 --genesis-block-url --enable';
-		expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+	describe('with flags without values but expecting values or options in the params', () => {
+		userInputs.withFlagsWithoutValues.forEach(startParams => {
+			it(`should return 'false' with following params: '${startParams}'`, async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+			});
+		});
+	});
+
+	describe('with only options or values specified in the params', () => {
+		userInputs.withValuesWithoutFlags.forEach(startParams => {
+			it(`should return 'false' with following params: '${startParams}'`, async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+			});
+		});
+	});
+
+	describe('with no inputs specified in the params', () => {
+		userInputs.withNoUserInput.forEach(startParams => {
+			it("should return 'false' with empty params", async () => {
+				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+			});
+		});
 	});
 });

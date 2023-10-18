@@ -36,8 +36,8 @@ const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
 
 const REGEX = {
 	INPUT_SEPARATOR: /[\s=]+/,
-	FLAG: /^[-]{1,2}[a-z]/,
-	NETWORK_FLAG: /^(-n|--network)/,
+	FLAG: /^(?:-[a-z]|--[a-z]+(?:-[a-z]+)*$)/,
+	NETWORK_FLAG: /^(?:-n|--network)/,
 	OPTION_OR_VALUE: /=<(option|value)>$/,
 };
 
