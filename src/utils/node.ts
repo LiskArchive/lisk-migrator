@@ -33,8 +33,13 @@ const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
 
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
-const START_COMMAND_OPTION = '<option>';
-const START_COMMAND_VALUE = '<value>';
+
+const REGEX = {
+	INPUT_SEPARATOR: /[\s=]+/,
+	FLAG: /^[-]{1,2}[a-z]/,
+	NETWORK_FLAG: /^(-n|--network)/,
+	OPTION_OR_VALUE: /=<(option|value)>$/,
+};
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
@@ -78,24 +83,33 @@ const getFinalConfigPath = async (outputDir: string, network: string) =>
 
 export const validateStartCommandParams = async (
 	allowedFlags: string[],
-	userInputs: string,
+	userInputString: string,
 ): Promise<boolean> => {
 	try {
-		const userInputsArray = userInputs.split(/[\s=]+/);
-		for (let i = 0; i < userInputsArray.length; i += 1) {
-			const userInput = userInputsArray[i];
+		let isOptionOrValueExpected = false;
 
-			if (userInput.startsWith('-')) {
-				const flag = allowedFlags.find(e => e.split(/[\s=,]+/).includes(userInput));
+		const userInputs = userInputString.split(REGEX.INPUT_SEPARATOR);
+		for (let i = 0; i < userInputs.length; i += 1) {
+			const input = userInputs[i];
 
-				if (!flag) throw new Error('Invalid Lisk Core command params.');
+			// Since network is determined automatically, user shouldn't pass the network flag
+			if (REGEX.NETWORK_FLAG.test(input)) return false;
 
-				if (flag.includes(START_COMMAND_VALUE) || flag.includes(START_COMMAND_OPTION)) {
-					const value = userInputsArray[i + 1];
-					if (value.startsWith('-')) {
-						throw new Error(`Lisk Core command:${flag} requires either a value or an option.`);
-					}
+			if (REGEX.FLAG.test(input)) {
+				const correspondingFlag = allowedFlags.find(f => f.includes(input));
+
+				// If unknown flag specified or expected a value for prev flag or if no value provided when expected
+				if (!correspondingFlag || isOptionOrValueExpected || i === userInputs.length - 1) {
+					return false;
 				}
+
+				if (REGEX.OPTION_OR_VALUE.test(correspondingFlag)) {
+					isOptionOrValueExpected = true;
+				}
+			} else if (isOptionOrValueExpected) {
+				isOptionOrValueExpected = false;
+			} else {
+				return false;
 			}
 		}
 
