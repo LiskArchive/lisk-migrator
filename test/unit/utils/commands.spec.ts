@@ -13,7 +13,10 @@
  */
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import { getCommandsToExecute, writeCommandsToExecute } from '../../../src/utils/commands';
+import {
+	getCommandsToExecPostMigration,
+	writeCommandsToExecute,
+} from '../../../src/utils/commands';
 import { exists } from '../../../src/utils/fs';
 
 const outputDir = join(__dirname, '../../..', 'test/unit/fixtures');
@@ -22,14 +25,10 @@ afterAll(() => {
 	fs.removeSync(join(outputDir, 'commandsToExecute.txt'));
 });
 
-describe('Test getCommandsToExecute method', () => {
+describe('Test getCommandsToExecPostMigration method', () => {
 	it('should create commandsToExecute text file', async () => {
-		const commandsToExecute = await getCommandsToExecute(outputDir);
+		const commandsToExecute = await getCommandsToExecPostMigration(outputDir);
 		await writeCommandsToExecute(commandsToExecute, outputDir);
 		expect(await exists(`${outputDir}/commandsToExecute.txt`)).toBe(true);
-	});
-
-	it('should throw error when outputDir is invalid', async () => {
-		await expect(getCommandsToExecute('invalidPath')).rejects.toThrow();
 	});
 });

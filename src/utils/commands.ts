@@ -14,9 +14,9 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { resolve } from 'path';
 
-import { read, write } from './fs';
+import { read, write, exists } from './fs';
 
-export const getCommandsToExecute = async (outputDir: string) => {
+export const getCommandsToExecPostMigration = async (outputDir: string) => {
 	const commandsToExecute = [];
 
 	commandsToExecute.push(
@@ -25,22 +25,24 @@ export const getCommandsToExecute = async (outputDir: string) => {
 	commandsToExecute.push('lisk-core keys:import --file-path config/keys.json');
 
 	const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
-	const forgingStatusString = (await read(forgingStatusJsonFilepath)) as string;
-	const forgingStatusJson = JSON.parse(forgingStatusString);
+	if (await exists(forgingStatusJsonFilepath)) {
+		const forgingStatusString = (await read(forgingStatusJsonFilepath)) as string;
+		const forgingStatusJson = JSON.parse(forgingStatusString);
 
-	if (forgingStatusJson.length) {
-		for (const forgingStatus of forgingStatusJson) {
-			commandsToExecute.push(
-				`lisk-core endpoint:invoke random_setHashOnion '{"address":"${forgingStatus.lskAddress}"}'`,
-			);
+		if (forgingStatusJson.length) {
+			for (const forgingStatus of forgingStatusJson) {
+				commandsToExecute.push(
+					`lisk-core endpoint:invoke random_setHashOnion '{"address":"${forgingStatus.lskAddress}"}'`,
+				);
 
-			commandsToExecute.push(
-				`lisk-core endpoint:invoke generator_setStatus '{"address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
-			);
+				commandsToExecute.push(
+					`lisk-core endpoint:invoke generator_setStatus '{"address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
+				);
 
-			commandsToExecute.push(
-				`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
-			);
+				commandsToExecute.push(
+					`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
+				);
+			}
 		}
 	}
 

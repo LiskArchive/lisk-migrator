@@ -26,7 +26,14 @@ import { isPortAvailable } from './network';
 import { resolveAbsolutePath } from './path';
 import { Port } from '../types';
 import { getAPIClient } from '../client';
-import { DEFAULT_PORT_P2P, DEFAULT_PORT_RPC, LEGACY_DB_PATH, SNAPSHOT_DIR } from '../constants';
+import {
+	DEFAULT_PORT_P2P,
+	DEFAULT_PORT_RPC,
+	ERROR_CODES,
+	LEGACY_DB_PATH,
+	SNAPSHOT_DIR,
+} from '../constants';
+import { CustomError } from './exception';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
@@ -175,50 +182,54 @@ export const startLiskCore = async (
 	network: string,
 	outputDir: string,
 ): Promise<void | Error> => {
-	const networkPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_P2P;
-	if (!(await isPortAvailable(networkPort))) {
-		throw new Error(`Port ${networkPort} is not available for P2P communication.`);
-	}
+	try {
+		const networkPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_P2P;
+		if (!(await isPortAvailable(networkPort))) {
+			throw new Error(`Port ${networkPort} is not available for P2P communication.`);
+		}
 
-	const rpcPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_RPC;
-	if (!(await isPortAvailable(rpcPort))) {
-		throw new Error(`Port ${rpcPort} is not available to start the RPC server.`);
-	}
+		const rpcPort = (_config?.network?.port as Port) ?? DEFAULT_PORT_RPC;
+		if (!(await isPortAvailable(rpcPort))) {
+			throw new Error(`Port ${rpcPort} is not available to start the RPC server.`);
+		}
 
-	await backupDefaultDirectoryIfExists(_this, liskCoreV3DataPath);
-	await copyLegacyDB(_this);
+		await backupDefaultDirectoryIfExists(_this, liskCoreV3DataPath);
+		await copyLegacyDB(_this);
 
-	const configPath = await getFinalConfigPath(outputDir, network);
-	const liskCoreStartCommand = await resolveLiskCoreStartCommand(_this, network, configPath);
+		const configPath = await getFinalConfigPath(outputDir, network);
+		const liskCoreStartCommand = await resolveLiskCoreStartCommand(_this, network, configPath);
 
-	const pm2Config = {
-		name: 'lisk-core-v4',
-		script: liskCoreStartCommand,
-	};
+		const pm2Config = {
+			name: 'lisk-core-v4',
+			script: liskCoreStartCommand,
+		};
 
-	const isUserConfirmed = await cli.confirm(
-		`Start Lisk Core with the following pm2 configuration? [yes/no]\n${JSON.stringify(
-			pm2Config,
-			null,
-			'\t',
-		)}`,
-	);
-
-	if (!isUserConfirmed) {
-		_this.error(
-			'User did not confirm to start Lisk Core v4 with the customized PM2 config. Skipping the Lisk Core v4 auto-start process. Please start the node manually.',
+		const isUserConfirmed = await cli.confirm(
+			`Start Lisk Core with the following pm2 configuration? [yes/no]\n${JSON.stringify(
+				pm2Config,
+				null,
+				'\t',
+			)}`,
 		);
+
+		if (!isUserConfirmed) {
+			_this.error(
+				'User did not confirm to start Lisk Core v4 with the customized PM2 config. Skipping the Lisk Core v4 auto-start process. Please start the node manually.',
+			);
+		}
+
+		_this.log('Installing PM2...');
+		await installPM2();
+		_this.log('Finished installing PM2.');
+
+		const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
+		_this.log(`Creating PM2 config at ${pm2FilePath}`);
+		fs.writeFileSync(pm2FilePath, JSON.stringify(pm2Config, null, '\t'));
+		_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
+
+		const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
+		_this.log(await execAsync(PM2_COMMAND_START));
+	} catch (error) {
+		throw new CustomError(`${(error as Error).message}`, ERROR_CODES.LISK_CORE_START);
 	}
-
-	_this.log('Installing PM2...');
-	await installPM2();
-	_this.log('Finished installing PM2.');
-
-	const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
-	_this.log(`Creating PM2 config at ${pm2FilePath}`);
-	fs.writeFileSync(pm2FilePath, JSON.stringify(pm2Config, null, '\t'));
-	_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
-
-	const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
-	_this.log(await execAsync(PM2_COMMAND_START));
 };

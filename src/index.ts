@@ -47,6 +47,7 @@ import { captureForgingStatusAtSnapshotHeight } from './events';
 import {
 	copyGenesisBlock,
 	createGenesisBlock,
+	getGenesisBlockCreateCommand,
 	writeGenesisAssets,
 	writeGenesisBlock,
 } from './utils/genesis_block';
@@ -56,9 +57,9 @@ import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/nod
 import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
 import { CustomError } from './utils/exception';
+import { getCommandsToExecPostMigration, writeCommandsToExecute } from './utils/commands';
 
 let configCoreV4: PartialApplicationConfig;
-
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
@@ -113,48 +114,48 @@ class LiskMigrator extends Command {
 	};
 
 	public async run(): Promise<void> {
+		const { flags } = this.parse(LiskMigrator);
+		const liskCoreV3DataPath = resolveAbsolutePath(
+			flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH,
+		);
+		const outputPath = flags.output ?? join(__dirname, '..', 'output');
+		const snapshotHeight = flags['snapshot-height'];
+		const customConfigPath = flags.config;
+		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
+		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
+		const pageSize = Number(flags['page-size']);
+
+		verifyOutputPath(outputPath);
+
+		const client = await getAPIClient(liskCoreV3DataPath);
+		const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
+		const { version: appVersion, networkIdentifier } = nodeInfo;
+
+		cli.action.start('Verifying if backup height from node config matches snapshot height');
+		if (snapshotHeight !== nodeInfo.backup.height) {
+			this.error(
+				`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
+			);
+		}
+		cli.action.stop('Snapshot height matches backup height');
+
+		cli.action.start(
+			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
+		);
+		if (snapshotHeight % ROUND_LENGTH !== 0) {
+			this.error(
+				`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
+			);
+		}
+		cli.action.stop('Snapshot height is valid');
+
+		const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
+		const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
+
+		// Ensure the output directory is present
+		if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+
 		try {
-			const { flags } = this.parse(LiskMigrator);
-			const liskCoreV3DataPath = resolveAbsolutePath(
-				flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH,
-			);
-			const outputPath = flags.output ?? join(__dirname, '..', 'output');
-			const snapshotHeight = flags['snapshot-height'];
-			const customConfigPath = flags.config;
-			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
-			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
-			const pageSize = Number(flags['page-size']);
-
-			verifyOutputPath(outputPath);
-
-			const client = await getAPIClient(liskCoreV3DataPath);
-			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
-			const { version: appVersion, networkIdentifier } = nodeInfo;
-
-			cli.action.start('Verifying if backup height from node config matches snapshot height');
-			if (snapshotHeight !== nodeInfo.backup.height) {
-				this.error(
-					`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
-				);
-			}
-			cli.action.stop('Snapshot height matches backup height');
-
-			cli.action.start(
-				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
-			);
-			if (snapshotHeight % ROUND_LENGTH !== 0) {
-				this.error(
-					`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
-				);
-			}
-			cli.action.stop('Snapshot height is valid');
-
-			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
-			const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
-
-			// Ensure the output directory is present
-			if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-
 			// Asynchronously capture the node's Forging Status information at the snapshot height
 			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
 			captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
@@ -363,10 +364,43 @@ class LiskMigrator extends Command {
 				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
 		} catch (error) {
-			this.error(error as string);
+			const commandsToExecute: string[] = [];
+			const code = Number(`${(error as { message: string; code: number }).code}`);
+
+			const liskCoreStartCommand = `lisk core start--network ${networkConstant.name}`;
+
+			if (code === ERROR_CODES.GENESIS_BLOCK_CREATE) {
+				const genesisBlockCreateCommand = getGenesisBlockCreateCommand();
+				commandsToExecute.push(genesisBlockCreateCommand);
+				commandsToExecute.push(liskCoreStartCommand);
+			}
+
+			if (code === ERROR_CODES.LISK_CORE_START) {
+				commandsToExecute.push(liskCoreStartCommand);
+			}
+
+			this.log(
+				`Creating file with the list of commands to execute: ${outputDir}/commandsToExecute.txt`,
+			);
+			await writeCommandsToExecute(
+				[...commandsToExecute, ...(await getCommandsToExecPostMigration(outputDir))],
+				outputDir,
+			);
+			this.log(
+				`Successfully created file with the list of commands to execute: ${outputDir}/commandsToExecute.txt`,
+			);
+			this.error(`${(error as Error).message}`);
 		}
 
 		this.log('Successfully finished migration. Exiting!!!');
+		this.log(
+			`Creating file with the list of commands to execute post migration: ${outputDir}/commandsToExecute.txt`,
+		);
+		await writeCommandsToExecute(await getCommandsToExecPostMigration(outputDir), outputDir);
+		this.log(
+			`Successfully created file with the list of commands to execute post migration: ${outputDir}/commandsToExecute.txt`,
+		);
+
 		process.exit(0);
 	}
 }

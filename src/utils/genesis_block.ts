@@ -33,6 +33,8 @@ import { CustomError } from './exception';
 
 let genesisBlockCreateCommand: string;
 
+export const getGenesisBlockCreateCommand = () => genesisBlockCreateCommand;
+
 export const createChecksum = async (filePath: string): Promise<string> => {
 	const fileStream = fs.createReadStream(filePath);
 	const dataHash = crypto.createHash('sha256');
