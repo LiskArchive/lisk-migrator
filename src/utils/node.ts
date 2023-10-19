@@ -81,7 +81,7 @@ export const getFinalConfigPath = async (outputDir: string, network: string) =>
 		? outputDir
 		: path.resolve(__dirname, '../..', 'config', network);
 
-export const validateStartCommandParams = async (
+export const validateStartCommandFlags = async (
 	allowedFlags: string[],
 	userInputString: string,
 ): Promise<boolean> => {
@@ -121,20 +121,22 @@ export const validateStartCommandParams = async (
 
 const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
 	const isUserConfirmed = await cli.confirm(
-		'Would you like to customize the Lisk Core v4 start command params? [yes/no]',
+		'Would you like to customize the Lisk Core v4 start command? [yes/no]',
 	);
 
+	const baseStartCommand = `lisk core start --network ${network}`;
+
 	if (!isUserConfirmed) {
-		const defaultStartCommand = `lisk core start --network ${network} --config ${configPath}/config.json`;
+		const defaultStartCommand = `${baseStartCommand} --config ${configPath}/config.json`;
 		return defaultStartCommand;
 	}
 
 	// Let user customize the start command
-	let customStartCommand;
+	let customStartCommand = baseStartCommand;
 
-	_this.log('Customizing Lisk Core start parameters');
+	_this.log('Customizing Lisk Core start command');
 	let userInput = await cli.prompt(
-		"Please provide the Lisk Core start command params you would like to specify except the '--network (-n)' flag (e.g. --api-ws):",
+		"Please provide the Lisk Core start command flags (e.g. --api-ws), except the '--network (-n)' flag:",
 	);
 
 	const command = "lisk-core start --help | grep -- '^\\s\\+-' | cut -d ' ' -f 3,4";
@@ -145,20 +147,20 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 	while (numTriesLeft) {
 		numTriesLeft -= 1;
 
-		const isValidParams = await validateStartCommandParams(allowedFlagsArray, userInput);
-		if (isValidParams) {
+		const isValid = await validateStartCommandFlags(allowedFlagsArray, userInput);
+		if (isValid) {
 			/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-			customStartCommand = `lisk core start --network ${network} ${userInput}`;
+			customStartCommand = `${baseStartCommand} ${userInput}`;
 			break;
 		}
 
 		if (numTriesLeft >= 0) {
 			userInput = await cli.prompt(
-				"Invalid params passed, please provide the Lisk Core start command params you would like to specify except the '--network (-n)' flag (e.g. --api-ws):",
+				"Invalid flags passed. Please provide the Lisk Core start command flags (e.g. --api-ws), except the '--network (-n)' flag again:",
 			);
 		} else {
 			throw new Error(
-				'Invalid Lisk Core start command params provided. Cannot proceed with Lisk Core v4 auto-start. Please continue manually. Exiting!!!',
+				'Invalid Lisk Core start command flags provided. Cannot proceed with Lisk Core v4 auto-start. Please continue manually. Exiting!!!',
 			);
 		}
 	}

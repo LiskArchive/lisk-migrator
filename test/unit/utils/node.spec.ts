@@ -12,7 +12,7 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 import { join, resolve } from 'path';
-import { validateStartCommandParams, getFinalConfigPath } from '../../../src/utils/node';
+import { validateStartCommandFlags, getFinalConfigPath } from '../../../src/utils/node';
 
 const clientFilePath = resolve(`${__dirname}/../../../src/client`);
 
@@ -21,7 +21,7 @@ afterEach(() => {
 	jest.resetModules();
 });
 
-describe('Test validateStartCommandParams method', () => {
+describe('Test validateStartCommandFlags method', () => {
 	const allowedFlags = [
 		'-c, --config=<value>',
 		'-d, --data-path=<value>',
@@ -82,7 +82,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with valid params', () => {
 		userInputs.valid.forEach(startParams => {
 			it(`should return 'true' with following params: '${startParams}'`, async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(true);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(true);
 			});
 		});
 	});
@@ -90,7 +90,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with network specified in the params', () => {
 		userInputs.withNetwork.forEach(startParams => {
 			it(`should return 'false' with following params: '${startParams}'`, async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(false);
 			});
 		});
 	});
@@ -98,7 +98,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with unknown flags specified in the params', () => {
 		userInputs.withUnknownFlags.forEach(startParams => {
 			it(`should return 'false' with following params: '${startParams}'`, async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(false);
 			});
 		});
 	});
@@ -106,7 +106,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with flags expecting no values but values specified in the params', () => {
 		userInputs.withValidFlagsButUnexpectedValues.forEach(startParams => {
 			it(`should return 'false' with following params: '${startParams}'`, async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(false);
 			});
 		});
 	});
@@ -114,7 +114,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with flags without values but expecting values or options in the params', () => {
 		userInputs.withFlagsWithoutValues.forEach(startParams => {
 			it(`should return 'false' with following params: '${startParams}'`, async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(false);
 			});
 		});
 	});
@@ -122,7 +122,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with only options or values specified in the params', () => {
 		userInputs.withValuesWithoutFlags.forEach(startParams => {
 			it(`should return 'false' with following params: '${startParams}'`, async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(false);
 			});
 		});
 	});
@@ -130,7 +130,7 @@ describe('Test validateStartCommandParams method', () => {
 	describe('with no inputs specified in the params', () => {
 		userInputs.withNoUserInput.forEach(startParams => {
 			it("should return 'false' with empty params", async () => {
-				expect(await validateStartCommandParams(allowedFlags, startParams)).toBe(false);
+				expect(await validateStartCommandFlags(allowedFlags, startParams)).toBe(false);
 			});
 		});
 	});
