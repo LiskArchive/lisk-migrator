@@ -16,8 +16,9 @@ module.exports = {
 	rules: {
 		'max-len': 'off', // Managed by prettier
 		'no-underscore-dangle': 'off', // Used for private variables and methods
-		'implicit-arrow-linebreak': 'off', // Prefered
+		'implicit-arrow-linebreak': 'off', // Preferred
 		'no-mixed-spaces-and-tabs': 'off', // Managed by prettier
+		'no-shadow': 'off',
 		'operator-linebreak': 'off',
 		'import/prefer-default-export': 'off',
 		'lines-between-class-members': 'off', // Off because typescript has members and methods
@@ -31,6 +32,7 @@ module.exports = {
 		'@typescript-eslint/no-unnecessary-boolean-literal-compare': ['error'],
 		'@typescript-eslint/no-unnecessary-qualifier': ['error'],
 		'@typescript-eslint/no-unnecessary-type-arguments': ['error'],
+		'@typescript-eslint/no-shadow': 'warn',
 		'@typescript-eslint/prefer-for-of': ['error'],
 		'@typescript-eslint/prefer-function-type': ['error'],
 		'@typescript-eslint/prefer-includes': ['error'],

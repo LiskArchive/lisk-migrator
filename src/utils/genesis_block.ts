@@ -16,11 +16,11 @@ import * as fs from 'fs-extra';
 import path from 'path';
 import { Command } from '@oclif/command';
 import { Block as BlockVersion3 } from '@liskhq/lisk-chain';
-import { ERROR_CODES, SNAPSHOT_TIME_GAP } from '../constants';
+import { ERROR_CODE, SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
 import { copyFile, createTarball } from './fs';
-import { CustomError } from './exception';
+import { MigratorException } from './exception';
 
 /* eslint-disable func-names, @typescript-eslint/no-explicit-any */
 (BigInt.prototype as any).toJSON = function () {
@@ -72,9 +72,9 @@ export const createGenesisBlock = async (
 
 		await execAsync(genesisBlockCreateCommand);
 	} catch (error) {
-		throw new CustomError(
+		throw new MigratorException(
 			`Failed to create genesis block.\nError: ${(error as Error).message}`,
-			ERROR_CODES.GENESIS_BLOCK_CREATE,
+			ERROR_CODE.GENESIS_BLOCK_CREATE,
 		);
 	}
 };

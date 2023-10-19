@@ -94,8 +94,16 @@ export const LEGACY_DB_PATH = `${DEFAULT_LISK_CORE_PATH}/${DEFAULT_DATA_DIR}/leg
 export const DEFAULT_VERSION = '0.1.0';
 export const EVENT_NEW_BLOCK = 'app:block:new';
 
-/* eslint-disable-next-line no-shadow */
-export const enum ERROR_CODES {
-	GENESIS_BLOCK_CREATE = 0,
-	LISK_CORE_START = 1,
+export const FILE_NAME = {
+	COMMANDS_TO_EXEC: 'commandsToExecute.txt',
+	FORGING_STATUS: 'forgingStatus.json',
+};
+
+export const enum ERROR_CODE {
+	DEFAULT = 0,
+	INVALID_CONFIG = 1,
+	GENESIS_BLOCK_CREATE = 2,
+	LISK_CORE_START = 3,
+	BACKUP_LEGACY_DATA_DIR = 4,
+	COPY_LEGACY_DB = 5,
 }

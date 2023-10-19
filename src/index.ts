@@ -26,7 +26,8 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
-	ERROR_CODES,
+	ERROR_CODE,
+	FILE_NAME,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -53,11 +54,16 @@ import {
 } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
-import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/node';
+import {
+	installLiskCore,
+	startLiskCore,
+	isLiskCoreV3Running,
+	getLiskCoreStartCommand,
+} from './utils/node';
 import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
-import { CustomError } from './utils/exception';
-import { getCommandsToExecPostMigration, writeCommandsToExecute } from './utils/commands';
+import { MigratorException } from './utils/exception';
+import { writeCommandsToExec } from './utils/commands';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -154,6 +160,7 @@ class LiskMigrator extends Command {
 
 		// Ensure the output directory is present
 		if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+		const filePathCommandsToExec = `${outputDir}/${FILE_NAME.COMMANDS_TO_EXEC}`;
 
 		try {
 			// Asynchronously capture the node's Forging Status information at the snapshot height
@@ -239,7 +246,12 @@ class LiskMigrator extends Command {
 				const isValidConfig = await validateConfig(migratedConfigV4);
 				cli.action.stop();
 
-				if (!isValidConfig) throw new Error('Migrated user configuration is invalid.');
+				if (!isValidConfig) {
+					throw new MigratorException(
+						'Migrated user configuration is invalid.',
+						ERROR_CODE.INVALID_CONFIG,
+					);
+				}
 
 				cli.action.start(`Exporting user configuration to the path: ${outputDir}`);
 				await writeConfig(migratedConfigV4, outputDir);
@@ -310,16 +322,14 @@ class LiskMigrator extends Command {
 									"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no]",
 								);
 								if (!isStopReconfirmed) {
-									throw new CustomError(
+									throw new Error(
 										`Cannot proceed with Lisk Core v4 auto-start. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
-										ERROR_CODES.LISK_CORE_START,
 									);
 								} else if (numTriesLeft === 0 && isStopReconfirmed) {
 									const isCoreV3StillRunning = await isLiskCoreV3Running(liskCoreV3DataPath);
 									if (isCoreV3StillRunning) {
-										throw new CustomError(
+										throw new Error(
 											`Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
-											ERROR_CODES.LISK_CORE_START,
 										);
 									}
 								}
@@ -345,16 +355,15 @@ class LiskMigrator extends Command {
 							);
 						}
 					} else {
-						throw new CustomError(
+						throw new Error(
 							`User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
-							ERROR_CODES.LISK_CORE_START,
 						);
 					}
 				} catch (err) {
-					/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-					throw new CustomError(
-						`Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`,
-						ERROR_CODES.LISK_CORE_START,
+					const errorMsg = `Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`;
+					throw new MigratorException(
+						errorMsg,
+						err instanceof MigratorException ? err.code : ERROR_CODE.LISK_CORE_START,
 					);
 				}
 			} else {
@@ -365,40 +374,41 @@ class LiskMigrator extends Command {
 			}
 		} catch (error) {
 			const commandsToExecute: string[] = [];
-			const code = Number(`${(error as { message: string; code: number }).code}`);
+			const code = Number(`${(error as MigratorException).code}`);
 
-			const liskCoreStartCommand = `lisk core start--network ${networkConstant.name}`;
+			const basicStartCommand = `lisk-core start --network ${networkConstant.name}`;
+			const liskCoreStartCommand = getLiskCoreStartCommand() ?? basicStartCommand;
 
-			if (code === ERROR_CODES.GENESIS_BLOCK_CREATE) {
+			if (code === ERROR_CODE.GENESIS_BLOCK_CREATE) {
 				const genesisBlockCreateCommand = getGenesisBlockCreateCommand();
 				commandsToExecute.push(genesisBlockCreateCommand);
 				commandsToExecute.push(liskCoreStartCommand);
 			}
 
-			if (code === ERROR_CODES.LISK_CORE_START) {
+			if (code === ERROR_CODE.LISK_CORE_START) {
 				commandsToExecute.push(liskCoreStartCommand);
 			}
 
+			this.log(`Creating file with the list of commands to execute: ${filePathCommandsToExec}`);
+			await writeCommandsToExec(outputDir, commandsToExecute);
 			this.log(
-				`Creating file with the list of commands to execute: ${outputDir}/commandsToExecute.txt`,
+				`Successfully created file with the list of commands to execute: ${filePathCommandsToExec}`,
 			);
-			await writeCommandsToExecute(
-				[...commandsToExecute, ...(await getCommandsToExecPostMigration(outputDir))],
-				outputDir,
+
+			this.error(
+				`Migrator could not finish execution successfully due to: ${
+					(error as Error).message
+				}\nPlease check the commands to be executed in the file: ${filePathCommandsToExec}`,
 			);
-			this.log(
-				`Successfully created file with the list of commands to execute: ${outputDir}/commandsToExecute.txt`,
-			);
-			this.error(`${(error as Error).message}`);
 		}
 
 		this.log('Successfully finished migration. Exiting!!!');
 		this.log(
-			`Creating file with the list of commands to execute post migration: ${outputDir}/commandsToExecute.txt`,
+			`Creating file with the list of commands to execute post migration: ${filePathCommandsToExec}`,
 		);
-		await writeCommandsToExecute(await getCommandsToExecPostMigration(outputDir), outputDir);
+		await writeCommandsToExec(outputDir);
 		this.log(
-			`Successfully created file with the list of commands to execute post migration: ${outputDir}/commandsToExecute.txt`,
+			`Successfully created file with the list of commands to execute post migration: ${filePathCommandsToExec}`,
 		);
 
 		process.exit(0);

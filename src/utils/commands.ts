@@ -15,6 +15,7 @@
 import { resolve } from 'path';
 
 import { read, write, exists } from './fs';
+import { FILE_NAME } from '../constants';
 
 export const getCommandsToExecPostMigration = async (outputDir: string) => {
 	const commandsToExecute = [];
@@ -24,7 +25,7 @@ export const getCommandsToExecPostMigration = async (outputDir: string) => {
 	);
 	commandsToExecute.push('lisk-core keys:import --file-path config/keys.json');
 
-	const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
+	const forgingStatusJsonFilepath = resolve(outputDir, FILE_NAME.FORGING_STATUS);
 	if (await exists(forgingStatusJsonFilepath)) {
 		const forgingStatusString = (await read(forgingStatusJsonFilepath)) as string;
 		const forgingStatusJson = JSON.parse(forgingStatusString);
@@ -53,8 +54,14 @@ export const getCommandsToExecPostMigration = async (outputDir: string) => {
 	return commandsToExecute;
 };
 
-export const writeCommandsToExecute = async (commandsToExecute: string[], outputDir: string) => {
-	const commandsToExecuteFilepath = resolve(outputDir, 'commandsToExecute.txt');
-	const inputCommands = commandsToExecute.join('\n\n');
-	await write(commandsToExecuteFilepath, inputCommands);
+export const writeCommandsToExec = async (outputDir: string, preCompletionCommands?: string[]) => {
+	const commandsToExecPreCompletion = preCompletionCommands ?? [];
+	const commandsToExecPostMigration = await getCommandsToExecPostMigration(outputDir);
+
+	const allCommandsToExec = [...commandsToExecPreCompletion, ...commandsToExecPostMigration].join(
+		'\n\n',
+	);
+
+	const commandsToExecuteFilepath = resolve(outputDir, FILE_NAME.COMMANDS_TO_EXEC);
+	await write(commandsToExecuteFilepath, allCommandsToExec);
 };

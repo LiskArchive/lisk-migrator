@@ -13,22 +13,18 @@
  */
 import * as fs from 'fs-extra';
 import { join } from 'path';
-import {
-	getCommandsToExecPostMigration,
-	writeCommandsToExecute,
-} from '../../../src/utils/commands';
+import { getCommandsToExecPostMigration, writeCommandsToExec } from '../../../src/utils/commands';
 import { exists } from '../../../src/utils/fs';
+import { FILE_NAME } from '../../../src/constants';
 
 const outputDir = join(__dirname, '../../..', 'test/unit/fixtures');
 
-afterAll(() => {
-	fs.removeSync(join(outputDir, 'commandsToExecute.txt'));
-});
+afterAll(() => fs.removeSync(join(outputDir, FILE_NAME.COMMANDS_TO_EXEC)));
 
 describe('Test getCommandsToExecPostMigration method', () => {
 	it('should create commandsToExecute text file', async () => {
 		const commandsToExecute = await getCommandsToExecPostMigration(outputDir);
-		await writeCommandsToExecute(commandsToExecute, outputDir);
-		expect(await exists(`${outputDir}/commandsToExecute.txt`)).toBe(true);
+		await writeCommandsToExec(outputDir, commandsToExecute);
+		expect(await exists(`${outputDir}/${FILE_NAME.COMMANDS_TO_EXEC}`)).toBe(true);
 	});
 });

@@ -11,9 +11,11 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { ERROR_CODE } from '../constants';
 
-export class CustomError extends Error {
-	public code: number;
+export class MigratorException extends Error {
+	public code: number = ERROR_CODE.DEFAULT;
+
 	public constructor(message: string, code: number) {
 		super(message);
 		this.code = code;
