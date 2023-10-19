@@ -12,44 +12,47 @@
  * Removal or modification of this copyright notice is prohibited.
  */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-
 import { resolve } from 'path';
-import { read } from './fs';
+
+import { read, write } from './fs';
 
 export const getCommandsToExecute = async (outputDir: string) => {
-	const commandsToExecute = {
-		keys: [] as string[],
-		hashOnion: [] as string[],
-		generator: [] as string[],
-		validator: [] as string[],
-	};
+	const commandsToExecute = [];
 
-	commandsToExecute.keys.push(
+	commandsToExecute.push(
 		'lisk-core keys:create --chainid 0 --output ./config/keys.json --add-legacy',
 	);
-	commandsToExecute.keys.push('lisk-core keys:import --file-path config/keys.json');
+	commandsToExecute.push('lisk-core keys:import --file-path config/keys.json');
 
 	const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
 	const forgingStatusString = (await read(forgingStatusJsonFilepath)) as string;
 	const forgingStatusJson = JSON.parse(forgingStatusString);
 
-	for (const forgingStatus of forgingStatusJson) {
-		commandsToExecute.hashOnion.push(
-			`lisk-core endpoint:invoke random_setHashOnion '{"address":${forgingStatus.lskAddress}}'`,
-		);
+	if (forgingStatusJson.length) {
+		for (const forgingStatus of forgingStatusJson) {
+			commandsToExecute.push(
+				`lisk-core endpoint:invoke random_setHashOnion '{"address":"${forgingStatus.lskAddress}"}'`,
+			);
 
-		commandsToExecute.generator.push(
-			`lisk-core endpoint:invoke generator_setStatus '{ "address": ${forgingStatus.lskAddress}, "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
-		);
+			commandsToExecute.push(
+				`lisk-core endpoint:invoke generator_setStatus '{"address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
+			);
 
-		commandsToExecute.generator.push(
-			`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
-		);
+			commandsToExecute.push(
+				`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
+			);
+		}
 	}
 
-	commandsToExecute.validator.push(
+	commandsToExecute.push(
 		'lisk-core transaction:create legacy registerKeys 10000000 --key-derivation-path=legacy --send',
 	);
 
 	return commandsToExecute;
+};
+
+export const writeCommandsToExecute = async (commandsToExecute: string[], outputDir: string) => {
+	const commandsToExecuteFilepath = resolve(outputDir, 'commandsToExecute.txt');
+	const inputCommands = commandsToExecute.join('\n\n');
+	await write(commandsToExecuteFilepath, inputCommands);
 };

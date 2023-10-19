@@ -26,6 +26,7 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
+	ERROR_CODES,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -54,8 +55,10 @@ import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/node';
 import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
+import { CustomError } from './utils/exception';
 
 let configCoreV4: PartialApplicationConfig;
+
 class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
@@ -306,14 +309,16 @@ class LiskMigrator extends Command {
 									"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no]",
 								);
 								if (!isStopReconfirmed) {
-									this.error(
+									throw new CustomError(
 										`Cannot proceed with Lisk Core v4 auto-start. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+										ERROR_CODES.LISK_CORE_START,
 									);
 								} else if (numTriesLeft === 0 && isStopReconfirmed) {
 									const isCoreV3StillRunning = await isLiskCoreV3Running(liskCoreV3DataPath);
 									if (isCoreV3StillRunning) {
-										this.error(
+										throw new CustomError(
 											`Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+											ERROR_CODES.LISK_CORE_START,
 										);
 									}
 								}
@@ -339,13 +344,17 @@ class LiskMigrator extends Command {
 							);
 						}
 					} else {
-						this.error(
+						throw new CustomError(
 							`User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+							ERROR_CODES.LISK_CORE_START,
 						);
 					}
 				} catch (err) {
 					/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-					this.error(`Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`);
+					throw new CustomError(
+						`Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`,
+						ERROR_CODES.LISK_CORE_START,
+					);
 				}
 			} else {
 				this.log(

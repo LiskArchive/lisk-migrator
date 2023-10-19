@@ -93,3 +93,9 @@ export const LEGACY_DB_PATH = `${DEFAULT_LISK_CORE_PATH}/${DEFAULT_DATA_DIR}/leg
 
 export const DEFAULT_VERSION = '0.1.0';
 export const EVENT_NEW_BLOCK = 'app:block:new';
+
+/* eslint-disable-next-line no-shadow */
+export const enum ERROR_CODES {
+	GENESIS_BLOCK_CREATE = 0,
+	LISK_CORE_START = 1,
+}
