@@ -14,6 +14,7 @@
 import * as fs from 'fs-extra';
 import { resolve, join } from 'path';
 import { ApplicationConfig } from 'lisk-framework';
+import Command from '@oclif/command';
 import { configV3, configV4 } from '../fixtures/config';
 import { NETWORK_CONSTANT } from '../../../src/constants';
 import {
@@ -23,6 +24,7 @@ import {
 	writeConfig,
 	resolveConfigPathByNetworkID,
 	createBackup,
+	getConfig,
 } from '../../../src/utils/config';
 import { ApplicationConfigV3 } from '../../../src/types';
 
@@ -92,5 +94,90 @@ describe('Test createBackup method', () => {
 	it('should create backup', async () => {
 		await createBackup((configV3 as unknown) as ApplicationConfigV3);
 		expect(fs.existsSync(expectedBackupPath)).toBe(true);
+	});
+});
+
+describe('Test getConfig method', () => {
+	const networkIdentifier = '4c09e6a781fc4c7bdb936ee815de8f94190f8a7519becd9de2081832be309a99';
+	const configPath = join(__dirname, '../../..', 'test/unit/fixtures/lisk-core');
+
+	it('should return valid config when custom config is not available', async () => {
+		const config = await getConfig(Command as any, configPath, networkIdentifier, undefined);
+		const expectedConfig = {
+			system: {
+				dataPath: '~/.lisk',
+			},
+			rpc: {
+				modes: ['ws'],
+				port: 7887,
+				host: '127.0.0.1',
+				allowedMethods: [],
+			},
+			genesis: {
+				block: {
+					fromFile: './config/genesis_block.blob',
+				},
+				blockTime: 10,
+				chainID: '00000000',
+				maxTransactionsSize: 15360,
+				minimumCertifyHeight: 1,
+			},
+			network: {
+				version: '4.0',
+				seedPeers: [],
+				port: 7667,
+			},
+			transactionPool: {
+				maxTransactions: 4096,
+				maxTransactionsPerAccount: 64,
+				transactionExpiryTime: 10800000,
+				minEntranceFeePriority: '0',
+				minReplacementFeeDifference: '10',
+			},
+			plugins: {},
+		};
+
+		expect(config).toEqual(expectedConfig);
+	});
+
+	it('should return valid config when custom config is available', async () => {
+		const customConfig = join(__dirname, '../../..', 'test/unit/fixtures/customConfig.json');
+		const config = await getConfig(Command as any, configPath, networkIdentifier, customConfig);
+
+		const expectedConfig = {
+			system: {
+				dataPath: '~/.customNode',
+			},
+			rpc: {
+				modes: ['ws'],
+				port: 7000,
+				host: '0.0.0.0',
+				allowedMethods: [],
+			},
+			genesis: {
+				block: {
+					fromFile: './config/genesis_block.blob',
+				},
+				blockTime: 10,
+				chainID: '00000000',
+				maxTransactionsSize: 15360,
+				minimumCertifyHeight: 1,
+			},
+			network: {
+				version: '4.0',
+				seedPeers: [],
+				port: 7667,
+			},
+			transactionPool: {
+				maxTransactions: 4096,
+				maxTransactionsPerAccount: 64,
+				transactionExpiryTime: 10800000,
+				minEntranceFeePriority: '0',
+				minReplacementFeeDifference: '10',
+			},
+			plugins: {},
+		};
+
+		expect(config).toEqual(expectedConfig);
 	});
 });
