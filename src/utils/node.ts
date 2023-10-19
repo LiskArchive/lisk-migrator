@@ -11,11 +11,13 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import cli from 'cli-ux';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { homedir } from 'os';
 import { Command } from '@oclif/command';
 import { existsSync, renameSync } from 'fs-extra';
+
 import { PartialApplicationConfig } from 'lisk-framework';
 
 import { execAsync } from './process';
@@ -31,6 +33,13 @@ const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
 
 const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
+
+const REGEX = {
+	INPUT_SEPARATOR: /[\s=]+/,
+	FLAG: /^(?:-[a-z]|--[a-z]+(?:-[a-z]+)*$)/,
+	NETWORK_FLAG: /^(?:-n|--network)/,
+	OPTION_OR_VALUE: /=<(option|value)>$/,
+};
 
 export const installLiskCore = async (): Promise<string> => execAsync(INSTALL_LISK_CORE_COMMAND);
 
@@ -67,10 +76,97 @@ const copyLegacyDB = async (_this: Command) => {
 	_this.log(`Legacy database for Lisk Core v4 has been created at ${LEGACY_DB_PATH}`);
 };
 
-const getFinalConfigPath = async (outputDir: string, network: string) =>
+export const getFinalConfigPath = async (outputDir: string, network: string) =>
 	(await exists(`${outputDir}/config.json`))
 		? outputDir
 		: path.resolve(__dirname, '../..', 'config', network);
+
+export const validateStartCommandFlags = async (
+	allowedFlags: string[],
+	userInputString: string,
+): Promise<boolean> => {
+	try {
+		let isOptionOrValueExpected = false;
+
+		const userInputs = userInputString.split(REGEX.INPUT_SEPARATOR);
+		for (let i = 0; i < userInputs.length; i += 1) {
+			const input = userInputs[i];
+
+			// Since network is determined automatically, user shouldn't pass the network flag
+			if (REGEX.NETWORK_FLAG.test(input)) return false;
+
+			if (REGEX.FLAG.test(input)) {
+				const correspondingFlag = allowedFlags.find(f => f.includes(input));
+
+				// If unknown flag specified or expected a value for prev flag or if no value provided when expected
+				if (!correspondingFlag || isOptionOrValueExpected || i === userInputs.length - 1) {
+					return false;
+				}
+
+				if (REGEX.OPTION_OR_VALUE.test(correspondingFlag)) {
+					isOptionOrValueExpected = true;
+				}
+			} else if (isOptionOrValueExpected) {
+				isOptionOrValueExpected = false;
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	} catch (error) {
+		return false;
+	}
+};
+
+const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
+	const isUserConfirmed = await cli.confirm(
+		'Would you like to customize the Lisk Core v4 start command? [yes/no]',
+	);
+
+	const baseStartCommand = `lisk core start --network ${network}`;
+
+	if (!isUserConfirmed) {
+		const defaultStartCommand = `${baseStartCommand} --config ${configPath}/config.json`;
+		return defaultStartCommand;
+	}
+
+	// Let user customize the start command
+	let customStartCommand = baseStartCommand;
+
+	_this.log('Customizing Lisk Core start command');
+	let userInput = await cli.prompt(
+		"Please provide the Lisk Core start command flags (e.g. --api-ws), except the '--network (-n)' flag:",
+	);
+
+	const command = "lisk-core start --help | grep -- '^\\s\\+-' | cut -d ' ' -f 3,4";
+	const allowedFlags = await execAsync(command);
+	const allowedFlagsArray = allowedFlags.split(/\n+/).filter(e => !!e);
+
+	let numTriesLeft = 3;
+	while (numTriesLeft) {
+		numTriesLeft -= 1;
+
+		const isValid = await validateStartCommandFlags(allowedFlagsArray, userInput);
+		if (isValid) {
+			/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
+			customStartCommand = `${baseStartCommand} ${userInput}`;
+			break;
+		}
+
+		if (numTriesLeft >= 0) {
+			userInput = await cli.prompt(
+				"Invalid flags passed. Please provide the Lisk Core start command flags (e.g. --api-ws), except the '--network (-n)' flag again:",
+			);
+		} else {
+			throw new Error(
+				'Invalid Lisk Core start command flags provided. Cannot proceed with Lisk Core v4 auto-start. Please continue manually. Exiting!!!',
+			);
+		}
+	}
+
+	return customStartCommand;
+};
 
 export const startLiskCore = async (
 	_this: Command,
@@ -92,24 +188,35 @@ export const startLiskCore = async (
 	await backupDefaultDirectoryIfExists(_this, liskCoreV3DataPath);
 	await copyLegacyDB(_this);
 
-	_this.log('Installing pm2...');
+	const configPath = await getFinalConfigPath(outputDir, network);
+	const liskCoreStartCommand = await resolveLiskCoreStartCommand(_this, network, configPath);
+
+	const pm2Config = {
+		name: 'lisk-core-v4',
+		script: liskCoreStartCommand,
+	};
+
+	const isUserConfirmed = await cli.confirm(
+		`Start Lisk Core with the following pm2 configuration? [yes/no]\n${JSON.stringify(
+			pm2Config,
+			null,
+			'\t',
+		)}`,
+	);
+
+	if (!isUserConfirmed) {
+		_this.error(
+			'User did not confirm to start Lisk Core v4 with the customized PM2 config. Skipping the Lisk Core v4 auto-start process. Please start the node manually.',
+		);
+	}
+
+	_this.log('Installing PM2...');
 	await installPM2();
-	_this.log('Finished installing pm2.');
+	_this.log('Finished installing PM2.');
 
 	const pm2FilePath = path.resolve(outputDir, PM2_FILE_NAME);
 	_this.log(`Creating PM2 config at ${pm2FilePath}`);
-	const configPath = await getFinalConfigPath(outputDir, network);
-	fs.writeFileSync(
-		pm2FilePath,
-		JSON.stringify(
-			{
-				name: 'lisk-core-v4',
-				script: `lisk-core start --network ${network} --config ${configPath}/config.json`,
-			},
-			null,
-			'\t',
-		),
-	);
+	fs.writeFileSync(pm2FilePath, JSON.stringify(pm2Config, null, '\t'));
 	_this.log(`Successfully created the PM2 config at ${pm2FilePath}`);
 
 	const PM2_COMMAND_START = `pm2 start ${pm2FilePath}`;
