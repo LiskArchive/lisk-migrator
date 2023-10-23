@@ -145,15 +145,6 @@ class LiskMigrator extends Command {
 
 			verifyOutputPath(outputPath);
 
-			let [networkID] =
-				(Object.entries(NETWORK_CONSTANT).find(([, v]) => v.name === inputNetwork) as [
-					string,
-					NetworkConfigLocal,
-				]) || [];
-
-			let networkConstant: NetworkConfigLocal = NETWORK_CONSTANT[networkID];
-			let outputDir: string = flags.output ? outputPath : `${outputPath}/${networkID}`;
-
 			if (useSnapshot) {
 				if (!snapshotPath) {
 					this.error("Snapshot path is required when 'use-snapshot' set to true");
@@ -169,6 +160,15 @@ class LiskMigrator extends Command {
 					this.error("Custom config path is required when 'use-snapshot' set to true");
 				}
 			}
+
+			let [networkID] =
+				(Object.entries(NETWORK_CONSTANT).find(([, v]) => v.name === inputNetwork) as [
+					string,
+					NetworkConfigLocal,
+				]) || [];
+
+			let networkConstant: NetworkConfigLocal = NETWORK_CONSTANT[networkID];
+			let outputDir: string = flags.output ? outputPath : `${outputPath}/${networkID}`;
 
 			if (!useSnapshot) {
 				const client = await getAPIClient(liskCoreV3DataPath);
@@ -316,9 +316,7 @@ class LiskMigrator extends Command {
 			this.log(`Genesis block tar and SHA256 files have been created at: ${outputDir}.`);
 			cli.action.stop();
 
-			if (useSnapshot) process.exit(0);
-
-			if (autoStartLiskCoreV4) {
+			if (autoStartLiskCoreV4 && !useSnapshot) {
 				try {
 					if (!autoMigrateUserConfig) {
 						configCoreV4 = defaultConfigV4;
