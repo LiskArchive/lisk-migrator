@@ -13,55 +13,85 @@
  */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { resolve } from 'path';
+import Command from '@oclif/command';
 
 import { read, write, exists } from './fs';
 import { FILE_NAME } from '../constants';
+import { NetworkConfigLocal } from '../types';
 
-export const getCommandsToExecPostMigration = async (outputDir: string) => {
+export const getCommandsToExecPostMigration = async (
+	networkConstant: NetworkConfigLocal,
+	outputDir: string,
+) => {
 	const commandsToExecute = [];
-
-	commandsToExecute.push(
-		'lisk-core keys:create --chainid 0 --output ./config/keys.json --add-legacy',
-	);
-	commandsToExecute.push('lisk-core keys:import --file-path config/keys.json');
 
 	const forgingStatusJsonFilepath = resolve(outputDir, FILE_NAME.FORGING_STATUS);
 	if (await exists(forgingStatusJsonFilepath)) {
 		const forgingStatusString = (await read(forgingStatusJsonFilepath)) as string;
 		const forgingStatusJson = JSON.parse(forgingStatusString);
 
-		if (forgingStatusJson.length) {
-			for (const forgingStatus of forgingStatusJson) {
-				commandsToExecute.push(
-					`lisk-core endpoint:invoke random_setHashOnion '{"address":"${forgingStatus.lskAddress}"}'`,
-				);
+		const chainID = parseInt(networkConstant.tokenID.substring(0, 2), 16);
 
-				commandsToExecute.push(
-					`lisk-core endpoint:invoke generator_setStatus '{"address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
-				);
+		for (const forgingStatus of forgingStatusJson) {
+			commandsToExecute.push(
+				'\n',
+				`## Generate/Register the BLS keys for validator ${forgingStatus.lskAddress} - Please modify the command if necessary`,
+				'\n',
+			);
 
-				commandsToExecute.push(
-					`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
-				);
-			}
+			const keysFilepath = resolve(outputDir, FILE_NAME.KEYS);
+			commandsToExecute.push(
+				`lisk-core keys:create --chainid ${chainID} --output ${keysFilepath} --add-legacy`,
+				`lisk-core keys:import --file-path ${keysFilepath}`,
+				`lisk-core endpoint:invoke random_setHashOnion '{ "address":"${forgingStatus.lskAddress}"}'`,
+				`lisk-core endpoint:invoke generator_setStatus '{ "address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
+				`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
+				'lisk-core transaction:create legacy registerKeys 4000000 --key-derivation-path=legacy --send',
+			);
+
+			commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
 		}
 	}
-
-	commandsToExecute.push(
-		'lisk-core transaction:create legacy registerKeys 10000000 --key-derivation-path=legacy --send',
-	);
 
 	return commandsToExecute;
 };
 
-export const writeCommandsToExec = async (outputDir: string, preCompletionCommands?: string[]) => {
+export const writeCommandsToExec = async (
+	_this: Command,
+	networkConstant: NetworkConfigLocal,
+	outputDir: string,
+	preCompletionCommands?: string[],
+) => {
 	const commandsToExecPreCompletion = preCompletionCommands ?? [];
-	const commandsToExecPostMigration = await getCommandsToExecPostMigration(outputDir);
-
-	const allCommandsToExec = [...commandsToExecPreCompletion, ...commandsToExecPostMigration].join(
-		'\n\n',
+	const commandsToExecPostMigration = await getCommandsToExecPostMigration(
+		networkConstant,
+		outputDir,
 	);
 
-	const commandsToExecuteFilepath = resolve(outputDir, FILE_NAME.COMMANDS_TO_EXEC);
-	await write(commandsToExecuteFilepath, allCommandsToExec);
+	const allCommandsToExec = [
+		'## Please execute the following commands to finish the migration successfully:',
+		'------------------------------------------------------------------------------',
+		'\n',
+		...commandsToExecPreCompletion,
+		...commandsToExecPostMigration,
+	].join('\n');
+
+	// Create the document only when there are commands to be executed by the user
+	if (commandsToExecPostMigration.length || commandsToExecPreCompletion.length) {
+		const commandsToExecuteFilepath = resolve(outputDir, FILE_NAME.COMMANDS_TO_EXEC);
+
+		_this.log(
+			commandsToExecPreCompletion.length
+				? `Creating file with the list of commands to execute post migration: ${commandsToExecuteFilepath}`
+				: `Creating file with the list of commands to execute: ${commandsToExecuteFilepath}`,
+		);
+
+		await write(commandsToExecuteFilepath, allCommandsToExec);
+
+		_this.log(
+			commandsToExecPreCompletion.length
+				? `Successfully created file with the list of commands to execute post migration: ${commandsToExecuteFilepath}`
+				: `Successfully created file with the list of commands to execute: ${commandsToExecuteFilepath}`,
+		);
+	}
 };

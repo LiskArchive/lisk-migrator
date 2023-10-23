@@ -99,6 +99,7 @@ export const EVENT_NEW_BLOCK = 'app:block:new';
 export const FILE_NAME = {
 	COMMANDS_TO_EXEC: 'commandsToExecute.txt',
 	FORGING_STATUS: 'forgingStatus.json',
+	KEYS: 'keys.json',
 };
 
 export const enum ERROR_CODE {

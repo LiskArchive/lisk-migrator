@@ -392,32 +392,67 @@ class LiskMigrator extends Command {
 				)
 			) {
 				const genesisBlockCreateCommand = getGenesisBlockCreateCommand();
+				commandsToExecute.push(
+					'\n',
+					'## Create the genesis block',
+					'## NOTE: This requires installing Lisk Core v4 locally. Please visit https://lisk.com/documentation/lisk-core/v4/setup/npm.html for further instructions',
+					'\n',
+				);
 				commandsToExecute.push(genesisBlockCreateCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
+			}
+
+			if (
+				[
+					ERROR_CODE.DEFAULT,
+					ERROR_CODE.INVALID_CONFIG,
+					ERROR_CODE.GENESIS_BLOCK_CREATE,
+					ERROR_CODE.BACKUP_LEGACY_DATA_DIR,
+				].includes(code)
+			) {
+				commandsToExecute.push('\n', '## Backup Lisk Core v3 data directory', '\n');
 				commandsToExecute.push(backupLegacyDataDirCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
+			}
+
+			if (
+				[
+					ERROR_CODE.DEFAULT,
+					ERROR_CODE.INVALID_CONFIG,
+					ERROR_CODE.GENESIS_BLOCK_CREATE,
+					ERROR_CODE.BACKUP_LEGACY_DATA_DIR,
+					ERROR_CODE.COPY_LEGACY_DB,
+				].includes(code)
+			) {
+				commandsToExecute.push(
+					'\n',
+					'## Copy legacy (v3) blockchain information to Lisk Core v4 legacy.db',
+					'\n',
+				);
 				commandsToExecute.push(copyLegacyDBCommand);
-				commandsToExecute.push(liskCoreStartCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
 			}
 
-			if ([ERROR_CODE.DEFAULT, ERROR_CODE.BACKUP_LEGACY_DATA_DIR].includes(code)) {
-				commandsToExecute.push(backupLegacyDataDirCommand);
-				commandsToExecute.push(copyLegacyDBCommand);
+			if (
+				[
+					ERROR_CODE.DEFAULT,
+					ERROR_CODE.INVALID_CONFIG,
+					ERROR_CODE.GENESIS_BLOCK_CREATE,
+					ERROR_CODE.BACKUP_LEGACY_DATA_DIR,
+					ERROR_CODE.COPY_LEGACY_DB,
+					ERROR_CODE.LISK_CORE_START,
+				].includes(code)
+			) {
+				commandsToExecute.push(
+					'\n',
+					'## Lisk Core v4 start command - Please modify if necessary',
+					'\n',
+				);
 				commandsToExecute.push(liskCoreStartCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
 			}
 
-			if ([ERROR_CODE.DEFAULT, ERROR_CODE.COPY_LEGACY_DB].includes(code)) {
-				commandsToExecute.push(copyLegacyDBCommand);
-				commandsToExecute.push(liskCoreStartCommand);
-			}
-
-			if ([ERROR_CODE.DEFAULT, ERROR_CODE.LISK_CORE_START].includes(code)) {
-				commandsToExecute.push(liskCoreStartCommand);
-			}
-
-			this.log(`Creating file with the list of commands to execute: ${filePathCommandsToExec}`);
-			await writeCommandsToExec(outputDir, commandsToExecute);
-			this.log(
-				`Successfully created file with the list of commands to execute: ${filePathCommandsToExec}`,
-			);
+			await writeCommandsToExec(this, networkConstant, outputDir, commandsToExecute);
 
 			this.error(
 				`Migrator could not finish execution successfully due to: ${
@@ -426,15 +461,9 @@ class LiskMigrator extends Command {
 			);
 		}
 
-		this.log('Successfully finished migration. Exiting!!!');
-		this.log(
-			`Creating file with the list of commands to execute post migration: ${filePathCommandsToExec}`,
-		);
-		await writeCommandsToExec(outputDir);
-		this.log(
-			`Successfully created file with the list of commands to execute post migration: ${filePathCommandsToExec}`,
-		);
+		await writeCommandsToExec(this, networkConstant, outputDir);
 
+		this.log('Successfully finished migration. Exiting!!!');
 		process.exit(0);
 	}
 }

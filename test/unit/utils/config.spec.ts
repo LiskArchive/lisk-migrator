@@ -15,6 +15,8 @@ import * as fs from 'fs-extra';
 import { resolve, join } from 'path';
 import { ApplicationConfig } from 'lisk-framework';
 import Command from '@oclif/command';
+import { log, error } from 'console';
+
 import { configV3, configV4 } from '../fixtures/config';
 import { NETWORK_CONSTANT } from '../../../src/constants';
 import {
@@ -30,6 +32,11 @@ import { ApplicationConfigV3 } from '../../../src/types';
 
 const migratedConfigFilePath = join(__dirname, 'test/config');
 const expectedBackupPath = join(__dirname, '../../..', 'backup');
+
+const mockCommand = {
+	log,
+	error,
+};
 
 describe('Migrate user configuration', () => {
 	afterAll(() => {
@@ -102,7 +109,12 @@ describe('Test getConfig method', () => {
 	const configPath = join(__dirname, '../../..', 'test/unit/fixtures/lisk-core');
 
 	it('should return valid config when custom config is not available', async () => {
-		const config = await getConfig(Command as any, configPath, networkIdentifier, undefined);
+		const config = await getConfig(
+			mockCommand as Command,
+			configPath,
+			networkIdentifier,
+			undefined,
+		);
 		const expectedConfig = {
 			system: {
 				dataPath: '~/.lisk',
