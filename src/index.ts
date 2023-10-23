@@ -19,7 +19,7 @@ import { Database } from '@liskhq/lisk-db';
 import * as semver from 'semver';
 import { Command, flags as flagsParser } from '@oclif/command';
 import cli from 'cli-ux';
-import { Block } from '@liskhq/lisk-chain';
+// import { Block } from '@liskhq/lisk-chain';
 import {
 	NETWORK_CONSTANT,
 	ROUND_LENGTH,
@@ -54,6 +54,7 @@ import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
 import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/node';
 import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
+import { getBlockHeaderByHeight } from './utils/block';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -107,6 +108,23 @@ class LiskMigrator extends Command {
 			description:
 				'Maximum number of blocks to be iterated at once for computation. Defaults to 100000.',
 		}),
+		'snapshot-path': flagsParser.string({
+			char: 'p',
+			required: false,
+			description:
+				'Path where the state snapshot will be created. When not supplied, defaults to the current directory.',
+		}),
+		network: flagsParser.string({
+			required: false,
+			env: 'NETWORK',
+			description: 'Network for the migration.',
+		}),
+		'use-snapshot': flagsParser.boolean({
+			required: false,
+			env: 'USE_SNAPSHOT',
+			description: 'Use the existing database snapshot.',
+			default: false,
+		}),
 	};
 
 	public async run(): Promise<void> {
@@ -121,85 +139,118 @@ class LiskMigrator extends Command {
 			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 			const pageSize = Number(flags['page-size']);
+			const useSnapshot = flags['use-snapshot'];
+			const snapshotPath = flags['snapshot-path'];
+			const inputNetwork = flags.network;
 
 			verifyOutputPath(outputPath);
 
-			const client = await getAPIClient(liskCoreV3DataPath);
-			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
-			const { version: appVersion, networkIdentifier } = nodeInfo;
+			let [networkID] =
+				(Object.entries(NETWORK_CONSTANT).find(([, v]) => v.name === inputNetwork) as [
+					string,
+					NetworkConfigLocal,
+				]) || [];
 
-			cli.action.start('Verifying if backup height from node config matches snapshot height');
-			if (snapshotHeight !== nodeInfo.backup.height) {
-				this.error(
-					`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
-				);
+			let networkConstant: NetworkConfigLocal = NETWORK_CONSTANT[networkID];
+			let outputDir: string = flags.output ? outputPath : `${outputPath}/${networkID}`;
+
+			if (useSnapshot) {
+				if (!snapshotPath) {
+					this.error("Snapshot path is required when 'use-snapshot' set to true");
+				}
+
+				if (!inputNetwork) {
+					this.error("Network is required when 'use-snapshot' set to true");
+				} else if (!['mainnet', 'testnet'].includes(inputNetwork)) {
+					this.error('Network must be either mainnet or testnet.');
+				}
+
+				if (!customConfigPath) {
+					this.error("Custom config path is required when 'use-snapshot' set to true");
+				}
 			}
-			cli.action.stop('Snapshot height matches backup height');
 
-			cli.action.start(
-				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
-			);
-			if (snapshotHeight % ROUND_LENGTH !== 0) {
-				this.error(
-					`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
+			if (!useSnapshot) {
+				const client = await getAPIClient(liskCoreV3DataPath);
+				const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
+				const { version: appVersion, networkIdentifier } = nodeInfo;
+				networkID = networkIdentifier;
+
+				cli.action.start('Verifying if backup height from node config matches snapshot height');
+				if (snapshotHeight !== nodeInfo.backup.height) {
+					this.error(
+						`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
+					);
+				}
+				cli.action.stop('Snapshot height matches backup height');
+
+				cli.action.start(
+					`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
 				);
-			}
-			cli.action.stop('Snapshot height is valid');
+				if (snapshotHeight % ROUND_LENGTH !== 0) {
+					this.error(
+						`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
+					);
+				}
+				cli.action.stop('Snapshot height is valid');
 
-			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
-			const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
+				networkConstant = NETWORK_CONSTANT[networkID];
+				outputDir = flags.output ? outputPath : `${outputPath}/${networkID}`;
+
+				// Asynchronously capture the node's Forging Status information at the snapshot height
+				// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
+				captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
+
+				if (autoStartLiskCoreV4) {
+					if (!networkConstant) {
+						this.error(
+							`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${networkID}.`,
+						);
+					}
+				}
+
+				cli.action.start('Verifying Lisk Core version');
+				const isLiskCoreVersionValid = semver.valid(appVersion);
+				if (isLiskCoreVersionValid === null) {
+					this.error(
+						`Invalid Lisk Core version detected: ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					);
+				}
+
+				// Using 'gt' instead of 'gte' because the behavior is swapped
+				// i.e. 'gt' acts as 'gte' and vice-versa
+				if (semver.gt(`${MIN_SUPPORTED_LISK_CORE_VERSION}-rc.0`, appVersion)) {
+					this.error(
+						`Lisk Migrator is not compatible with Lisk Core version ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
+					);
+				}
+				cli.action.stop(`${appVersion} detected`);
+
+				await observeChainHeight({
+					label: 'Waiting for snapshot height to be finalized',
+					liskCoreV3DataPath,
+					height: snapshotHeight,
+					delay: 500,
+					isFinal: true,
+				});
+			}
 
 			// Ensure the output directory is present
 			if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
-			// Asynchronously capture the node's Forging Status information at the snapshot height
-			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
-			captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
-
-			if (autoStartLiskCoreV4) {
-				if (!networkConstant) {
-					this.error(
-						`Unknown network detected. No NETWORK_CONSTANT defined for networkID: ${networkIdentifier}.`,
-					);
-				}
-			}
-
-			cli.action.start('Verifying Lisk Core version');
-			const isLiskCoreVersionValid = semver.valid(appVersion);
-			if (isLiskCoreVersionValid === null) {
-				this.error(
-					`Invalid Lisk Core version detected: ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
-				);
-			}
-
-			// Using 'gt' instead of 'gte' because the behavior is swapped
-			// i.e. 'gt' acts as 'gte' and vice-versa
-			if (semver.gt(`${MIN_SUPPORTED_LISK_CORE_VERSION}-rc.0`, appVersion)) {
-				this.error(
-					`Lisk Migrator is not compatible with Lisk Core version ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
-				);
-			}
-			cli.action.stop(`${appVersion} detected`);
+			await setTokenIDLskByNetID(networkID);
+			await setPrevSnapshotBlockHeightByNetID(networkID);
 
 			// User specified custom config file
 			const configV3: ApplicationConfigV3 = customConfigPath
-				? await getConfig(this, liskCoreV3DataPath, networkIdentifier, customConfigPath)
-				: await getConfig(this, liskCoreV3DataPath, networkIdentifier);
-
-			await setTokenIDLskByNetID(networkIdentifier);
-			await setPrevSnapshotBlockHeightByNetID(networkIdentifier);
-
-			await observeChainHeight({
-				label: 'Waiting for snapshot height to be finalized',
-				liskCoreV3DataPath,
-				height: snapshotHeight,
-				delay: 500,
-				isFinal: true,
-			});
+				? await getConfig(this, liskCoreV3DataPath, networkID, customConfigPath, useSnapshot)
+				: await getConfig(this, liskCoreV3DataPath, networkID);
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const snapshotDirPath = join(liskCoreV3DataPath, SNAPSHOT_DIR);
+			const snapshotDirPath = useSnapshot
+				? (snapshotPath as string)
+				: join(liskCoreV3DataPath, SNAPSHOT_DIR);
 			const db = new Database(snapshotDirPath);
 			cli.action.stop();
 
@@ -211,7 +262,7 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			// Create an app instance for creating genesis block
-			const defaultConfigFilePath = await resolveConfigPathByNetworkID(networkIdentifier);
+			const defaultConfigFilePath = await resolveConfigPathByNetworkID(networkID);
 			const defaultConfigV4 = await fs.readJSON(defaultConfigFilePath);
 
 			cli.action.start(`Exporting genesis block to the path ${outputDir}`);
@@ -250,15 +301,13 @@ class LiskMigrator extends Command {
 			cli.action.stop();
 
 			cli.action.start('Creating genesis block');
-			const blockAtSnapshotHeight = ((await client.block.getByHeight(
-				snapshotHeight,
-			)) as unknown) as Block;
+			const blockHeaderAtSnapshotHeight = await getBlockHeaderByHeight(db, snapshotHeight);
 			await createGenesisBlock(
 				this,
 				networkConstant.name,
 				defaultConfigFilePath,
 				outputDir,
-				blockAtSnapshotHeight,
+				blockHeaderAtSnapshotHeight,
 			);
 			cli.action.stop();
 
@@ -266,6 +315,8 @@ class LiskMigrator extends Command {
 			await writeGenesisBlock(outputDir);
 			this.log(`Genesis block tar and SHA256 files have been created at: ${outputDir}.`);
 			cli.action.stop();
+
+			if (useSnapshot) process.exit(0);
 
 			if (autoStartLiskCoreV4) {
 				try {
