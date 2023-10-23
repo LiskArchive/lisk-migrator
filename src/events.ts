@@ -17,7 +17,7 @@ import { Block } from '@liskhq/lisk-chain';
 import { address } from '@liskhq/lisk-cryptography';
 import { APIClient } from '@liskhq/lisk-api-client';
 import { write } from './utils/fs';
-import { EVENT_NEW_BLOCK } from './constants';
+import { EVENT_NEW_BLOCK, FILE_NAME } from './constants';
 import { ForgingStatus } from './types';
 
 const { getLisk32AddressFromAddress } = address;
@@ -41,7 +41,7 @@ export const captureForgingStatusAtSnapshotHeight = (
 
 			if (finalForgingStatuses.length) {
 				try {
-					const forgingStatusJsonFilepath = resolve(outputDir, 'forgingStatus.json');
+					const forgingStatusJsonFilepath = resolve(outputDir, FILE_NAME.FORGING_STATUS);
 					await write(forgingStatusJsonFilepath, JSON.stringify(finalForgingStatuses, null, '\t'));
 					_this.log(`\nFinished exporting forging status to ${forgingStatusJsonFilepath}.`);
 				} catch (error) {

@@ -20,7 +20,7 @@
 		"minimumCertifyHeight": 20520176
 	},
 	"network": {
-		"version": "4.0",
+		"version": "5.0",
 		"seedPeers": [
 			{
 				"ip": "testnet-seed-01.lisk.com",

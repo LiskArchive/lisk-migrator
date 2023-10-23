@@ -20,7 +20,7 @@
 		"minimumCertifyHeight": 1
 	},
 	"network": {
-		"version": "4.0",
+		"version": "5.0",
 		"seedPeers": [
 			{
 				"ip": "mainnet-seed-01.lisk.com",

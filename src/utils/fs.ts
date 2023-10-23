@@ -72,6 +72,18 @@ export const write = async (filePath: string, content: string): Promise<boolean 
 		});
 	});
 
+export const read = async (filePath: string): Promise<string | Error> =>
+	new Promise((resolve, reject) => {
+		fs.promises
+			.readFile(filePath, 'utf8')
+			.then(data => {
+				resolve(data);
+			})
+			.catch(error => {
+				reject(error);
+			});
+	});
+
 export const copyFile = async (src: string, dest: string): Promise<boolean | Error> =>
 	new Promise((resolve, reject) => {
 		fs.copyFile(src, dest, err => {

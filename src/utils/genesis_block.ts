@@ -17,10 +17,11 @@ import path from 'path';
 import { Command } from '@oclif/command';
 
 import { BlockHeader } from '@liskhq/lisk-chain';
-import { SNAPSHOT_TIME_GAP } from '../constants';
+import { ERROR_CODE, SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
 import { copyFile, createTarball } from './fs';
+import { MigratorException } from './exception';
 
 /* eslint-disable func-names, @typescript-eslint/no-explicit-any */
 (BigInt.prototype as any).toJSON = function () {
@@ -30,6 +31,10 @@ import { copyFile, createTarball } from './fs';
 	return this.toString('hex');
 };
 /* eslint-enable func-names, @typescript-eslint/no-explicit-any */
+
+let genesisBlockCreateCommand: string;
+
+export const getGenesisBlockCreateCommand = () => genesisBlockCreateCommand;
 
 export const createChecksum = async (filePath: string): Promise<string> => {
 	const fileStream = fs.createReadStream(filePath);
@@ -56,16 +61,23 @@ export const createGenesisBlock = async (
 	outputDir: string,
 	blockHeaderAtSnapshotHeight: BlockHeader,
 ) => {
-	const height = blockHeaderAtSnapshotHeight.height + 1;
-	const timestamp = blockHeaderAtSnapshotHeight.timestamp + SNAPSHOT_TIME_GAP;
-	const previousBlockID = blockHeaderAtSnapshotHeight.id.toString('hex');
+	try {
+		const height = blockHeaderAtSnapshotHeight.height + 1;
+		const timestamp = blockHeaderAtSnapshotHeight.timestamp + SNAPSHOT_TIME_GAP;
+		const previousBlockID = blockHeaderAtSnapshotHeight.id.toString('hex');
 
-	const genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp} --export-json`;
-	_this.log(
-		`\nExecuting the following command to generate the genesis block:\n${genesisBlockCreateCommand}`,
-	);
+		genesisBlockCreateCommand = `lisk-core genesis-block:create --network ${network} --config=${configFilepath} --output=${outputDir} --assets-file=${outputDir}/genesis_assets.json --height=${height} --previous-block-id=${previousBlockID} --timestamp=${timestamp} --export-json`;
+		_this.log(
+			`\nExecuting the following command to generate the genesis block:\n${genesisBlockCreateCommand}`,
+		);
 
-	await execAsync(genesisBlockCreateCommand);
+		await execAsync(genesisBlockCreateCommand);
+	} catch (error) {
+		throw new MigratorException(
+			`Failed to create genesis block.\nError: ${(error as Error).message}`,
+			ERROR_CODE.GENESIS_BLOCK_CREATE,
+		);
+	}
 };
 
 export const writeGenesisAssets = async (
