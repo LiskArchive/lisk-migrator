@@ -109,8 +109,8 @@ class LiskMigrator extends Command {
 				'Maximum number of blocks to be iterated at once for computation. Defaults to 100000.',
 		}),
 		'snapshot-path': flagsParser.string({
-			char: 'p',
 			required: false,
+			env: 'SNAPSHOT_PATH',
 			description:
 				'Path where the state snapshot will be created. When not supplied, defaults to the current directory.',
 		}),

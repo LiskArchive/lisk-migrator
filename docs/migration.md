@@ -75,7 +75,7 @@ The Lisk Migrator v2 also allows users to download and start the Lisk Core v4.x 
 
 ```
 USAGE
-$ lisk-migrator [-d <value>] [-m <value>] [-c <value>] [-o <value>] [-p <value>] [-p <value>] [--snapshot-time-gap <value>] [--auto-migrate-config] [--auto-start-lisk-core-v4] [--use-existing-snapshot]
+$ lisk-migrator [-d <value>] [-m <value>] [-c <value>] [-o <value>] [-p <value>] [-p <value>] [--snapshot-time-gap <value>] [--auto-migrate-config] [--auto-start-lisk-core-v4] [--use-snapshot] [--snapshot-path] [--network]
 
 FLAGS
   -c, --config=config                                  Custom configuration file path.
@@ -87,6 +87,9 @@ FLAGS
   -v, --version                                        Shows the CLI version.
   --auto-migrate-config                                Migrate user configuration automatically. Default to false.
   --auto-start-lisk-core-v4                            Start lisk-core v4 automatically. Default to false.
+  --use-snapshot                                       Use the existing database snapshot.
+  --snapshot-path                                      Path where the state snapshot is available. Only required when `--use-snapshot`` is set to true.
+  --network                                            Network for the migration. Only required when `--use-snapshot`` is set to true.
 
 EXAMPLES
   lisk-migrator --snapshot-height 20931763 --lisk-core-path /path/to/data-dir
