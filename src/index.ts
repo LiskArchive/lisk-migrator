@@ -28,6 +28,8 @@ import {
 	DEFAULT_LISK_CORE_PATH,
 	ERROR_CODE,
 	FILE_NAME,
+	LISK_V3_BACKUP_DATA_DIR,
+	LEGACY_DB_PATH,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -379,13 +381,35 @@ class LiskMigrator extends Command {
 			const basicStartCommand = `lisk-core start --network ${networkConstant.name}`;
 			const liskCoreStartCommand = getLiskCoreStartCommand() ?? basicStartCommand;
 
-			if (code === ERROR_CODE.GENESIS_BLOCK_CREATE) {
+			const backupLegacyDataDirCommand = `mv ${liskCoreV3DataPath} ${LISK_V3_BACKUP_DATA_DIR}`;
+			const copyLegacyDBCommand = `cp -r ${
+				(resolve(LISK_V3_BACKUP_DATA_DIR, SNAPSHOT_DIR), LEGACY_DB_PATH)
+			}`;
+
+			if (
+				[ERROR_CODE.DEFAULT, ERROR_CODE.INVALID_CONFIG, ERROR_CODE.GENESIS_BLOCK_CREATE].includes(
+					code,
+				)
+			) {
 				const genesisBlockCreateCommand = getGenesisBlockCreateCommand();
 				commandsToExecute.push(genesisBlockCreateCommand);
+				commandsToExecute.push(backupLegacyDataDirCommand);
+				commandsToExecute.push(copyLegacyDBCommand);
 				commandsToExecute.push(liskCoreStartCommand);
 			}
 
-			if (code === ERROR_CODE.LISK_CORE_START) {
+			if ([ERROR_CODE.DEFAULT, ERROR_CODE.BACKUP_LEGACY_DATA_DIR].includes(code)) {
+				commandsToExecute.push(backupLegacyDataDirCommand);
+				commandsToExecute.push(copyLegacyDBCommand);
+				commandsToExecute.push(liskCoreStartCommand);
+			}
+
+			if ([ERROR_CODE.DEFAULT, ERROR_CODE.COPY_LEGACY_DB].includes(code)) {
+				commandsToExecute.push(copyLegacyDBCommand);
+				commandsToExecute.push(liskCoreStartCommand);
+			}
+
+			if ([ERROR_CODE.DEFAULT, ERROR_CODE.LISK_CORE_START].includes(code)) {
 				commandsToExecute.push(liskCoreStartCommand);
 			}
 

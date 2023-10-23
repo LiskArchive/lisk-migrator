@@ -11,6 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { homedir } from 'os';
+
 import { utils } from '@liskhq/lisk-cryptography';
 
 import { NetworkConfigLocal } from './types';
@@ -107,3 +109,5 @@ export const enum ERROR_CODE {
 	BACKUP_LEGACY_DATA_DIR = 4,
 	COPY_LEGACY_DB = 5,
 }
+
+export const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;

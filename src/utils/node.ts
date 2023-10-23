@@ -32,14 +32,13 @@ import {
 	ERROR_CODE,
 	LEGACY_DB_PATH,
 	SNAPSHOT_DIR,
+	LISK_V3_BACKUP_DATA_DIR,
 } from '../constants';
 import { MigratorException } from './exception';
 
 const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
-
-const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
 
 const REGEX = {
 	INPUT_SEPARATOR: /[\s=]+/,
