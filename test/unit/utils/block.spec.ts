@@ -12,7 +12,16 @@
  * Removal or modification of this copyright notice is prohibited.
  *
  */
-import { formatInt } from '../../../src/utils/block';
+import { when } from 'jest-when';
+
+import { Database } from '@liskhq/lisk-db';
+import { codec } from '@liskhq/lisk-codec';
+import { blockHeaderAssetSchema, blockHeaderSchema } from '@liskhq/lisk-chain';
+
+import { generateBlocks } from './blocks';
+import { formatInt, getBlockHeaderByHeight } from '../../../src/utils/block';
+import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID } from '../../../src/constants';
+import { keyString } from '../../../src/utils/transaction';
 
 jest.mock('@liskhq/lisk-db');
 
@@ -28,5 +37,52 @@ describe('Test formatInt method', () => {
 
 	it('should throw error when called with negative BigInteger', async () => {
 		await expect(() => formatInt(BigInt(-1))).toThrow();
+	});
+});
+
+describe('Test getBlockHeaderByHeight method', () => {
+	let db: any;
+	let blockHeader: Buffer;
+	let blockID: Buffer;
+
+	beforeAll(async () => {
+		db = new Database('testDB');
+		const [block] = generateBlocks({
+			startHeight: 150,
+			numberOfBlocks: 1,
+		});
+
+		const blockAssetBuffer = codec.encode(blockHeaderAssetSchema, block.header.asset);
+		blockHeader = codec.encode(blockHeaderSchema, {
+			...block.header,
+			asset: blockAssetBuffer,
+		});
+		blockID = block.header.id;
+	});
+
+	it('should return block header when called with valid height', async () => {
+		const blockHeight = 150;
+
+		when(db.get)
+			.calledWith(Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${formatInt(blockHeight)}`))
+			.mockResolvedValue(blockID as never);
+
+		when(db.get)
+			.calledWith(Buffer.from(`${DB_KEY_BLOCKS_ID}:${keyString(blockID)}`))
+			.mockResolvedValue(blockHeader as never);
+
+		const block = await getBlockHeaderByHeight(db, blockHeight);
+		expect(Object.getOwnPropertyNames(block)).toEqual([
+			'version',
+			'timestamp',
+			'height',
+			'previousBlockID',
+			'transactionRoot',
+			'generatorPublicKey',
+			'reward',
+			'asset',
+			'signature',
+			'id',
+		]);
 	});
 });
