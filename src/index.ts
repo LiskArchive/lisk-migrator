@@ -180,7 +180,6 @@ class LiskMigrator extends Command {
 
 		let networkConstant: NetworkConfigLocal = NETWORK_CONSTANT[networkID];
 		let outputDir: string = flags.output ? outputPath : `${outputPath}/${networkID}`;
-		const filePathCommandsToExec = `${outputDir}/${FILE_NAME.COMMANDS_TO_EXEC}`;
 
 		if (!useSnapshot) {
 			const client = await getAPIClient(liskCoreV3DataPath);
@@ -249,6 +248,7 @@ class LiskMigrator extends Command {
 
 		// Ensure the output directory is present
 		if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+		const filePathCommandsToExec = `${outputDir}/${FILE_NAME.COMMANDS_TO_EXEC}`;
 
 		try {
 			await setTokenIDLskByNetID(networkID);
