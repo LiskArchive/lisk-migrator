@@ -26,6 +26,10 @@ import {
 	SNAPSHOT_DIR,
 	MIN_SUPPORTED_LISK_CORE_VERSION,
 	DEFAULT_LISK_CORE_PATH,
+	ERROR_CODE,
+	FILE_NAME,
+	LISK_V3_BACKUP_DATA_DIR,
+	LEGACY_DB_PATH,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -46,14 +50,22 @@ import { captureForgingStatusAtSnapshotHeight } from './events';
 import {
 	copyGenesisBlock,
 	createGenesisBlock,
+	getGenesisBlockCreateCommand,
 	writeGenesisAssets,
 	writeGenesisBlock,
 } from './utils/genesis_block';
 import { CreateAsset } from './createAsset';
 import { ApplicationConfigV3, NetworkConfigLocal, NodeInfo } from './types';
-import { installLiskCore, startLiskCore, isLiskCoreV3Running } from './utils/node';
+import {
+	installLiskCore,
+	startLiskCore,
+	isLiskCoreV3Running,
+	getLiskCoreStartCommand,
+} from './utils/node';
 import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
+import { MigratorException } from './utils/exception';
+import { writeCommandsToExec } from './utils/commands';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -110,48 +122,49 @@ class LiskMigrator extends Command {
 	};
 
 	public async run(): Promise<void> {
+		const { flags } = this.parse(LiskMigrator);
+		const liskCoreV3DataPath = resolveAbsolutePath(
+			flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH,
+		);
+		const outputPath = flags.output ?? join(__dirname, '..', 'output');
+		const snapshotHeight = flags['snapshot-height'];
+		const customConfigPath = flags.config;
+		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
+		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
+		const pageSize = Number(flags['page-size']);
+
+		verifyOutputPath(outputPath);
+
+		const client = await getAPIClient(liskCoreV3DataPath);
+		const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
+		const { version: appVersion, networkIdentifier } = nodeInfo;
+
+		cli.action.start('Verifying if backup height from node config matches snapshot height');
+		if (snapshotHeight !== nodeInfo.backup.height) {
+			this.error(
+				`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
+			);
+		}
+		cli.action.stop('Snapshot height matches backup height');
+
+		cli.action.start(
+			`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
+		);
+		if (snapshotHeight % ROUND_LENGTH !== 0) {
+			this.error(
+				`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
+			);
+		}
+		cli.action.stop('Snapshot height is valid');
+
+		const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
+		const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
+
+		// Ensure the output directory is present
+		if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
+		const filePathCommandsToExec = `${outputDir}/${FILE_NAME.COMMANDS_TO_EXEC}`;
+
 		try {
-			const { flags } = this.parse(LiskMigrator);
-			const liskCoreV3DataPath = resolveAbsolutePath(
-				flags['lisk-core-v3-data-path'] ?? DEFAULT_LISK_CORE_PATH,
-			);
-			const outputPath = flags.output ?? join(__dirname, '..', 'output');
-			const snapshotHeight = flags['snapshot-height'];
-			const customConfigPath = flags.config;
-			const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
-			const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
-			const pageSize = Number(flags['page-size']);
-
-			verifyOutputPath(outputPath);
-
-			const client = await getAPIClient(liskCoreV3DataPath);
-			const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
-			const { version: appVersion, networkIdentifier } = nodeInfo;
-
-			cli.action.start('Verifying if backup height from node config matches snapshot height');
-			if (snapshotHeight !== nodeInfo.backup.height) {
-				this.error(
-					`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
-				);
-			}
-			cli.action.stop('Snapshot height matches backup height');
-
-			cli.action.start(
-				`Verifying snapshot height to be multiples of round length i.e ${ROUND_LENGTH}`,
-			);
-			if (snapshotHeight % ROUND_LENGTH !== 0) {
-				this.error(
-					`Invalid snapshot height provided: ${snapshotHeight}. It must be an exact multiple of round length (${ROUND_LENGTH}).`,
-				);
-			}
-			cli.action.stop('Snapshot height is valid');
-
-			const networkConstant = NETWORK_CONSTANT[networkIdentifier] as NetworkConfigLocal;
-			const outputDir = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
-
-			// Ensure the output directory is present
-			if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
-
 			// Asynchronously capture the node's Forging Status information at the snapshot height
 			// This information is necessary for the node operators to enable generator post-migration without getting PoM'd
 			captureForgingStatusAtSnapshotHeight(this, client, snapshotHeight, outputDir);
@@ -235,7 +248,12 @@ class LiskMigrator extends Command {
 				const isValidConfig = await validateConfig(migratedConfigV4);
 				cli.action.stop();
 
-				if (!isValidConfig) throw new Error('Migrated user configuration is invalid.');
+				if (!isValidConfig) {
+					throw new MigratorException(
+						'Migrated user configuration is invalid.',
+						ERROR_CODE.INVALID_CONFIG,
+					);
+				}
 
 				cli.action.start(`Exporting user configuration to the path: ${outputDir}`);
 				await writeConfig(migratedConfigV4, outputDir);
@@ -306,13 +324,13 @@ class LiskMigrator extends Command {
 									"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no]",
 								);
 								if (!isStopReconfirmed) {
-									this.error(
+									throw new Error(
 										`Cannot proceed with Lisk Core v4 auto-start. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
 									);
 								} else if (numTriesLeft === 0 && isStopReconfirmed) {
 									const isCoreV3StillRunning = await isLiskCoreV3Running(liskCoreV3DataPath);
 									if (isCoreV3StillRunning) {
-										this.error(
+										throw new Error(
 											`Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
 										);
 									}
@@ -339,13 +357,16 @@ class LiskMigrator extends Command {
 							);
 						}
 					} else {
-						this.error(
+						throw new Error(
 							`User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
 						);
 					}
 				} catch (err) {
-					/* eslint-disable-next-line @typescript-eslint/restrict-template-expressions */
-					this.error(`Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`);
+					const errorMsg = `Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`;
+					throw new MigratorException(
+						errorMsg,
+						err instanceof MigratorException ? err.code : ERROR_CODE.LISK_CORE_START,
+					);
 				}
 			} else {
 				this.log(
@@ -354,8 +375,93 @@ class LiskMigrator extends Command {
 				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
 		} catch (error) {
-			this.error(error as string);
+			const commandsToExecute: string[] = [];
+			const code = Number(`${(error as MigratorException).code}`);
+
+			const basicStartCommand = `lisk-core start --network ${networkConstant.name}`;
+			const liskCoreStartCommand = getLiskCoreStartCommand() ?? basicStartCommand;
+
+			const backupLegacyDataDirCommand = `mv ${liskCoreV3DataPath} ${LISK_V3_BACKUP_DATA_DIR}`;
+			const copyLegacyDBCommand = `cp -r ${
+				(resolve(LISK_V3_BACKUP_DATA_DIR, SNAPSHOT_DIR), LEGACY_DB_PATH)
+			}`;
+
+			if (
+				[ERROR_CODE.DEFAULT, ERROR_CODE.INVALID_CONFIG, ERROR_CODE.GENESIS_BLOCK_CREATE].includes(
+					code,
+				)
+			) {
+				const genesisBlockCreateCommand = getGenesisBlockCreateCommand();
+				commandsToExecute.push(
+					'\n',
+					'## Create the genesis block',
+					'## NOTE: This requires installing Lisk Core v4 locally. Please visit https://lisk.com/documentation/lisk-core/v4/setup/npm.html for further instructions',
+					'\n',
+				);
+				commandsToExecute.push(genesisBlockCreateCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
+			}
+
+			if (
+				[
+					ERROR_CODE.DEFAULT,
+					ERROR_CODE.INVALID_CONFIG,
+					ERROR_CODE.GENESIS_BLOCK_CREATE,
+					ERROR_CODE.BACKUP_LEGACY_DATA_DIR,
+				].includes(code)
+			) {
+				commandsToExecute.push('\n', '## Backup Lisk Core v3 data directory', '\n');
+				commandsToExecute.push(backupLegacyDataDirCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
+			}
+
+			if (
+				[
+					ERROR_CODE.DEFAULT,
+					ERROR_CODE.INVALID_CONFIG,
+					ERROR_CODE.GENESIS_BLOCK_CREATE,
+					ERROR_CODE.BACKUP_LEGACY_DATA_DIR,
+					ERROR_CODE.COPY_LEGACY_DB,
+				].includes(code)
+			) {
+				commandsToExecute.push(
+					'\n',
+					'## Copy legacy (v3) blockchain information to Lisk Core v4 legacy.db',
+					'\n',
+				);
+				commandsToExecute.push(copyLegacyDBCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
+			}
+
+			if (
+				[
+					ERROR_CODE.DEFAULT,
+					ERROR_CODE.INVALID_CONFIG,
+					ERROR_CODE.GENESIS_BLOCK_CREATE,
+					ERROR_CODE.BACKUP_LEGACY_DATA_DIR,
+					ERROR_CODE.COPY_LEGACY_DB,
+					ERROR_CODE.LISK_CORE_START,
+				].includes(code)
+			) {
+				commandsToExecute.push(
+					'\n',
+					'## Lisk Core v4 start command - Please modify if necessary',
+					'\n',
+				);
+				commandsToExecute.push(liskCoreStartCommand);
+				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
+			}
+
+			await writeCommandsToExec(this, networkConstant, outputDir, commandsToExecute);
+
+			this.error(
+				`Migrator could not finish execution successfully due to: ${
+					(error as Error).message
+				}\nPlease check the commands to be executed in the file: ${filePathCommandsToExec}`,
+			);
 		}
+
+		await writeCommandsToExec(this, networkConstant, outputDir);
 
 		this.log('Successfully finished migration. Exiting!!!');
 		process.exit(0);

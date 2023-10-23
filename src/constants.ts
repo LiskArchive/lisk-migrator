@@ -11,6 +11,8 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
+import { homedir } from 'os';
+
 import { utils } from '@liskhq/lisk-cryptography';
 
 import { NetworkConfigLocal } from './types';
@@ -93,3 +95,20 @@ export const LEGACY_DB_PATH = `${DEFAULT_LISK_CORE_PATH}/${DEFAULT_DATA_DIR}/leg
 
 export const DEFAULT_VERSION = '0.1.0';
 export const EVENT_NEW_BLOCK = 'app:block:new';
+
+export const FILE_NAME = {
+	COMMANDS_TO_EXEC: 'commandsToExecute.txt',
+	FORGING_STATUS: 'forgingStatus.json',
+	KEYS: 'keys.json',
+};
+
+export const enum ERROR_CODE {
+	DEFAULT = 0,
+	INVALID_CONFIG = 1,
+	GENESIS_BLOCK_CREATE = 2,
+	LISK_CORE_START = 3,
+	BACKUP_LEGACY_DATA_DIR = 4,
+	COPY_LEGACY_DB = 5,
+}
+
+export const LISK_V3_BACKUP_DATA_DIR = `${homedir()}/.lisk/lisk-core-v3`;
