@@ -19,26 +19,12 @@ import { codec } from '@liskhq/lisk-codec';
 import { blockHeaderAssetSchema, blockHeaderSchema } from '@liskhq/lisk-chain';
 
 import { generateBlocks } from './blocks';
-import { formatInt, getBlockHeaderByHeight } from '../../../src/utils/block';
+import { getBlockHeaderByHeight } from '../../../src/utils/block';
+import { formatInt } from '../../../src/utils/number';
 import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID } from '../../../src/constants';
 import { keyString } from '../../../src/utils/transaction';
 
 jest.mock('@liskhq/lisk-db');
-
-describe('Test formatInt method', () => {
-	it('should return formatted result when called with valid BigInt', async () => {
-		const formattedResult = formatInt(BigInt(100));
-		await expect(typeof formattedResult).toBe('string');
-	});
-
-	it('should throw error when called with negative number', async () => {
-		await expect(() => formatInt(-1)).toThrow();
-	});
-
-	it('should throw error when called with negative BigInteger', async () => {
-		await expect(() => formatInt(BigInt(-1))).toThrow();
-	});
-});
 
 describe('Test getBlockHeaderByHeight method', () => {
 	let db: any;

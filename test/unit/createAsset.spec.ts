@@ -44,7 +44,7 @@ import {
 	GenesisAssetEntry,
 	VoteWeightsWrapper,
 } from '../../src/types';
-import { formatInt } from '../../src/utils/block';
+import { formatInt } from '../../src/utils/number';
 
 const { hash } = utils;
 const { getKeys } = legacy;
