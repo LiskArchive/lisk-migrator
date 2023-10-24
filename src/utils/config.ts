@@ -70,7 +70,6 @@ export const getConfig = async (
 	corePath: string,
 	_networkID: string,
 	customConfigPath?: string,
-	useSnapshot = false,
 ): Promise<ApplicationConfigV3> => {
 	let network: string | Error = 'mainnet';
 	try {
@@ -79,14 +78,12 @@ export const getConfig = async (
 		_this.error(err as Error);
 	}
 
+	const dataDirConfigPath = join(corePath, 'config', network as string, 'config.json');
+	const dataDirConfig = await fs.readJSON(dataDirConfigPath);
+
 	const customConfig = customConfigPath
 		? await fs.readJSON(resolveAbsolutePath(customConfigPath))
 		: {};
-
-	if (useSnapshot) return customConfig;
-
-	const dataDirConfigPath = join(corePath, 'config', network as string, 'config.json');
-	const dataDirConfig = await fs.readJSON(dataDirConfigPath);
 
 	cli.action.start('Compiling Lisk Core configuration');
 	const config = objects.mergeDeep({}, dataDirConfig, customConfig) as ApplicationConfigV3;

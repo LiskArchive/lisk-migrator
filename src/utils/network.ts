@@ -13,7 +13,9 @@
  */
 import { createServer } from 'net';
 
-import { Port } from '../types';
+import { NetworkConfigLocal, NodeInfo, Port } from '../types';
+import { getAPIClient } from '../client';
+import { NETWORK_CONSTANT } from '../constants';
 
 export const isPortAvailable = async (port: Port): Promise<boolean | Error> =>
 	new Promise((resolve, reject) => {
@@ -35,3 +37,24 @@ export const isPortAvailable = async (port: Port): Promise<boolean | Error> =>
 
 		server.listen(port);
 	});
+
+export const getNetworkIdentifier = async (
+	useSnapshot: boolean,
+	network: string,
+	liskCoreV3DataPath: string,
+) => {
+	let nodeInfo;
+	if (!useSnapshot) {
+		const client = await getAPIClient(liskCoreV3DataPath);
+		nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
+	}
+
+	const networkIdentifier = !useSnapshot
+		? nodeInfo?.networkIdentifier
+		: (Object.entries(NETWORK_CONSTANT).find(([, v]) => v.name === network) as [
+				string,
+				NetworkConfigLocal,
+		  ])[0];
+
+	return networkIdentifier;
+};
