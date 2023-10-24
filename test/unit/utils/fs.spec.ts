@@ -23,6 +23,7 @@ import {
 	write,
 	copyFile,
 	read,
+	getFiles,
 } from '../../../src/utils/fs';
 import { configV3 } from '../fixtures/config';
 
@@ -141,5 +142,28 @@ describe('Test createTarball method', () => {
 
 	it('should throw when called with empty string', async () => {
 		await expect(createTarball('', '')).rejects.toThrow();
+	});
+});
+
+describe('Test getFiles method', () => {
+	it('should get files when getFiles() method is called', async () => {
+		const directoryPath = join(__dirname, '../fixtures');
+		const files = await getFiles(directoryPath);
+		expect(files).toEqual(
+			expect.arrayContaining([
+				'blockchain.db.tar.gz',
+				'config.ts',
+				'customConfig.json',
+				'forgingStatus.json',
+				'genesis_assets.ts',
+				'genesis_block.json',
+				'lisk-core',
+				'sub-directory',
+			]),
+		);
+	});
+
+	it('should throw when called with empty string', async () => {
+		await expect(getFiles('')).rejects.toThrow();
 	});
 });

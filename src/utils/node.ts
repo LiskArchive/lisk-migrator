@@ -21,7 +21,7 @@ import { renameSync } from 'fs-extra';
 import { PartialApplicationConfig } from 'lisk-framework';
 
 import { execAsync } from './process';
-import { copyDir, exists } from './fs';
+import { copyDir, exists, getFiles } from './fs';
 import { isPortAvailable } from './network';
 import { resolveAbsolutePath } from './path';
 import { Port } from '../types';
@@ -252,4 +252,18 @@ export const startLiskCore = async (
 			err instanceof MigratorException ? err.code : ERROR_CODE.LISK_CORE_START,
 		);
 	}
+};
+
+export const resolveSnapshotPath = async (
+	useSnapshot: boolean,
+	snapshotPath: string,
+	dataDir: string,
+	liskCoreV3DataPath: string,
+) => {
+	if (!useSnapshot) return path.join(liskCoreV3DataPath, SNAPSHOT_DIR);
+	if (!snapshotPath.endsWith('.tar.gz')) return snapshotPath;
+
+	const [snapshotDirNameExtracted] = (await getFiles(dataDir)) as string[];
+	const snapshotFilePathExtracted = path.join(dataDir, snapshotDirNameExtracted);
+	return snapshotFilePathExtracted;
 };

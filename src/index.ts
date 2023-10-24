@@ -30,6 +30,7 @@ import {
 	FILE_NAME,
 	LISK_V3_BACKUP_DATA_DIR,
 	LEGACY_DB_PATH,
+	DEFAULT_DATA_DIR,
 } from './constants';
 import { getAPIClient } from './client';
 import {
@@ -61,6 +62,7 @@ import {
 	startLiskCore,
 	isLiskCoreV3Running,
 	getLiskCoreStartCommand,
+	resolveSnapshotPath,
 } from './utils/node';
 import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
 import { execAsync } from './utils/process';
@@ -68,6 +70,7 @@ import { getBlockHeaderByHeight } from './utils/block';
 import { MigratorException } from './utils/exception';
 import { writeCommandsToExec } from './utils/commands';
 import { getNetworkIdentifier } from './utils/network';
+import { extractTarBall } from './utils/fs';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -146,7 +149,7 @@ class LiskMigrator extends Command {
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 		const pageSize = Number(flags['page-size']);
-		const snapshotPath = flags['snapshot-path'];
+		const snapshotPath = flags['snapshot-path'] as string;
 		const inputNetwork = flags.network as string;
 		const useSnapshot = !!snapshotPath || false;
 
@@ -163,6 +166,7 @@ class LiskMigrator extends Command {
 		// Ensure the output directory is present
 		if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 		const filePathCommandsToExec = `${outputDir}/${FILE_NAME.COMMANDS_TO_EXEC}`;
+		const dataDir = join(__dirname, '..', DEFAULT_DATA_DIR);
 
 		try {
 			if (!useSnapshot) {
@@ -224,6 +228,10 @@ class LiskMigrator extends Command {
 					delay: 500,
 					isFinal: true,
 				});
+			} else if (useSnapshot && snapshotPath.endsWith('.tar.gz')) {
+				cli.action.start(`Extracting snapshot at ${dataDir}`);
+				await extractTarBall(snapshotPath, dataDir);
+				cli.action.stop();
 			}
 
 			await setTokenIDLskByNetID(networkIdentifier);
@@ -231,9 +239,13 @@ class LiskMigrator extends Command {
 
 			// Create new DB instance based on the snapshot path
 			cli.action.start('Creating database instance');
-			const snapshotDirPath = useSnapshot
-				? (snapshotPath as string)
-				: join(liskCoreV3DataPath, SNAPSHOT_DIR);
+			const snapshotDirPath = await resolveSnapshotPath(
+				useSnapshot,
+				snapshotPath,
+				dataDir,
+				liskCoreV3DataPath,
+			);
+
 			const db = new Database(snapshotDirPath);
 			cli.action.stop();
 
