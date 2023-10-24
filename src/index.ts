@@ -77,7 +77,6 @@ class LiskMigrator extends Command {
 	public static description = 'Migrate Lisk Core to latest version';
 
 	public static flags = {
-		// add --version flag to show CLI version
 		version: flagsParser.version({ char: 'v' }),
 		help: flagsParser.help({ char: 'h' }),
 
@@ -124,17 +123,21 @@ class LiskMigrator extends Command {
 			description:
 				'Maximum number of blocks to be iterated at once for computation. Defaults to 100000.',
 		}),
-		network: flagsParser.string({
-			char: 'n',
-			required: false,
-			env: 'NETWORK',
-			description: 'Network for the migration.',
-		}),
 		'snapshot-path': flagsParser.string({
 			required: false,
 			env: 'SNAPSHOT_PATH',
-			description: 'Path where the state snapshot is available.',
+			description:
+				"Path/URL to the state snapshot to run the migration offline. It could point either to a directory, a tarball (tar.gz) or a URL ending with tar.gz. Depends on the '--network (-n)' flag.",
 			dependsOn: ['network'],
+		}),
+		network: flagsParser.enum({
+			char: 'n',
+			required: false,
+			env: 'NETWORK',
+			description:
+				"Network to be considered for the migration. Depends on the '--snapshot-path' flag.",
+			options: ['mainnet', 'testnet'],
+			dependsOn: ['snapshot-path'],
 		}),
 	};
 
@@ -150,16 +153,12 @@ class LiskMigrator extends Command {
 		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 		const pageSize = Number(flags['page-size']);
 		const snapshotPath = flags['snapshot-path'] as string;
-		const inputNetwork = flags.network as string;
+		const network = flags.network as string;
 		const useSnapshot = !!snapshotPath || false;
 
 		verifyOutputPath(outputPath);
 
-		const networkIdentifier = (await getNetworkIdentifier(
-			useSnapshot,
-			inputNetwork,
-			liskCoreV3DataPath,
-		)) as string;
+		const networkIdentifier: string = await getNetworkIdentifier(network, liskCoreV3DataPath);
 		const networkConstant: NetworkConfigLocal = NETWORK_CONSTANT[networkIdentifier];
 		const outputDir: string = flags.output ? outputPath : `${outputPath}/${networkIdentifier}`;
 
@@ -177,7 +176,7 @@ class LiskMigrator extends Command {
 				cli.action.start('Verifying if backup height from node config matches snapshot height');
 				if (snapshotHeight !== nodeInfo.backup.height) {
 					this.error(
-						`Lisk Core v3 backup height (${nodeInfo.backup.height}) does not match the expected snapshot height (${snapshotHeight}).`,
+						`Lisk Core v3 backup height mismatch. Actual: ${nodeInfo.backup.height}, Expected: ${snapshotHeight}.`,
 					);
 				}
 				cli.action.stop('Snapshot height matches backup height');
@@ -214,7 +213,7 @@ class LiskMigrator extends Command {
 
 				// Using 'gt' instead of 'gte' because the behavior is swapped
 				// i.e. 'gt' acts as 'gte' and vice-versa
-				if (semver.gt(`${MIN_SUPPORTED_LISK_CORE_VERSION}-rc.0`, appVersion)) {
+				if (semver.gt(MIN_SUPPORTED_LISK_CORE_VERSION, appVersion)) {
 					this.error(
 						`Lisk Migrator is not compatible with Lisk Core version ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 					);
@@ -384,8 +383,8 @@ class LiskMigrator extends Command {
 
 						if (isUserConfirmed) {
 							cli.action.start('Starting Lisk Core v4');
-							const network = networkConstant.name as string;
-							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, network, outputDir);
+							const networkName = networkConstant.name as string;
+							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, networkName, outputDir);
 							this.log(
 								`Started Lisk Core v4 at default data directory ('${DEFAULT_LISK_CORE_PATH}').`,
 							);

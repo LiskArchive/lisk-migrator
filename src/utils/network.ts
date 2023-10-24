@@ -39,22 +39,23 @@ export const isPortAvailable = async (port: Port): Promise<boolean | Error> =>
 	});
 
 export const getNetworkIdentifier = async (
-	useSnapshot: boolean,
 	network: string,
 	liskCoreV3DataPath: string,
-) => {
-	let nodeInfo;
-	if (!useSnapshot) {
-		const client = await getAPIClient(liskCoreV3DataPath);
-		nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
-	}
+): Promise<string> => {
+	const networkID = network
+		? (() => {
+				const networkConstantEntry = Object.entries(NETWORK_CONSTANT).find(
+					([, v]) => v.name === network,
+				) as [string, NetworkConfigLocal];
 
-	const networkIdentifier = !useSnapshot
-		? nodeInfo?.networkIdentifier
-		: (Object.entries(NETWORK_CONSTANT).find(([, v]) => v.name === network) as [
-				string,
-				NetworkConfigLocal,
-		  ])[0];
+				const [networkIdentifier] = networkConstantEntry;
+				return networkIdentifier;
+		  })()
+		: await (async () => {
+				const client = await getAPIClient(liskCoreV3DataPath);
+				const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
+				return nodeInfo.networkIdentifier;
+		  })();
 
-	return networkIdentifier;
+	return networkID;
 };
