@@ -30,11 +30,9 @@ describe('Test getNetworkIdentifier method', () => {
 	) as [string, NetworkConfigLocal])[0];
 
 	it('should return networkIdentifier when use-snapshot is true', async () => {
-		const useSnapshot = true;
-
 		/* eslint-disable-next-line global-require, @typescript-eslint/no-var-requires */
 		const { getNetworkIdentifier } = require('../../../src/utils/network');
-		const networkIdentifier = await getNetworkIdentifier(useSnapshot, network, './lisk/lisk-core');
+		const networkIdentifier = await getNetworkIdentifier(network, './lisk/lisk-core');
 		expect(networkIdentifier).toBe(mainnetNetworkIdentifier);
 	});
 
@@ -46,12 +44,11 @@ describe('Test getNetworkIdentifier method', () => {
 				},
 			}),
 		}));
-		const useSnapshot = false;
 
 		/* eslint-disable-next-line global-require, @typescript-eslint/no-var-requires */
 		const { getNetworkIdentifier } = require('../../../src/utils/network');
 
-		const networkIdentifier = await getNetworkIdentifier(useSnapshot, network, './lisk/lisk-core');
+		const networkIdentifier = await getNetworkIdentifier(null, './lisk/lisk-core');
 		expect(networkIdentifier).toBe(mainnetNetworkIdentifier);
 	});
 });
