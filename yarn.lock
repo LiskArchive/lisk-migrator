@@ -2655,9 +2655,9 @@ ed2curve@0.3.0:
     tweetnacl "1.x.x"
 
 electron-to-chromium@^1.4.535:
-  version "1.4.563"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.563.tgz#dabb424202754c1fed2d2938ff564b23d3bbf0d3"
-  integrity sha512-dg5gj5qOgfZNkPNeyKBZQAQitIQ/xwfIDmEQJHCbXaD9ebTZxwJXUsDYcBlAvZGZLi+/354l35J1wkmP6CqYaw==
+  version "1.4.564"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.564.tgz#9c6ada8ec7b43c65d8629300a0916a346ac5c0c2"
+  integrity sha512-bGAx9+teIzL5I4esQwCMtiXtb78Ysc8xOKTPOvmafbJZ4SQ40kDO1ym3yRcGSkfaBtV81fGgHOgPoe6DsmpmkA==
 
 emittery@^0.8.1:
   version "0.8.1"
@@ -4853,10 +4853,10 @@ lint-staged@10.2.11:
     string-argv "0.3.1"
     stringify-object "^3.3.0"
 
-lisk-framework@0.11.0-rc.4:
-  version "0.11.0-rc.4"
-  resolved "https://registry.yarnpkg.com/lisk-framework/-/lisk-framework-0.11.0-rc.4.tgz#bec20ce39aee6c25b2e5666894d5abe7f9af9f64"
-  integrity sha512-qdf5E0wPrNsFW1fgcg/4incehCbBHhud2zoQxdJprosINpSL6IZRmGeT/JbqgqkyMBHa8Q1zHS7AdNEH0zd1ng==
+lisk-framework@0.11.0-rc.5:
+  version "0.11.0-rc.5"
+  resolved "https://registry.yarnpkg.com/lisk-framework/-/lisk-framework-0.11.0-rc.5.tgz#1b281b9facd253158444541ed6a978bf48c8c29e"
+  integrity sha512-mF/GZtnCfyClrc7mUmotIzlE213rZodKtzdusxrEHeK6G6wK9GQUc2ag+gJP8tf6PvsKUh9EKiI4kQV4HJOmIA==
   dependencies:
     "@chainsafe/blst" "0.2.9"
     "@liskhq/lisk-api-client" "^6.0.0-rc.4"
