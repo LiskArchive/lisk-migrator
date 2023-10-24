@@ -46,7 +46,7 @@ export const getCommandsToExecPostMigration = async (
 				`lisk-core endpoint:invoke random_setHashOnion '{ "address":"${forgingStatus.lskAddress}"}'`,
 				`lisk-core endpoint:invoke generator_setStatus '{ "address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
 				`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
-				'lisk-core transaction:create legacy registerKeys 4000000 --key-derivation-path=legacy --send',
+				'lisk-core transaction:create legacy registerKeys 400000 --key-derivation-path=legacy --send',
 			);
 
 			commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
