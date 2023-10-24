@@ -82,10 +82,9 @@ OPTIONS
   -c, --config=config                                  Custom configuration file path for Lisk Core v3.1.x.
   -d, --lisk-core-v3-data-path=lisk-core-v3-data-path  Path where the Lisk Core v3.x instance is running. When not supplied, defaults to the default data directory for Lisk Core.
   -h, --help                                           show CLI help
-  -n, --network=network                                Network to be considered for the migration. Depends on the '--snapshot-path' flag.
+  -n, --network=(mainnet|testnet)                      Network to be considered for the migration. Depends on the '--snapshot-path' flag.
 
-  -o, --output=output                                  File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob. Do not use any value
-                                                       starting with the default data path reserved for Lisk Core: '~/.lisk/lisk-core'.
+  -o, --output=output                                  File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob. Do not use any value starting with the default data path reserved for Lisk Core: '~/.lisk/lisk-core'.
 
   -p, --page-size=page-size                            [default: 100000] Maximum number of blocks to be iterated at once for computation. Defaults to 100000.
 
@@ -95,10 +94,11 @@ OPTIONS
 
   --auto-migrate-config                                Migrate user configuration automatically. Defaults to false.
 
-  --auto-start-lisk-core-v4                            Start Lisk Core v4 automatically. Defaults to false. When using this flag, kindly open another terminal window to stop Lisk Core v3.1.x for when the
-                                                       migrator prompts.
+  --auto-start-lisk-core-v4                            Start Lisk Core v4 automatically. Defaults to false. When using this flag, kindly open another terminal window to stop Lisk Core v3.1.x for when the migrator prompts.
 
-  --snapshot-path=snapshot-path                        Path/URL to the state snapshot to run the migration offline. It could point either to a directory, a tarball (tar.gz) or a URL ending with tar.gz. Depends on the '--network (-n)' flag.
+  --snapshot-path=snapshot-path                        Path to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).
+
+  --snapshot-url=snapshot-url                          URL to download the state snapshot from. Use to run the migration offline. URL must end with tar.gz.
 
 EXAMPLES
   lisk-migrator --snapshot-height 20931763 --lisk-core-path /path/to/data-dir

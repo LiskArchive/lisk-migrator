@@ -90,15 +90,15 @@ export const getChecksum = (url: string, dir: string): string => {
 	return content.split(' ')[0];
 };
 
-export const downloadAndValidate = async (
+export const downloadAndExtract = async (
 	url: string,
-	snapshotDirPath: string,
-	extractSnapshotPath: string,
+	downloadPath: string,
+	extractionPath: string,
 ): Promise<void> => {
-	await download(url, snapshotDirPath);
-	await download(`${url}.SHA256`, snapshotDirPath);
-	const { filePath } = getDownloadedFileInfo(url, snapshotDirPath);
-	const checksum = getChecksum(url, snapshotDirPath);
+	await download(url, downloadPath);
+	await download(`${url}.SHA256`, downloadPath);
+	const { filePath } = getDownloadedFileInfo(url, downloadPath);
+	const checksum = getChecksum(url, downloadPath);
 	await verifyChecksum(filePath, checksum);
-	await extractTarBall(filePath, extractSnapshotPath);
+	await extractTarBall(filePath, extractionPath);
 };

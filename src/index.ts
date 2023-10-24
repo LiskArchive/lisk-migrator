@@ -62,16 +62,15 @@ import {
 	startLiskCore,
 	isLiskCoreV3Running,
 	getLiskCoreStartCommand,
-	resolveSnapshotPath,
 } from './utils/node';
-import { resolveAbsolutePath, verifyOutputPath } from './utils/path';
+import { resolveAbsolutePath, verifyOutputPath, resolveSnapshotPath } from './utils/path';
 import { execAsync } from './utils/process';
 import { getBlockHeaderByHeight } from './utils/block';
 import { MigratorException } from './utils/exception';
 import { writeCommandsToExec } from './utils/commands';
 import { getNetworkIdentifier } from './utils/network';
 import { extractTarBall } from './utils/fs';
-import { downloadAndValidate } from './utils/download';
+import { downloadAndExtract } from './utils/download';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -128,8 +127,17 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'SNAPSHOT_PATH',
 			description:
-				"Path/URL to the state snapshot to run the migration offline. It could point either to a directory, a tarball (tar.gz) or a URL ending with tar.gz. Depends on the '--network (-n)' flag.",
+				'Path to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).',
 			dependsOn: ['network'],
+			exclusive: ['snapshot-url'],
+		}),
+		'snapshot-url': flagsParser.string({
+			required: false,
+			env: 'SNAPSHOT_URL',
+			description:
+				'URL to download the state snapshot from. Use to run the migration offline. URL must end with tar.gz.',
+			dependsOn: ['network'],
+			exclusive: ['snapshot-path'],
 		}),
 		network: flagsParser.enum({
 			char: 'n',
@@ -138,7 +146,6 @@ class LiskMigrator extends Command {
 			description:
 				"Network to be considered for the migration. Depends on the '--snapshot-path' flag.",
 			options: ['mainnet', 'testnet'],
-			dependsOn: ['snapshot-path'],
 		}),
 	};
 
@@ -153,9 +160,25 @@ class LiskMigrator extends Command {
 		const autoMigrateUserConfig = flags['auto-migrate-config'] ?? false;
 		const autoStartLiskCoreV4 = flags['auto-start-lisk-core-v4'];
 		const pageSize = Number(flags['page-size']);
-		const snapshotPath = flags['snapshot-path'] as string;
+		const snapshotPath = flags['snapshot-path']
+			? resolveAbsolutePath(flags['snapshot-path'])
+			: (flags['snapshot-path'] as string);
+		const snapshotURL = flags['snapshot-url'] as string;
 		const network = flags.network as string;
-		const useSnapshot = !!snapshotPath || false;
+		const useSnapshot = !!(snapshotPath || snapshotURL);
+
+		// Custom flag dependency check because neither exactlyOne or relationships properties are working for network
+		if (network && !useSnapshot) {
+			this.error(
+				'Either --snapshot-path= or --snapshot-url= must be provided when using --network=',
+			);
+		}
+
+		if (snapshotURL && (!snapshotURL.startsWith('http') || !snapshotURL.endsWith('tar.gz'))) {
+			this.error(
+				`Expected --snapshot-url to begin with http(s) and end with 'tar.gz' instead received ${snapshotURL}.`,
+			);
+		}
 
 		verifyOutputPath(outputPath);
 
@@ -170,14 +193,14 @@ class LiskMigrator extends Command {
 
 		try {
 			if (useSnapshot) {
-				if (snapshotPath.startsWith('http')) {
-					cli.action.start(`Downloading snapshot from ${snapshotPath} to ${outputDir}`);
-					await downloadAndValidate(snapshotPath, outputDir, dataDir);
-					cli.action.stop();
-				} else if (snapshotPath.endsWith('.tar.gz')) {
-					cli.action.start(`Extracting snapshot at ${dataDir}`);
+				if (snapshotURL?.startsWith('http')) {
+					cli.action.start(`Downloading snapshot from ${snapshotURL} to ${outputDir}`);
+					await downloadAndExtract(snapshotURL, outputDir, dataDir);
+					cli.action.stop(`Successfully downloaded snapshot from ${snapshotURL} to ${outputDir}`);
+				} else if (snapshotPath?.endsWith('.tar.gz')) {
+					cli.action.start(`Extracting snapshot to ${dataDir}`);
 					await extractTarBall(snapshotPath, dataDir);
-					cli.action.stop();
+					cli.action.stop(`Successfully extracted snapshot to ${dataDir}`);
 				}
 			} else {
 				const client = await getAPIClient(liskCoreV3DataPath);
@@ -222,9 +245,7 @@ class LiskMigrator extends Command {
 					);
 				}
 
-				// Using 'gt' instead of 'gte' because the behavior is swapped
-				// i.e. 'gt' acts as 'gte' and vice-versa
-				if (semver.gt(MIN_SUPPORTED_LISK_CORE_VERSION, appVersion)) {
+				if (semver.lt(appVersion, MIN_SUPPORTED_LISK_CORE_VERSION)) {
 					this.error(
 						`Lisk Migrator is not compatible with Lisk Core version ${appVersion}. Minimum supported version is ${MIN_SUPPORTED_LISK_CORE_VERSION}.`,
 					);
