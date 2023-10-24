@@ -71,6 +71,7 @@ import { MigratorException } from './utils/exception';
 import { writeCommandsToExec } from './utils/commands';
 import { getNetworkIdentifier } from './utils/network';
 import { extractTarBall } from './utils/fs';
+import { downloadAndValidate } from './utils/download';
 
 let configCoreV4: PartialApplicationConfig;
 class LiskMigrator extends Command {
@@ -168,7 +169,17 @@ class LiskMigrator extends Command {
 		const dataDir = join(__dirname, '..', DEFAULT_DATA_DIR);
 
 		try {
-			if (!useSnapshot) {
+			if (useSnapshot) {
+				if (snapshotPath.startsWith('http')) {
+					cli.action.start(`Downloading snapshot from ${snapshotPath} to ${outputDir}`);
+					await downloadAndValidate(snapshotPath, outputDir, dataDir);
+					cli.action.stop();
+				} else if (snapshotPath.endsWith('.tar.gz')) {
+					cli.action.start(`Extracting snapshot at ${dataDir}`);
+					await extractTarBall(snapshotPath, dataDir);
+					cli.action.stop();
+				}
+			} else {
 				const client = await getAPIClient(liskCoreV3DataPath);
 				const nodeInfo = (await client.node.getNodeInfo()) as NodeInfo;
 				const { version: appVersion } = nodeInfo;
@@ -227,10 +238,6 @@ class LiskMigrator extends Command {
 					delay: 500,
 					isFinal: true,
 				});
-			} else if (useSnapshot && snapshotPath.endsWith('.tar.gz')) {
-				cli.action.start(`Extracting snapshot at ${dataDir}`);
-				await extractTarBall(snapshotPath, dataDir);
-				cli.action.stop();
 			}
 
 			await setTokenIDLskByNetID(networkIdentifier);
@@ -323,94 +330,96 @@ class LiskMigrator extends Command {
 			this.log(`Genesis block tar and SHA256 files have been created at: ${outputDir}.`);
 			cli.action.stop();
 
-			if (autoStartLiskCoreV4 && !useSnapshot) {
-				try {
-					if (!autoMigrateUserConfig) {
-						configCoreV4 = defaultConfigV4;
-					}
+			if (!useSnapshot) {
+				if (autoStartLiskCoreV4) {
+					try {
+						if (!autoMigrateUserConfig) {
+							configCoreV4 = defaultConfigV4;
+						}
 
-					cli.action.start('Copying genesis block to the Lisk Core executable directory');
-					const liskCoreExecPath = await execAsync('which lisk-core');
-					const liskCoreV4ConfigPath = resolve(
-						liskCoreExecPath,
-						'../..',
-						`lib/node_modules/lisk-core/config/${networkConstant.name}`,
-					);
+						cli.action.start('Copying genesis block to the Lisk Core executable directory');
+						const liskCoreExecPath = await execAsync('which lisk-core');
+						const liskCoreV4ConfigPath = resolve(
+							liskCoreExecPath,
+							'../..',
+							`lib/node_modules/lisk-core/config/${networkConstant.name}`,
+						);
 
-					await copyGenesisBlock(
-						`${outputDir}/genesis_block.blob`,
-						`${liskCoreV4ConfigPath}/genesis_block.blob`,
-					);
-					this.log(`Genesis block has been copied to: ${liskCoreV4ConfigPath}.`);
-					cli.action.stop();
+						await copyGenesisBlock(
+							`${outputDir}/genesis_block.blob`,
+							`${liskCoreV4ConfigPath}/genesis_block.blob`,
+						);
+						this.log(`Genesis block has been copied to: ${liskCoreV4ConfigPath}.`);
+						cli.action.stop();
 
-					// Ask user to manually stop Lisk Core v3 and continue
-					const isLiskCoreV3Stopped = await cli.confirm(
-						"Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]",
-					);
+						// Ask user to manually stop Lisk Core v3 and continue
+						const isLiskCoreV3Stopped = await cli.confirm(
+							"Please stop Lisk Core v3 to continue. Type 'yes' and press Enter when ready. [yes/no]",
+						);
 
-					if (isLiskCoreV3Stopped) {
-						let numTriesLeft = 3;
-						while (numTriesLeft) {
-							numTriesLeft -= 1;
+						if (isLiskCoreV3Stopped) {
+							let numTriesLeft = 3;
+							while (numTriesLeft) {
+								numTriesLeft -= 1;
 
-							const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
-							if (!isCoreV3Running) break;
+								const isCoreV3Running = await isLiskCoreV3Running(liskCoreV3DataPath);
+								if (!isCoreV3Running) break;
 
-							if (numTriesLeft >= 0) {
-								const isStopReconfirmed = await cli.confirm(
-									"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no]",
-								);
-								if (!isStopReconfirmed) {
-									throw new Error(
-										`Cannot proceed with Lisk Core v4 auto-start. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+								if (numTriesLeft >= 0) {
+									const isStopReconfirmed = await cli.confirm(
+										"Lisk Core v3 still running. Please stop the node, type 'yes' to proceed and 'no' to exit. [yes/no]",
 									);
-								} else if (numTriesLeft === 0 && isStopReconfirmed) {
-									const isCoreV3StillRunning = await isLiskCoreV3Running(liskCoreV3DataPath);
-									if (isCoreV3StillRunning) {
+									if (!isStopReconfirmed) {
 										throw new Error(
-											`Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+											`Cannot proceed with Lisk Core v4 auto-start. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
 										);
+									} else if (numTriesLeft === 0 && isStopReconfirmed) {
+										const isCoreV3StillRunning = await isLiskCoreV3Running(liskCoreV3DataPath);
+										if (isCoreV3StillRunning) {
+											throw new Error(
+												`Cannot auto-start Lisk Core v4 as Lisk Core v3 is still running. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+											);
+										}
 									}
 								}
 							}
-						}
 
-						const isUserConfirmed = await cli.confirm(
-							`Start Lisk Core with the following configuration? [yes/no]
+							const isUserConfirmed = await cli.confirm(
+								`Start Lisk Core with the following configuration? [yes/no]
 							${util.inspect(configCoreV4, false, 3)} `,
-						);
-
-						if (isUserConfirmed) {
-							cli.action.start('Starting Lisk Core v4');
-							const networkName = networkConstant.name as string;
-							await startLiskCore(this, liskCoreV3DataPath, configCoreV4, networkName, outputDir);
-							this.log(
-								`Started Lisk Core v4 at default data directory ('${DEFAULT_LISK_CORE_PATH}').`,
 							);
-							cli.action.stop();
+
+							if (isUserConfirmed) {
+								cli.action.start('Starting Lisk Core v4');
+								const networkName = networkConstant.name as string;
+								await startLiskCore(this, liskCoreV3DataPath, configCoreV4, networkName, outputDir);
+								this.log(
+									`Started Lisk Core v4 at default data directory ('${DEFAULT_LISK_CORE_PATH}').`,
+								);
+								cli.action.stop();
+							} else {
+								this.log(
+									'User did not accept the migrated config. Skipping the Lisk Core v4 auto-start process.',
+								);
+							}
 						} else {
-							this.log(
-								'User did not accept the migrated config. Skipping the Lisk Core v4 auto-start process.',
+							throw new Error(
+								`User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
 							);
 						}
-					} else {
-						throw new Error(
-							`User did not confirm Lisk Core v3 node shutdown. Skipping the Lisk Core v4 auto-start process. Please continue manually. In order to access legacy blockchain information posts-migration, please copy the contents of the ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/). Exiting!!!`,
+					} catch (err) {
+						const errorMsg = `Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`;
+						throw new MigratorException(
+							errorMsg,
+							err instanceof MigratorException ? err.code : ERROR_CODE.LISK_CORE_START,
 						);
 					}
-				} catch (err) {
-					const errorMsg = `Failed to auto-start Lisk Core v4.\nError: ${(err as Error).message}`;
-					throw new MigratorException(
-						errorMsg,
-						err instanceof MigratorException ? err.code : ERROR_CODE.LISK_CORE_START,
+				} else {
+					this.log(
+						`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/) in order to access legacy blockchain information.`,
 					);
+					this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 				}
-			} else {
-				this.log(
-					`Please copy the contents of ${snapshotDirPath} directory to 'data/legacy.db' under the Lisk Core v4 data directory (e.g: ${DEFAULT_LISK_CORE_PATH}/data/legacy.db/) in order to access legacy blockchain information.`,
-				);
-				this.log('Please copy genesis block to the Lisk Core V4 network directory.');
 			}
 		} catch (error) {
 			const commandsToExecute: string[] = [];

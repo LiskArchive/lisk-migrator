@@ -76,7 +76,8 @@
 		"lisk-framework": "0.11.0-rc.5",
 		"semver": "7.3.2",
 		"shelljs": "^0.8.5",
-		"tar": "6.1.13"
+		"tar": "6.1.13",
+		"axios": "0.25.0"
 	},
 	"devDependencies": {
 		"@oclif/dev-cli": "1.22.2",
