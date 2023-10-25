@@ -13,7 +13,8 @@
  */
 import { homedir } from 'os';
 import { isAbsolute, join } from 'path';
-import { DEFAULT_LISK_CORE_PATH } from '../constants';
+import { getFiles } from './fs';
+import { DEFAULT_LISK_CORE_PATH, SNAPSHOT_DIR } from '../constants';
 
 export const resolveAbsolutePath = (path: string) => {
 	if (isAbsolute(path)) {
@@ -36,4 +37,18 @@ export const verifyOutputPath = (_outputPath: string): void | Error => {
 			`Output path '${_outputPath}' is not allowed. Please restart the migrator with a different output path.`,
 		);
 	}
+};
+
+export const resolveSnapshotPath = async (
+	useSnapshot: boolean,
+	snapshotPath: string,
+	dataDir: string,
+	liskCoreV3DataPath: string,
+) => {
+	if (!useSnapshot) return join(liskCoreV3DataPath, SNAPSHOT_DIR);
+	if (snapshotPath && !snapshotPath.endsWith('.tar.gz')) return snapshotPath;
+
+	const [snapshotDirNameExtracted] = (await getFiles(dataDir)) as string[];
+	const snapshotFilePathExtracted = join(dataDir, snapshotDirNameExtracted);
+	return snapshotFilePathExtracted;
 };

@@ -146,7 +146,7 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 		'Would you like to customize the Lisk Core v4 start command? [yes/no]',
 	);
 
-	const baseStartCommand = `lisk core start --network ${network}`;
+	const baseStartCommand = `lisk-core start --network ${network}`;
 
 	if (!isUserConfirmed) {
 		const defaultStartCommand = `${baseStartCommand} --config ${configPath}/config.json`;

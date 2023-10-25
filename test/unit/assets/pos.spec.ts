@@ -36,7 +36,6 @@ import {
 	createStakersArrayEntry,
 	getStakes,
 	getPoSModuleEntry,
-	formatInt,
 } from '../../../src/assets/pos';
 import { MODULE_NAME_POS } from '../../../src/constants';
 
@@ -307,20 +306,5 @@ describe('Build assets/pos', () => {
 			'stakers',
 			'genesisData',
 		]);
-	});
-});
-
-describe('Test formatInt method', () => {
-	it('should return formatted result when called with valid BigInt', async () => {
-		const formattedResult = formatInt(BigInt(100));
-		await expect(typeof formattedResult).toBe('string');
-	});
-
-	it('should throw error when called with negative number', async () => {
-		await expect(() => formatInt(-1)).toThrow();
-	});
-
-	it('should throw error when called with negative BigInteger', async () => {
-		await expect(() => formatInt(BigInt(-1))).toThrow();
 	});
 });

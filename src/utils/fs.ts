@@ -110,3 +110,13 @@ export const createTarball = async (filePath: string, outputDir: string) =>
 			.then(() => resolve(true))
 			.catch(err => reject(err));
 	});
+
+export const getFiles = async (directoryPath: string, options = {}): Promise<string[] | Error> =>
+	new Promise((resolve, reject) => {
+		fs.readdir(directoryPath, options, (err, files) => {
+			if (err) {
+				return reject(err);
+			}
+			return resolve(files as string[]);
+		});
+	});

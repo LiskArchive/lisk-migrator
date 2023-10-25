@@ -52,24 +52,6 @@ const ceiling = (a: number, b: number) => {
 	return Math.floor((a + b - 1) / b);
 };
 
-export const formatInt = (num: number | bigint): string => {
-	let buf: Buffer;
-	if (typeof num === 'bigint') {
-		if (num < BigInt(0)) {
-			throw new Error('Negative number cannot be formatted');
-		}
-		buf = Buffer.alloc(8);
-		buf.writeBigUInt64BE(num);
-	} else {
-		if (num < 0) {
-			throw new Error('Negative number cannot be formatted');
-		}
-		buf = Buffer.alloc(4);
-		buf.writeUInt32BE(num, 0);
-	}
-	return buf.toString('binary');
-};
-
 export const getValidatorKeys = async (
 	accounts: Account[],
 	db: Database,

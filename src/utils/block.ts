@@ -15,9 +15,10 @@ import { codec, Schema } from '@liskhq/lisk-codec';
 import { Database } from '@liskhq/lisk-db';
 import { BlockHeader } from '@liskhq/lisk-chain';
 
-import { DB_KEY_BLOCKS_ID } from '../constants';
+import { DB_KEY_BLOCKS_HEIGHT, DB_KEY_BLOCKS_ID } from '../constants';
 import { blockHeaderSchema } from '../schemas';
 import { keyString, incrementOne } from './transaction';
+import { formatInt } from './number';
 
 export const getDataFromDBStream = async (stream: NodeJS.ReadableStream, schema: Schema) => {
 	const data = await new Promise<Record<string, unknown>[]>((resolve, reject) => {
@@ -74,4 +75,15 @@ export const getBlockPublicKeySet = async (
 		startingKey = incrementOne(lastKey as Buffer);
 	}
 	return result;
+};
+
+export const getBlockHeaderByHeight = async (
+	db: Database,
+	height: number,
+): Promise<BlockHeader> => {
+	const stringHeight = formatInt(height);
+	const id = await db.get(Buffer.from(`${DB_KEY_BLOCKS_HEIGHT}:${stringHeight}`));
+	const blockHeaderBuffer = await db.get(Buffer.from(`${DB_KEY_BLOCKS_ID}:${keyString(id)}`));
+	const blockHeader: BlockHeader = codec.decode(blockHeaderSchema, blockHeaderBuffer);
+	return { ...blockHeader, id };
 };

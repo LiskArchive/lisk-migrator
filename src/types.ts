@@ -398,3 +398,9 @@ export interface ForgingStatus {
 	readonly maxHeightPrevoted?: number;
 	readonly maxHeightPreviouslyForged?: number;
 }
+
+export interface FileInfo {
+	readonly fileName: string;
+	readonly fileDir: string;
+	readonly filePath: string;
+}

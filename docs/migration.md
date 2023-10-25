@@ -76,18 +76,29 @@ The Lisk Migrator v2 also allows users to download and start the Lisk Core v4.x 
 
 ```
 USAGE
-$ lisk-migrator [-d <value>] [-m <value>] [-c <value>] [-o <value>] [-p <value>] [-p <value>] [--snapshot-time-gap <value>] [--auto-migrate-config] [--auto-start-lisk-core-v4] [--use-existing-snapshot]
+$ lisk-migrator [-d <value>] [-m <value>] [-c <value>] [-o <value>] [-p <value>] [-p <value>] [--snapshot-time-gap <value>] [--auto-migrate-config] [--auto-start-lisk-core-v4] [--snapshot-path] [--network]
 
-FLAGS
-  -c, --config=config                                  Custom configuration file path.
-  -d, --lisk-core-v3-data-path=lisk-core-v3-data-path  Path where the lisk-core v3.x instance is running. Current home directory will be considered the default if not provided.
-  -h, --help                                           Shows CLI help.
-  -o, --output=output                                  File path to write the genesis block json. If not provided, it will default to cwd/genesis_block.json.
-  -p, --page-size                                      Maximum number of blocks to be iterated at once for computation. Default to 100000.
-  -s, --snapshot-height=snapshot-height                (Required) The height at which the re-genesis block will be generated. Can be specified with the SNAPSHOT_HEIGHT as well.
-  -v, --version                                        Shows the CLI version.
-  --auto-migrate-config                                Migrate user configuration automatically. Default to false.
-  --auto-start-lisk-core-v4                            Start lisk-core v4 automatically. Default to false.
+OPTIONS
+  -c, --config=config                                  Custom configuration file path for Lisk Core v3.1.x.
+  -d, --lisk-core-v3-data-path=lisk-core-v3-data-path  Path where the Lisk Core v3.x instance is running. When not supplied, defaults to the default data directory for Lisk Core.
+  -h, --help                                           show CLI help
+  -n, --network=(mainnet|testnet)                      Network to be considered for the migration. Depends on the '--snapshot-path' flag.
+
+  -o, --output=output                                  File path to write the genesis block. If not provided, it will default to cwd/output/{v3_networkIdentifier}/genesis_block.blob. Do not use any value starting with the default data path reserved for Lisk Core: '~/.lisk/lisk-core'.
+
+  -p, --page-size=page-size                            [default: 100000] Maximum number of blocks to be iterated at once for computation. Defaults to 100000.
+
+  -s, --snapshot-height=snapshot-height                (required) The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.
+
+  -v, --version                                        show CLI version
+
+  --auto-migrate-config                                Migrate user configuration automatically. Defaults to false.
+
+  --auto-start-lisk-core-v4                            Start Lisk Core v4 automatically. Defaults to false. When using this flag, kindly open another terminal window to stop Lisk Core v3.1.x for when the migrator prompts.
+
+  --snapshot-path=snapshot-path                        Path to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).
+
+  --snapshot-url=snapshot-url                          URL to download the state snapshot from. Use to run the migration offline. URL must end with tar.gz.
 
 EXAMPLES
   lisk-migrator --snapshot-height 20931763 --lisk-core-path /path/to/data-dir

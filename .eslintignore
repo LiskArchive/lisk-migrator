@@ -9,3 +9,4 @@ benchmark
 .eslintrc.js
 dist/
 test/_setup.js
+data/
