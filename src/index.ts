@@ -127,7 +127,7 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'SNAPSHOT_PATH',
 			description:
-				'Path to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).',
+				'Local filepath to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).',
 			dependsOn: ['network'],
 			exclusive: ['snapshot-url'],
 		}),
