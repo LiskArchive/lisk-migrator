@@ -16,7 +16,11 @@ import { homedir } from 'os';
 import { join } from 'path';
 
 import { DEFAULT_LISK_CORE_PATH } from '../../../src/constants';
-import { resolveAbsolutePath, verifyOutputPath } from '../../../src/utils/path';
+import {
+	resolveAbsolutePath,
+	verifyOutputPath,
+	resolveSnapshotPath,
+} from '../../../src/utils/path';
 
 describe('Test resolveAbsolutePath method', () => {
 	it('should resolve absolute path when called with valid path which contains ~', async () => {
@@ -71,5 +75,46 @@ describe('Test verifyOutputPath method', () => {
 	it("should not throw error when output path is './output'", async () => {
 		const outputPath = './output';
 		expect(() => verifyOutputPath(outputPath)).not.toThrow();
+	});
+});
+
+describe('Test resolveSnapshotPath method', () => {
+	const dataDir = join(__dirname, '../../..', 'test/unit/fixtures/data');
+	const liskCoreV3DataPath = '~/.lisk/lisk-core/config/data';
+	const inputSnapshotPath = join(__dirname, '../../..', 'test/unit/fixtures/data/snapshotDir');
+
+	it('should return valid snapshot path when useSnapshot is false', async () => {
+		const useSnapshot = false;
+		const snapshotPath = await resolveSnapshotPath(
+			useSnapshot,
+			inputSnapshotPath,
+			dataDir,
+			liskCoreV3DataPath,
+		);
+		const expectedResult = '~/.lisk/lisk-core/config/data/data/backup';
+		expect(snapshotPath).toBe(expectedResult);
+	});
+
+	it('should return valid snapshot path when useSnapshot is true and snapshotPath is available', async () => {
+		const useSnapshot = true;
+		const snapshotPath = await resolveSnapshotPath(
+			useSnapshot,
+			inputSnapshotPath,
+			dataDir,
+			liskCoreV3DataPath,
+		);
+		expect(snapshotPath).toBe(inputSnapshotPath);
+	});
+
+	it('should return valid snapshot path when useSnapshot is true and snapshotPath ends with .tar,gz', async () => {
+		const useSnapshot = true;
+		const snapshotPath = await resolveSnapshotPath(
+			useSnapshot,
+			(undefined as unknown) as string,
+			dataDir,
+			liskCoreV3DataPath,
+		);
+		const expectedResult = join(dataDir, 'snapshotDir');
+		expect(snapshotPath).toBe(expectedResult);
 	});
 });
