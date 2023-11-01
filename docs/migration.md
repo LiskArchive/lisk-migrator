@@ -96,7 +96,7 @@ OPTIONS
 
   --auto-start-lisk-core-v4                            Start Lisk Core v4 automatically. Defaults to false. When using this flag, kindly open another terminal window to stop Lisk Core v3.1.x for when the migrator prompts.
 
-  --snapshot-path=snapshot-path                        Local filepath to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).
+  --snapshot-path=snapshot-path                        Local filepath to the state snapshot to run the migration offline. It could either point to a directory or a tarball (tar.gz).
 
   --snapshot-url=snapshot-url                          URL to download the state snapshot from. Use to run the migration offline. URL must end with tar.gz.
 

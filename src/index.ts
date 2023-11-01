@@ -91,17 +91,17 @@ class LiskMigrator extends Command {
 			description:
 				'Path where the Lisk Core v3.x instance is running. When not supplied, defaults to the default data directory for Lisk Core.',
 		}),
-		config: flagsParser.string({
-			char: 'c',
-			required: false,
-			description: 'Custom configuration file path for Lisk Core v3.1.x.',
-		}),
 		'snapshot-height': flagsParser.integer({
 			char: 's',
 			required: true,
 			env: 'SNAPSHOT_HEIGHT',
 			description:
 				'The height at which re-genesis block will be generated. Can be specified with SNAPSHOT_HEIGHT as well.',
+		}),
+		config: flagsParser.string({
+			char: 'c',
+			required: false,
+			description: 'Custom configuration file path for Lisk Core v3.1.x.',
 		}),
 		'auto-migrate-config': flagsParser.boolean({
 			required: false,
@@ -127,7 +127,7 @@ class LiskMigrator extends Command {
 			required: false,
 			env: 'SNAPSHOT_PATH',
 			description:
-				'Local filepath to the state snapshot to run the migration offline. It could point either to a directory or a tarball (tar.gz).',
+				'Local filepath to the state snapshot to run the migration offline. It could either point to a directory or a tarball (tar.gz).',
 			dependsOn: ['network'],
 			exclusive: ['snapshot-url'],
 		}),
@@ -146,6 +146,12 @@ class LiskMigrator extends Command {
 			description:
 				"Network to be considered for the migration. Depends on the '--snapshot-path' flag.",
 			options: ['mainnet', 'testnet'],
+			exclusive: [
+				'lisk-core-v3-data-path',
+				'config',
+				'auto-migrate-config',
+				'auto-start-lisk-core-v4',
+			],
 		}),
 	};
 
