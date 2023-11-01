@@ -100,8 +100,8 @@ const copyLegacyDB = async (_this: Command) => {
 
 export const getFinalConfigPath = async (outputDir: string, network: string) =>
 	(await exists(`${outputDir}/config.json`))
-		? outputDir
-		: path.resolve(__dirname, '../..', 'config', network);
+		? path.resolve(outputDir, 'config.json')
+		: path.resolve(__dirname, '../..', 'config', network, 'config.json');
 
 export const validateStartCommandFlags = async (
 	allowedFlags: string[],
@@ -149,7 +149,7 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 	const baseStartCommand = `lisk-core start --network ${network}`;
 
 	if (!isUserConfirmed) {
-		const defaultStartCommand = `${baseStartCommand} --config ${configPath}/config.json`;
+		const defaultStartCommand = `${baseStartCommand} --config ${configPath}`;
 		liskCoreStartCommand = defaultStartCommand;
 		return defaultStartCommand;
 	}
