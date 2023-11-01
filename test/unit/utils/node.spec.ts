@@ -143,7 +143,7 @@ describe('Test getFinalConfigPath method', () => {
 		const outputDir = join(__dirname, '../../..', 'test/unit/fixtures/outputDir');
 		const configPath = await getFinalConfigPath(outputDir, network);
 
-		const expectedResponse = join(__dirname, '../../..', 'config/mainnet');
+		const expectedResponse = join(__dirname, '../../..', 'config/mainnet/config.json');
 		expect(configPath).toBe(expectedResponse);
 	});
 
@@ -151,7 +151,7 @@ describe('Test getFinalConfigPath method', () => {
 		const outputDir = join(__dirname, '../../..', 'config');
 		const configPath = await getFinalConfigPath(outputDir, network);
 
-		const expectedResponse = join(__dirname, '../../..', 'config/mainnet');
+		const expectedResponse = join(__dirname, '../../..', 'config/mainnet/config.json');
 		expect(configPath).toBe(expectedResponse);
 	});
 });
