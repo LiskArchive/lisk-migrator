@@ -526,7 +526,13 @@ class LiskMigrator extends Command {
 				commandsToExecute.push('\n', '-----------------------------------------------------', '\n');
 			}
 
-			await writeCommandsToExec(this, networkConstant, outputDir, commandsToExecute);
+			await writeCommandsToExec(
+				this,
+				networkConstant,
+				snapshotHeight,
+				outputDir,
+				commandsToExecute,
+			);
 
 			this.error(
 				`Migrator could not finish execution successfully due to: ${
@@ -535,7 +541,7 @@ class LiskMigrator extends Command {
 			);
 		}
 
-		await writeCommandsToExec(this, networkConstant, outputDir);
+		await writeCommandsToExec(this, networkConstant, snapshotHeight, outputDir);
 
 		this.log('Successfully finished migration. Exiting!!!');
 		process.exit(0);
