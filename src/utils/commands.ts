@@ -21,6 +21,7 @@ import { NetworkConfigLocal } from '../types';
 
 export const getCommandsToExecPostMigration = async (
 	networkConstant: NetworkConfigLocal,
+	snapshotHeight: number,
 	outputDir: string,
 ) => {
 	const commandsToExecute = [];
@@ -44,7 +45,11 @@ export const getCommandsToExecPostMigration = async (
 				`lisk-core keys:create --chainid ${chainID} --output ${keysFilepath} --add-legacy`,
 				`lisk-core keys:import --file-path ${keysFilepath}`,
 				`lisk-core endpoint:invoke random_setHashOnion '{ "address":"${forgingStatus.lskAddress}"}'`,
-				`lisk-core endpoint:invoke generator_setStatus '{ "address":"${forgingStatus.lskAddress}", "height": ${forgingStatus.height}, "maxHeightGenerated":  ${forgingStatus.maxHeightPreviouslyForged}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted} }' --pretty`,
+				`lisk-core endpoint:invoke generator_setStatus '{ "address":"${
+					forgingStatus.lskAddress
+				}", "height": ${forgingStatus.height ?? snapshotHeight}, "maxHeightGenerated":  ${
+					forgingStatus.maxHeightPreviouslyForged ?? snapshotHeight
+				}, "maxHeightPrevoted":  ${forgingStatus.maxHeightPrevoted ?? snapshotHeight} }' --pretty`,
 				`lisk-core generator:enable ${forgingStatus.lskAddress} --use-status-value`,
 				'lisk-core transaction:create legacy registerKeys 400000 --key-derivation-path=legacy --send',
 			);
@@ -59,12 +64,14 @@ export const getCommandsToExecPostMigration = async (
 export const writeCommandsToExec = async (
 	_this: Command,
 	networkConstant: NetworkConfigLocal,
+	snapshotHeight: number,
 	outputDir: string,
 	preCompletionCommands?: string[],
 ) => {
 	const commandsToExecPreCompletion = preCompletionCommands ?? [];
 	const commandsToExecPostMigration = await getCommandsToExecPostMigration(
 		networkConstant,
+		snapshotHeight,
 		outputDir,
 	);
 

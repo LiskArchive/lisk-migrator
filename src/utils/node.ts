@@ -142,14 +142,14 @@ export const validateStartCommandFlags = async (
 };
 
 const resolveLiskCoreStartCommand = async (_this: Command, network: string, configPath: string) => {
+	const baseStartCommand = `lisk-core start --network ${network}`;
+	const defaultStartCommand = `${baseStartCommand} --config ${configPath}`;
+
 	const isUserConfirmed = await cli.confirm(
-		'Would you like to customize the Lisk Core v4 start command? [yes/no]',
+		`Default start command: ${defaultStartCommand}\nWould you like to customize the Lisk Core v4 start command? [yes/no]`,
 	);
 
-	const baseStartCommand = `lisk-core start --network ${network}`;
-
 	if (!isUserConfirmed) {
-		const defaultStartCommand = `${baseStartCommand} --config ${configPath}`;
 		liskCoreStartCommand = defaultStartCommand;
 		return defaultStartCommand;
 	}
