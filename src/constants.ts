@@ -100,6 +100,9 @@ export const FILE_NAME = {
 	COMMANDS_TO_EXEC: 'commandsToExecute.txt',
 	FORGING_STATUS: 'forgingStatus.json',
 	KEYS: 'keys.json',
+	GENESIS_ASSETS: 'genesis_assets.json',
+	GENESIS_BLOCK_JSON: 'genesis_block.json',
+	GENESIS_BLOCK_BLOB: 'genesis_block.blob',
 };
 
 export const enum ERROR_CODE {

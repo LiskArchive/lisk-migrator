@@ -40,7 +40,7 @@ The following system requirements are recommended to run Lisk Migrator v2.0.0:
 
 ## Setup
 
-Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/management/migration.html#setting-up-the-lisk-migrator).
+Follow our Lisk Documentation guide for [setting up the Lisk migrator](https://lisk.com/documentation/lisk-core/v4/management/migration.html#setting-up-the-lisk-migrator).
 
 ### Build Distributions (Linux, Darwin) from source
 
@@ -77,10 +77,11 @@ $ export PATH="$PATH:$HOME/lisk-migrator-extract/lisk-migrator/bin"
 <!-- usage -->
 
 ```sh-session
+$ npm install -g lisk-migrator
 $ lisk-migrator COMMAND
 running command...
 $ lisk-migrator (-v|--version|version)
-lisk-migrator/2.0.0-rc.4 darwin-arm64 node-v18.16.1
+lisk-migrator/2.0.0 darwin-arm64 node-v18.16.1
 $ lisk-migrator --help [COMMAND]
 USAGE
   $ lisk-migrator COMMAND
@@ -88,6 +89,8 @@ USAGE
 ```
 
 <!-- usagestop -->
+
+> **NOTE**: To verify the final results, please run the following command: `cat genesis_block.blob.SHA256` under the output directory and compare the results with other participants on [Discord](https://lisk.chat/).
 
 <!-- commands -->
 
