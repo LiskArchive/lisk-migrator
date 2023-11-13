@@ -17,7 +17,7 @@ import path from 'path';
 import { Command } from '@oclif/command';
 
 import { BlockHeader } from '@liskhq/lisk-chain';
-import { ERROR_CODE, SNAPSHOT_TIME_GAP } from '../constants';
+import { ERROR_CODE, FILE_NAME, SNAPSHOT_TIME_GAP } from '../constants';
 import { GenesisAssetEntry } from '../types';
 import { execAsync } from './process';
 import { copyFile, createTarball } from './fs';
@@ -84,7 +84,7 @@ export const writeGenesisAssets = async (
 	genesisAssets: GenesisAssetEntry[],
 	outputDir: string,
 ): Promise<void> => {
-	const genesisAssetsJsonFilepath = path.resolve(outputDir, 'genesis_assets.json');
+	const genesisAssetsJsonFilepath = path.resolve(outputDir, FILE_NAME.GENESIS_ASSETS);
 	fs.writeFileSync(
 		genesisAssetsJsonFilepath,
 		JSON.stringify({ assets: genesisAssets }, null, '\t'),
@@ -97,21 +97,35 @@ export const copyGenesisBlock = async (
 ): Promise<boolean | Error> => copyFile(currGenesisBlockFilepath, liskCoreV4ConfigPath);
 
 export const writeGenesisBlock = async (outputDir: string): Promise<void> => {
-	const genesisBlockJsonFilepath = path.resolve(outputDir, 'genesis_block.json');
-	await createTarball(genesisBlockJsonFilepath, outputDir);
+	// Genesis BLOB handling
+	const genesisBlockBlobFilepath = path.resolve(outputDir, FILE_NAME.GENESIS_BLOCK_BLOB);
 
-	const genesisBlockBlobFilepath = path.resolve(outputDir, 'genesis_block.blob');
-	await createTarball(genesisBlockBlobFilepath, outputDir);
-
-	const genesisBlockJsonHash = await createChecksum(`${genesisBlockJsonFilepath}.tar.gz`);
+	const genesisBlockBlobHash = await createChecksum(genesisBlockBlobFilepath);
 	fs.writeFileSync(
-		path.resolve(outputDir, 'genesis_block.json.tar.gz.SHA256'),
+		path.resolve(outputDir, `${FILE_NAME.GENESIS_BLOCK_BLOB}.SHA256`),
+		genesisBlockBlobHash,
+	);
+
+	await createTarball(genesisBlockBlobFilepath, outputDir);
+	const genesisBlockBlobTarballHash = await createChecksum(`${genesisBlockBlobFilepath}.tar.gz`);
+	fs.writeFileSync(
+		path.resolve(outputDir, `${FILE_NAME.GENESIS_BLOCK_BLOB}.tar.gz.SHA256`),
+		genesisBlockBlobTarballHash,
+	);
+
+	// Genesis JSON handling
+	const genesisBlockJsonFilepath = path.resolve(outputDir, FILE_NAME.GENESIS_BLOCK_JSON);
+
+	const genesisBlockJsonHash = await createChecksum(genesisBlockJsonFilepath);
+	fs.writeFileSync(
+		path.resolve(outputDir, `${FILE_NAME.GENESIS_BLOCK_JSON}.SHA256`),
 		genesisBlockJsonHash,
 	);
 
-	const genesisBlockBlobHash = await createChecksum(`${genesisBlockBlobFilepath}.tar.gz`);
+	await createTarball(genesisBlockJsonFilepath, outputDir);
+	const genesisBlockJsonTarBallHash = await createChecksum(`${genesisBlockJsonFilepath}.tar.gz`);
 	fs.writeFileSync(
-		path.resolve(outputDir, 'genesis_block.blob.tar.gz.SHA256'),
-		genesisBlockBlobHash,
+		path.resolve(outputDir, `${FILE_NAME.GENESIS_BLOCK_JSON}.tar.gz.SHA256`),
+		genesisBlockJsonTarBallHash,
 	);
 };
