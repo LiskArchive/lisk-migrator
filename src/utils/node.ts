@@ -158,6 +158,9 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 	let customStartCommand = baseStartCommand;
 
 	_this.log('Customizing Lisk Core start command');
+	_this.log(
+		`Kindly do not forget to include '--config ${configPath}' in your custom start command, if you still want to use this config.`,
+	);
 	let userInput = await cli.prompt(
 		"Please provide the Lisk Core start command flags (e.g. --api-ws), except the '--network (-n)' flag:",
 	);

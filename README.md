@@ -81,7 +81,7 @@ $ npm install -g lisk-migrator
 $ lisk-migrator COMMAND
 running command...
 $ lisk-migrator (-v|--version|version)
-lisk-migrator/2.0.0 darwin-arm64 node-v18.16.1
+lisk-migrator/2.0.1 darwin-arm64 node-v18.16.1
 $ lisk-migrator --help [COMMAND]
 USAGE
   $ lisk-migrator COMMAND
