@@ -21,6 +21,7 @@ import { configV3, configV4 } from '../fixtures/config';
 import { NETWORK_CONSTANT } from '../../../src/constants';
 import {
 	getNetworkByNetworkID,
+	getLogLevel,
 	migrateUserConfig,
 	validateConfig,
 	writeConfig,
@@ -28,7 +29,7 @@ import {
 	createBackup,
 	getConfig,
 } from '../../../src/utils/config';
-import { ApplicationConfigV3 } from '../../../src/types';
+import { ApplicationConfigV3, LoggerConfig } from '../../../src/types';
 
 const migratedConfigFilePath = join(__dirname, 'test/config');
 const expectedBackupPath = join(__dirname, '../../..', 'backup');
@@ -37,6 +38,41 @@ const mockCommand = {
 	log,
 	error,
 };
+
+describe('Test getLogLevel method', () => {
+	it('should return highest priority logLevel provided by user', async () => {
+		const loggerConfig = {
+			fileLogLevel: 'trace',
+			consoleLogLevel: 'error',
+		} as LoggerConfig;
+		const logLevel = getLogLevel(loggerConfig);
+		expect(logLevel).toBe('trace');
+	});
+
+	it('should return info when logger config is not available', async () => {
+		const loggerConfig = {} as LoggerConfig;
+		const logLevel = getLogLevel(loggerConfig);
+		expect(logLevel).toBe('info');
+	});
+
+	it('should return the highest priority log level when one of the specified logLevel is incorrect', async () => {
+		const loggerConfig = {
+			fileLogLevel: 'trace',
+			consoleLogLevel: 'err',
+		} as LoggerConfig;
+		const logLevel = getLogLevel(loggerConfig);
+		expect(logLevel).toBe('trace');
+	});
+
+	it('should return info if the specified valid log level is of lower priority than info and other is incorrect', async () => {
+		const loggerConfig = {
+			fileLogLevel: 'fatal',
+			consoleLogLevel: 'err',
+		} as LoggerConfig;
+		const logLevel = getLogLevel(loggerConfig);
+		expect(logLevel).toBe('info');
+	});
+});
 
 describe('Migrate user configuration', () => {
 	afterAll(() => {

@@ -36,7 +36,7 @@ import {
 } from '../constants';
 import { MigratorException } from './exception';
 
-const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.0-rc.1';
+const INSTALL_LISK_CORE_COMMAND = 'npm i -g lisk-core@^4.0.1';
 const INSTALL_PM2_COMMAND = 'npm i -g pm2';
 const PM2_FILE_NAME = 'pm2.migrator.config.json';
 
@@ -158,6 +158,9 @@ const resolveLiskCoreStartCommand = async (_this: Command, network: string, conf
 	let customStartCommand = baseStartCommand;
 
 	_this.log('Customizing Lisk Core start command');
+	_this.log(
+		`Kindly do not forget to include '--config ${configPath}' in your custom start command, if you still want to use this config.`,
+	);
 	let userInput = await cli.prompt(
 		"Please provide the Lisk Core start command flags (e.g. --api-ws), except the '--network (-n)' flag:",
 	);

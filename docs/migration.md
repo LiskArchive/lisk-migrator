@@ -1,8 +1,8 @@
 # Migration Guide
 
-This section explains how to migrate a Lisk Core v3.1.0 node to Lisk Core v4.0.0 using the Lisk Migrator.
+This section explains how to migrate a Lisk Core v3.1.0 node to Lisk Core v4.0.1 using the Lisk Migrator.
 
-The Lisk Migrator CLI tool will generate a new genesis (snapshot) block for Lisk Core v4.0.0.
+The Lisk Migrator CLI tool will generate a new genesis (snapshot) block for Lisk Core v4.0.1.
 The new genesis block is created based on a snapshot of the existing blockchain (running on Lisk Core v3.1.0) at a pre-determined height.
 
 Lisk Migrator automatically exports the node's Forging Status information to the file named `forgingStatus.json` under the output directory.

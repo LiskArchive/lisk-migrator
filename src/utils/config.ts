@@ -50,8 +50,10 @@ export const getNetworkByNetworkID = (_networkID: string): string | Error => {
 
 export const getLogLevel = (loggerConfig: LoggerConfig): string => {
 	const highestLogPriority = Math.max(
-		LOG_LEVEL_PRIORITY[String(loggerConfig.fileLogLevel).toUpperCase()],
-		LOG_LEVEL_PRIORITY[String(loggerConfig.consoleLogLevel).toUpperCase()],
+		LOG_LEVEL_PRIORITY[String(loggerConfig.fileLogLevel || '').toUpperCase()] ??
+			LOG_LEVEL_PRIORITY.INFO,
+		LOG_LEVEL_PRIORITY[String(loggerConfig.consoleLogLevel || '').toUpperCase()] ??
+			LOG_LEVEL_PRIORITY.INFO,
 	);
 
 	try {
