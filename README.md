@@ -108,9 +108,9 @@ Lisk Migrator has an extensive set of unit tests. To run the tests, please insta
 $ npm test
 ```
 
-## Migrating from Lisk Core v3.1.0 to v4.0.0
+## Migrating from Lisk Core v3.1.0 to v4.0.1
 
-The [migration guide](./docs/migration.md) explains the transition process from Lisk Core v3.1.0 (or later) to Lisk Core v4.0.0 using Lisk Migrator v2.
+The [migration guide](./docs/migration.md) explains the transition process from Lisk Core v3.1.0 (or later) to Lisk Core v4.0.1 using Lisk Migrator v2.
 
 ## Get Involved
 
