@@ -11,22 +11,41 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-
 import cli from 'cli-ux';
-import { getClient } from '../client';
+import { getAPIClient } from '../client';
+import { NETWORK_CONSTANT } from '../constants';
+
+let tokenIDLsk: string;
+let prevSnapshotBlockHeight: number;
 
 interface ObserveParams {
 	readonly label: string;
 	readonly height: number;
-	readonly liskCorePath: string;
+	readonly liskCoreV3DataPath: string;
 	readonly delay: number;
+	readonly isFinal: boolean;
 }
 
-export const getChainHeight = async (liskCorePath: string): Promise<number> => {
-	const client = await getClient(liskCorePath);
-	const result = await client.node.getNodeInfo();
+export const getTokenIDLsk = (): string => tokenIDLsk;
 
-	return result.height;
+export const setTokenIDLskByNetID = async (networkIdentifier: string): Promise<void> => {
+	tokenIDLsk = NETWORK_CONSTANT[networkIdentifier].tokenID as string;
+};
+
+export const getPrevSnapshotBlockHeight = (): number => prevSnapshotBlockHeight;
+
+export const setPrevSnapshotBlockHeightByNetID = async (
+	networkIdentifier: string,
+): Promise<void> => {
+	prevSnapshotBlockHeight = NETWORK_CONSTANT[networkIdentifier].prevSnapshotBlockHeight as number;
+};
+
+export const getNodeInfo = async (
+	liskCorePath: string,
+): Promise<{ height: number; finalizedHeight: number }> => {
+	const client = await getAPIClient(liskCorePath);
+	const { height, finalizedHeight } = await client.node.getNodeInfo();
+	return { height, finalizedHeight };
 };
 
 const secondsToHumanString = (seconds: number): string => {
@@ -70,18 +89,17 @@ const getRemainingTime = (currentHeight: number, observedHeight: number): string
 
 export const observeChainHeight = async (options: ObserveParams): Promise<number> => {
 	const observedHeight = options.height;
-	const startHeight = await getChainHeight(options.liskCorePath);
+	const startHeight = options.isFinal
+		? (await getNodeInfo(options.liskCoreV3DataPath)).finalizedHeight
+		: (await getNodeInfo(options.liskCoreV3DataPath)).height;
 
-	if (startHeight === observedHeight) {
+	if (startHeight >= observedHeight) {
 		return startHeight;
 	}
 
-	if (startHeight > observedHeight) {
-		throw new Error(`Chain height: ${startHeight} crossed the observed height: ${observedHeight}`);
-	}
-
+	const observedProperty = options.isFinal ? 'Finalized height' : 'Height';
 	const progress = cli.progress({
-		format: `${options.label}: [{bar}] {percentage}% | Remaining: {remaining}/{total} | Height: {height}/${observedHeight} | ETA: {timeLeft}`,
+		format: `${options.label}: [{bar}] {percentage}% | Remaining: {remaining}/{total} | ${observedProperty}: {height}/${observedHeight} | ETA: {timeLeft}`,
 		fps: 2,
 		synchronousUpdate: false,
 		etaAsynchronousUpdate: false,
@@ -101,7 +119,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 		const checkHeight = async () => {
 			let height!: number;
 			try {
-				height = await getChainHeight(options.liskCorePath);
+				height = options.isFinal
+					? (await getNodeInfo(options.liskCoreV3DataPath)).finalizedHeight
+					: (await getNodeInfo(options.liskCoreV3DataPath)).height;
 			} catch (error) {
 				return reject(error);
 			}
@@ -112,15 +132,9 @@ export const observeChainHeight = async (options: ObserveParams): Promise<number
 				height,
 			});
 
-			if (height === observedHeight) {
+			if (height >= observedHeight) {
 				clearInterval(intervalId);
 				return resolve(height);
-			}
-
-			if (height > observedHeight) {
-				return reject(
-					new Error(`Chain height: ${height} crossed the observed height: ${observedHeight}`),
-				);
 			}
 		};
 

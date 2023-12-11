@@ -11,13 +11,20 @@
  *
  * Removal or modification of this copyright notice is prohibited.
  */
-import { createIPCClient } from '@liskhq/lisk-api-client';
+import { createIPCClient, APIClient } from '@liskhq/lisk-api-client';
 
-let client: object;
+const clientCache: Record<string, APIClient> = {};
 
-export const getClient = async (liskCorePath: string): Promise<any> => {
-	if (!client) {
-		client = await createIPCClient(liskCorePath);
+export const getAPIClient = async (
+	liskCorePath: string,
+	isForceInstantiate?: boolean,
+): Promise<APIClient> => {
+	let _client = clientCache[liskCorePath];
+
+	if (!_client || isForceInstantiate) {
+		_client = await createIPCClient(liskCorePath);
+		clientCache[liskCorePath] = _client;
 	}
-	return client;
+
+	return _client;
 };
